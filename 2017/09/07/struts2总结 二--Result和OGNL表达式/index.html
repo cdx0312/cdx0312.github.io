@@ -79,7 +79,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="Java,Struts2," />
 
 
 
@@ -96,13 +96,14 @@
 
 
 <meta name="description" content="4 ResultResult是Action执行结束之后返回的结果，result包含name和type属性，前者是返回的字符串，后者指定跳转的类型，默认为dispatcher。 4.1 Result常用的四中类型 dispatcher， 从一个Action里面服务器内部跳转到一个页面中, r1–&amp;gt;r1.jsp chain， 从一个Action里面服务器内部跳转到另一个Action中,r2–&amp;g">
+<meta name="keywords" content="Java,Struts2">
 <meta property="og:type" content="article">
 <meta property="og:title" content="struts2总结（二）--Result和OGNL表达式">
 <meta property="og:url" content="http://yoursite.com/2017/09/07/struts2总结 二--Result和OGNL表达式/index.html">
 <meta property="og:site_name" content="小黄">
 <meta property="og:description" content="4 ResultResult是Action执行结束之后返回的结果，result包含name和type属性，前者是返回的字符串，后者指定跳转的类型，默认为dispatcher。 4.1 Result常用的四中类型 dispatcher， 从一个Action里面服务器内部跳转到一个页面中, r1–&amp;gt;r1.jsp chain， 从一个Action里面服务器内部跳转到另一个Action中,r2–&amp;g">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-09-07T05:32:41.092Z">
+<meta property="og:updated_time" content="2017-09-08T08:15:38.627Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="struts2总结（二）--Result和OGNL表达式">
 <meta name="twitter:description" content="4 ResultResult是Action执行结束之后返回的结果，result包含name和type属性，前者是返回的字符串，后者指定跳转的类型，默认为dispatcher。 4.1 Result常用的四中类型 dispatcher， 从一个Action里面服务器内部跳转到一个页面中, r1–&amp;gt;r1.jsp chain， 从一个Action里面服务器内部跳转到另一个Action中,r2–&amp;g">
@@ -205,6 +206,26 @@
           </a>
         </li>
       
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
 
       
     </ul>
@@ -277,6 +298,39 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/Struts2/" itemprop="url" rel="index">
+                    <span itemprop="name">Struts2</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -389,10 +443,52 @@
     
 
     
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
 
     
 
     <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/Struts2/" rel="tag"># Struts2</a>
+          
+        </div>
       
 
       
@@ -495,14 +591,32 @@
             
               <a href="/archives">
             
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
           
 
           
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
 
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
           
 
         </nav>
@@ -510,6 +624,20 @@
         
 
         <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
           
         </div>
 

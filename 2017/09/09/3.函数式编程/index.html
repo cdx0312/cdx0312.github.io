@@ -95,18 +95,18 @@
 
 
 
-<meta name="description" content="#函数式编程  函数式Python内建支持的一种封装，我们通过把大段代码拆成函数，通过一层一层的函数调用，就可以把复杂任务分解成简单的任务，这种分解称之为面向过程的程序设计。函数就是面向过程的程序设计的基本单元。 而函数式编程—-Functional Programming，虽然也可以归结到面向过程的程序设计，但是其思想更接近数学计算。 我们首先要弄清楚计算机和计算的概念。在计算机的层次上，CPU">
+<meta name="description" content="函数式编程 函数式Python内建支持的一种封装，我们通过把大段代码拆成函数，通过一层一层的函数调用，就可以把复杂任务分解成简单的任务，这种分解称之为面向过程的程序设计。函数就是面向过程的程序设计的基本单元。 而函数式编程—-Functional Programming，虽然也可以归结到面向过程的程序设计，但是其思想更接近数学计算。 我们首先要弄清楚计算机和计算的概念。在计算机的层次上，CPU执行">
 <meta name="keywords" content="Python基础">
 <meta property="og:type" content="article">
 <meta property="og:title" content="3. 函数式编程">
 <meta property="og:url" content="http://yoursite.com/2017/09/09/3.函数式编程/index.html">
 <meta property="og:site_name" content="小黄">
-<meta property="og:description" content="#函数式编程  函数式Python内建支持的一种封装，我们通过把大段代码拆成函数，通过一层一层的函数调用，就可以把复杂任务分解成简单的任务，这种分解称之为面向过程的程序设计。函数就是面向过程的程序设计的基本单元。 而函数式编程—-Functional Programming，虽然也可以归结到面向过程的程序设计，但是其思想更接近数学计算。 我们首先要弄清楚计算机和计算的概念。在计算机的层次上，CPU">
+<meta property="og:description" content="函数式编程 函数式Python内建支持的一种封装，我们通过把大段代码拆成函数，通过一层一层的函数调用，就可以把复杂任务分解成简单的任务，这种分解称之为面向过程的程序设计。函数就是面向过程的程序设计的基本单元。 而函数式编程—-Functional Programming，虽然也可以归结到面向过程的程序设计，但是其思想更接近数学计算。 我们首先要弄清楚计算机和计算的概念。在计算机的层次上，CPU执行">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-09-09T07:00:40.543Z">
+<meta property="og:updated_time" content="2017-09-09T09:49:47.023Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="3. 函数式编程">
-<meta name="twitter:description" content="#函数式编程  函数式Python内建支持的一种封装，我们通过把大段代码拆成函数，通过一层一层的函数调用，就可以把复杂任务分解成简单的任务，这种分解称之为面向过程的程序设计。函数就是面向过程的程序设计的基本单元。 而函数式编程—-Functional Programming，虽然也可以归结到面向过程的程序设计，但是其思想更接近数学计算。 我们首先要弄清楚计算机和计算的概念。在计算机的层次上，CPU">
+<meta name="twitter:description" content="函数式编程 函数式Python内建支持的一种封装，我们通过把大段代码拆成函数，通过一层一层的函数调用，就可以把复杂任务分解成简单的任务，这种分解称之为面向过程的程序设计。函数就是面向过程的程序设计的基本单元。 而函数式编程—-Functional Programming，虽然也可以归结到面向过程的程序设计，但是其思想更接近数学计算。 我们首先要弄清楚计算机和计算的概念。在计算机的层次上，CPU执行">
 
 
 
@@ -368,8 +368,7 @@
       
 
       
-        <p>#函数式编程</p>
-<blockquote>
+        <h1 id="函数式编程"><a href="#函数式编程" class="headerlink" title="函数式编程"></a>函数式编程</h1><blockquote>
 <p>函数式Python内建支持的一种封装，我们通过把大段代码拆成函数，通过一层一层的函数调用，就可以把复杂任务分解成简单的任务，这种分解称之为面向过程的程序设计。函数就是面向过程的程序设计的基本单元。</p>
 <p>而函数式编程—-Functional Programming，虽然也可以归结到面向过程的程序设计，但是其思想更接近数学计算。</p>
 <p>我们首先要弄清楚计算机和计算的概念。在计算机的层次上，CPU执行的是加减乘除的指令代码，以及各种条件判断和跳转指令，所以，汇编语言是最贴近计算机的语言。而计算则是指数学意义上的计算，越是抽象的计算，离计算机硬件越远。</p>
@@ -377,11 +376,8 @@
 <p>函数抽象编程是一种抽象程度很高的编程范式，纯粹的函数式编程语言编写的函数没有变量，因此，任意一个函数，只要输入时确定的，输出就是确定的，这种函数我们称为没有副作用。而允许使用变量的程序设计语言，由于函数内部变量状态不确定，同样的输入，可能会得到不同的输出，因此这种函数式有副作用的。</p>
 <p>函数式编程的一个特点就是，允许函数本身作为参数传入另一个函数，还允许返回一个函数！Python对函数式编程提供部分支持，由于Python允许使用变量，因此，Python不是纯函数编程式编程语言。</p>
 </blockquote>
-<p>[TOC]</p>
-<p>##高阶函数</p>
-<p>高阶函数—-Higher-order function。</p>
-<p>###变量可以指向函数</p>
-<p>以Python内置的求绝对值的函数<code>abs()</code>为例子，调用该函数的代码如下：</p>
+<h2 id="高阶函数"><a href="#高阶函数" class="headerlink" title="高阶函数"></a>高阶函数</h2><p>高阶函数—-Higher-order function。</p>
+<h3 id="变量可以指向函数"><a href="#变量可以指向函数" class="headerlink" title="变量可以指向函数"></a>变量可以指向函数</h3><p>以Python内置的求绝对值的函数<code>abs()</code>为例子，调用该函数的代码如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>abs(<span class="number">-10</span>)</div><div class="line"><span class="number">10</span></div></pre></td></tr></table></figure>
 <p>如果只写abs:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>abs</div><div class="line">&lt;built-<span class="keyword">in</span> function abs&gt;</div></pre></td></tr></table></figure></p>
 <p>可见，abs是函数本身，abs(-10)是函数调用。</p>
@@ -392,12 +388,10 @@
 <blockquote>
 <p>结论：函数本身也可以赋值给变量，即变量可以指向函数。如果一个变量指向了函数，那么，可以通过变量来调用这个函数。</p>
 </blockquote>
-<p>###函数名也是变量</p>
-<p>函数名其实就是指向函数的变量！！！对于<code>abs()</code>这个函数，完全可以把函数名<code>abs</code>看成变量，他指向一个可以计算绝对值的函数。如果把<code>abs</code>指向其他对象，会发生什么？？</p>
+<h3 id="函数名也是变量"><a href="#函数名也是变量" class="headerlink" title="函数名也是变量"></a>函数名也是变量</h3><p>函数名其实就是指向函数的变量！！！对于<code>abs()</code>这个函数，完全可以把函数名<code>abs</code>看成变量，他指向一个可以计算绝对值的函数。如果把<code>abs</code>指向其他对象，会发生什么？？</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>abs=<span class="number">1</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>abs(<span class="number">-1</span>)</div><div class="line">Traceback (most recent call last):</div><div class="line">  File <span class="string">"&lt;stdin&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</div><div class="line">TypeError: <span class="string">'int'</span> object <span class="keyword">is</span> <span class="keyword">not</span> callable</div></pre></td></tr></table></figure>
 <p>此时，abs这个变量已经不指向求绝对值函数，而是指向一个整数1。</p>
-<p>###传入函数</p>
-<p>既然变量可以指向函数，函数的参数能接收变量，那么一个函数就可以接收另一个函数作为参数，这种函数被称为高阶函数：</p>
+<h3 id="传入函数"><a href="#传入函数" class="headerlink" title="传入函数"></a>传入函数</h3><p>既然变量可以指向函数，函数的参数能接收变量，那么一个函数就可以接收另一个函数作为参数，这种函数被称为高阶函数：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(x,y,f)</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">return</span> f(x)*f(y)</div><div class="line">...</div></pre></td></tr></table></figure>
 <p>当我们调用<code>add(-4,2,abs)</code>时，参数<code>x</code>,<code>y</code>,<code>f</code>分别接收<code>-4</code>,<code>2</code>,<code>abs</code>,验证一下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>add(<span class="number">-4</span>,<span class="number">2</span>,abs)</div><div class="line"><span class="number">8</span></div></pre></td></tr></table></figure>
@@ -405,8 +399,7 @@
 <blockquote>
 <p>小结<br>把函数作为参数传入，这样的函数称之为高阶函数，函数式编程就是指这种高度抽象的编程范式。</p>
 </blockquote>
-<p>###map/reduce</p>
-<p>Python中内建了<code>map()</code>和<code>reduce()</code>函数。</p>
+<h3 id="map-reduce"><a href="#map-reduce" class="headerlink" title="map/reduce"></a>map/reduce</h3><p>Python中内建了<code>map()</code>和<code>reduce()</code>函数。</p>
 <p><code>map()</code>函数接收两个参数，一个是函数，一个是<code>Iterable</code>，<code>map</code>将传入的函数依次作用到序列的每个元素，并把结果作为新的<code>Iterator</code>返回。举例如下：我们有一个函数f(x)=x^2，要把这个函数作用在一个list<code>[1,2,3,4,5,6,7,8,9]</code>上就可以用<code>map</code>实现：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>L=[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">f</span><span class="params">(x)</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">return</span> x*x</div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>h=map(f,L)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>list(h)</div><div class="line">[<span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, <span class="number">16</span>, <span class="number">25</span>, <span class="number">36</span>, <span class="number">49</span>, <span class="number">64</span>, <span class="number">81</span>]</div></pre></td></tr></table></figure>
 <p><code>map()</code>传入的第一个参数是<code>f</code>，也就是函数对象本身。由于结果<code>r</code>是一个<code>Iterator</code>，<code>Iterator</code>是惰性序列，因此需要<code>list()</code>函数让它把整个序列都计算出来并返回一个list。</p>
@@ -422,8 +415,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> functools <span class="keyword">import</span> reduce</div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">f</span><span class="params">(x,y)</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">return</span> <span class="number">10</span>*x+y</div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">char2num</span><span class="params">(s)</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">return</span> &#123;<span class="string">'0'</span>:<span class="number">0</span>,<span class="string">'1'</span>:<span class="number">1</span>,<span class="string">'2'</span>:<span class="number">2</span>,<span class="string">'3'</span>:<span class="number">3</span>,<span class="string">'4'</span>:<span class="number">4</span>,<span class="string">'5'</span>:<span class="number">5</span>,<span class="string">'6'</span>:<span class="number">6</span>,<span class="string">'7'</span>:<span class="number">7</span>,<span class="string">'8'</span>:<span class="number">8</span>,<span class="string">'9'</span>:<span class="number">9</span>&#125;[s]</div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>reduce(f,map(char2num,<span class="string">'13579'</span>))</div><div class="line"><span class="number">13579</span></div></pre></td></tr></table></figure>
 <p>还可以用lambda函数进一步简化：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; from functools import reduce</div><div class="line">&gt;&gt;&gt; def char2num(s):</div><div class="line">...     return &#123;&apos;0&apos;:0,&apos;1&apos;:1,&apos;2&apos;:2,&apos;3&apos;:3,&apos;4&apos;:4,&apos;5&apos;:5,&apos;6&apos;:6,&apos;7&apos;:7,&apos;8&apos;:8,&apos;9&apos;:9&#125;[s]</div><div class="line">...</div><div class="line">&gt;&gt;&gt; def str2int(s):</div><div class="line">...     return reduce(lambda x,y:x*10+y,map(char2num,s))</div><div class="line">...</div><div class="line">&gt;&gt;&gt; str2int(&apos;13579&apos;)</div><div class="line">13579</div></pre></td></tr></table></figure>
-<p>###filter</p>
-<p>Python内建的<code>filter</code>函数用于过滤序列。</p>
+<h3 id="filter"><a href="#filter" class="headerlink" title="filter"></a>filter</h3><p>Python内建的<code>filter</code>函数用于过滤序列。</p>
 <p>和<code>map</code>类似，<code>filter</code>函数也接收一个函数和一个序列。不同的是<code>filter</code>把传入的函数依次作用于每个元素，然后根据返回值是<code>True</code>or <code>False</code>决定保留还是丢弃该元素。在一个list中，删掉偶数，保留奇数，可以这么写：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">is_odd</span><span class="params">(s)</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">return</span> s%<span class="number">2</span>==<span class="number">1</span></div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>list(filter(is_odd,[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>]))</div><div class="line">[<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">9</span>]</div></pre></td></tr></table></figure>
 <p>把一个序列中的空字符串删掉，可以这么写：</p>
@@ -438,8 +430,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">primes</span><span class="params">()</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">yield</span> <span class="number">2</span></div><div class="line"><span class="meta">... </span>    it=_odd_iter()</div><div class="line"><span class="meta">... </span>    <span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line"><span class="meta">... </span>            n=next(it)</div><div class="line"><span class="meta">... </span>            <span class="keyword">yield</span> n</div><div class="line"><span class="meta">... </span>            it=filter(_not_divisible(n),it)</div><div class="line">...</div></pre></td></tr></table></figure>
 <p>这个生成器先返回第一个素数2，然后利用filter不断产生筛选后的新的序列。由于primes也是一个无限序列，所以退出时需要一个退出循环的条件：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> n <span class="keyword">in</span> primes():</div><div class="line"><span class="meta">... </span>    <span class="keyword">if</span> n&lt;<span class="number">1000</span>:</div><div class="line"><span class="meta">... </span>            print(n)</div><div class="line"><span class="meta">... </span>    <span class="keyword">else</span>:</div><div class="line"><span class="meta">... </span>            <span class="keyword">break</span></div><div class="line">...</div></pre></td></tr></table></figure>
-<p>###sorted</p>
-<p>排序算法</p>
+<h3 id="sorted"><a href="#sorted" class="headerlink" title="sorted"></a>sorted</h3><p>排序算法</p>
 <p>排序也是在程序中经常遇到的算法，无论使用冒泡排序还是快速排序，排序的核心是比较两个元素的大小。如果是数字，我们可以直接比较，但是如果是字符串或者两个dict时，直接比较数学书的大小是没有意义的，因此，比较的过程必须通过函数抽象出来。</p>
 <p>Python内置的<code>sorted()</code>函数就可以对list进行排序：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>sorted([<span class="number">23</span>,<span class="number">43</span>,<span class="number">5</span>,<span class="number">-5</span>,<span class="number">122</span>])</div><div class="line">[<span class="number">-5</span>, <span class="number">5</span>, <span class="number">23</span>, <span class="number">43</span>, <span class="number">122</span>]</div></pre></td></tr></table></figure>
@@ -459,8 +450,7 @@
 <p>要进行反向排序，不必改动key函数，可以传入第三个参数<code>reverse=True</code>：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>sorted([<span class="string">'bob'</span>,<span class="string">'james'</span>,<span class="string">'curry'</span>,<span class="string">'Kobe'</span>],key=str.lower,reverse=<span class="keyword">True</span>)</div><div class="line">[<span class="string">'Kobe'</span>, <span class="string">'james'</span>, <span class="string">'curry'</span>, <span class="string">'bob'</span>]</div></pre></td></tr></table></figure>
 <p><code>sorted()</code>也是一个高阶函数。用<code>sorted()</code>排序的关键是实现一个映射函数。</p>
-<p>##返回函数</p>
-<blockquote>
+<h2 id="返回函数"><a href="#返回函数" class="headerlink" title="返回函数"></a>返回函数</h2><blockquote>
 <p>函数作为返回值</p>
 </blockquote>
 <p>高阶函数除了可以接受函数作为参数外，还可以把函数作为结果返回。</p>
@@ -481,8 +471,7 @@
 <blockquote>
 <p>小结<br>一个函数可以返回一个计算结果也可以返回一个函数。返回一个函数时，牢记该函数并未执行，返回函数中不要引用任何可能会变化的变量。</p>
 </blockquote>
-<p>##匿名函数</p>
-<p>当我们传入函数时，有些时候，不需要显示的定义函数，直接传入匿名函数更方便。在Python中，对匿名函数提供了优先支持。以<code>map()</code>函数为例，计算f(x)=x^2时，除了定义一个函数外，还可以传入匿名函数：</p>
+<h2 id="匿名函数"><a href="#匿名函数" class="headerlink" title="匿名函数"></a>匿名函数</h2><p>当我们传入函数时，有些时候，不需要显示的定义函数，直接传入匿名函数更方便。在Python中，对匿名函数提供了优先支持。以<code>map()</code>函数为例，计算f(x)=x^2时，除了定义一个函数外，还可以传入匿名函数：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>list(map(<span class="keyword">lambda</span> x:x*x,[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>]))</div><div class="line">[<span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, <span class="number">16</span>, <span class="number">25</span>, <span class="number">36</span>, <span class="number">49</span>, <span class="number">64</span>, <span class="number">81</span>]</div></pre></td></tr></table></figure>
 <p>通过对比可以看出，匿名函数<code>lambda x:x*x</code>实际上就是：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">f</span><span class="params">(x)</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">return</span> x*x</div></pre></td></tr></table></figure>
@@ -491,8 +480,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=<span class="keyword">lambda</span> x:x*x+x</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f</div><div class="line">&lt;function &lt;<span class="keyword">lambda</span>&gt; at <span class="number">0x00000230CEB4F510</span>&gt;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f(<span class="number">16</span>)</div><div class="line"><span class="number">272</span></div></pre></td></tr></table></figure>
 <p>同样，也可以把匿名函数作为返回值返回：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">build</span><span class="params">(x,y)</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">return</span> <span class="keyword">lambda</span>:x*x+y*y</div></pre></td></tr></table></figure>
-<p>##装饰器</p>
-<p>由于函数也是一个对象，而且函数对象可以被赋值变量，所以，通过变量能调用该函数。</p>
+<h2 id="装饰器"><a href="#装饰器" class="headerlink" title="装饰器"></a>装饰器</h2><p>由于函数也是一个对象，而且函数对象可以被赋值变量，所以，通过变量能调用该函数。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">now</span><span class="params">()</span>:</span></div><div class="line"><span class="meta">... </span>    print(<span class="string">'2016-11-23'</span>)</div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=now</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f()</div><div class="line"><span class="number">2016</span><span class="number">-11</span><span class="number">-23</span></div></pre></td></tr></table></figure>
 <p>函数对象有一个<code>__name__</code>属性，可以拿到函数的名字：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>now.__name__</div><div class="line"><span class="string">'now'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.__name__</div><div class="line"><span class="string">'now'</span></div></pre></td></tr></table></figure>
@@ -524,8 +512,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> functools</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">log</span><span class="params">(text)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">decorator</span><span class="params">(func)</span>:</span></div><div class="line"><span class="meta">        @functools.wraps(func)</span></div><div class="line">        <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span><span class="params">(*args, **kw)</span>:</span></div><div class="line">            print(<span class="string">'%s %s():'</span> % (text, func.__name__))</div><div class="line">            <span class="keyword">return</span> func(*args, **kw)</div><div class="line">        <span class="keyword">return</span> wrapper</div><div class="line">    <span class="keyword">return</span> decorator</div></pre></td></tr></table></figure>
 <p><strong>小结</strong><br>在面对对象的设计模块中，decorator被称为装饰模式。OOP的装饰模式需要通过继承和组合来实现，而Python除了能支持OOP的decorator外，直接从语法层次支持decorator。Python的decorator可以用函数实现，也可以用类实现。</p>
 <p>decorator可以增强函数的功能，定义起来虽然有点复杂，但使用起来非常灵活和方便。</p>
-<p>##偏函数</p>
-<p>Python的<code>fucntools</code>模块提供了很多有用的功能，其中一个就是偏函数(Partial function)。要注意，这里的偏函数和数学上的偏函数不一样。在介绍函数参数的时候，我们讲到，通过设定参数的默认值，可以降低函数调用的难度。而偏函数也可以做到这一点。</p>
+<h2 id="偏函数"><a href="#偏函数" class="headerlink" title="偏函数"></a>偏函数</h2><p>Python的<code>fucntools</code>模块提供了很多有用的功能，其中一个就是偏函数(Partial function)。要注意，这里的偏函数和数学上的偏函数不一样。在介绍函数参数的时候，我们讲到，通过设定参数的默认值，可以降低函数调用的难度。而偏函数也可以做到这一点。</p>
 <p>如<code>int()</code>函数可以把字符串装换为整数，当仅传入字符串时，<code>int()</code>函数默认按照十进制装换：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>int(<span class="string">'12354'</span>)</div><div class="line"><span class="number">12354</span></div></pre></td></tr></table></figure>
 <p>但<code>int()</code>函数还提供额外的<code>base</code>参数，默认值为10，如果传入<code>base</code>参数，就可以做N进制装换：</p>
@@ -617,8 +604,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/09/09/4.模块/" rel="prev" title="">
-                 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/09/09/4.模块/" rel="prev" title="4. 模块">
+                4. 模块 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -671,8 +658,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           
             <img class="site-author-image" itemprop="image"
@@ -751,6 +747,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#函数式编程"><span class="nav-number">1.</span> <span class="nav-text">函数式编程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#高阶函数"><span class="nav-number">1.1.</span> <span class="nav-text">高阶函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#变量可以指向函数"><span class="nav-number">1.1.1.</span> <span class="nav-text">变量可以指向函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数名也是变量"><span class="nav-number">1.1.2.</span> <span class="nav-text">函数名也是变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#传入函数"><span class="nav-number">1.1.3.</span> <span class="nav-text">传入函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#map-reduce"><span class="nav-number">1.1.4.</span> <span class="nav-text">map/reduce</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#filter"><span class="nav-number">1.1.5.</span> <span class="nav-text">filter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sorted"><span class="nav-number">1.1.6.</span> <span class="nav-text">sorted</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#返回函数"><span class="nav-number">1.2.</span> <span class="nav-text">返回函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#匿名函数"><span class="nav-number">1.3.</span> <span class="nav-text">匿名函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#装饰器"><span class="nav-number">1.4.</span> <span class="nav-text">装饰器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#偏函数"><span class="nav-number">1.5.</span> <span class="nav-text">偏函数</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

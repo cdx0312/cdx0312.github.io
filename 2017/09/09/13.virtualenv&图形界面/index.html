@@ -95,21 +95,21 @@
 
 
 
-<meta name="description" content="#virtualenv&amp;amp;图形界面 ##virtualenv 在开发Python应用程序的时候，系统安装的Python只有一个3.5版本。所有的第三方包都会被安装到Python3的site-packages目录下。 如果要同时开发多个应用程序，那么这些应用程序共用一个Python3.5，如果应用A需要jinja2.7，应用B需要jinja2.6，这时候需要用virtualenv来为一个应用创">
+<meta name="description" content="virtualenv&amp;amp;图形界面virtualenv在开发Python应用程序的时候，系统安装的Python只有一个3.5版本。所有的第三方包都会被安装到Python3的site-packages目录下。 如果要同时开发多个应用程序，那么这些应用程序共用一个Python3.5，如果应用A需要jinja2.7，应用B需要jinja2.6，这时候需要用virtualenv来为一个应用创建一套隔离">
 <meta name="keywords" content="Python基础">
 <meta property="og:type" content="article">
 <meta property="og:title" content="13. virtualenv&amp;图形界面">
 <meta property="og:url" content="http://yoursite.com/2017/09/09/13.virtualenv&图形界面/index.html">
 <meta property="og:site_name" content="小黄">
-<meta property="og:description" content="#virtualenv&amp;amp;图形界面 ##virtualenv 在开发Python应用程序的时候，系统安装的Python只有一个3.5版本。所有的第三方包都会被安装到Python3的site-packages目录下。 如果要同时开发多个应用程序，那么这些应用程序共用一个Python3.5，如果应用A需要jinja2.7，应用B需要jinja2.6，这时候需要用virtualenv来为一个应用创">
+<meta property="og:description" content="virtualenv&amp;amp;图形界面virtualenv在开发Python应用程序的时候，系统安装的Python只有一个3.5版本。所有的第三方包都会被安装到Python3的site-packages目录下。 如果要同时开发多个应用程序，那么这些应用程序共用一个Python3.5，如果应用A需要jinja2.7，应用B需要jinja2.6，这时候需要用virtualenv来为一个应用创建一套隔离">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/img/1478439318915.png">
 <meta property="og:image" content="http://yoursite.com/img/1478440468867.png">
 <meta property="og:image" content="http://yoursite.com/img/1478440493401.png">
-<meta property="og:updated_time" content="2017-09-09T07:27:30.526Z">
+<meta property="og:updated_time" content="2017-09-09T10:27:15.377Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="13. virtualenv&amp;图形界面">
-<meta name="twitter:description" content="#virtualenv&amp;amp;图形界面 ##virtualenv 在开发Python应用程序的时候，系统安装的Python只有一个3.5版本。所有的第三方包都会被安装到Python3的site-packages目录下。 如果要同时开发多个应用程序，那么这些应用程序共用一个Python3.5，如果应用A需要jinja2.7，应用B需要jinja2.6，这时候需要用virtualenv来为一个应用创">
+<meta name="twitter:description" content="virtualenv&amp;amp;图形界面virtualenv在开发Python应用程序的时候，系统安装的Python只有一个3.5版本。所有的第三方包都会被安装到Python3的site-packages目录下。 如果要同时开发多个应用程序，那么这些应用程序共用一个Python3.5，如果应用A需要jinja2.7，应用B需要jinja2.6，这时候需要用virtualenv来为一个应用创建一套隔离">
 <meta name="twitter:image" content="http://yoursite.com/img/1478439318915.png">
 
 
@@ -372,16 +372,13 @@
       
 
       
-        <p>#virtualenv&amp;图形界面</p>
-<p>##virtualenv</p>
-<p>在开发Python应用程序的时候，系统安装的Python只有一个3.5版本。所有的第三方包都会被安装到Python3的<code>site-packages</code>目录下。</p>
+        <h1 id="virtualenv-amp-图形界面"><a href="#virtualenv-amp-图形界面" class="headerlink" title="virtualenv&amp;图形界面"></a>virtualenv&amp;图形界面</h1><h2 id="virtualenv"><a href="#virtualenv" class="headerlink" title="virtualenv"></a>virtualenv</h2><p>在开发Python应用程序的时候，系统安装的Python只有一个3.5版本。所有的第三方包都会被安装到Python3的<code>site-packages</code>目录下。</p>
 <p>如果要同时开发多个应用程序，那么这些应用程序共用一个Python3.5，如果应用A需要jinja2.7，应用B需要jinja2.6，这时候需要用virtualenv来为一个应用创建一套隔离的Python运行环境。</p>
 <p>第一步，创建项目文件夹myproject，在该文件夹中安装虚拟环境env：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++&gt;mkdir myproject</div><div class="line">D:\笔记\Python\Notepad++&gt;cd myproject</div><div class="line">D:\笔记\Python\Notepad++\myproject&gt;dir</div><div class="line"> 驱动器 D 中的卷是 文件</div><div class="line"> 卷的序列号是 <span class="number">0</span>BE3<span class="number">-0E5</span>C</div><div class="line"></div><div class="line"> D:\笔记\Python\Notepad++\myproject 的目录</div><div class="line"></div><div class="line"><span class="number">2016</span>/<span class="number">11</span>/<span class="number">06</span>  <span class="number">20</span>:<span class="number">01</span>    &lt;DIR&gt;          .</div><div class="line"><span class="number">2016</span>/<span class="number">11</span>/<span class="number">06</span>  <span class="number">20</span>:<span class="number">01</span>    &lt;DIR&gt;          ..</div><div class="line">               <span class="number">0</span> 个文件              <span class="number">0</span> 字节</div><div class="line">               <span class="number">2</span> 个目录 <span class="number">104</span>,<span class="number">178</span>,<span class="number">057</span>,<span class="number">216</span> 可用字节</div><div class="line"></div><div class="line">D:\笔记\Python\Notepad++\myproject&gt;virtualenv env</div><div class="line">Using base prefix <span class="string">'c:\\users\\cdxu0\\appdata\\local\\programs\\python\\python35'</span></div><div class="line">New python executable <span class="keyword">in</span> D:\笔记\Python\Notepad++\myproject\env\Scripts\python.exe</div><div class="line">Installing setuptools, pip, wheel...done.</div></pre></td></tr></table></figure></p>
 <p>第二步，启动虚拟环境，安装所需库类。在windows中虚拟环境的启动使用命令：your_env_dir\Scripts\activate，默认情况下，virtualenv已经安装好了pip。在启动虚拟环境后直接使用pip install命令就可以为该虚拟环境安装库类。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++\myproject&gt;cd env\Scripts</div><div class="line"></div><div class="line">D:\笔记\Python\Notepad++\myproject\env\Scripts&gt;activate</div><div class="line"></div><div class="line">(env) D:\笔记\Python\Notepad++\myproject\env\Scripts&gt;pip install flask==<span class="number">0.9</span></div></pre></td></tr></table></figure></p>
 <p>第三步，在虚拟环境中可以运行脚本等操作，离开虚拟环境，使用deactivate命令。</p>
 <hr>
-<p>##图形界面</p>
-<p>Python支持多种图形界面的第三方库，比如：Tk，wxWidgets ，Qt，GTK等。但是Python自带的库是支持Tk的TKinter，使用Tkinter，无需安装任何包就可以直接使用。</p>
+<h2 id="图形界面"><a href="#图形界面" class="headerlink" title="图形界面"></a>图形界面</h2><p>Python支持多种图形界面的第三方库，比如：Tk，wxWidgets ，Qt，GTK等。但是Python自带的库是支持Tk的TKinter，使用Tkinter，无需安装任何包就可以直接使用。</p>
 <p>使用TKinter十分简单，第一步导入TKinter包的所有内容：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> tkinter <span class="keyword">import</span> *</div></pre></td></tr></table></figure></p>
 <p>第二步从<code>Frame</code>派生一个<code>Application</code>类，这是所有Widget的父容器：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Application</span><span class="params">(Frame)</span>:</span></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,master=None)</span>:</span></div><div class="line">		Frame.__init__(self,master)</div><div class="line">		self.pack()</div><div class="line">		self.createWidgets()</div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">createWidgets</span><span class="params">(self)</span>:</span></div><div class="line">		self.helloLabel=Label(self, text=<span class="string">'Hello, world!'</span>)</div><div class="line">		self.helloLabel.pack()</div><div class="line">		self.quitButton=Button(self, text=<span class="string">'Quit'</span>, command=self.quit)</div><div class="line">		self.quitButton.pack()</div></pre></td></tr></table></figure></p>
 <p>在GUI中，每个Button、Label、输入框等，都是一个Widget。Frame则是可以容纳其他Widget的Widget，所有的Widget组合起来就是一棵树。</p>
@@ -390,8 +387,7 @@
 <p>第三步，实例化<code>Application</code>，并启动消息循环：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>app=Application()</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>app.master.title(<span class="string">'Hello world!'</span>)</div><div class="line"><span class="string">''</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>app.mainloop()</div></pre></td></tr></table></figure></p>
 <p>GUI程序的主线负责监听来自操作系统的消息，并依次处理每一条消息。因此，如果消息处理非常耗时，就需要新线程中处理。运行这个GUI程序：<br><img src="/img/1478439318915.png" alt="Alt text"></p>
 <p>点击Quit按钮或者窗口的x结束程序。</p>
-<p>###输入文本</p>
-<p>我们再对这个GUI程序改进一下，加入一个文本框，让用户可以输入文本，然后点按钮后，弹出消息对话框。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python3</span></div><div class="line"><span class="comment">#-*- coding: utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="keyword">from</span> tkinter <span class="keyword">import</span> *</div><div class="line"><span class="keyword">import</span> tkinter.messagebox <span class="keyword">as</span> messagebox</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Application</span><span class="params">(Frame)</span>:</span></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,master=None)</span>:</span></div><div class="line">		Frame.__init__(self,master)</div><div class="line">		self.pack()</div><div class="line">		self.createWidgets()</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">createWidgets</span><span class="params">(self)</span>:</span></div><div class="line">		self.nameInput=Entry(self)</div><div class="line">		self.nameInput.pack()</div><div class="line">		self.alterButton=Button(self, text=<span class="string">'Hello'</span>, command=self.hello)</div><div class="line">		self.alterButton.pack()</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">hello</span><span class="params">(self)</span>:</span></div><div class="line">		name=self.nameInput.get() <span class="keyword">or</span> <span class="string">'world'</span></div><div class="line">		messagebox.showinfo(<span class="string">'Message'</span>,<span class="string">'Hello, %s'</span> %name)</div><div class="line"></div><div class="line">app=Application()</div><div class="line">app.master.title(<span class="string">'Hello World'</span>)</div><div class="line">app.mainloop()</div></pre></td></tr></table></figure></p>
+<h3 id="输入文本"><a href="#输入文本" class="headerlink" title="输入文本"></a>输入文本</h3><p>我们再对这个GUI程序改进一下，加入一个文本框，让用户可以输入文本，然后点按钮后，弹出消息对话框。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python3</span></div><div class="line"><span class="comment">#-*- coding: utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="keyword">from</span> tkinter <span class="keyword">import</span> *</div><div class="line"><span class="keyword">import</span> tkinter.messagebox <span class="keyword">as</span> messagebox</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Application</span><span class="params">(Frame)</span>:</span></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,master=None)</span>:</span></div><div class="line">		Frame.__init__(self,master)</div><div class="line">		self.pack()</div><div class="line">		self.createWidgets()</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">createWidgets</span><span class="params">(self)</span>:</span></div><div class="line">		self.nameInput=Entry(self)</div><div class="line">		self.nameInput.pack()</div><div class="line">		self.alterButton=Button(self, text=<span class="string">'Hello'</span>, command=self.hello)</div><div class="line">		self.alterButton.pack()</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">hello</span><span class="params">(self)</span>:</span></div><div class="line">		name=self.nameInput.get() <span class="keyword">or</span> <span class="string">'world'</span></div><div class="line">		messagebox.showinfo(<span class="string">'Message'</span>,<span class="string">'Hello, %s'</span> %name)</div><div class="line"></div><div class="line">app=Application()</div><div class="line">app.master.title(<span class="string">'Hello World'</span>)</div><div class="line">app.mainloop()</div></pre></td></tr></table></figure></p>
 <p>当用户点击按钮时，出发<code>hello()</code>,通过<code>self.nameInput.get()</code>获得用户输入的文本后，使用<code>tkMessageBox.showinfo()</code>可以弹出消息对话框：<br><img src="/img/1478440468867.png" alt="Alt text"><br><img src="/img/1478440493401.png" alt="Alt text"></p>
 
       
@@ -521,8 +517,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           
             <img class="site-author-image" itemprop="image"
@@ -601,6 +606,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#virtualenv-amp-图形界面"><span class="nav-number">1.</span> <span class="nav-text">virtualenv&图形界面</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#virtualenv"><span class="nav-number">1.1.</span> <span class="nav-text">virtualenv</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#图形界面"><span class="nav-number">1.2.</span> <span class="nav-text">图形界面</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#输入文本"><span class="nav-number">1.2.1.</span> <span class="nav-text">输入文本</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

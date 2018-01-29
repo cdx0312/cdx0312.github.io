@@ -422,8 +422,7 @@
 </ol>
 </li>
 </ul>
-<h2 id="2、mybatis架构"><a href="#2、mybatis架构" class="headerlink" title="2、mybatis架构"></a>2、mybatis架构</h2><p>  <img src="/img/hibernate_intro1.png" alt="Alt text"></p>
-<p> <img src="/img/mybatis-1.jpg" alt="Alt text"></p>
+<h2 id="2、mybatis架构"><a href="#2、mybatis架构" class="headerlink" title="2、mybatis架构"></a>2、mybatis架构</h2><p> <img src="/img/mybatis-1.jpg" alt="Alt text"></p>
 <ol>
 <li><p>mybatis配置</p>
 <ul>
@@ -446,7 +445,7 @@
 </ol>
 <h2 id="3、mybatis的入门程序"><a href="#3、mybatis的入门程序" class="headerlink" title="3、mybatis的入门程序"></a>3、mybatis的入门程序</h2><h3 id="1、mybatis下载"><a href="#1、mybatis下载" class="headerlink" title="1、mybatis下载"></a>1、mybatis下载</h3><p>mybatis的代码由GitHub管理，地址为：<a href="https://github.com/mybatis/mybatis-3/releases" target="_blank" rel="external">https://github.com/mybatis/mybatis-3/releases</a></p>
 <p>文件结构为：</p>
-<p><img src="/img/mybatis-2.jpg" alt="Alt text"></p>
+<p><img src="/img/mybatis-2.png" alt="Alt text"></p>
 <h3 id="2、实现的功能"><a href="#2、实现的功能" class="headerlink" title="2、实现的功能"></a>2、实现的功能</h3><ul>
 <li><p>根据用户id查询一个用户信息</p>
 </li>
@@ -463,7 +462,7 @@
 <li><p>使用IDEA 2017.2 创建Java工程，jdk为1.8.0_141</p>
 </li>
 <li><p>添加jar包，包括mybatis核心包，依赖包，数据库驱动包</p>
-<p> <img src="/img/mybatis-3.jpg" alt="Alt text"></p>
+<p> <img src="/img/mybatis-3.png" alt="Alt text"></p>
 </li>
 <li><p>日志的打印：mybatis默认使用log4j输出日志信息，在classpath下创建log4j.properties：</p>
  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># Global logging configuration</div><div class="line">log4j.rootLogger=DEBUG, stdout</div><div class="line"># Console output...</div><div class="line">log4j.appender.stdout=org.apache.log4j.ConsoleAppender</div><div class="line">log4j.appender.stdout.layout=org.apache.log4j.PatternLayout</div><div class="line">log4j.appender.stdout.layout.ConversionPattern=%5p [%t] - %m%n</div></pre></td></tr></table></figure>
@@ -829,7 +828,7 @@
 </li>
 </ul>
 <h2 id="4、sql片段"><a href="#4、sql片段" class="headerlink" title="4、sql片段"></a>4、sql片段</h2><p>sql中可将重复的SQL提取出来，使用时用include引用即可，从而达到SQL重用的目的：<br>    <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">&lt;!--封装SQL条件，封装后可以重用，id为SQL的唯一标示--&gt;</div><div class="line">&lt;sql id=&quot;user_Where&quot;&gt;</div><div class="line">    &lt;!--会自动向SQL语句中添加where关键字，</div><div class="line">        会去掉第一个条件的and关键字--&gt;</div><div class="line">    &lt;where&gt;</div><div class="line">        &lt;if test=&quot;username != null and username != &apos;&apos;&quot;&gt;</div><div class="line">            and username like &apos;%$&#123;username&#125;%&apos;</div><div class="line">        &lt;/if&gt;</div><div class="line">        &lt;if test=&quot;sex != null and sex != &apos;&apos;&quot;&gt;</div><div class="line">            and sex=#&#123;sex&#125;</div><div class="line">        &lt;/if&gt;</div><div class="line">    &lt;/where&gt;</div><div class="line">&lt;/sql&gt;</div><div class="line">......</div><div class="line">&lt;select id=&quot;findUserByUserNameAndSex&quot; parameterType=&quot;cn.itheima.pojo.User&quot; resultType=&quot;cn.itheima.pojo.User&quot;&gt;</div><div class="line">     select * from user</div><div class="line">    &lt;!--调用SQL条件--&gt;</div><div class="line">     &lt;include refid=&quot;user_Where&quot;/&gt;</div><div class="line">&lt;/select&gt;</div></pre></td></tr></table></figure></p>
-<h1 id="六-关联查询"><a href="#六-关联查询" class="headerlink" title="六 关联查询"></a>六 关联查询</h1><h2 id="1、商品订单数据模型"><a href="#1、商品订单数据模型" class="headerlink" title="1、商品订单数据模型"></a>1、商品订单数据模型</h2><p><img src="/img/mybatis-4.jpg" alt="Alt text"></p>
+<h1 id="六-关联查询"><a href="#六-关联查询" class="headerlink" title="六 关联查询"></a>六 关联查询</h1><h2 id="1、商品订单数据模型"><a href="#1、商品订单数据模型" class="headerlink" title="1、商品订单数据模型"></a>1、商品订单数据模型</h2><p><img src="/img/mybatis-4.png" alt="Alt text"></p>
 <h2 id="2、一对一关联"><a href="#2、一对一关联" class="headerlink" title="2、一对一关联"></a>2、一对一关联</h2><p>需求：查询所有订单信息，关联查询下单用户信息。由于一个订单信息只能由一个用户下单，所以从查询订单信息出发关联查询用户信息为一对一查询。如果从用户信息出发查询用户下的订单为一对多查询。</p>
 <h3 id="方法一：使用resultType，定义订单信息po类，此po类中包括了订单信息和用户信息。"><a href="#方法一：使用resultType，定义订单信息po类，此po类中包括了订单信息和用户信息。" class="headerlink" title="方法一：使用resultType，定义订单信息po类，此po类中包括了订单信息和用户信息。"></a>方法一：使用resultType，定义订单信息po类，此po类中包括了订单信息和用户信息。</h3><ol>
 <li><p>SQL语句</p>
@@ -926,7 +925,7 @@
 <li><p>MySQL数据库驱动包</p>
 </li>
 <li><p>数据库连接池的jar包</p>
-<p><img src="/img/mybatis-5.jpg" alt="Alt text"></p>
+<p><img src="/img/mybatis-5.png" alt="Alt text"></p>
 </li>
 </ol>
 <h2 id="3、整合的步骤"><a href="#3、整合的步骤" class="headerlink" title="3、整合的步骤"></a>3、整合的步骤</h2><ol>
@@ -981,7 +980,7 @@
 <h1 id="八、mybatis逆向工程"><a href="#八、mybatis逆向工程" class="headerlink" title="八、mybatis逆向工程"></a>八、mybatis逆向工程</h1><p>使用官方网站的mapper自动生成工具mybatis-generator-core-1.3.2来生成po类和mapper映射文件。</p>
 <p>作用:mybatis官方提供逆向工程,可以使用它通过数据库中的表来自动生成Mapper接口和映射文件(单表增删改查)和Po类.</p>
 <p>需要导入的jar包包括：</p>
-<p><img src="/img/mybatis-6.jpg" alt="Alt text"></p>
+<p><img src="/img/mybatis-6.png" alt="Alt text"></p>
 <h2 id="1、mapper生成配置文件"><a href="#1、mapper生成配置文件" class="headerlink" title="1、mapper生成配置文件"></a>1、mapper生成配置文件</h2><p>在generatorConfig.xml中配置mapper生成的详细信息，需要注意：</p>
 <ol>
 <li><p>添加要生成的数据库表</p>

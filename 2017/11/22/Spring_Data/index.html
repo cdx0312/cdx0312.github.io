@@ -105,7 +105,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/2017/11/22/Spring_Data/spring_data_repository_query_1">
 <meta property="og:image" content="http://yoursite.com/2017/11/22/Spring_Data/spring_data_repository_query_2">
-<meta property="og:updated_time" content="2017-11-26T09:49:38.482Z">
+<meta property="og:updated_time" content="2018-03-23T02:45:59.638Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Spring Data">
 <meta name="twitter:description" content="概念  Spring Data JPA 是 Spring Data 系列的一部分，可以轻松实现基于 JPA 的存储库。 该模块处理对基于 JPA 的数据访问层的增强的支持。 这使得使用数据访问技术构建Spring 的应用程序变得更加容易。 传统方式访问数据库JDBC驱动创建Maven项目 maven工程的目录结构|– pom.xml|– src|   |– main|   |   -- java">
@@ -463,22 +463,10 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">@Test</div><div class="line">public void testPage() &#123;</div><div class="line">    //page: index是从0开始的</div><div class="line">    Pageable pageable = new PageRequest(0,5);</div><div class="line"></div><div class="line">    Page&lt;Employee&gt; page = employeePagingAndSortingRepository.findAll(pageable);</div><div class="line"></div><div class="line">    System.out.println(&quot;查询的总页数：&quot; + page.getTotalPages());</div><div class="line">    System.out.println(&quot;查询的总记录数：&quot; + page.getTotalElements());</div><div class="line">    System.out.println(&quot;查询当前第几页：&quot; + page.getNumber() + 1);</div><div class="line">    System.out.println(&quot;查询的当前页面的集合：&quot; + page.getContent());</div><div class="line">    System.out.println(&quot;查询的当前页面的记录数：&quot; + page.getNumberOfElements());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 </li>
 <li><p>带排序的分页查询</p>
-<pre><code>@Test
-   public void testPageAndSort() {
-       Sort.Order order = new Sort.Order(Sort.Direction.DESC, &quot;id&quot;);
-       Sort sort = new Sort(order);
-       //page: index是从0开始的
-       Pageable pageable = new PageRequest(0,5, sort);
-
-       Page&lt;Employee&gt; page = employeePagingAndSortingRepository.findAll(pageable);
-
-       System.out.println(&quot;查询的总页数：&quot; + page.getTotalPages());
-       System.out.println(&quot;查询的总记录数：&quot; + page.getTotalElements());
-       System.out.println(&quot;查询当前第几页：&quot; + page.getNumber() + 1);
-       System.out.println(&quot;查询的当前页面的集合：&quot; + page.getContent());
-       System.out.println(&quot;查询的当前页面的记录数：&quot; + page.getNumberOfElements());
-   }
-</code></pre><h2 id="JpaRepository接口使用详解"><a href="#JpaRepository接口使用详解" class="headerlink" title="JpaRepository接口使用详解"></a>JpaRepository接口使用详解</h2></li>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">@Test</div><div class="line">   public void testPageAndSort() &#123;</div><div class="line">       Sort.Order order = new Sort.Order(Sort.Direction.DESC, &quot;id&quot;);</div><div class="line">       Sort sort = new Sort(order);</div><div class="line">       //page: index是从0开始的</div><div class="line">       Pageable pageable = new PageRequest(0,5, sort);</div><div class="line"></div><div class="line">       Page&lt;Employee&gt; page = employeePagingAndSortingRepository.findAll(pageable);</div><div class="line"></div><div class="line">       System.out.println(&quot;查询的总页数：&quot; + page.getTotalPages());</div><div class="line">       System.out.println(&quot;查询的总记录数：&quot; + page.getTotalElements());</div><div class="line">       System.out.println(&quot;查询当前第几页：&quot; + page.getNumber() + 1);</div><div class="line">       System.out.println(&quot;查询的当前页面的集合：&quot; + page.getContent());</div><div class="line">       System.out.println(&quot;查询的当前页面的记录数：&quot; + page.getNumberOfElements());</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="JpaRepository接口使用详解"><a href="#JpaRepository接口使用详解" class="headerlink" title="JpaRepository接口使用详解"></a>JpaRepository接口使用详解</h2><ol>
 <li>findAll</li>
 <li>findAll(Sort sort)</li>
 <li>Save(entities)</li>
@@ -646,7 +634,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-count">31</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

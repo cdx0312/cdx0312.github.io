@@ -79,7 +79,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Python基础," />
+  <meta name="keywords" content="Java," />
 
 
 
@@ -95,20 +95,20 @@
 
 
 
-<meta name="description" content="常用第三方模块除了内建的模块，Python还有很多的第三方模块，在PyPI-the Python Package Index注册。 PILPIL：Python Imaging Library，已经是Python平台事实上的图像处理标准库了。PIL的功能非常强大，API却非常简单易用。PIL只支持到2.7，PIL上的兼容版本Pillow，加了很多新特性，可以支持到3.x。 操作图像图像缩放操作：12">
-<meta name="keywords" content="Python基础">
+<meta name="description" content="模式定义讲一个复杂对象的构建与他的表示分离，使得同样的构建过程可以创建不同的表示。 模式使用场景 相同的方法，不同的执行顺序，产生不同的时间结果时。 多个部件或零件，都可以装配到一个对象中，但是产生的结果又不相同时。 产品类非常复杂，或者产品类中的调用顺序不同产生了不同的效能时。  UML图 角色描述* Product产品类：产品的抽象类 * Builder：抽象类，规范产品的组件，一般由子类实现">
+<meta name="keywords" content="Java">
 <meta property="og:type" content="article">
-<meta property="og:title" content="12. 常用第三方模块">
-<meta property="og:url" content="http://yoursite.com/2017/09/09/12.常用第三方模块/index.html">
+<meta property="og:title" content="Builder模式">
+<meta property="og:url" content="http://yoursite.com/2018/03/24/Builder模式/index.html">
 <meta property="og:site_name" content="小黄">
-<meta property="og:description" content="常用第三方模块除了内建的模块，Python还有很多的第三方模块，在PyPI-the Python Package Index注册。 PILPIL：Python Imaging Library，已经是Python平台事实上的图像处理标准库了。PIL的功能非常强大，API却非常简单易用。PIL只支持到2.7，PIL上的兼容版本Pillow，加了很多新特性，可以支持到3.x。 操作图像图像缩放操作：12">
+<meta property="og:description" content="模式定义讲一个复杂对象的构建与他的表示分离，使得同样的构建过程可以创建不同的表示。 模式使用场景 相同的方法，不同的执行顺序，产生不同的时间结果时。 多个部件或零件，都可以装配到一个对象中，但是产生的结果又不相同时。 产品类非常复杂，或者产品类中的调用顺序不同产生了不同的效能时。  UML图 角色描述* Product产品类：产品的抽象类 * Builder：抽象类，规范产品的组件，一般由子类实现">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/img/1478431423817.png">
-<meta property="og:updated_time" content="2017-09-09T10:26:47.477Z">
+<meta property="og:image" content="http://yoursite.com/img/dp-factory-builder.png">
+<meta property="og:updated_time" content="2018-03-24T10:07:21.777Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="12. 常用第三方模块">
-<meta name="twitter:description" content="常用第三方模块除了内建的模块，Python还有很多的第三方模块，在PyPI-the Python Package Index注册。 PILPIL：Python Imaging Library，已经是Python平台事实上的图像处理标准库了。PIL的功能非常强大，API却非常简单易用。PIL只支持到2.7，PIL上的兼容版本Pillow，加了很多新特性，可以支持到3.x。 操作图像图像缩放操作：12">
-<meta name="twitter:image" content="http://yoursite.com/img/1478431423817.png">
+<meta name="twitter:title" content="Builder模式">
+<meta name="twitter:description" content="模式定义讲一个复杂对象的构建与他的表示分离，使得同样的构建过程可以创建不同的表示。 模式使用场景 相同的方法，不同的执行顺序，产生不同的时间结果时。 多个部件或零件，都可以装配到一个对象中，但是产生的结果又不相同时。 产品类非常复杂，或者产品类中的调用顺序不同产生了不同的效能时。  UML图 角色描述* Product产品类：产品的抽象类 * Builder：抽象类，规范产品的组件，一般由子类实现">
+<meta name="twitter:image" content="http://yoursite.com/img/dp-factory-builder.png">
 
 
 
@@ -138,13 +138,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/09/09/12.常用第三方模块/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/03/24/Builder模式/"/>
 
 
 
 
 
-  <title>12. 常用第三方模块 | 小黄</title>
+  <title>Builder模式 | 小黄</title>
   
 
 
@@ -281,7 +281,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/09/12.常用第三方模块/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/24/Builder模式/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="cdx">
@@ -298,7 +298,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">12. 常用第三方模块</h1>
+          <h1 class="post-title" itemprop="name headline">Builder模式</h1>
         
 
         <div class="post-meta">
@@ -310,8 +310,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-09T15:31:29+08:00">
-                2017-09-09
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-24T17:18:12+08:00">
+                2018-03-24
               </time>
             
 
@@ -333,8 +333,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
                   </a>
                 </span>
 
@@ -370,13 +370,29 @@
       
 
       
-        <h1 id="常用第三方模块"><a href="#常用第三方模块" class="headerlink" title="常用第三方模块"></a>常用第三方模块</h1><p>除了内建的模块，Python还有很多的第三方模块，在<a href="https://pypi.python.org/pypi" target="_blank" rel="external">PyPI-the Python Package Index</a>注册。</p>
-<h2 id="PIL"><a href="#PIL" class="headerlink" title="PIL"></a>PIL</h2><p>PIL：Python Imaging Library，已经是Python平台事实上的图像处理标准库了。PIL的功能非常强大，API却非常简单易用。PIL只支持到2.7，PIL上的兼容版本Pillow，加了很多新特性，可以支持到3.x。</p>
-<h3 id="操作图像"><a href="#操作图像" class="headerlink" title="操作图像"></a>操作图像</h3><p>图像缩放操作：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>im=Image.open(<span class="string">'1.jpg'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>w,h=im.size</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(<span class="string">'Original image size: %sx%s'</span> %(w,h))</div><div class="line">Original image size: <span class="number">600</span>x337</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>im.thumbnail((w//<span class="number">2</span>, h//<span class="number">2</span>))</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(<span class="string">'Resize image to: %sx%s'</span> %(w//<span class="number">2</span>,h//<span class="number">2</span>))</div><div class="line">Resize image to: <span class="number">300</span>x168</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>im.save(<span class="string">'thumbnail.jpg'</span>,<span class="string">'jpeg'</span>)</div></pre></td></tr></table></figure></p>
-<p>其他功能如切片、旋转、滤镜、输出文字、调色板等一应俱全。比如，模糊效果：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> PIL <span class="keyword">import</span> Image,ImageFilter</div><div class="line">&gt;&gt;&gt;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>im=Image.open(<span class="string">'1.jpg'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>im2=im.filter(ImageFilter.BLUR)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>im2.save(<span class="string">'blur.jpg'</span>,<span class="string">'jpeg'</span>)</div></pre></td></tr></table></figure></p>
-<p>PIL的<code>ImageDraw</code>提供了一系列绘图的方法，让我们可以直接绘图。如生成字幕验证码的图片：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python3</span></div><div class="line"><span class="comment">#-*- coding: utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image, ImageDraw, ImageFont, ImageFilter</div><div class="line"></div><div class="line"><span class="keyword">import</span> random</div><div class="line"></div><div class="line"><span class="comment">#随机字母：</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">rndChar</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">return</span> chr(random.randint(<span class="number">65</span>,<span class="number">90</span>))</div><div class="line"></div><div class="line"><span class="comment">#随机颜色1：</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">rndColor</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">return</span> (random.randint(<span class="number">64</span>,<span class="number">255</span>),random.randint(<span class="number">64</span>,<span class="number">255</span>),random.randint(<span class="number">64</span>,<span class="number">255</span>))</div><div class="line"></div><div class="line"><span class="comment">#随机颜色2：</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">rndColor2</span><span class="params">()</span>:</span></div><div class="line">		<span class="keyword">return</span> (random.randint(<span class="number">32</span>,<span class="number">217</span>),random.randint(<span class="number">32</span>,<span class="number">217</span>),random.randint(<span class="number">32</span>,<span class="number">217</span>))</div><div class="line"></div><div class="line"><span class="comment">#240*60</span></div><div class="line">width=<span class="number">60</span>*<span class="number">4</span></div><div class="line">height=<span class="number">60</span></div><div class="line">image=Image.new(<span class="string">'RGB'</span>,(width,height),(<span class="number">255</span>,<span class="number">255</span>,<span class="number">255</span>))</div><div class="line"><span class="comment">#创建Font、Draw对象：</span></div><div class="line">font=ImageFont.truetype(<span class="string">'C:\Windows\Fonts\Arial.ttf'</span>,<span class="number">36</span>)</div><div class="line">draw=ImageDraw.Draw(image)</div><div class="line"><span class="comment">#填充：</span></div><div class="line"><span class="keyword">for</span> x <span class="keyword">in</span> range(width):</div><div class="line">	<span class="keyword">for</span> y <span class="keyword">in</span> range(height):</div><div class="line">		draw.point((x,y),fill=rndColor())</div><div class="line"><span class="comment">#输出文字：</span></div><div class="line"><span class="keyword">for</span> t <span class="keyword">in</span> range(<span class="number">4</span>):</div><div class="line">	draw.text((<span class="number">60</span>*t+<span class="number">10</span>,<span class="number">10</span>),rndChar(),font=font,fill=rndColor2())</div><div class="line"><span class="comment">#模糊</span></div><div class="line">image=image.filter(ImageFilter.BLUR)</div><div class="line">image.save(<span class="string">'code.jpg'</span>,<span class="string">'jpeg'</span>)</div></pre></td></tr></table></figure></p>
-<p>得到的验证码图片如下：<br><img src="/img/1478431423817.png" alt="Alt text"></p>
-<p><a href="https://pillow.readthedocs.org/" target="_blank" rel="external">详细的Pillow官方文档：</a></p>
+        <h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>讲一个复杂对象的构建与他的表示分离，使得同样的构建过程可以创建不同的表示。</p>
+<h1 id="模式使用场景"><a href="#模式使用场景" class="headerlink" title="模式使用场景"></a>模式使用场景</h1><ol>
+<li>相同的方法，不同的执行顺序，产生不同的时间结果时。</li>
+<li>多个部件或零件，都可以装配到一个对象中，但是产生的结果又不相同时。</li>
+<li>产品类非常复杂，或者产品类中的调用顺序不同产生了不同的效能时。</li>
+</ol>
+<h1 id="UML图"><a href="#UML图" class="headerlink" title="UML图"></a>UML图</h1><p><img src="/img/dp-factory-builder.png" alt="Alt text"></p>
+<h2 id="角色描述"><a href="#角色描述" class="headerlink" title="角色描述"></a>角色描述</h2><pre><code>* Product产品类：产品的抽象类
+* Builder：抽象类，规范产品的组件，一般由子类实现具体的组装过程。
+* ConcreteBuilder：具体的构造器
+* Director：统一组装过程
+</code></pre><h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>电脑组装过程比较复杂，步骤很多，但是顺序却不确定。适用于Builder模式</p>
+<p>Computer抽象类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">public abstract class Computer &#123;</div><div class="line">    protected int mCpuCore = 1;</div><div class="line">    protected int mRanSize = 0;</div><div class="line">    protected String mOs = &quot;Dos&quot;;</div><div class="line"></div><div class="line">    public Computer() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public abstract void setmCpuCore(int mCpuCore);</div><div class="line"></div><div class="line">    public abstract void setmRanSize(int mRanSize);</div><div class="line"></div><div class="line">    public abstract void setmOs(String mOs);</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public String toString() &#123;</div><div class="line">        return &quot;Computer&#123;&quot; +</div><div class="line">                &quot;mCpuCore=&quot; + mCpuCore +</div><div class="line">                &quot;, mRanSize=&quot; + mRanSize +</div><div class="line">                &quot;, mOs=&apos;&quot; + mOs + &apos;\&apos;&apos; +</div><div class="line">                &apos;&#125;&apos;;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>AppleComputer实现类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">public class AppleComputer extends Computer&#123;</div><div class="line">    protected AppleComputer()&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void setmCpuCore(int mCpuCore) &#123;</div><div class="line">        super.mCpuCore = mCpuCore;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void setmRanSize(int mRanSize) &#123;</div><div class="line">        super.mRanSize = mRanSize;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void setmOs(String mOs) &#123;</div><div class="line">        super.mOs = mOs;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Builder抽象类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public abstract class Builder &#123;</div><div class="line">    public abstract void buildCPU(int core);</div><div class="line"></div><div class="line">    public abstract void buildRAM(int gb);</div><div class="line"></div><div class="line">    public abstract void buildOs(String os);</div><div class="line"></div><div class="line">    public abstract Computer create();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>AppleBuilder实现类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">public class AppleBuilder extends Builder&#123;</div><div class="line"></div><div class="line">    private Computer mApplePC = new AppleComputer();</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void buildCPU(int core) &#123;</div><div class="line">        mApplePC.setmCpuCore(core);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void buildRAM(int gb) &#123;</div><div class="line">        mApplePC.setmRanSize(gb);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void buildOs(String os) &#123;</div><div class="line">        mApplePC.setmOs(os);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Computer create() &#123;</div><div class="line">        return mApplePC;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public class Director &#123;</div><div class="line">    Builder builder = null;</div><div class="line"></div><div class="line">    public Director(Builder builder) &#123;</div><div class="line">        this.builder = builder;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void construct(int cpu, int ram, String os) &#123;</div><div class="line">        builder.buildCPU(cpu);</div><div class="line">        builder.buildRAM(ram);</div><div class="line">        builder.buildOs(os);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Test</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Builder builder = new AppleBuilder();</div><div class="line">        Director director = new Director(builder);</div><div class="line">        director.construct(4,2,&quot;Max OS X 10.0.3&quot;);</div><div class="line">        System.out.println(builder.create().toString());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
       
     </div>
@@ -428,7 +444,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Python基础/" rel="tag"># Python基础</a>
+            <a href="/tags/Java/" rel="tag"># Java</a>
           
         </div>
       
@@ -441,8 +457,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/09/09/11.常用内建模块/" rel="next" title="11. 常用内建模块">
-                <i class="fa fa-chevron-left"></i> 11. 常用内建模块
+              <a href="/2018/03/24/设计模式简介/" rel="next" title="设计模式简介">
+                <i class="fa fa-chevron-left"></i> 设计模式简介
               </a>
             
           </div>
@@ -450,10 +466,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/09/09/10.正则表达式/" rel="prev" title="10. 正则表达式">
-                10. 正则表达式 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -604,7 +616,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#常用第三方模块"><span class="nav-number">1.</span> <span class="nav-text">常用第三方模块</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#PIL"><span class="nav-number">1.1.</span> <span class="nav-text">PIL</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#操作图像"><span class="nav-number">1.1.1.</span> <span class="nav-text">操作图像</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#模式定义"><span class="nav-number">1.</span> <span class="nav-text">模式定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模式使用场景"><span class="nav-number">2.</span> <span class="nav-text">模式使用场景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#UML图"><span class="nav-number">3.</span> <span class="nav-text">UML图</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#角色描述"><span class="nav-number">3.1.</span> <span class="nav-text">角色描述</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实现"><span class="nav-number">4.</span> <span class="nav-text">实现</span></a></li></ol></div>
             
 
           </div>

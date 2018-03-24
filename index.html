@@ -278,6 +278,627 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/24/Builder模式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/24/Builder模式/" itemprop="url">Builder模式</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-24T17:18:12+08:00">
+                2018-03-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>讲一个复杂对象的构建与他的表示分离，使得同样的构建过程可以创建不同的表示。</p>
+<h1 id="模式使用场景"><a href="#模式使用场景" class="headerlink" title="模式使用场景"></a>模式使用场景</h1><ol>
+<li>相同的方法，不同的执行顺序，产生不同的时间结果时。</li>
+<li>多个部件或零件，都可以装配到一个对象中，但是产生的结果又不相同时。</li>
+<li>产品类非常复杂，或者产品类中的调用顺序不同产生了不同的效能时。</li>
+</ol>
+<h1 id="UML图"><a href="#UML图" class="headerlink" title="UML图"></a>UML图</h1><p><img src="/img/dp-factory-builder.png" alt="Alt text"></p>
+<h2 id="角色描述"><a href="#角色描述" class="headerlink" title="角色描述"></a>角色描述</h2><pre><code>* Product产品类：产品的抽象类
+* Builder：抽象类，规范产品的组件，一般由子类实现具体的组装过程。
+* ConcreteBuilder：具体的构造器
+* Director：统一组装过程
+</code></pre><h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>电脑组装过程比较复杂，步骤很多，但是顺序却不确定。适用于Builder模式</p>
+<p>Computer抽象类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">public abstract class Computer &#123;</div><div class="line">    protected int mCpuCore = 1;</div><div class="line">    protected int mRanSize = 0;</div><div class="line">    protected String mOs = &quot;Dos&quot;;</div><div class="line"></div><div class="line">    public Computer() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public abstract void setmCpuCore(int mCpuCore);</div><div class="line"></div><div class="line">    public abstract void setmRanSize(int mRanSize);</div><div class="line"></div><div class="line">    public abstract void setmOs(String mOs);</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public String toString() &#123;</div><div class="line">        return &quot;Computer&#123;&quot; +</div><div class="line">                &quot;mCpuCore=&quot; + mCpuCore +</div><div class="line">                &quot;, mRanSize=&quot; + mRanSize +</div><div class="line">                &quot;, mOs=&apos;&quot; + mOs + &apos;\&apos;&apos; +</div><div class="line">                &apos;&#125;&apos;;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>AppleComputer实现类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">public class AppleComputer extends Computer&#123;</div><div class="line">    protected AppleComputer()&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void setmCpuCore(int mCpuCore) &#123;</div><div class="line">        super.mCpuCore = mCpuCore;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void setmRanSize(int mRanSize) &#123;</div><div class="line">        super.mRanSize = mRanSize;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void setmOs(String mOs) &#123;</div><div class="line">        super.mOs = mOs;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Builder抽象类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public abstract class Builder &#123;</div><div class="line">    public abstract void buildCPU(int core);</div><div class="line"></div><div class="line">    public abstract void buildRAM(int gb);</div><div class="line"></div><div class="line">    public abstract void buildOs(String os);</div><div class="line"></div><div class="line">    public abstract Computer create();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>AppleBuilder实现类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">public class AppleBuilder extends Builder&#123;</div><div class="line"></div><div class="line">    private Computer mApplePC = new AppleComputer();</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void buildCPU(int core) &#123;</div><div class="line">        mApplePC.setmCpuCore(core);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void buildRAM(int gb) &#123;</div><div class="line">        mApplePC.setmRanSize(gb);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void buildOs(String os) &#123;</div><div class="line">        mApplePC.setmOs(os);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Computer create() &#123;</div><div class="line">        return mApplePC;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public class Director &#123;</div><div class="line">    Builder builder = null;</div><div class="line"></div><div class="line">    public Director(Builder builder) &#123;</div><div class="line">        this.builder = builder;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void construct(int cpu, int ram, String os) &#123;</div><div class="line">        builder.buildCPU(cpu);</div><div class="line">        builder.buildRAM(ram);</div><div class="line">        builder.buildOs(os);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Test</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Builder builder = new AppleBuilder();</div><div class="line">        Director director = new Director(builder);</div><div class="line">        director.construct(4,2,&quot;Max OS X 10.0.3&quot;);</div><div class="line">        System.out.println(builder.create().toString());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/24/设计模式简介/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/24/设计模式简介/" itemprop="url">设计模式简介</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-24T16:52:11+08:00">
+                2018-03-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h1><ul>
+<li>创建型模式：工厂方法模式，抽象工厂模式，单例模式，建造者模式，原型模式</li>
+<li>结构型模式：适配器模式，装饰器模式，代理模式，外观模式，桥接模式，组合模式，享元模式</li>
+<li>行为型模式：策略模式，模板方法模式，观察者模式，迭代子模式，责任链模式，命令模式，备忘录模式，状态模式，访问者模式，中介者模式，解释器模式。</li>
+</ul>
+<h1 id="设计模式六大原则"><a href="#设计模式六大原则" class="headerlink" title="设计模式六大原则"></a>设计模式六大原则</h1><ol>
+<li>总原则-开闭原则</li>
+</ol>
+<p>对扩展开放，对修改封闭。</p>
+<p>在需要对程序进行扩展时，不去修改原来的代码，而是要扩展原有代码，类似热插拔。需要使用接口或者抽象类。</p>
+<ol>
+<li>单一职能原则</li>
+</ol>
+<ul>
+<li>不要存在多余一个类变更的原因，也就是每个类应该实现单一的职责，否则需要将类进行拆分。</li>
+</ul>
+<ol>
+<li>里氏替换原则</li>
+</ol>
+<ul>
+<li><p>任何基类可以出现的地方，子类一定可以出现。里氏替换原则是继承复用的基石，只有当衍生类可以替换基类，软件单位的功能不受影响时，基类才能真正被复用，而衍生类也能够在基类的基础上增加新的行为。</p>
+</li>
+<li><p>里氏替换原则是对实现抽象化的具体步骤的规范。其中子类对父类的方法尽量不要重写和重载。因为父类代表着定义好的结构，通过这个规范的接口与外界交互，子类不应该破坏。</p>
+</li>
+</ul>
+<ol>
+<li>依赖倒转原则</li>
+</ol>
+<ul>
+<li>面向接口编程，依赖于抽象而不依赖于具体。写代码时用到具体类时，不与具体类交互，而是与具体类的上层接口交互。</li>
+</ul>
+<ol>
+<li>接口隔离原则</li>
+</ol>
+<ul>
+<li>每个接口中不存在子类用不到却必须实现的方法，否则就拆分接口。使用多个隔离的接口，比使用单个接口要好。</li>
+</ul>
+<ol>
+<li>迪米特法则</li>
+</ol>
+<ul>
+<li><p>一个类对自己依赖的类知道的越少越好。无论被依赖的类多么复杂，都应该讲逻辑封装到方法的内部，通过public方法提供给外部。这样当被依赖的类变化时，才能最小的影响该类。</p>
+</li>
+<li><p>最少知道原则：只与直接的朋友通信，类之间要是有耦合关系，就称为朋友关系。耦合分为依赖，关联，聚合，组合灯，我们成出现为成员变量，方法参数，方法返回值中的类为直接朋友。局部变量，临时变量则不是直接朋友。我们要求陌生的类不要作为局部变量出现在类中。</p>
+</li>
+</ul>
+<ol>
+<li>合成复用原则</li>
+</ol>
+<ul>
+<li>尽量首先使用合成、聚合方式，而不是使用继承。</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/23/单例模式与工厂方法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/23/单例模式与工厂方法/" itemprop="url">单例模式与工厂方法</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-23T20:43:38+08:00">
+                2018-03-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h1><p>  设计模式是一套被反复使用的，多数人知晓的，经过分类编目的，代码设计经验的总结。使用设计模式是为了可重用代码。</p>
+<h1 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h1><ol>
+<li><p>定义：单例模式确保只有一个实例，而且自行实例化并向整个系统提供这个实例。</p>
+</li>
+<li><p>类型：创建类模式</p>
+</li>
+<li><p>组成：私有构造方法则不能通过构造方法来创建类，静态属性在类加载时就创建了一个对象，公有静态方法保证外部类可以直接调用。</p>
+<ul>
+<li>私有的构造方法</li>
+<li>指向自己实例的私有静态引用</li>
+<li>以自己实例为返回值的静态的公有方法</li>
+</ul>
+</li>
+<li><p>实现：</p>
+<ol>
+<li><p>饿汉式单例：单例类被加载时候，就实例化一个对象交个自己引用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public class Singleton &#123;</div><div class="line">    private Singleton() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static Singleton singleton = new Singleton();</div><div class="line"></div><div class="line">    public static Singleton getInstance() &#123;</div><div class="line">        return singleton;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>懒汉式实例：调用取得方法实例时才会实例化对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">public class Singleton1 &#123;</div><div class="line">    private Singleton1()&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static Singleton1 singleton1;</div><div class="line"></div><div class="line">    public static synchronized Singleton1 getInstacne()&#123;</div><div class="line">        if (singleton1 == null)</div><div class="line">            singleton1 = new Singleton1();</div><div class="line">        return singleton1;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><p>优点:</p>
+<ul>
+<li>内存中只有一个对象，节省内存空间</li>
+<li>避免频繁的创建和销毁对象，可以提高性能</li>
+<li>避免对共享资源的多重占用</li>
+<li>可以全局访问</li>
+</ul>
+</li>
+<li><p>应用场景：</p>
+<ul>
+<li>需要频繁实例化然后销毁的对象</li>
+<li>创建对象耗时过多或者消耗资源过多，但又经常用到的对象。</li>
+<li>有状态的工具类对象</li>
+<li>频繁访问数据库或文件的对象</li>
+</ul>
+</li>
+<li><p>注意事项：</p>
+<ul>
+<li>只能使用单例类提供的方法获得单例对象，不要使用反射，否则会实例化一个新对象。</li>
+<li>不要做断开单例类对象与类中静态引用的操作。</li>
+<li>多线程使用单例共享资源时，注意线程安全的问题。</li>
+</ul>
+</li>
+<li><p>相关问题：</p>
+<ul>
+<li><p>单例模式的对象长时间不用会被jvm回收吗？<br>  不会，Hotspot中只要对象和GC Roots之间有可达引用链，也就是单例对象和单例中的引用没有被断开就不会被回收。</p>
+</li>
+<li><p>一个jvm中会出现多个单例吗？<br>  不使用反射的话，在一个jvm中不会出现多个单例。</p>
+</li>
+<li><p>单例模式只有饿汉和懒汉两种吗？<br>  所有可以实现一个实例的类，都是单例模式。</p>
+</li>
+<li><p>单例模式可以被继承吗？<br>  饿汉和懒汉，private方法不可以被继承。</p>
+</li>
+</ul>
+</li>
+</ol>
+<h1 id="工厂方法模式"><a href="#工厂方法模式" class="headerlink" title="工厂方法模式"></a>工厂方法模式</h1><ol>
+<li><p>定义：定义一个用于创建对象的接口，让子类决定实例化哪一个类，工厂方法使一个类的实例化延迟到其子类。</p>
+</li>
+<li><p>类型：创建类模式</p>
+</li>
+<li><p>实现：</p>
+<p>工厂模式根据抽象程度的不同分为三种：</p>
+<ul>
+<li><p>简单工厂模式（静态工厂模式）：创建一个工厂来创建新的对象。</p>
+<p>   <img src="/img/dp-factory-simpleFactory.png" alt="Alt text"></p>
+<p>   工厂类</p>
+   <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public class Factory &#123;</div><div class="line">    public Product createFactory(int type) &#123;</div><div class="line">        if (type == 1)</div><div class="line">            return new Product1();</div><div class="line">        else</div><div class="line">            return new Product2();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>   产品抽象类和具体产品</p>
+   <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public abstract class Product &#123;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Product1 extends Product&#123;</div><div class="line">    public Product1() &#123;</div><div class="line">        System.out.println(&quot;product1&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Product2 extends Product&#123;</div><div class="line">    public Product2() &#123;</div><div class="line">        System.out.println(&quot;product2&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>   消费者</p>
+   <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public class Customer &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Factory factory = new Factory();</div><div class="line">        Product product1 = factory.createFactory(1);</div><div class="line">        Product product2 = factory.createFactory(2);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><p>组成：</p>
+<ul>
+<li>工厂类：用于创建商品</li>
+<li>抽象产品：具体产品继承的父类或者实现的接口</li>
+<li>具体产品：工厂类创建的对象</li>
+</ul>
+</li>
+<li><p>此时当我们想要添加一种产品时，需要修改工厂类的业务员逻辑，实际中对应很多产品，对于工厂类来说负担太大，因此引入工厂方法模式，也就是讲工厂类定义成接口，增加一个商品，就增加该商品对应的工厂类的实现。</p>
+</li>
+</ul>
+</li>
+<li><p>工厂方法模式</p>
+<p> <img src="/img/dp-factory-factoryMethod.png" alt="Alt text"></p>
+<p> 产品类：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public interface IProduct &#123;</div><div class="line">    public void productMethod();</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Product implements IProduct&#123;</div><div class="line">    @Override</div><div class="line">    public void productMethod() &#123;</div><div class="line">        System.out.println(&quot;产品&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Product1 implements IProduct&#123;</div><div class="line">    @Override</div><div class="line">    public void productMethod() &#123;</div><div class="line">        System.out.println(&quot;产品1&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p> 工厂类</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public interface IFactory &#123;</div><div class="line">    public IProduct createProduct();</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Factory implements IFactory&#123;</div><div class="line">    @Override</div><div class="line">    public IProduct createProduct() &#123;</div><div class="line">        return new Product();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Factory1 implements IFactory&#123;</div><div class="line">    @Override</div><div class="line">    public IProduct createProduct() &#123;</div><div class="line">        return new Product1();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p> 客户类</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">public class Client &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        IFactory factory = new Factory();</div><div class="line">        IProduct product = factory.createProduct();</div><div class="line">        product.productMethod();</div><div class="line"></div><div class="line">        IFactory factory1 = new Factory1();</div><div class="line">        IProduct product1 = factory1.createProduct();</div><div class="line">        product1.productMethod();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p> 工厂方法模式去掉了简单工厂模式中工厂方法的静态属性，使得它可以被子类继承。这样在简单工厂模式中集中在工厂方法中的压力就转到不同的工厂子类这种去了。</p>
+<ul>
+<li><p>组成：</p>
+<ul>
+<li>抽象工厂：具体工厂必须实现的接口或父类</li>
+<li>具体工厂：含有和具体业务逻辑有关的代码。</li>
+<li>抽象产品：具体产品继承的接口或父类。</li>
+<li>具体产品：创建产品的类。</li>
+</ul>
+</li>
+<li><p>工厂方法模式对对象的创建进行了包装，使得客户程序中仅仅处理抽象产品角色提供的接口。这样的缺点是使得对象的数量成倍增加。</p>
+</li>
+</ul>
+</li>
+<li><p>抽象工厂模式</p>
+<p>产品类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">public interface IProductA &#123;</div><div class="line">    public void productMethod();</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class ProductA implements IProductA &#123;</div><div class="line">    @Override</div><div class="line">    public void productMethod() &#123;</div><div class="line">        System.out.println(&quot;A产品&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class ProductA1 implements IProductA &#123;</div><div class="line">    @Override</div><div class="line">    public void productMethod() &#123;</div><div class="line">        System.out.println(&quot;A产品1&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public interface IProductB &#123;</div><div class="line">    public void productMethod();</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class ProductB implements IProductB &#123;</div><div class="line">    @Override</div><div class="line">    public void productMethod() &#123;</div><div class="line">        System.out.println(&quot;B产品&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class ProductB1 implements IProductB &#123;</div><div class="line">    @Override</div><div class="line">    public void productMethod() &#123;</div><div class="line">        System.out.println(&quot;B产品1&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>工厂类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">public interface AbstratFactory &#123;</div><div class="line">    public IProductA createProductA();</div><div class="line"></div><div class="line">    public IProductB createProductB();</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Factory implements AbstratFactory&#123;</div><div class="line">    @Override</div><div class="line">    public IProductA createProductA() &#123;</div><div class="line">        return new ProductA();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public IProductB createProductB() &#123;</div><div class="line">        return new ProductB();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Factory1 implements AbstratFactory&#123;</div><div class="line">    @Override</div><div class="line">    public IProductA createProductA() &#123;</div><div class="line">        return new ProductA1();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public IProductB createProductB() &#123;</div><div class="line">        return new ProductB1();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>客户端</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public class Client &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        //生产产品</div><div class="line">        AbstratFactory factory = new Factory();</div><div class="line">        IProductA productA = factory.createProductA();</div><div class="line">        productA.productMethod();</div><div class="line">        IProductB productB = factory.createProductB();</div><div class="line">        productB.productMethod();</div><div class="line">        //生产产品1</div><div class="line"></div><div class="line">        AbstratFactory factory1 = new Factory1();</div><div class="line">        IProductA productA1 = factory1.createProductA();</div><div class="line">        IProductB productB1 = factory1.createProductB();</div><div class="line">        productA1.productMethod();</div><div class="line">        productB1.productMethod();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>无论是简单工厂模式，工厂方法模式，还是抽象工厂模式，他们都属于工厂模式，在形式和特点上也是极为相似的，他们的最终目的都是为了解耦。在使用时，我们不必去在意这个模式到底工厂方法模式还是抽象工厂模式，因为他们之间的演变常常是令人琢磨不透的。经常你会发现，明明使用的工厂方法模式，当新需求来临，稍加修改，加入了一个新方法后，由于类中的产品构成了不同等级结构中的产品族，它就变成抽象工厂模式了；而对于抽象工厂模式，当减少一个方法使的提供的产品不再构成产品族之后，它就演变成了工厂方法模式。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/22/HashMap和ConcurrentHashMap/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -3696,920 +4317,6 @@ String(request.getParamter(&quot;userName&quot;).getBytes(&quot;ISO8859-1&quot;)
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/20/hibernate总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/20/hibernate总结/" itemprop="url">Hibernate总结</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-20T16:45:40+08:00">
-                2017-09-20
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/Hibernate/" itemprop="url" rel="index">
-                    <span itemprop="name">Hibernate</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="一、Hibernate简介"><a href="#一、Hibernate简介" class="headerlink" title="一、Hibernate简介"></a>一、Hibernate简介</h1><ul>
-<li>hibernate是一个开源的ORM框架，Object-Relational Mapping，在关系型数据库和对象之间做了一个映射，Hibernate是对JDBC的进一步封装，将JDBC封装起来，从而在和数据库进行操作的时候不需要直接对数据库进行读写，只需要对Hibernate接口进行调用就可以完成数据库方面的操作。</li>
-<li>Hibernate位于JPA接口和Native接口和JDBC之间，从而实现对JDBC的封装和对关系型数据库的对象映射。<br><img src="/img/hibernate_intro1.png" alt="Alt text"></li>
-<li>Hibernate核心<br><img src="/img/hibernate_intro2.png" alt="Alt text"><ol>
-<li>Configuration接口负责配置并启动Hibernate</li>
-<li>SessionFactory接口负责初始化Hibernate</li>
-<li>Session接口负责持久化对象的CRUD操作</li>
-<li>Transaction接口负责事务性</li>
-<li>Query接口负责执行数据库的查询</li>
-</ol>
-</li>
-</ul>
-<h2 id="Hibernate的优缺点"><a href="#Hibernate的优缺点" class="headerlink" title="Hibernate的优缺点"></a>Hibernate的优缺点</h2><h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ol>
-<li>对象化，只需要操作对象就可以完成数据库的操作</li>
-<li>一致性，代码可复用程度高</li>
-<li>POJO对象，简单的Java对象</li>
-<li>测试方便 JUnit</li>
-<li>效率高</li>
-</ol>
-<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ol>
-<li>使用数据库特性的语句，调优比较困难</li>
-<li>对大批量数据库更新存在问题</li>
-<li>系统中存在大量的攻击查询功能<blockquote>
-<p>优缺点参考了<a href="http://blog.csdn.net/jiuqiyuliang/article/details/39078749这篇博客，自己还不是很理解。" target="_blank" rel="external">http://blog.csdn.net/jiuqiyuliang/article/details/39078749这篇博客，自己还不是很理解。</a></p>
-</blockquote>
-</li>
-</ol>
-<hr>
-<h1 id="二、Hibernate环境搭建"><a href="#二、Hibernate环境搭建" class="headerlink" title="二、Hibernate环境搭建"></a>二、Hibernate环境搭建</h1><h2 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h2><p>Win10 + Intellij2017 + Mysql-Front + jdk1.8 + hibernate5.2,<br>其中hibernate5.2改动比较大，我学习hibernate的目的在于了解这个经典的持久层框架，现在主流公司的框架为ssm，所以主要参考马士兵老师的hibernate视频学习，版本为hibernate3.2,有一些区别，不过一遍学习一边修正。</p>
-<h2 id="Intelij创建项目流程："><a href="#Intelij创建项目流程：" class="headerlink" title="Intelij创建项目流程："></a>Intelij创建项目流程：</h2><ol>
-<li>file-&gt;new Project，勾选hibernate，会自动下载好需要的hibernate的包，但是JDBC和Junit单元测试的包需要手动导入，添加方式如下：<br><img src="/img/hibernate_intro4.png" alt="Alt text"><br>选中自己的lib文件夹就可以。<br>包结构如下：<br><img src="/img/hibernate_intro3.png" alt="Alt text"></li>
-<li>创建一个测试文件夹，标记为测试文件夹，用于测试。</li>
-<li>根据提供的或者自己拷贝的hibernate.cfg.xml文件，完成基本的配置，了解基本的参数的意思即可。</li>
-<li>写实体层代码<ul>
-<li>建立一个Student类<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div></pre></td><td class="code"><pre><div class="line">package com.hibernate;</div><div class="line"></div><div class="line">import javax.persistence.Basic;</div><div class="line">import javax.persistence.Column;</div><div class="line">import javax.persistence.Entity;</div><div class="line">import javax.persistence.Id;</div><div class="line"></div><div class="line">@Entity</div><div class="line">public class Student &#123;</div><div class="line">    private int id;</div><div class="line">    private String name;</div><div class="line">    private int age;</div><div class="line"></div><div class="line">    public void setAge(Integer age) &#123;</div><div class="line">        this.age = age;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Id</div><div class="line">    @Column(name = &quot;id&quot;, nullable = false)</div><div class="line">    public int getId() &#123;</div><div class="line">        return id;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setId(int id) &#123;</div><div class="line">        this.id = id;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Basic</div><div class="line">    @Column(name = &quot;name&quot;, nullable = true, length = 20)</div><div class="line">    public String getName() &#123;</div><div class="line">        return name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setName(String name) &#123;</div><div class="line">        this.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Basic</div><div class="line">    @Column(name = &quot;age&quot;, nullable = true)</div><div class="line">    public Integer getAge() &#123;</div><div class="line">        return age;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setAge(int age) &#123;</div><div class="line">        this.age = age;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public boolean equals(Object o) &#123;</div><div class="line">        if (this == o) return true;</div><div class="line">        if (o == null || getClass() != o.getClass()) return false;</div><div class="line"></div><div class="line">        Student student = (Student) o;</div><div class="line"></div><div class="line">        if (id != student.id) return false;</div><div class="line">        if (age != student.age) return false;</div><div class="line">        if (name != null ? !name.equals(student.name) : student.name != null) return false;</div><div class="line"></div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public int hashCode() &#123;</div><div class="line">        int result = id;</div><div class="line">        result = 31 * result + (name != null ? name.hashCode() : 0);</div><div class="line">        result = 31 * result + age;</div><div class="line">        return result;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-</ol>
-<p>这里采用注解的方式完成实体类和数据库表之间的映射。在hibernate.cfg.xml文件中加入对应的mapping语句。<br><code>&lt;mapping class=&quot;com.hibernate.Student&quot;/&gt;</code></p>
-<ol>
-<li>测试映射是否正常工作，为了调试方便，推荐将hibernate默认的日志slf4j换成log4j,用JUnit进行单元测试。测试代码如下：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div></pre></td><td class="code"><pre><div class="line">public class StudentTest extends TestCase&#123;</div><div class="line">    private SessionFactory sessionFactory;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void setUp() throws Exception &#123;</div><div class="line">        final StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure().build();</div><div class="line">        try &#123;</div><div class="line">            sessionFactory = new MetadataSources(registry).buildMetadata().buildSessionFactory();</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">            StandardServiceRegistryBuilder.destroy(registry);</div><div class="line">        &#125;</div><div class="line">        ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().configure().build();</div><div class="line">        Metadata metadata = new MetadataSources(serviceRegistry).buildMetadata();</div><div class="line">        SchemaExport schemaExport = new SchemaExport();</div><div class="line">        schemaExport.create(EnumSet.of(TargetType.DATABASE),metadata);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void tearDown() throws Exception &#123;</div><div class="line">        if (sessionFactory != null) &#123;</div><div class="line">            sessionFactory.close();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Test</div><div class="line">    public void testInsert() &#123;</div><div class="line">        Student student = new Student();</div><div class="line">        student.setName(&quot;aa&quot;);</div><div class="line">        student.setId(1);</div><div class="line">        student.setAge(12);</div><div class="line"></div><div class="line">        Session session = sessionFactory.getCurrentSession();</div><div class="line">        session.beginTransaction();</div><div class="line">        session.save(student);</div><div class="line">        session.getTransaction().commit();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Test</div><div class="line">    public void testUpdate() &#123;</div><div class="line">        testInsert();</div><div class="line">        Session session = sessionFactory.getCurrentSession();</div><div class="line">        session.beginTransaction();</div><div class="line">        Student student = (Student)session.get(Student.class, new Integer(1));</div><div class="line">        student.setName(&quot;penny&quot;);</div><div class="line">        session.getTransaction().commit();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Test</div><div class="line">    public void testGetById() &#123;</div><div class="line">        testInsert();</div><div class="line">        Session session = sessionFactory.getCurrentSession();</div><div class="line">        session.beginTransaction();</div><div class="line">        Student student = session.get(Student.class, new Integer(1));</div><div class="line">        session.getTransaction().commit();</div><div class="line">        System.out.println(&quot;id&quot; + student.getId() + &quot; name = &quot; + student.getName() + &quot; Age = &quot; + student.getAge());</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Test</div><div class="line">    public void testDelete() &#123;</div><div class="line">        testInsert();</div><div class="line">        Session session = sessionFactory.getCurrentSession();</div><div class="line">        session.beginTransaction();</div><div class="line">        Student student = session.get(Student.class, new Integer(1));</div><div class="line">        session.delete(student);</div><div class="line">        session.getTransaction().commit();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>需要注意的是在hibe.cfg.xml文件中，我们配置了<code>&lt;property name=&quot;hbm2ddl.auto&quot;&gt;update&lt;/property&gt;</code>，从而每次运行的时候会再数据库中删除原有的表，再执行后续操作，所有后面测试查找和删除功能时，需要首先插入数据才可以进行正常操作，不然会报空指针错误。</p>
-<ul>
-<li>NOTE： Junit的测试类开头需要用testXXX, 不然会检测不到测试文件。<ol>
-<li>测试结果：</li>
-</ol>
-<ul>
-<li>插入：<br><img src="/img/hibernate_intro5.png" alt="Alt text"></li>
-<li>更新<br><img src="/img/hibernate_intro6.png" alt="Alt text"></li>
-<li>ID查找<br><img src="/img/hibernate_intro7.png" alt="Alt text"></li>
-<li>删除<br><img src="/img/hibernate_intro8.png" alt="Alt text"></li>
-</ul>
-</li>
-</ul>
-<hr>
-<h1 id="三、Hibernate核心接口"><a href="#三、Hibernate核心接口" class="headerlink" title="三、Hibernate核心接口"></a>三、Hibernate核心接口</h1><ol>
-<li>Configuration : 配置并启动Hibernate,创建SessionFactory对象</li>
-<li>SessionFactory ：初始化Hibernate，创建Session对象</li>
-<li>Session ： 持久化对象的CRUD操作</li>
-<li>Transaction ： 管理事务</li>
-<li>Query，Criteria ： 执行数据库的查询</li>
-</ol>
-<h2 id="1、Configuration"><a href="#1、Configuration" class="headerlink" title="1、Configuration"></a>1、Configuration</h2><p>一个Configuration实例允许应用指定在创建一个SessionFactory时使用的属性和映射文件，一个应用一般创建一个SessionFactory，Configuration是一个厨师时的对象，一个Configuration实例代表Hibernate所有Java类到SQL映射的集合。<br>Configuration配置SessionFactory的方法为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure().build();</div><div class="line">sessionFactory = new MetadataSources(registry).buildMetadata().buildSessionFactory();</div></pre></td></tr></table></figure></p>
-<h2 id="2、sessionFactory"><a href="#2、sessionFactory" class="headerlink" title="2、sessionFactory"></a>2、sessionFactory</h2><ul>
-<li>SessionFactory的作用是用于产生和管理Session的，创建SessionFactory成本比较大，一般一个程序只创建一个。SessionFactory一旦被创建，与Configuration对象就不再关联，内部状态是不可变的。</li>
-<li>SessionFactory可以通过两种方式创建Session:<ul>
-<li>openSession: 每次打开都是新的Session，需要调用close方法关闭</li>
-<li>getCurrentSession: 从上下文中获取Session并绑定到当前线程，第一次调用会自动创建一个Session实例，没有手动关闭的时候获取的是同一个Session，事务提交或者回滚时会自动关闭Session，不需要调用close方法。</li>
-</ul>
-</li>
-<li>使用getCurrentSession的时候注意区分本地事务和全局事务：<ul>
-<li>本地事务：JDBC事务，也就是一个数据库的事务<code>&lt;property name=&quot;current_session_context_class&quot;&gt;thread&lt;/property&gt;</code></li>
-<li>全局事务 JTA事务，分布式数据库的事务，跨越多个数据库<code>&lt;property name=&quot;current_session_context_class&quot;&gt;jta&lt;/property&gt;</code></li>
-</ul>
-</li>
-</ul>
-<h2 id="3、Session"><a href="#3、Session" class="headerlink" title="3、Session"></a>3、Session</h2><p>Session用于管理一个数据库的CRUD操作，是Java应用和Hibernate之间主要运行接口。<br>Session的生命周期是以一个逻辑事务的开始和结束为边界，Session的主要功能是提供创建，读取和删除映射的实体类操作。</p>
-<ul>
-<li>实体对象的三种状态：<br><img src="/img/hibernate_intro9.png" alt="Alt text"><ol>
-<li>Transient：瞬时的，没有内置ID，只是内存中的一个对象，在缓存和数据库里面都找不到这个对象</li>
-<li>Persistent：持久化的，缓存中有ID，数据库中有，内存中有，缓存中有</li>
-<li>Detached：游离的，数据库中有ID，数据库和内存里面都有，缓存中没有</li>
-</ol>
-</li>
-<li><p>Session中存在一个缓存，成为Hibernate一级缓存，存放了当前单元加载的对象，缓存中存在一个Map，在执行save方法后，会对改对象生成一个id，并存储在Map中，提交之后，数据库就同步了这条数据，此时实例就处于持久化状态，关闭Session之后处于游离状态。</p>
-</li>
-<li><p>Session接口的方法：</p>
-<ul>
-<li>save():将Transient状态的实体转换为Persistent状态，并给其分配一个ID标识符。</li>
-<li>Delete():从数据库中删除持久化的实体</li>
-<li>load()/get():将给定标识符的实体有Detached状态转变为Persistent状态。<blockquote>
-<p>load返回的是代理对象，真正需要对象的内容时才会发出SQL语句<br>get直接从数据库中加载对象，不会产生延迟<br>当对象不存在时，get会立即报错，load只有需要使用该对象时才报错。  </p>
-</blockquote>
-</li>
-<li>update():<ol>
-<li>更新指定标识符的Deta状态为Persistent状态</li>
-<li>更新transient对象会报错<ol>
-<li>更新自己设定ID的transient对象可以（数据库中需要有相应的ID）</li>
-<li>persistent状态的对象只要设定不同对象就会发生更新</li>
-<li>更新部分更改的字段<ul>
-<li>xml设定property标签的update属性，annotation设定@Column的updateable属性，很少用，不灵活</li>
-<li>使用xml中的dynamic-update，annotation在实体类上设定@DynamicUpdate<ul>
-<li>使用HQL（EJBQL）语句–建议</li>
-</ul>
-</li>
-</ul>
-</li>
-</ol>
-</li>
-</ol>
-</li>
-<li>clear:无论是load还是get，都会优先查找缓存，没找到才会去数据库中查找，调用clear可以强制清楚session缓存。<h2 id="4、Transaction"><a href="#4、Transaction" class="headerlink" title="4、Transaction"></a>4、Transaction</h2>Hibernate中的Transaction是对JDBC或者JTA的Transaction的封装，一个典型的事务会在创建完Session之后启动session.beginTransaction()连启动事务,commit提交事务：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">  Session session = sessionFactory.getCurrentSession();</div><div class="line">session.beginTransaction();</div><div class="line">Teacher t = (Teacher)session.get(Teacher.class, 1);</div><div class="line">t.setName(&quot;zhangsan2&quot;);</div><div class="line">session.getTransaction().commit();</div></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-</ul>
-<h2 id="5、Query"><a href="#5、Query" class="headerlink" title="5、Query"></a>5、Query</h2><p>通过SessionFactory获取session对象，可以通过get方法来获取相应的对象，也可以通过获取Query对象来获得需要的对象：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">@Test</div><div class="line">public void testHQL_01() &#123;</div><div class="line">    testSave();</div><div class="line">    Session session = sessionFactory.openSession();</div><div class="line">    session.beginTransaction();</div><div class="line">    Query q = session.createQuery(&quot;from Category&quot;);</div><div class="line">    List&lt;Category&gt; categories = (List&lt;Category&gt;)q.list();</div><div class="line">    for(Category c : categories) &#123;</div><div class="line">        System.out.println(c.getName());</div><div class="line">    &#125;</div><div class="line">    session.getTransaction().commit();</div><div class="line">    session.close();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h1 id="四、Hibernate关系映射"><a href="#四、Hibernate关系映射" class="headerlink" title="四、Hibernate关系映射"></a>四、Hibernate关系映射</h1><p>Hibernate之间的关系是指对象之间的关系，不是数据库之间的关系。ORM的思想是将关系型数据库中表单的数据映射成对象，以对象的形式展现，这样开发就可以把对数据库的操作转变为对对象的操作。<br>Hibernate实现ORM功能的主要文件有：</p>
-<ul>
-<li>映射类(xx.java):描述数据库表的结构，表中的字段在类中被描述成属性，可以实现把表中的记录映射成该类的对象。</li>
-<li>映射文件(xx.hbm.xml):指定数据库表和映射类之间的关系，包括映射类和数据库表的对应关系，表字段和类属性类型的对应关系以及表子弹和类属性名称的对应关系等</li>
-<li>数据库配置文件(hibernate.cfg.xml):指定与数据库连接时需要的连接信息，比如数据库类型，用户名，密码等。</li>
-</ul>
-<h2 id="1-单向一对一关联"><a href="#1-单向一对一关联" class="headerlink" title="1. 单向一对一关联"></a>1. 单向一对一关联</h2><p>两个实体对象之间是一对一的关联映射，也就是一个对象只能与另外一个唯一的对象相对应。比如实体Student和StudentCard是典型的一对一的关系。一个学生有唯一的一个学号。一个学号对应唯一的一个学生。完成关系模型映射的方式有两种：</p>
-<ul>
-<li><p>主键关联：让两个对象具有相同的主键值，不需要其余的外键字段来维护关系。</p>
-<ul>
-<li>Annotation :  @OneToOne<pre><code>@PrimaryKeyJoinColumn
-</code></pre></li>
-<li>XML:         <one-to-one name="student" constrained="true"></one-to-one></li>
-</ul>
-</li>
-<li><p>外键关联：两个实体对象用一个外键来关联，本质上是多对一关联映射的特例，多的一端加上唯一的限制之后就成为了一对一的关联映射。</p>
-</li>
-</ul>
-<h3 id="1-1-XML实现方式"><a href="#1-1-XML实现方式" class="headerlink" title="1.1 XML实现方式"></a>1.1 XML实现方式</h3><p>StudentCard.java：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public class StudentCard &#123;</div><div class="line">    private int id;</div><div class="line">    private String num;</div><div class="line">    private Student student;</div><div class="line"></div><div class="line">    //Getter and Setter are omitted</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>Student.java:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">public class Student &#123;</div><div class="line">    private int id;</div><div class="line">    private String name;</div><div class="line">    private int age;</div><div class="line">    private String sex;</div><div class="line">    private boolean good;</div><div class="line"></div><div class="line">    public Student() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public Student(int age, String sex, boolean good) &#123;</div><div class="line">        this.age = age;</div><div class="line">        this.sex = sex;</div><div class="line">        this.good = good;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public Student(String name, int age, String sex, boolean good) &#123;</div><div class="line">        this.name = name;</div><div class="line">        this.age = age;</div><div class="line">        this.sex = sex;</div><div class="line">        this.good = good;</div><div class="line">    &#125;</div><div class="line">    //Getter and Setter are omitted</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>Student.hbm.xml:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">&lt;hibernate-mapping&gt;</div><div class="line">    &lt;class name=&quot;com.hibernate.Student&quot;&gt;</div><div class="line">        &lt;id name=&quot;id&quot; &gt;</div><div class="line">            &lt;generator class=&quot;native&quot;/&gt;</div><div class="line">        &lt;/id&gt;</div><div class="line">        &lt;property name=&quot;name&quot;/&gt;</div><div class="line">        &lt;property name=&quot;age&quot; /&gt;</div><div class="line">        &lt;property name=&quot;sex&quot; /&gt;</div><div class="line">        &lt;property name=&quot;good&quot; type=&quot;yes_no&quot;&gt;&lt;/property&gt;</div><div class="line">    &lt;/class&gt;</div><div class="line"></div><div class="line">&lt;/hibernate-mapping&gt;</div></pre></td></tr></table></figure></p>
-<p>StudentCard.hbm.xml:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&lt;hibernate-mapping&gt;</div><div class="line">    &lt;class name=&quot;com.hibernate.StudentCard&quot;&gt;</div><div class="line">        &lt;id name=&quot;id&quot; &gt;</div><div class="line">            &lt;generator class=&quot;native&quot;/&gt;</div><div class="line">        &lt;/id&gt;</div><div class="line">        &lt;property name=&quot;num&quot;/&gt;</div><div class="line">        &lt;many-to-one name=&quot;student&quot; column=&quot;studentID&quot; unique=&quot;true&quot; /&gt;</div><div class="line">    &lt;/class&gt;</div><div class="line"></div><div class="line">&lt;/hibernate-mapping&gt;</div></pre></td></tr></table></figure></p>
-<p>hibernate.cfg.xml:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;mapping resource=&quot;com/hibernate/Student.hbm.xml&quot;/&gt;</div><div class="line">&lt;mapping resource=&quot;com/hibernate/StudentCard.hbm.xml&quot;/&gt;</div></pre></td></tr></table></figure></p>
-<p>建表结果：<br><img src="/img/hibernate_intro10.png" alt="Alt text"></p>
-<h3 id="1-2-Annotation方式"><a href="#1-2-Annotation方式" class="headerlink" title="1.2 Annotation方式"></a>1.2 Annotation方式</h3><p>采用Husband和Wife两个实体对象，其中在Husband里面有对Wife的单向关联。<br>Wife:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">@Entity</div><div class="line">public class Wife &#123;</div><div class="line">    private int id;</div><div class="line">    private String name;</div><div class="line"></div><div class="line">    @Id</div><div class="line">    @GeneratedValue(generator = &quot;increment&quot;)</div><div class="line">    @GenericGenerator(name = &quot;increment&quot;, strategy = &quot;increment&quot;)</div><div class="line">    public int getId() &#123;</div><div class="line">        return id;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setId(int id) &#123;</div><div class="line">        this.id = id;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String getName() &#123;</div><div class="line">        return name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setName(String name) &#123;</div><div class="line">        this.name = name;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>Husband:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">@Entity</div><div class="line">public class Husband &#123;</div><div class="line">    private int id;</div><div class="line">    private String name;</div><div class="line">    private Wife wife;</div><div class="line">    @Id</div><div class="line">    @GeneratedValue(generator = &quot;increment&quot;)</div><div class="line">    @GenericGenerator(name = &quot;increment&quot;, strategy = &quot;increment&quot;)</div><div class="line">    public int getId() &#123;</div><div class="line">        return id;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setId(int id) &#123;</div><div class="line">        this.id = id;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String getName() &#123;</div><div class="line">        return name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setName(String name) &#123;</div><div class="line">        this.name = name;</div><div class="line">    &#125;</div><div class="line">    @OneToOne</div><div class="line">    @JoinColumn(name = &quot;wifeid&quot;)</div><div class="line">    public Wife getWife() &#123;</div><div class="line">        return wife;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setWife(Wife wife) &#123;</div><div class="line">        this.wife = wife;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>hibernate.cfg.xml加上映射类关系：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;mapping class=&quot;com.hibernate.Wife&quot;/&gt;</div><div class="line">&lt;mapping class=&quot;com.hibernate.Husband&quot;/&gt;</div></pre></td></tr></table></figure></p>
-<h2 id="2-双向一对一关联"><a href="#2-双向一对一关联" class="headerlink" title="2. 双向一对一关联"></a>2. 双向一对一关联</h2><p>上面说的一对一单向映射只能从一方加载另一方，双向关联映射可以互相加载。与单向关联映射相比，并不影响其再数据库中的存储方式，只影响其加载方式。</p>
-<ul>
-<li><p>主键</p>
-<ul>
-<li><p>修改StudentCard.hbm.xml文件：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">&lt;hibernate-mapping&gt;</div><div class="line">	&lt;class name=&quot;com.bjsxt.hibernate.StuIdCard&quot;&gt;</div><div class="line">		&lt;id name=&quot;id&quot;&gt;</div><div class="line">			&lt;generator class=&quot;foreign&quot;&gt;</div><div class="line">				&lt;param name=&quot;property&quot;&gt;student&lt;/param&gt;</div><div class="line">			&lt;/generator&gt;</div><div class="line">		&lt;/id&gt;</div><div class="line"></div><div class="line">		&lt;property name=&quot;num&quot;/&gt;</div><div class="line">		&lt;one-to-one name=&quot;student&quot; constrained=&quot;true&quot;&gt;&lt;/one-to-one&gt;</div><div class="line">    &lt;/class&gt;</div><div class="line"></div><div class="line">&lt;/hibernate-mapping&gt;</div></pre></td></tr></table></figure>
-</li>
-<li><p>Annotation 将添加注解<code>@PrimaryKeyJoinColumn</code>即可</p>
-</li>
-</ul>
-</li>
-<li>外键<ul>
-<li>Annotation方式在Wife中创建一个Husband的引用， 在get方法上面添加注解<code>@OneToOne(mappedBy = &quot;wife&quot;)</code>即可</li>
-<li>XML方式在Student.hbm.xml中添加:<code>&lt;one-to-one name=&quot;studentCard&quot; property-ref=&quot;student&quot;/&gt;</code>即可</li>
-</ul>
-</li>
-</ul>
-<h2 id="3-一对多关联映射"><a href="#3-一对多关联映射" class="headerlink" title="3. 一对多关联映射"></a>3. 一对多关联映射</h2><p>一对多和多对一的关联映射原理一致，都是在多的一端加一个外键，指向一的一端。</p>
-<ul>
-<li>与一对多的区别在于维护的关系不同：多对一维护的关系是多指向一的关系，有了此关系，在加载多的时候可以将一加载上来，一对多维护的是多的关系，有了此关系，在加载一的时候可以将多加载上来。</li>
-</ul>
-<p>选取的是Group和User类型，显然一个Group拥有多个User，一个User属于一个Group，是典型的一对多的关系。<br>Group:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">@Entity</div><div class="line">@Table(name = &quot;t_group&quot;)</div><div class="line">public class Group &#123;</div><div class="line">    private int id;</div><div class="line">    private String name;</div><div class="line">    private Set&lt;User&gt; users = new HashSet&lt;&gt;();</div><div class="line">    @Id</div><div class="line">    @GeneratedValue</div><div class="line">    public int getId() &#123;</div><div class="line">        return id;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setId(int id) &#123;</div><div class="line">        this.id = id;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String getName() &#123;</div><div class="line">        return name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setName(String name) &#123;</div><div class="line">        this.name = name;</div><div class="line">    &#125;</div><div class="line">    @OneToMany</div><div class="line">    @JoinColumn(name = &quot;groupId&quot;)</div><div class="line">    public Set&lt;User&gt; getUsers() &#123;</div><div class="line">        return users;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setUsers(Set&lt;User&gt; users) &#123;</div><div class="line">        this.users = users;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>User:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">@Entity</div><div class="line">@Table(name = &quot;t_user&quot;)</div><div class="line">public class User &#123;</div><div class="line">    private int id;</div><div class="line">    private String name;</div><div class="line">    @Id</div><div class="line">    @GeneratedValue</div><div class="line">    public int getId() &#123;</div><div class="line">        return id;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setId(int id) &#123;</div><div class="line">        this.id = id;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String getName() &#123;</div><div class="line">        return name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setName(String name) &#123;</div><div class="line">        this.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>在hibernate.cfg.xml中注册之后即可进行测试：<br><img src="/img/hibernate_intro11.png" alt="Alt text"><br>这里只写了注解实现的，因为考虑到注解是后面的主流，工作后也是注解用的比较多，XML的只写下思路。在Group配置文件下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;set name=&quot;users&quot;&gt;</div><div class="line">            &lt;key column=&quot;groupid&quot;&gt;&lt;/key&gt;</div><div class="line">            &lt;one-to-many class=&quot;com.hibernate.User&quot;&gt;&lt;/one-to-many&gt;</div><div class="line">        &lt;/set&gt;</div></pre></td></tr></table></figure></p>
-<p>完成其一对多的单向映射。</p>
-<h2 id="4、一对多，多对一双向关联映射"><a href="#4、一对多，多对一双向关联映射" class="headerlink" title="4、一对多，多对一双向关联映射"></a>4、一对多，多对一双向关联映射</h2><p>完成一对多多对一的双向关联映射的关键在于在多的哪段添加对一的那端的引用。也就是在User实体里面创建一个Group类型的私有变量，从而持有Group的一个引用。与一对多的区别在于：</p>
-<ol>
-<li>Annotation方式下，User实体类对Group的getter方法上添加注解：@ManyToOne()，说明这是多对一的关联。</li>
-<li>XML方式下，在User的配置文件下添加：<code>&lt;many-to-one name=&quot;group&quot; column=&quot;group_Id&quot;/&gt;</code>即可。</li>
-</ol>
-<h2 id="5、单向多对多关联映射"><a href="#5、单向多对多关联映射" class="headerlink" title="5、单向多对多关联映射"></a>5、单向多对多关联映射</h2><p>多对多映射比较常见，比如一个老师教多个学生，一个学生有多个老师。关联是通过创建一个中间表来实现的。中间表可以很好的解决数据冗余的问题。<br>Student.java:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">@Entity</div><div class="line">public class Student &#123;</div><div class="line">    private int id;</div><div class="line">    private String name;</div><div class="line"></div><div class="line">    @Id</div><div class="line">    @GeneratedValue</div><div class="line">    public int getId() &#123;</div><div class="line">        return id;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setId(int id) &#123;</div><div class="line">        this.id = id;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String getName() &#123;</div><div class="line">        return name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setName(String name) &#123;</div><div class="line">        this.name = name;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>Teacher.java:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">@Entity</div><div class="line">public class Teacher &#123;</div><div class="line">    private int id;</div><div class="line">    private String name;</div><div class="line">    private Set&lt;Student&gt; students = new HashSet&lt;&gt;();</div><div class="line">    @Id</div><div class="line">    @GeneratedValue</div><div class="line">    public int getId() &#123;</div><div class="line">        return id;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setId(int id) &#123;</div><div class="line">        this.id = id;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String getName() &#123;</div><div class="line">        return name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setName(String name) &#123;</div><div class="line">        this.name = name;</div><div class="line">    &#125;</div><div class="line">    @ManyToMany</div><div class="line">    @JoinTable(name = &quot;t_s&quot;,</div><div class="line">            joinColumns = &#123;@JoinColumn(name = &quot;teacher_id&quot;)&#125;,</div><div class="line">            inverseJoinColumns = &#123;@JoinColumn(name = &quot;student_id&quot;)&#125;</div><div class="line">    )</div><div class="line"></div><div class="line">    public Set&lt;Student&gt; getStudents() &#123;</div><div class="line">        return students;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setStudents(Set&lt;Student&gt; students) &#123;</div><div class="line">        this.students = students;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>生成结果：<br><img src="/img/hibernate_intro12.png" alt="Alt text"></p>
-<h2 id="6、双向多对多关联映射"><a href="#6、双向多对多关联映射" class="headerlink" title="6、双向多对多关联映射"></a>6、双向多对多关联映射</h2><p>与单向的相比，在Student类中添加了Teacher的引用，从而实现多对多的导航，其余的和5一样。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">@Entity</div><div class="line">public class Student &#123;</div><div class="line">    private int id;</div><div class="line">    private String name;</div><div class="line">    private Set&lt;Teacher&gt; teachers = new HashSet&lt;&gt;();</div><div class="line"></div><div class="line">    @Id</div><div class="line">    @GeneratedValue</div><div class="line">    public int getId() &#123;</div><div class="line">        return id;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setId(int id) &#123;</div><div class="line">        this.id = id;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String getName() &#123;</div><div class="line">        return name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setName(String name) &#123;</div><div class="line">        this.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @ManyToMany(mappedBy = &quot;students&quot;)</div><div class="line">    public Set&lt;Teacher&gt; getTeachers() &#123;</div><div class="line">        return teachers;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setTeachers(Set&lt;Teacher&gt; teachers) &#123;</div><div class="line">        this.teachers = teachers;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h2 id="7、关联数据的CRUD操作"><a href="#7、关联数据的CRUD操作" class="headerlink" title="7、关联数据的CRUD操作"></a>7、关联数据的CRUD操作</h2><ul>
-<li>设定cascade可以设定在持久化时对关联对象的操作<ul>
-<li>cascade属性指明做什么操作的时候关联对象是绑定在一起的</li>
-<li>双向关系在程序中要设定双向关联</li>
-<li>双向mappedBy</li>
-<li>Fetch<pre><code>* 双向不要两边设置Eager，会有多余的查询语句发出
-* 对多方设置fetch时要谨慎吗，结合具体的应用，一般用Lazy。
-</code></pre></li>
-<li>ORMapping编程模型<pre><code>* 映射模型
-        * JPA annotation
-          * Hibernate annotation extension
-          * Hibernate xml
-          * Jpa xml
-    * 编程接口
-          * Jpa
-          *  Hibernate
-    *  数据查询语言
-          * HQL
-* EJBQL
-</code></pre></li>
-</ul>
-</li>
-<li>TIps：<pre><code>* *删除和更新之前需要load*
-* *如果想要删除关联关系，先设定关系为null，再删除对应记录，如果不删除，记录变为垃圾数据*
-</code></pre>测试程序：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div></pre></td><td class="code"><pre><div class="line">  public class HibernateORMTest extends TestCase&#123;</div><div class="line">    private SessionFactory sessionFactory;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void setUp() throws Exception &#123;</div><div class="line"></div><div class="line">        try &#123;</div><div class="line">            sessionFactory = new Configuration().configure().buildSessionFactory();</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">        ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().configure().build();</div><div class="line">        Metadata metadata = new MetadataSources(serviceRegistry).buildMetadata();</div><div class="line">        SchemaExport schemaExport = new SchemaExport();</div><div class="line">        schemaExport.create(EnumSet.of(TargetType.DATABASE),metadata);</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void tearDown() throws Exception &#123;</div><div class="line">        if (sessionFactory != null) &#123;</div><div class="line">            sessionFactory.close();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Test</div><div class="line">    public void testSaveUser() &#123;</div><div class="line">        User user = new User();</div><div class="line">        user.setName(&quot;g1&quot;);</div><div class="line">        Group g = new Group();</div><div class="line">        g.setName(&quot;g1&quot;);</div><div class="line">        user.setGroup(g);</div><div class="line"></div><div class="line">        Session session = sessionFactory.openSession();</div><div class="line">        session.beginTransaction();</div><div class="line">//        session.save(g);</div><div class="line">        session.save(user);</div><div class="line">        session.getTransaction().commit();</div><div class="line">        session.close();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Test</div><div class="line">    public void testSaveGroup() &#123;</div><div class="line">        User u1 = new User();</div><div class="line">        u1.setName(&quot;u1&quot;);</div><div class="line">        User u2 = new User();</div><div class="line">        u2.setName(&quot;u2&quot;);</div><div class="line">        Group g = new Group();</div><div class="line">        g.setName(&quot;g1&quot;);</div><div class="line">        g.getUsers().add(u1);</div><div class="line">        g.getUsers().add(u2);</div><div class="line">        u1.setGroup(g);</div><div class="line">        u2.setGroup(g);</div><div class="line"></div><div class="line">        Session session = sessionFactory.openSession();</div><div class="line">        session.beginTransaction();</div><div class="line">//        session.save(g);</div><div class="line">        session.save(g);</div><div class="line">        session.getTransaction().commit();</div><div class="line">        session.close();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Test</div><div class="line">    public void testGetUser() &#123;</div><div class="line">        testSaveGroup();</div><div class="line"></div><div class="line">        Session session = sessionFactory.openSession();</div><div class="line">        session.beginTransaction();</div><div class="line">        User user = session.get(User.class, 1);</div><div class="line">        System.out.println(user.getGroup().getName());</div><div class="line">        session.getTransaction().commit();</div><div class="line">        session.close();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Test</div><div class="line">    public void testGetGroup() &#123;</div><div class="line">        testSaveGroup();</div><div class="line"></div><div class="line">        Session session = sessionFactory.openSession();</div><div class="line">        session.beginTransaction();</div><div class="line">        Group g = session.get(Group.class, 1);</div><div class="line">        session.getTransaction().commit();</div><div class="line">        session.close();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Test</div><div class="line">    public void testLoadUser() &#123;</div><div class="line">        testSaveGroup();</div><div class="line"></div><div class="line">        Session session = sessionFactory.openSession();</div><div class="line">        session.beginTransaction();</div><div class="line">        User user = session.load(User.class, 1);</div><div class="line">        System.out.println(user.getGroup().getName());</div><div class="line">        session.getTransaction().commit();</div><div class="line">        session.close();</div><div class="line">      &#125;</div><div class="line"></div><div class="line">    @Test</div><div class="line">    public void testUpdateUser() &#123;</div><div class="line">        testSaveGroup();</div><div class="line"></div><div class="line">        Session session = sessionFactory.getCurrentSession();</div><div class="line">        session.beginTransaction();</div><div class="line">        User user = new User();</div><div class="line">        user.setName(&quot;hhhhhh&quot;);</div><div class="line">        Group g = new Group();</div><div class="line">        g.setName(&quot;g2&quot;);</div><div class="line">        user.setGroup(g);</div><div class="line">//        user.getGroup().setName(&quot;ggggg&quot;);</div><div class="line"></div><div class="line">        session.persist(user);</div><div class="line">        session.getTransaction().commit();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Test</div><div class="line">    public void testDeleteUser() &#123;</div><div class="line">        testSaveGroup();</div><div class="line"></div><div class="line">        Session session = sessionFactory.getCurrentSession();</div><div class="line">        session.beginTransaction();</div><div class="line">//        User user = session.load(User.class, 1);</div><div class="line">//        user.setGroup(null);</div><div class="line">//        session.delete(user);</div><div class="line">        session.createQuery(&quot;delete from User u where u.id = 1&quot;).executeUpdate();</div><div class="line">        session.getTransaction().commit();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Test</div><div class="line">    public void testDeleteGroup() &#123;</div><div class="line">        testSaveGroup();</div><div class="line"></div><div class="line">        Session session = sessionFactory.getCurrentSession();</div><div class="line">        session.beginTransaction();</div><div class="line">        Group g = session.load(Group.class, 1);</div><div class="line">        session.delete(g);</div><div class="line">//        session.createQuery(&quot;delete from User u where u.id = 1&quot;).executeUpdate();</div><div class="line">        session.getTransaction().commit();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h2 id="8、集合映射"><a href="#8、集合映射" class="headerlink" title="8、集合映射"></a>8、集合映射</h2><p>对象之间存储的容器可以选择Set, List, Map三种，根据实际中的具体需求来选取不同的容器，其中Map需要设定键值对，相对来说要复杂一点。采用的是User和Group的双向的一对多的关系，在User中设置好ID生成策略和多对一的导航，在Group中设置装载user的容器为map:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">private Map&lt;Integer, User&gt; users = new HashMap&lt;&gt;();</div><div class="line"></div><div class="line">   @OneToMany(mappedBy = &quot;group&quot;, cascade = CascadeType.ALL)</div><div class="line">   @MapKey(name = &quot;id&quot;)</div><div class="line">   public Map&lt;Integer, User&gt; getUsers() &#123;</div><div class="line">       return users;</div><div class="line">   &#125;</div></pre></td></tr></table></figure></p>
-<p>单元测试如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">@Test</div><div class="line">public void testMap() &#123;</div><div class="line"></div><div class="line">    Session session = sessionFactory.getCurrentSession();</div><div class="line">    session.beginTransaction();</div><div class="line">    Group g = session.load(Group.class, 1);</div><div class="line">    for (Map.Entry&lt;Integer, User&gt; entry : g.getUsers().entrySet()) &#123;</div><div class="line">        System.out.println(entry.getValue().getName());</div><div class="line">    &#125;</div><div class="line">    session.getTransaction().commit();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h2 id="9、继承关系"><a href="#9、继承关系" class="headerlink" title="9、继承关系"></a>9、继承关系</h2><p>hibernate中有三种继承关系：</p>
-<ul>
-<li>一张总表 single_table</li>
-<li>每个类分别一张表 table_per_class</li>
-<li>每个子类一张表 joined</li>
-</ul>
-<p>找到了一个说的很详细的博客，可以参考：<a href="http://blog.csdn.net/pursuer211/article/details/17318379" target="_blank" rel="external">http://blog.csdn.net/pursuer211/article/details/17318379</a></p>
-<hr>
-<h1 id="五、Hibernate查询方式"><a href="#五、Hibernate查询方式" class="headerlink" title="五、Hibernate查询方式"></a>五、Hibernate查询方式</h1><p>Hibernate支持多种查询方式：</p>
-<ul>
-<li>NativeSQL查询语言</li>
-<li>HQL <code>Query q = session.createQuery(&quot;from Category&quot;);</code></li>
-<li>EJBQL</li>
-<li>QBC –query by Cretiral <code>Criteria c = session.createCriteria(Topic.class)</code></li>
-<li>QBE – query by Example<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">  Topic tExample = new Topic();</div><div class="line">tExample.setTitle(&quot;T_&quot;);</div><div class="line"></div><div class="line">Example e = Example.create(tExample)</div><div class="line">			.ignoreCase().enableLike();</div><div class="line">Criteria c = session.createCriteria(Topic.class)</div><div class="line">			 .add(Restrictions.gt(&quot;id&quot;, 2))</div><div class="line">			 .add(Restrictions.lt(&quot;id&quot;, 8))</div><div class="line">			 .add(e)</div><div class="line">			 ;</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<hr>
-<h1 id="六、Hibernate性能优化"><a href="#六、Hibernate性能优化" class="headerlink" title="六、Hibernate性能优化"></a>六、Hibernate性能优化</h1><ol>
-<li><p>注意session.clear的运用，清除不用的缓存空间。</p>
-</li>
-<li><p>1+N问题：hibernate默认表和表的关联方式为fetchType.EAGER，这时候hibernate在一对多关系中查询多的一方的数据时，会额外发出N条SQL语句。原因在于设置了多到一的导航，而一那方的fetch默认为Eager，从而会取出一那方的所有的值。</p>
-<blockquote>
-<p>解决方案：</p>
-<ul>
-<li>多对一那边的fetch属性设置为LAZY。但是这样会影响级联查询。</li>
-<li>设置BatchSize(),发出的SQL会减少，但是没有在根本上解决问题。</li>
-<li>HQL语句中使用join fetch，推荐使用：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">List&lt;Topic&gt; topics = (List&lt;Topic&gt;)session.createQuery(&quot;from Topic t left join fetch t.category c&quot;).list();</div></pre></td></tr></table></figure>
-</li>
-</ul>
-</blockquote>
-</li>
-<li><p>list和iterate的区别</p>
-<ul>
-<li>list取出所有的元素</li>
-<li>iterate先取ID，等到用的时候再根据ID来取对象</li>
-<li>session中list第二次发出仍然回去数据库查询</li>
-<li>iterate第二次发出，首先查找session缓存</li>
-</ul>
-</li>
-<li><p>缓存机制：</p>
-<ul>
-<li>缓存的作用：Hibernate是一个持久层框架，经常访问物理数据库，为了降低应用程序对物理数据源访问的频次，从而提高应用程序的运行性能。缓存内的数据是对物理数据源中的数据的复制，应用程序在运行时从缓存读写数据，在特定的时刻或事件会同步缓存和物理数据源的数据。</li>
-<li>缓存的分类：Hibernate一级缓存和Hibernate二级缓存Hibernate一级缓存又称为“Session的缓存”，它是内置的，不能被卸载（不能被卸载的意思就是这种缓存不具有可选性，必须有的功能，不可以取消session缓存）。由于Session对象的生命周期通常对应一个数据库事务或者一个应用事务，因此它的缓存是事务范围的缓存。第一级缓存是必需的，不允许而且事实上也无法卸除。在第一级缓存中，持久化类的每个实例都具有唯一的OID。 Hibernate二级缓存又称为“SessionFactory的缓存”，由于SessionFactory对象的生命周期和应用程序的整个过程对应，因此Hibernate二级缓存是进程范围或者集群范围的缓存，有可能出现并发问题，因此需要采用适当的并发访问策略，该策略为被缓存的数据提供了事务隔离级别。第二级缓存是可选的，是一个可配置的插件，在默认情况下，SessionFactory不会启用这个插件。</li>
-<li>第二级缓存存放的数据：<ul>
-<li>很少被修改的数据</li>
-<li>不是很重要的数据，</li>
-<li>不会被并发访问的数据</li>
-<li>常量数据</li>
-<li>经常被访问的数据</li>
-</ul>
-</li>
-<li><p>不适合存放在第二级缓存的数据：</p>
-<ul>
-<li>经常修改的数据</li>
-<li>不允许出现并发访问的数据</li>
-<li>与其他应用共享的数据</li>
-</ul>
-</li>
-<li><p>HIbernate查找对象中缓存的应用：</p>
-<ul>
-<li>当Hibernate根据ID访问数据对象的时候，首先从Session一级缓存中查；查不到，如果配置了二级缓存，那么从二级缓存中查；如果都查不到，再查询数据库，把结果按照ID放入到缓存,删除、更新、增加数据的时候，同时更新缓存。Hibernate管理缓存实例无论何时，当你给save()、update()或saveOrUpdate()方法传递一个对象时，或使用load()、 get()、list()、iterate() 或scroll()方法获得一个对象时, 该对象都将被加入到Session的内部缓存中。 当随后flush()方法被调用时，对象的状态会和数据库取得同步。 如果你不希望此同步操作发生，或者你正处理大量对象、需要对有效管理内存时，你可以调用evict() 方法，从一级缓存中去掉这些对象及其集合。</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li><p>load默认使用二级缓存，iterate默认使用二级缓存，list默认往二级缓存中加数据，Query需要设置才可以使用二级缓存。</p>
-</li>
-<li><p>缓存算法：</p>
-<ul>
-<li>LRU Least Recently Used</li>
-<li>LFU Least Frequently Used</li>
-<li>FIFO</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>事务并发处理</p>
-<ul>
-<li>事务 ：ACID<ul>
-<li>Atomic 原子性</li>
-<li>Consistency 一致性</li>
-<li>Isolation 隔离性</li>
-<li>Durability 持久性</li>
-</ul>
-</li>
-<li>事务并发可能出现的问题：<ul>
-<li>第一类丢失更新， 把后启动事务的更新丢弃</li>
-<li>脏读 读到了其他事务还没有提交的数据</li>
-<li>第二类丢失更新 不可重复读，多次读取一个事务读出了不同的值</li>
-<li>幻读 读到了不存在的事务</li>
-</ul>
-</li>
-<li>数据库的隔离机制<ul>
-<li>Serializable (串行化)：可避免脏读、不可重复读、幻读的发生。</li>
-</ul>
-</li>
-</ul>
-<p>　　 * Repeatable read (可重复读)：可避免脏读、不可重复读的发生。</p>
-<p>　　 * Read committed (读已提交)：可避免脏读的发生。</p>
-<p>　　 * Read uncommitted (读未提交)：最低级别，任何情况都无法保证。</p>
-<ul>
-<li>Hibernate的事务隔离机制：<br>   1：读操作未提交（Read Uncommitted）<br>   2：读操作已提交（Read Committed）<br>   4：可重读（Repeatable Read）<br>   8：可串行化（Serializable）<br>设置方式为：<br><code>&lt;property name=&quot; hibernate.connection.isolation&quot;&gt;4&lt;/property&gt;</code></li>
-</ul>
-</li>
-</ol>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/09/16.Web编程/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/09/16.Web编程/" itemprop="url">16. Web编程</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-09T15:40:03+08:00">
-                2017-09-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="Web开发"><a href="#Web开发" class="headerlink" title="Web开发"></a>Web开发</h1><p>随着互联网的兴起，人们发现CS架构不适合Web，最大的原因是Web应用程序的修改和升级非常迅速，而CS架构需要每个客户端逐个升级桌面APP，因此BS架构开始流行。</p>
-<p>在BS架构下，客户端只需浏览器，应用程序的逻辑和数据都存储在服务器端。浏览器只需要请求服务器获取Web页面，并把Web页面展示给用户即可。Web页面也具有极强的交互性。由于Web页面使用HTML编写的，而HTML具备超强的表现力，并且服务端升级后，客户端无需任何部署就可以使用到最新的版本，因此BS架构迅速流行起来。</p>
-<p>Web开发的阶段：<br>1、静态Web页面<br>2、CGI：Common Gateway Interface<br>3、ASP/JSP/PHP：脚本语言开发与HTML结合紧密。<br>4、MVC：Model-View-Controller的模式，ASP发展为ASP.Net，JSP和PHP也有一大堆MVC框架。</p>
-<p>Python是一种解释型脚本语言，开发效率高，所以很适合来做WEB开发。Python有上百种Web开发框架，有很多成熟的模板技术。</p>
-<h2 id="HTTP协议简介"><a href="#HTTP协议简介" class="headerlink" title="HTTP协议简介"></a>HTTP协议简介</h2><p>在Web应用中，服务器把网页传给浏览器，实际上就是把网页的HTML代码发送给浏览器，让浏览器显示出来。而浏览器和服务器之间的传输协议就是HTTP，所以：</p>
-<blockquote>
-<p>HTML是一种用来定义网页的文本，会HTML，就可以编写网页<br>HTTP是在网络上传输HTML的协议，用于浏览器和服务器的通信。</p>
-</blockquote>
-<p>chrome浏览器视图，开发者，开发者工具，就可以显示开发者工具：<br><img src="/img/1478682531152.png" alt="Alt text"></p>
-<p><code>Elements</code>显示网页的结构，<code>Network</code>显示浏览器和服务器的通信。我们点<code>Network</code>，确保第一个小红灯亮着，Chrome就会记录所有浏览器和服务器之间的通信：<br><img src="/img/1478682659522.png" alt="Alt text"></p>
-<p>当我们在地址栏输入<code>www.sina.com.cn</code>时，浏览器将显示新浪的首页。在<code>Network</code>中，定位到第一条记录，点击，右侧将显示<code>Request Headers</code>，点击右侧的<code>view source</code>，我们就可以看到浏览器发给新浪服务器的请求了：<br><img src="/img/1478691391893.png" alt="Alt text"></p>
-<p>最主要的头两行分析如下，第一行为</p>
-<blockquote>
-<p>GET / HTTP/1.1</p>
-</blockquote>
-<p>GET表示一个读取请求，将从服务器获得网页数据，<code>/</code>表示URL的路径，URL总是以<code>/</code>开头，<code>/</code>就表示首页，最后的<code>HTTP/1.1</code>表示采用的HTTP版本是1.1。目前HTTP协议的版本就是1.1，但是大部分服务器也支持1.0版本，主要区别在于1.1版本允许多个HTTP请求复用一个TCP连接，以加快传输速度。</p>
-<p>第二行开始，每一行都类似于<code>Xxx：abcdefg</code>：</p>
-<blockquote>
-<p>Host: www.sina.com.cn</p>
-</blockquote>
-<p>表示请求的域名是<code>www.sina.com.cn</code>，如果一天服务器有多个网站，服务器就需要通过Host来区分浏览器请求的是哪个网站。</p>
-<p>继续往下找到<code>Response Headers</code>，点击<code>view source</code>，显示服务器返回的原始相应数据：<br><img src="/img/1478692170995.png" alt="Alt text"></p>
-<p>HTTP相应分为Header和Body两部分，我们在Network中看到的Header最重要的几行如下：</p>
-<blockquote>
-<p>200 OK</p>
-</blockquote>
-<p><code>200</code>表示一个成功的响应，后面的<code>OK</code>是说明。失败的响应有<code>404 Not Found</code>，<code>500Internal Server Error</code>等。</p>
-<blockquote>
-<p>Content-Type：text/html</p>
-</blockquote>
-<p><code>Content-Type</code>指示响应的内容，这里是<code>text/html</code>表示HTML网页。请注意浏览器就是靠<code>Content-Type</code>来判断响应的内容是网页还是图片，是时频还是音乐，不是靠URL来判断响应的内容的。</p>
-<p>HTTP响应的Body就是HTML源码，我们可以直接查看：<br><img src="/img/1478692487428.png" alt="Alt text"></p>
-<p>当浏览器读取到新浪首页的HTML源码后，它会解析HTML，显示页面，然后根据HTML里面的各种链接，再发送HTTP请求到新浪服务器，拿到相应的图片、时频、Flash。JavaScript脚本、CSS等各种资源，最终显示出一个完整的页面。我们在Network下回看到很多额外的请求。</p>
-<h3 id="HTTP请求"><a href="#HTTP请求" class="headerlink" title="HTTP请求"></a>HTTP请求</h3><blockquote>
-<p>1、浏览器首先向服务器发送HTTP请求，请求包括：</p>
-<blockquote>
-<p>方法：GET–仅请求资源、POST–附带用户数据<br>路径：由Host头指定–Host：www.sina.com.cn<br>以及其他相关的Header</p>
-</blockquote>
-<p>2、服务器向浏览器返回HTTP相应，相应包括：</p>
-<blockquote>
-<p>响应代码：200表示成功，3xx表示重定向，4xx表示客户端发送的请求有错误，5xx表示服务器端处理时发生了错误；<br>响应类型：由Content-Type指定；<br>以及其他相关的Header；<br>通常服务器的HTTP响应会携带内容，也就是有一个Body，包含响应的内容，网页的HTML源码就在Body中。</p>
-</blockquote>
-<p>3、如果浏览器还需要继续向服务器请求其他资源，比如图片，就再次发出HTTP请求，重复步骤1、2。</p>
-</blockquote>
-<p>Web采用的HTTP协议采用了非常简单的请求-响应模式，从而大大简化了开发。当我们编写一个页面时，我们只需要在HTTP请求中把HTML发送出去，不需要考虑如何附带图片、视频等，浏览器如果需要请求图片和视频，它会发送另一个HTTP请求，因此，一个HTTP请求只处理一个资源。</p>
-<p>HTTP协议同时具备极强的扩展性，虽然浏览器请求的是<a href="http://www.sina.com.cn/的首页，但是新浪在HTML中可以链入其他服务器的资源，比如`" target="_blank" rel="external">http://www.sina.com.cn/的首页，但是新浪在HTML中可以链入其他服务器的资源，比如`</a><img src="http://i1.sinaimg.cn/home/2013/1008/U8455P30DT20131008135420.png">`=&gt;<img src="http://i1.sinaimg.cn/home/2013/1008/U8455P30DT20131008135420.png">，从而将请求压力分散到各个服务器上，并且，一个站点可以链接到其他站点，无数个站点互相链接起来，就形成了World Wide Web，简称WWW。</p>
-<h3 id="HTTP格式"><a href="#HTTP格式" class="headerlink" title="HTTP格式"></a>HTTP格式</h3><p>每个HTTP请求和相应都遵循相同的格式，一个HTTP包含Header和Body两部分，其中Body是可选的。</p>
-<p>HTTP协议是一种文本协议，所以它的格式非常简单。HTTP　GET请求的格式：<br><figure class="highlight http"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">GET</span> <span class="string">/path</span> HTTP/1.1</div><div class="line"><span class="attribute">Header1</span>: Value1</div><div class="line"><span class="attribute">Header2</span>: Value2</div><div class="line"><span class="attribute">Header3</span>: Value3</div></pre></td></tr></table></figure></p>
-<p>每个Header一行一个，换行符是<code>\r\n</code>。HTTP POST请求的格式是：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">POST</span> <span class="string">/path</span> HTTP/1.1</div><div class="line"><span class="attribute">Header1</span>: Value1</div><div class="line"><span class="attribute">Header2</span>: Value2</div><div class="line"><span class="attribute">Header3</span>: Value3</div><div class="line"></div><div class="line">body data goes here...</div></pre></td></tr></table></figure></p>
-<p>当遇到连续两个<code>\r\n</code>时，Header部分结束，后面的数据都是Body。</p>
-<p>HTTP相应的格式：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">200 OK</div><div class="line"><span class="attribute">Header1</span>: Value1</div><div class="line"><span class="attribute">Header2</span>: Value2</div><div class="line"><span class="attribute">Header3</span>: Value3</div><div class="line"></div><div class="line">body data goes here...</div></pre></td></tr></table></figure></p>
-<p>HTTP响应如果包含body，也是通过<code>\r\n\r\n</code>来分割的。Body数据类型是由<code>Content-Type</code>来确定的。</p>
-<hr>
-<h2 id="HTML简介"><a href="#HTML简介" class="headerlink" title="HTML简介"></a>HTML简介</h2><p>ＨＴＭＬ定义了一套语法规则，来告诉浏览器如何把一个丰富多彩的页面显示出来。最简单的HTML长这样：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">  &lt;title&gt;Hello&lt;/title&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">  &lt;h1&gt;Hello, world!&lt;/h1&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
-<p>可以用文本编辑器编写HTML，然后保存为<code>hello.html</code>，双击或者把文件拖到浏览器中，就可以看到效果：<br><img src="/img/1478694755907.png" alt="Alt text"><br>HTML文档就是一些列的Tag组成的，最外层的Tag是<code>&lt;html&gt;</code>。规范的HTML也包含<code>&lt;head&gt;...&lt;/head&gt;</code>和<code>&lt;body&gt;...&lt;body&gt;</code>注意不要和HTTP中的Header和Body搞混了。由于HTML是富文档模型，所以还有一系列的Tag来表示链接、图片、表格、表单等等。</p>
-<h3 id="CSS简介"><a href="#CSS简介" class="headerlink" title="CSS简介"></a>CSS简介</h3><p>CSS是Cascading Style Sheets(层叠样式表)，CSS用来控制HTML里的所有元素如何展现，比如，给标题元素<code>&lt;h1&gt;</code>加一个样式，变成48号字体，灰色，带阴影。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">  &lt;title&gt;Hello&lt;/title&gt;</div><div class="line">  &lt;style&gt;</div><div class="line">    h1 &#123;</div><div class="line">      color: #333333;</div><div class="line">      font-size: 48px;</div><div class="line">      text-shadow: 3px 3px 3px #666666;</div><div class="line">    &#125;</div><div class="line">  &lt;/style&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">  &lt;h1&gt;Hello, world!&lt;/h1&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
-<p>效果如下：<br><img src="/img/1478696324582.png" alt="Alt text"></p>
-<h3 id="JavaScript简介"><a href="#JavaScript简介" class="headerlink" title="JavaScript简介"></a>JavaScript简介</h3><p>JavaScript和Java没有关系。JavaScript是为了让HTML具有交互性而作为脚本语言添加的，JavaScript既可以内嵌到HTML中，也可以从外部链接到HTML中。如果我们希望当用户点击标题时把标题变为红色，就必须通过JavaScript来实现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">  &lt;title&gt;Hello&lt;/title&gt;</div><div class="line">  &lt;style&gt;</div><div class="line">    h1 &#123;</div><div class="line">      color: #333333;</div><div class="line">      font-size: 48px;</div><div class="line">      text-shadow: 3px 3px 3px #666666;</div><div class="line">    &#125;</div><div class="line">  &lt;/style&gt;</div><div class="line">   &lt;script&gt;</div><div class="line">    function change() &#123;</div><div class="line">      document.getElementsByTagName(&apos;h1&apos;)[0].style.color = &apos;#ff0000&apos;;</div><div class="line">    &#125;</div><div class="line">  &lt;/script&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">  &lt;h1 onclick=&quot;change()&quot;&gt;Hello, world!&lt;/h1&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
-<p><img src="/img/1478696913936.png" alt="Alt text"></p>
-<p>如果要学习Web开发，首先要对HTML、CSS和JavaScript作一定的了解。HTML定义了页面的内容，CSS来控制页面元素的样式，而JavaScript负责页面的交互逻辑。</p>
-<hr>
-<h2 id="WSGI接口"><a href="#WSGI接口" class="headerlink" title="WSGI接口"></a>WSGI接口</h2><p>了解HTTP协议和HTML文档，一个Web应用的本质是：</p>
-<blockquote>
-<p>浏览器发送一个请求—&gt;服务器收到请求，生成一个HTML文档—&gt;服务器把HTML文档作为HTTP相应的Body发送给浏览器—&gt;浏览器收到HTTP响应，从HTTP Body中取出HTML并显示。</p>
-</blockquote>
-<p>最简单的WEB应用就是先把HTML用文件保存好，用一个线程的HTTP服务器软件接收用户请求，从文件中读取HTML，返回。Apache、Nginx、Lighttpd等这些常见的静态服务器就是做这件事情的。</p>
-<p> 如果要动态生成HTML，就需要把上述步骤自己实现。不过那些工作量很大，所以底层的代码由专门的服务器软件实现，我们用python专注于生成HTML文档。我们不希望接触到TCP连接。HTTP原始请求和响应格式，所以需要一个统一的接口，让我们专心用Python编写Web业务。</p>
-<p>这个接口就是WSGI：Web Server Gateway Interface，只要求开发者实现一个函数，就可以相应HTTP请求。最简单的实例如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">application</span><span class="params">(envision, start_response)</span>:</span></div><div class="line"><span class="meta">... </span>    start_response(<span class="string">'200 OK'</span>,[(<span class="string">'Content-Type'</span>, <span class="string">'text/html'</span>)])</div><div class="line"><span class="meta">... </span>    <span class="keyword">return</span> [<span class="string">b'&lt;h1&gt;Hello, world!&lt;/h1&gt;'</span>]</div><div class="line">...</div></pre></td></tr></table></figure></p>
-<p>上面的<code>application()</code>函数就是符合WSGI标准的一个HTTP处理函数，它接收两个参数：</p>
-<blockquote>
-<p>environ：一个包含所有HTTP请求信息的<code>dict</code>对象<br>start_response：一个发送HTTP响应的函数。</p>
-</blockquote>
-<p>在<code>application()</code>函数中，调用：</p>
-<blockquote>
-<p>start_response(‘200 OK’,[(‘Content-Type’, ‘text/html’)])</p>
-</blockquote>
-<p>就发送了HTTP响应的Header，注意Header只能发送一次，也就是只能调用一次<code>start_response()</code>函数。<code>start_response()</code>函数接收两个参数，一个是HTTP响应码，一个是一组<code>list</code>表示的HTTP Header，每个Header用一个包含两个<code>str</code>的<code>tuple</code>表示。</p>
-<p>通常情况下，都应该把<code>Connect-Type</code>头发送给浏览器。其他很多常用的HTTP Header也应该发送。</p>
-<p>然后函数的返回值<code>b&#39;&lt;h1&gt;Hello, world!&lt;/h1&gt;&#39;</code>将作为HTTP响应的Body发送给浏览器。</p>
-<p>有了WSGI，我们关心的就是如何从<code>environ</code>这个<code>dict</code>对象中拿到HTTP请求信息然后构造HTML，通过<code>start_response()</code>函数发送Header，最后返回Body。</p>
-<p>整个<code>application()</code>函数本身并没有涉及到任何解析HTTP的部分，也就是说，底层代码不需要我们自己编写，我们只负责在更高层次上考虑如何响应请求就可以了。并且<code>application()</code>必须由WSGI服务器来调用。有很多符合WSGI规范的服务器，我们可以挑选一个来用。Python内置了一个WSGI服务器，这个模块叫wsgiref，它是用纯Python编写的WSGI服务器的参考实现。</p>
-<h3 id="运行WSGI服务"><a href="#运行WSGI服务" class="headerlink" title="运行WSGI服务"></a>运行WSGI服务</h3><p>我们先编写hello.py，实现WEB应用程序的WSGI处理函数：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">application</span><span class="params">(environ, start_response)</span>:</span></div><div class="line">	start_response(<span class="string">'200 OK'</span>,[(<span class="string">'Content-Type'</span>,<span class="string">'text/html'</span>)])</div><div class="line">	<span class="keyword">return</span> [<span class="string">b'&lt;h1&gt;Hello, world!&lt;/h1&gt;'</span>]</div></pre></td></tr></table></figure></p>
-<p>然后再编写一个<code>server.py</code>，负责启动WSGI服务器，加载<code>application()</code>函数：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> wsgiref.simple_server <span class="keyword">import</span> make_server</div><div class="line"></div><div class="line"><span class="keyword">from</span> hello <span class="keyword">import</span> application</div><div class="line"></div><div class="line"><span class="comment">#创建一个服务器，IP地址为空，端口为8000，处理函数是application</span></div><div class="line">httpd = make_server(<span class="string">''</span>, <span class="number">8000</span>, application)</div><div class="line">print(<span class="string">'Serving HTTP on port 8000...'</span>)</div><div class="line"></div><div class="line">httpd.serve_forever()</div></pre></td></tr></table></figure></p>
-<p>两个文件在一个目录下，执行服务器程序：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++&gt;python server.py</div><div class="line">Serving HTTP on port <span class="number">8000.</span>..</div><div class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> - - [<span class="number">10</span>/Nov/<span class="number">2016</span> <span class="number">20</span>:<span class="number">47</span>:<span class="number">17</span>] <span class="string">"GET / HTTP/1.1"</span> <span class="number">200</span> <span class="number">22</span></div><div class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> - - [<span class="number">10</span>/Nov/<span class="number">2016</span> <span class="number">20</span>:<span class="number">47</span>:<span class="number">17</span>] <span class="string">"GET /favicon.ico HTTP/1.1"</span> <span class="number">200</span> <span class="number">22</span></div></pre></td></tr></table></figure></p>
-<p> 启动成功后，打开浏览器，输入<code>http://localhost:8000/</code>就可以看到结果了。<br> <img src="/img/1478782158828.png" alt="Alt text"></p>
-<p>按<code>Ctrl+c</code>终止服务器。</p>
-<p>为了丰富WEB内容，可以在<code>environ</code>里读取<code>PATH_INFO</code>,这样可以显示更加动态的内容：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">application</span><span class="params">(environ, start_response)</span>:</span></div><div class="line">	start_response(<span class="string">'200 OK'</span>,[(<span class="string">'Content-Type'</span>,<span class="string">'text/html'</span>)])</div><div class="line">	body=<span class="string">'&lt;h1&gt;Hello, %s!&lt;/h1&gt;'</span> % (environ[<span class="string">'PATH_INFO'</span>][<span class="number">1</span>:] <span class="keyword">or</span> <span class="string">'web'</span>)</div><div class="line">	<span class="keyword">return</span> [body.encode(<span class="string">'utf-8'</span>)]</div></pre></td></tr></table></figure></p>
-<p>你可以在地址栏输入用户名作为URL的一部分，将返回<code>Hello,xx!</code>：<br><img src="/img/1478782836071.png" alt="Alt text"></p>
-<p>无论多么复杂的WEB应用程序，入口都是一个WSGI处理函数。HTTP请求的所有输入信息都可以通过<code>environ</code>获得，HTTP响应的输出都可以通过<code>start_response()</code>加上函数返回值作为Body。复杂的Web应用程序，光靠一个WSGI函数来处理还是太底层了，我们需要在WSGI之上再抽象出Web框架，进一步简化开发。</p>
-<hr>
-<h2 id="使用Web框架"><a href="#使用Web框架" class="headerlink" title="使用Web框架"></a>使用Web框架</h2><p>了解了WSGI框架，我们发现：其实一个WebAPP就是写一个WSGI的处理函数，针对每个HTTP请求进行相应。</p>
-<p>但是如何处理HTTP请求不是问题，问题是如何处理100个不同的URL。</p>
-<p>每一个URL可以对应GET和POST请求，当然还有PUT、DELETE等请求，但是通常我们只考虑最常见的GET和POST请求。</p>
-<p>一个最简单的想法是从<code>environ</code>变量里取出HTTP请求的信息，然后逐个判断：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">application</span><span class="params">(environ, start_response)</span>:</span></div><div class="line">    method = environ[<span class="string">'REQUEST_METHOD'</span>]</div><div class="line">    path = environ[<span class="string">'PATH_INFO'</span>]</div><div class="line">    <span class="keyword">if</span> method==<span class="string">'GET'</span> <span class="keyword">and</span> path==<span class="string">'/'</span>:</div><div class="line">        <span class="keyword">return</span> handle_home(environ, start_response)</div><div class="line">    <span class="keyword">if</span> method==<span class="string">'POST'</span> <span class="keyword">and</span> path=<span class="string">'/signin'</span>:</div><div class="line">        <span class="keyword">return</span> handle_signin(environ, start_response)</div><div class="line">    ...</div></pre></td></tr></table></figure></p>
-<p>这样写下去代码是没法维护的，因为WSGI提供的接口虽然比HTTP接口高级了不少，但是和Web APP的处理逻辑相比，还是比较低级的，我们需要在WSGI接口之上能进一步抽象，让我们专注于用一个函数处理一个URL，至于URL到函数 的映射就交给WEB框架来做。</p>
-<p>Python提供了上百个开源的框架，最流行的为<a href="http://flask.pocoo.org/" target="_blank" rel="external">flask</a>。</p>
-<p>写一个<code>app.py</code>，处理三个URL，分别是：</p>
-<blockquote>
-<p>1、<code>GET /</code>：首页，返回<code>Home</code><br>2、<code>GET /signin</code>:登录页，显示登录表单<br>3、<code>POST /signin</code>：处理登录表单，显示登录结果。</p>
-</blockquote>
-<p>同一个URL<code>/signin</code>分别有GET和POST两种请求，映射到两个处理函数争取。Flask通过Python的装饰器在内部自动地把URL和函数关联起来：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</div><div class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> request</div><div class="line"></div><div class="line">app=Flask(__name__)</div><div class="line"></div><div class="line"><span class="meta">@app.route('/',methods=['GET', 'Post'])</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">home</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">return</span> <span class="string">'&lt;h1&gt;Home&lt;/h1&gt;'</span></div><div class="line"></div><div class="line"><span class="meta">@app.route('/signin', methods=['GET'])</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">signin_form</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">return</span> <span class="string">'''&lt;form action="/signin" method="post"&gt;</span></div><div class="line"><span class="string">			  &lt;p&gt;&lt;input name="username"&gt;&lt;/p&gt;</span></div><div class="line"><span class="string">			  &lt;p&gt;&lt;input name="password" type="password"&gt;&lt;/p&gt;</span></div><div class="line"><span class="string">			  &lt;p&gt;&lt;button type="submit"&gt;Sign In&lt;/p&gt;</span></div><div class="line"><span class="string">			  &lt;/form&gt;'''</span></div><div class="line"></div><div class="line"><span class="meta">@app.route('/signin', methods=['POST'])</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">signin</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">if</span> request.form[<span class="string">'username'</span>]==<span class="string">'admin'</span> <span class="keyword">and</span> request.form[<span class="string">'password'</span>]==<span class="string">'password'</span>:</div><div class="line">		<span class="keyword">return</span> <span class="string">'&lt;h3&gt;Hello, admin!&lt;/h3&gt;'</span></div><div class="line">	<span class="keyword">return</span> <span class="string">'&lt;h3&gt;Bad username or password.&lt;/h3&gt;'</span></div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</div><div class="line">	app.run()</div></pre></td></tr></table></figure></p>
-<p>运行<code>python app.py</code>，Flask自带的Server在端口5000上监听：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++&gt;python app.py</div><div class="line"> * Running on http://<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">5000</span>/ (Press CTRL+C to quit)</div><div class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> - - [<span class="number">11</span>/Nov/<span class="number">2016</span> <span class="number">18</span>:<span class="number">07</span>:<span class="number">12</span>] <span class="string">"GET / HTTP/1.1"</span> <span class="number">200</span> -</div><div class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> - - [<span class="number">11</span>/Nov/<span class="number">2016</span> <span class="number">18</span>:<span class="number">07</span>:<span class="number">12</span>] <span class="string">"GET /favicon.ico HTTP/1.1"</span> <span class="number">404</span> -</div></pre></td></tr></table></figure></p>
-<p>在浏览器首页输入：<code>http://localhost:5000/</code>:<br><img src="/img/1478858951071.png" alt="Alt text"></p>
-<p>首页显示正确，地址栏输入:<code>http://localhost:5000/signin</code>:<br><img src="/img/1478859009824.png" alt="Alt text"></p>
-<p>输入预设的用户名和口令：<br><img src="/img/1478859057990.png" alt="Alt text"><br><img src="/img/1478859073699.png" alt="Alt text"></p>
-<p>实际的Web APP应该拿到用户名和口令后，去数据库查询再对比，来判断用户是否能登录成功。除了Flask，常见的python框架还有：Django、web.py、Bottle、Tornado</p>
-<p>有了Web框架，我们在编写Web应用时，注意力就从WSGI处理函数转移到URL+对应的处理函数，编写变得简单。在编写URL处理函数时，除了配置URL外，从HTTP请求拿到用户数据也是非常重要的。Web框架都提供了自己的API来实现这些功能。Flask通过<code>request.form[&#39;name&#39;]</code>来获取表单的内容。</p>
-<hr>
-<h2 id="使用模板"><a href="#使用模板" class="headerlink" title="使用模板"></a>使用模板</h2><p>Web框架把我们从WSGI中拯救出来了，我们只需要不断地编写函数，带上URL，就可以继续Web APP的开发了。Web App最复杂的部分在HTML页面。HTML不仅要正确，还要通过CSS美化，再加上复杂的JavaScript脚本来实现各种交互和动画效果。用python的字符串是无法实现的。所以出现了模板技术。</p>
-<p>使用模板首先需要预先准备一个HTML文档，这个HTMl文档不是普通的HTML，而是嵌入了一些变量和指令，然后根据我们传入的数据，替换后得到最终的HTMl，发送给用户：<br><img src="/img/1478859739321.png" alt="Alt text"></p>
-<p>这就是传说中的MVC：Model-View-Controller，模型-视图-控制器</p>
-<p>Python处理URL的函数就是C：Controller，Controller负责业务逻辑，比如检查用户名是否存在，取出用户信息等等。包含变量<code></code>的模板就是V：View，View负责显示逻辑，通过简单地替换一些变量，View最终输出的就是用户看到的HTML。</p>
-<p>上面的例子中，Model就是一个<code>dict</code>：</p>
-<blockquote>
-<p>{ ‘name’: ‘Michael’}</p>
-</blockquote>
-<p>因为Python支持关键字参数，很多Web框架允许传入关键字参数，然后在框架内部组装出一个<code>dict</code>作为Model。</p>
-<p>对之前的app.py进行改写：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</div><div class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> request, render_template</div><div class="line"></div><div class="line">app=Flask(__name__)</div><div class="line"></div><div class="line"><span class="meta">@app.route('/',methods=['GET', 'Post'])</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">home</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">return</span> render_template(<span class="string">'home.html'</span>)</div><div class="line"></div><div class="line"><span class="meta">@app.route('/signin', methods=['GET'])</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">signin_form</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">return</span> render_template(<span class="string">'form.html'</span>)</div><div class="line"></div><div class="line"><span class="meta">@app.route('/signin', methods=['POST'])</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">signin</span><span class="params">()</span>:</span></div><div class="line">	username=request.form[<span class="string">'username'</span>]</div><div class="line">	password=request.form[<span class="string">'password'</span>]</div><div class="line">	<span class="keyword">if</span> username==<span class="string">'admin'</span> <span class="keyword">and</span> password==<span class="string">'password'</span>:</div><div class="line">		<span class="keyword">return</span> render_template(<span class="string">'signin-ok.html'</span>, username=username)</div><div class="line">	<span class="keyword">return</span> render_template(<span class="string">'form.html'</span>, message=<span class="string">'Bad username or password'</span>,username=username)</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</div><div class="line">	app.run()</div></pre></td></tr></table></figure></p>
-<p>Flask通过<code>render_template()</code>函数来实现模板的渲染。和Web框架类似，Python的模板也有很多中。Flask默认支持的模板是jinja2，用jinja2来编写模板home.html、显示首页：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">  &lt;title&gt;Home&lt;/title&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">  &lt;h1 style=&quot;font-style:italic&quot;&gt;Home&lt;/h1&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html</div></pre></td></tr></table></figure></p>
-<p>form.html:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">  &lt;title&gt;Please Sign In&lt;/title&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">  &#123;% if message %&#125;</div><div class="line">  &lt;p style=&quot;color:red&quot;&gt;&#123;&#123; message &#125;&#125;&lt;/p&gt;</div><div class="line">  &#123;% endif %&#125;</div><div class="line">  &lt;form action=&quot;/signin&quot; method=&quot;post&quot;&gt;</div><div class="line">    &lt;legend&gt;Please sign in:&lt;/legend&gt;</div><div class="line">    &lt;p&gt;&lt;input name=&quot;username&quot; placeholder=&quot;Username&quot; value=&quot;&#123;&#123; username &#125;&#125;&quot;&gt;&lt;/p&gt;</div><div class="line">    &lt;p&gt;&lt;input name=&quot;password&quot; placeholder=&quot;Password&quot; type=&quot;password&quot;&gt;&lt;/p&gt;</div><div class="line">    &lt;p&gt;&lt;button type=&quot;submit&quot;&gt;Sign In&lt;/button&gt;&lt;/p&gt;</div><div class="line">  &lt;/form&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
-<p>signin-ok.html:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">  &lt;title&gt;Welcome, &#123;&#123; username &#125;&#125;&lt;/title&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">  &lt;p&gt;Welcome, &#123;&#123; username &#125;&#125;!&lt;/p&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/09/10.正则表达式/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/09/10.正则表达式/" itemprop="url">10. 正则表达式</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-09T15:31:29+08:00">
-                2017-09-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h1><p>字符串是编程时涉及到最多的一种数据结构，对于字符串进行操作的需求几乎无处不在。比如判断一个字符串是否是合法的Email地址，虽然可以编程提取@前后的子串，再分别判断是否是单词和域名，但这样做不但麻烦，而且代码难以复用。</p>
-<p>正则表达式是一种用来匹配字符串的强有力的武器。它设计的思想是用一种描述性的语言来给字符串定义了一个规则，凡是符合规则 对字符串，我们就认为它匹配了，否则，该字符串就是不合法的。</p>
-<p>所以我们判断一个字符串是否是合法的Email的方法是：<br>1、创建一个匹配Email的正则表达式<br>2、用该正则表达式去匹配用户的输入来判断是否合法。</p>
-<p>因为正则表达式也是用字符串表示的，首先需要了解如何用字符来描述字符。</p>
-<p>在正则表达式中，如果直接给出字符，就是精确匹配。用<code>\d</code>可以匹配一个数字，<code>\w</code>可以匹配一个字母或数字，所以：</p>
-<blockquote>
-<p><code>00\d</code>可以匹配<code>007</code>，但是无法匹配<code>00A</code><br><code>\d\d\d</code>可以匹配<code>010</code><br><code>\w\w\d</code>可以匹配<code>py3</code><br><code>.</code>可以匹配任意字符，<code>py.</code>可以匹配<code>pyc``py0``py!</code>等。</p>
-</blockquote>
-<p>要匹配变长的字符，在正则表达式中，用<code>*</code>表示任意个字符，用<code>+</code>表示至少一个字符，用<code>?</code>表示0个或1个字符，用<code>{n}</code>表示n个字符，用<code>{n,m}</code>表示n-m个字符：</p>
-<p><code>\d{3}\s+\d{3,8}</code><br>1、<code>\d{3}</code>表示匹配三个数字<br>2、<code>\s</code>表示可以匹配一个空格（包括Tab等空白符），<code>\s+</code>表示至少有一个空白符，<br>3、<code>\d{3.8}</code>表示3-8个数字。<br>综合起来，上面的正则表达式可以匹配任意个空格隔开的带区号的电话号码。如果要匹配<code>010-12345</code>这样的号码时，由于<code>-</code>是特殊字符，在正则表达式中要用<code>\</code>转义，所以上面的正则为：<code>\d{3}\-\d{3,8}</code>，但是仍然无法匹配<code>010 - 12345</code>这样的电话号码。</p>
-<h2 id="进阶"><a href="#进阶" class="headerlink" title="进阶"></a>进阶</h2><p>要做更精确的匹配，可以用<code>[]</code>表示范围：</p>
-<blockquote>
-<p><code>[0-9a-zA-Z\_]</code>可以匹配一个数字、字母或者下划线<br><code>[0-9a-zA-Z\_]+</code>可以匹配至少由一个数字、字母或者下划线组成的祖字符串，比如<code>a100</code>，<code>0_z</code>，<code>Py300</code>等<br><code>[a-zA-z\_][0-9a-zA-Z\_]*</code>可以匹配由字母或下划线开头，后接任意个由一个数字、字母或者下划线组成的字符串。<br><code>[a-zA-z\_][0-9a-zA-Z\_]{0,19}</code>更精确地限制了变量的长度是1-20个字符</p>
-</blockquote>
-<p><code>A|B</code>可以匹配A或B，所以<code>(P|p)ython</code>可以匹配<code>python</code>或者<code>Python</code>。</p>
-<p><code>^</code>表示行的开头，<code>^\d</code>表示必须以数字开头。</p>
-<p><code>$</code>表示行的结束，<code>\d$</code>表示必须以数字结束。</p>
-<h2 id="re模块"><a href="#re模块" class="headerlink" title="re模块"></a>re模块</h2><p>Python提供<code>re</code>模块，包含所有正则表达式的功能。又有Python的字符串本身也用<code>\</code>转义，要特别注意：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>s=<span class="string">'ABC\\-001'</span></div><div class="line"><span class="comment">#python的字符串，对应的正则表达式'ABC\-001'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>s=<span class="string">r'ABC\-001'</span></div><div class="line"><span class="comment">#加r就不再考虑转义的问题</span></div></pre></td></tr></table></figure></p>
-<p>如何判断正则表达式是否匹配：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> re</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>re.match(<span class="string">r'^\d&#123;3&#125;\-\d&#123;3,8&#125;$'</span>, <span class="string">'010-12345'</span>)</div><div class="line">&lt;_sre.SRE_Match object; span=(<span class="number">0</span>, <span class="number">9</span>), match=<span class="string">'010-12345'</span>&gt;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>re.match(<span class="string">r'^\d&#123;3&#125;\-\d&#123;3,8&#125;$'</span>, <span class="string">'010 12345'</span>)</div></pre></td></tr></table></figure></p>
-<p><code>match()</code>方法判断是否匹配，如果匹配成功，返回一个Match对象，否则返回None。常见的判断方法是：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">test=<span class="string">'用户输入的字符串'</span></div><div class="line"><span class="keyword">if</span> re.match(<span class="string">r'正则表达式'</span>,est):</div><div class="line">	print(<span class="string">'ok'</span>)</div><div class="line"><span class="keyword">else</span>:</div><div class="line">	print(<span class="string">'failed'</span>)</div></pre></td></tr></table></figure></p>
-<h2 id="切分字符串"><a href="#切分字符串" class="headerlink" title="切分字符串"></a>切分字符串</h2><p>用正则表达式切分字符串比用固定的字符更灵活，正常的切分代码为：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">'a b    c'</span>.split()</div><div class="line">[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>]</div></pre></td></tr></table></figure></p>
-<p>无法识别连续的空格，用正则表达式：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>re.split(<span class="string">r'\s+'</span>,<span class="string">'a b   c'</span>)</div><div class="line">[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>]</div></pre></td></tr></table></figure></p>
-<p>无论多少个空格都可以正常分割。加入<code>,</code>：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>re.split(<span class="string">r'[\s\.]+'</span>,<span class="string">'a, b, c d'</span>)</div><div class="line">[<span class="string">'a,'</span>, <span class="string">'b,'</span>, <span class="string">'c'</span>, <span class="string">'d'</span>]</div></pre></td></tr></table></figure></p>
-<p>加入<code>;</code>：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>re.split(<span class="string">r'[\s\.\;]+'</span>,<span class="string">'a,b;; c d'</span>)</div><div class="line">[<span class="string">'a,b'</span>, <span class="string">'c'</span>, <span class="string">'d'</span>]</div></pre></td></tr></table></figure></p>
-<h2 id="分组"><a href="#分组" class="headerlink" title="分组"></a>分组</h2><p>除了简单地判断是否匹配之外，正则表达式还有提取子串的强大功能。用<code>()</code>表示的就是要提取的分组。比如：</p>
-<p><code>^(\d{3}-(\d{3,8}))$</code>分别定义了两个组，可以直接从匹配的字符串中提取出区号和本地号码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>m=re.match(<span class="string">r'^(\d&#123;3&#125;)-(\d&#123;3,8&#125;)$'</span>, <span class="string">'010-12345'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>m</div><div class="line">&lt;_sre.SRE_Match object; span=(<span class="number">0</span>, <span class="number">9</span>), match=<span class="string">'010-12345'</span>&gt;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>m.group(<span class="number">0</span>)</div><div class="line"><span class="string">'010-12345'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>m.group(<span class="number">1</span>)</div><div class="line"><span class="string">'010'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>m.group(<span class="number">2</span>)</div><div class="line"><span class="string">'12345'</span></div></pre></td></tr></table></figure></p>
-<p>如果正则表达式中定义了组，就可以在<code>Match</code>对象上用<code>group()</code>方法提取出子串来。</p>
-<p><code>group(0)</code>永远是原始字符串，<code>group(1)</code>、<code>group(2)</code>……表示第一个、第二个子串。</p>
-<p>提取子串很有用：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>t=<span class="string">'19:13:12'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>m = re.match(<span class="string">r'^(0[0-9]|1[0-9]|2[0-3]|[0-9])\:(0[0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9]|[0-9])\:(0[0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9]|[0-9])$'</span>, t)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>m.groups()</div><div class="line">(<span class="string">'19'</span>, <span class="string">'13'</span>, <span class="string">'12'</span>)</div></pre></td></tr></table></figure></p>
-<p>这个正则表达式可以直接识别合法的时间。但是有些时候，用正则表达式也无法做到完全验证，比如识别日期：</p>
-<blockquote>
-<p>‘^(0[1-9]|1[0-2]|[0-9])-(0[0-9]|1[0-9]|2[0-9]|3[0-1]|[0-9])$’</p>
-</blockquote>
-<p>对于<code>2-30</code>，<code>4-31</code>这样的非法日期，用正则还是识别不了。</p>
-<h2 id="贪婪匹配"><a href="#贪婪匹配" class="headerlink" title="贪婪匹配"></a>贪婪匹配</h2><p>正则匹配默认是贪婪匹配，也就是匹配尽可能多的字符。如匹配出数字后面的0：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>re.match(<span class="string">r'^(\d+)(0*)$'</span>,<span class="string">'102300'</span>).groups()</div><div class="line">(<span class="string">'102300'</span>, <span class="string">''</span>)</div></pre></td></tr></table></figure></p>
-<p>由于<code>\d+</code>采用贪婪匹配，直接把后面的0全匹配了，结果<code>0*</code>只能匹配空字符串了。</p>
-<p>必须让<code>\d+</code>采用非贪婪匹配，才能把后面的0匹配出来，加个<code>？</code>就可以了：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>re.match(<span class="string">r'^(\d+?)(0*)$'</span>,<span class="string">'102300'</span>).groups()</div><div class="line">(<span class="string">'1023'</span>, <span class="string">'00'</span>)</div></pre></td></tr></table></figure></p>
-<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>当我们在Python中使用正则表达式时，re模块会做两件事情：</p>
-<blockquote>
-<p>1、编译正则表达式，如果正则表达式的字符串本身不合法会报错。<br>2、用编译后的正则表达式去匹配字符串</p>
-</blockquote>
-<p>如果一个正则表达式要重复机器那次，出于效率的考虑，我们可以预编译该正则表达式，接下来重复使用时就不需要编译这个步骤了，直接匹配：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> re</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>re_telephone=re.compile(<span class="string">r'^(\d&#123;3&#125;)-(\d&#123;3,8&#125;)$'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>re_telephone.match(<span class="string">'010-12345'</span>).groups()</div><div class="line">(<span class="string">'010'</span>, <span class="string">'12345'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>re_telephone.match(<span class="string">'010-8989'</span>).groups()</div><div class="line">(<span class="string">'010'</span>, <span class="string">'8989'</span>)</div></pre></td></tr></table></figure></p>
-<p>编译后生成Regular Expression对象，由于该对象自己包含了正则表达式，所以调用对应的方法时不用给出正则字符串。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -4663,7 +4370,7 @@ String(request.getParamter(&quot;userName&quot;).getBytes(&quot;ISO8859-1&quot;)
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-count">34</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

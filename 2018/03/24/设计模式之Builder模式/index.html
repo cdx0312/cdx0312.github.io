@@ -79,7 +79,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Java," />
+  <meta name="keywords" content="Java,design patterns," />
 
 
 
@@ -95,19 +95,19 @@
 
 
 
-<meta name="description" content="模式定义讲一个复杂对象的构建与他的表示分离，使得同样的构建过程可以创建不同的表示。 模式使用场景 相同的方法，不同的执行顺序，产生不同的时间结果时。 多个部件或零件，都可以装配到一个对象中，但是产生的结果又不相同时。 产品类非常复杂，或者产品类中的调用顺序不同产生了不同的效能时。  UML图 角色描述* Product产品类：产品的抽象类 * Builder：抽象类，规范产品的组件，一般由子类实现">
-<meta name="keywords" content="Java">
+<meta name="description" content="模式定义将一个复杂对象的构建与他的表示分离，使得同样的构建过程可以创建不同的表示。 模式使用场景 相同的方法，不同的执行顺序，产生不同的时间结果时。 多个部件或零件，都可以装配到一个对象中，但是产生的结果又不相同时。 产品类非常复杂，或者产品类中的调用顺序不同产生了不同的效能时。  UML图 角色描述* Product产品类：产品的抽象类 * Builder：抽象类，规范产品的组件，一般由子类实现">
+<meta name="keywords" content="Java,design patterns">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Builder模式">
-<meta property="og:url" content="http://yoursite.com/2018/03/24/Builder模式/index.html">
+<meta property="og:title" content="设计模式之Builder模式">
+<meta property="og:url" content="http://yoursite.com/2018/03/24/设计模式之Builder模式/index.html">
 <meta property="og:site_name" content="小黄">
-<meta property="og:description" content="模式定义讲一个复杂对象的构建与他的表示分离，使得同样的构建过程可以创建不同的表示。 模式使用场景 相同的方法，不同的执行顺序，产生不同的时间结果时。 多个部件或零件，都可以装配到一个对象中，但是产生的结果又不相同时。 产品类非常复杂，或者产品类中的调用顺序不同产生了不同的效能时。  UML图 角色描述* Product产品类：产品的抽象类 * Builder：抽象类，规范产品的组件，一般由子类实现">
+<meta property="og:description" content="模式定义将一个复杂对象的构建与他的表示分离，使得同样的构建过程可以创建不同的表示。 模式使用场景 相同的方法，不同的执行顺序，产生不同的时间结果时。 多个部件或零件，都可以装配到一个对象中，但是产生的结果又不相同时。 产品类非常复杂，或者产品类中的调用顺序不同产生了不同的效能时。  UML图 角色描述* Product产品类：产品的抽象类 * Builder：抽象类，规范产品的组件，一般由子类实现">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/img/dp-factory-builder.png">
-<meta property="og:updated_time" content="2018-03-24T10:07:21.777Z">
+<meta property="og:updated_time" content="2018-03-25T05:44:09.257Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Builder模式">
-<meta name="twitter:description" content="模式定义讲一个复杂对象的构建与他的表示分离，使得同样的构建过程可以创建不同的表示。 模式使用场景 相同的方法，不同的执行顺序，产生不同的时间结果时。 多个部件或零件，都可以装配到一个对象中，但是产生的结果又不相同时。 产品类非常复杂，或者产品类中的调用顺序不同产生了不同的效能时。  UML图 角色描述* Product产品类：产品的抽象类 * Builder：抽象类，规范产品的组件，一般由子类实现">
+<meta name="twitter:title" content="设计模式之Builder模式">
+<meta name="twitter:description" content="模式定义将一个复杂对象的构建与他的表示分离，使得同样的构建过程可以创建不同的表示。 模式使用场景 相同的方法，不同的执行顺序，产生不同的时间结果时。 多个部件或零件，都可以装配到一个对象中，但是产生的结果又不相同时。 产品类非常复杂，或者产品类中的调用顺序不同产生了不同的效能时。  UML图 角色描述* Product产品类：产品的抽象类 * Builder：抽象类，规范产品的组件，一般由子类实现">
 <meta name="twitter:image" content="http://yoursite.com/img/dp-factory-builder.png">
 
 
@@ -138,13 +138,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/03/24/Builder模式/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/03/24/设计模式之Builder模式/"/>
 
 
 
 
 
-  <title>Builder模式 | 小黄</title>
+  <title>设计模式之Builder模式 | 小黄</title>
   
 
 
@@ -281,7 +281,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/24/Builder模式/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/24/设计模式之Builder模式/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="cdx">
@@ -298,7 +298,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Builder模式</h1>
+          <h1 class="post-title" itemprop="name headline">设计模式之Builder模式</h1>
         
 
         <div class="post-meta">
@@ -340,6 +340,17 @@
 
                 
                 
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/design-patterns/" itemprop="url" rel="index">
+                    <span itemprop="name">design patterns</span>
+                  </a>
+                </span>
+
+                
+                
               
             </span>
           
@@ -370,7 +381,7 @@
       
 
       
-        <h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>讲一个复杂对象的构建与他的表示分离，使得同样的构建过程可以创建不同的表示。</p>
+        <h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>将一个复杂对象的构建与他的表示分离，使得同样的构建过程可以创建不同的表示。</p>
 <h1 id="模式使用场景"><a href="#模式使用场景" class="headerlink" title="模式使用场景"></a>模式使用场景</h1><ol>
 <li>相同的方法，不同的执行顺序，产生不同的时间结果时。</li>
 <li>多个部件或零件，都可以装配到一个对象中，但是产生的结果又不相同时。</li>
@@ -393,6 +404,21 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public class Director &#123;</div><div class="line">    Builder builder = null;</div><div class="line"></div><div class="line">    public Director(Builder builder) &#123;</div><div class="line">        this.builder = builder;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void construct(int cpu, int ram, String os) &#123;</div><div class="line">        builder.buildCPU(cpu);</div><div class="line">        builder.buildRAM(ram);</div><div class="line">        builder.buildOs(os);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>Test</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Builder builder = new AppleBuilder();</div><div class="line">        Director director = new Director(builder);</div><div class="line">        director.construct(4,2,&quot;Max OS X 10.0.3&quot;);</div><div class="line">        System.out.println(builder.create().toString());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="优点和缺点"><a href="#优点和缺点" class="headerlink" title="优点和缺点"></a>优点和缺点</h2><ul>
+<li><p>优点：</p>
+<ul>
+<li>良好的封装性，使用Builder模式可以使客户端不必知道产品内部组成的细节。</li>
+<li>建造者独立，容易扩展</li>
+<li>在对象创建过程中会使用到系统中的其他对象，这些对象在产品的创建过程中不易得到。</li>
+</ul>
+</li>
+<li><p>缺点：</p>
+<ul>
+<li>会产生多余的Builder对象和Director对象，消耗内存</li>
+<li>对象的构建过程暴露。</li>
+</ul>
+</li>
+</ul>
 
       
     </div>
@@ -446,6 +472,8 @@
           
             <a href="/tags/Java/" rel="tag"># Java</a>
           
+            <a href="/tags/design-patterns/" rel="tag"># design patterns</a>
+          
         </div>
       
 
@@ -466,6 +494,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/25/设计模式之原型模式/" rel="prev" title="设计模式之原型模式">
+                设计模式之原型模式 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -545,7 +577,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">34</span>
+                <span class="site-state-item-count">36</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -556,7 +588,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">12</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -567,7 +599,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -616,7 +648,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#模式定义"><span class="nav-number">1.</span> <span class="nav-text">模式定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模式使用场景"><span class="nav-number">2.</span> <span class="nav-text">模式使用场景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#UML图"><span class="nav-number">3.</span> <span class="nav-text">UML图</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#角色描述"><span class="nav-number">3.1.</span> <span class="nav-text">角色描述</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实现"><span class="nav-number">4.</span> <span class="nav-text">实现</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#模式定义"><span class="nav-number">1.</span> <span class="nav-text">模式定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模式使用场景"><span class="nav-number">2.</span> <span class="nav-text">模式使用场景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#UML图"><span class="nav-number">3.</span> <span class="nav-text">UML图</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#角色描述"><span class="nav-number">3.1.</span> <span class="nav-text">角色描述</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实现"><span class="nav-number">4.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#优点和缺点"><span class="nav-number">4.1.</span> <span class="nav-text">优点和缺点</span></a></li></ol></li></ol></div>
             
 
           </div>

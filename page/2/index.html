@@ -278,6 +278,857 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/22/Spring_Data/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/11/22/Spring_Data/" itemprop="url">Spring Data</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-22T20:57:32+08:00">
+                2017-11-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/Spring/" itemprop="url" rel="index">
+                    <span itemprop="name">Spring</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><p>  Spring Data JPA 是 Spring Data 系列的一部分，可以轻松实现基于 JPA 的存储库。 该模块处理对基于 JPA 的数据访问层的增强的支持。 这使得使用数据访问技术构建Spring 的应用程序变得更加容易。</p>
+<h1 id="传统方式访问数据库JDBC驱动"><a href="#传统方式访问数据库JDBC驱动" class="headerlink" title="传统方式访问数据库JDBC驱动"></a>传统方式访问数据库JDBC驱动</h1><h2 id="创建Maven项目"><a href="#创建Maven项目" class="headerlink" title="创建Maven项目"></a>创建Maven项目</h2><ul>
+<li>maven工程的目录结构<br>|– pom.xml<br>|– src<br>|   |– main<br>|   |   <code>-- java
+|   |</code>– resources<br>|   |   <code>-- filters
+|</code>– test<br>|   |   <code>-- java
+|   |</code>– resources<br>|   |   <code>-- filters
+|</code>– it<br>|   <code>-- assembly
+|</code>– site<br>|– LICENSE.txt<br>|– NOTICE.txt<br>|– README.txt</li>
+<li>添加依赖<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">&lt;!--MySQL Driver--&gt;</div><div class="line">      &lt;dependency&gt;</div><div class="line">          &lt;groupId&gt;mysql&lt;/groupId&gt;</div><div class="line">          &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;</div><div class="line">          &lt;version&gt;5.1.38&lt;/version&gt;</div><div class="line">      &lt;/dependency&gt;</div><div class="line">      &lt;!--junit--&gt;</div><div class="line">      &lt;dependency&gt;</div><div class="line">          &lt;groupId&gt;junit&lt;/groupId&gt;</div><div class="line">          &lt;artifactId&gt;junit&lt;/artifactId&gt;</div><div class="line">          &lt;version&gt;4.10&lt;/version&gt;</div><div class="line">          &lt;scope&gt;test&lt;/scope&gt;</div><div class="line">&lt;/dependency&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="数据表准备"><a href="#数据表准备" class="headerlink" title="数据表准备"></a>数据表准备</h2><ul>
+<li>Create database spring_data;</li>
+<li>create table student(<br>   id int not null auto_increment,<br>   name varchar(20) not null,<br>   age int not null,<br>   primary key(id)<br>  );</li>
+<li>Insert into student (name, age) values (“zhangsan”,20);</li>
+<li>Insert into student (name, age) values (“lisi”,21);</li>
+<li>Insert into student (name, age) values (“wangwu”,22);<h2 id="开发JDBCUtil工具类"><a href="#开发JDBCUtil工具类" class="headerlink" title="开发JDBCUtil工具类"></a>开发JDBCUtil工具类</h2></li>
+<li>获取Connection，关闭Connection、Statement、ResultSet</li>
+<li>注意事项<br> 配置的属性放置在配置文件中，通过代码的方式将配置文件中的属性加载进程序<h2 id="建立对象模型，DAO"><a href="#建立对象模型，DAO" class="headerlink" title="建立对象模型，DAO"></a>建立对象模型，DAO</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line">package com.imooc.domain;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Student实体类</div><div class="line"> */</div><div class="line">public class Student &#123;</div><div class="line">    /**</div><div class="line">     * 主键字段</div><div class="line">     */</div><div class="line">    private int id;</div><div class="line">    /**</div><div class="line">     * 姓名</div><div class="line">     */</div><div class="line">    private String name;</div><div class="line">    /**</div><div class="line">     * 年龄</div><div class="line">     */</div><div class="line">    private int age;</div><div class="line"></div><div class="line">    public int getId() &#123;</div><div class="line">        return id;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setId(int id) &#123;</div><div class="line">        this.id = id;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String getName() &#123;</div><div class="line">        return name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setName(String name) &#123;</div><div class="line">        this.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public int getAge() &#123;</div><div class="line">        return age;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setAge(int age) &#123;</div><div class="line">        this.age = age;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public String toString() &#123;</div><div class="line">        return &quot;Student&#123;&quot; +</div><div class="line">                &quot;id=&quot; + id +</div><div class="line">                &quot;, name=&apos;&quot; + name + &apos;\&apos;&apos; +</div><div class="line">                &quot;, age=&quot; + age +</div><div class="line">                &apos;&#125;&apos;;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<hr>
+<h1 id="使用Spring-JDBC的方式操作数据库"><a href="#使用Spring-JDBC的方式操作数据库" class="headerlink" title="使用Spring JDBC的方式操作数据库"></a>使用Spring JDBC的方式操作数据库</h1><h2 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&lt;dependency&gt;</div><div class="line">    &lt;groupId&gt;org.springframework&lt;/groupId&gt;</div><div class="line">    &lt;artifactId&gt;spring-jdbc&lt;/artifactId&gt;</div><div class="line">    &lt;version&gt;4.3.5.RELEASE&lt;/version&gt;</div><div class="line">&lt;/dependency&gt;</div><div class="line">&lt;dependency&gt;</div><div class="line">    &lt;groupId&gt;org.springframework&lt;/groupId&gt;</div><div class="line">    &lt;artifactId&gt;spring-context&lt;/artifactId&gt;</div><div class="line">    &lt;version&gt;4.3.5.RELEASE&lt;/version&gt;</div><div class="line">&lt;/dependency&gt;</div></pre></td></tr></table></figure>
+<h2 id="配置beans-xml"><a href="#配置beans-xml" class="headerlink" title="配置beans.xml"></a>配置beans.xml</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;dataSource&quot; class=&quot;org.springframework.jdbc.datasource.DriverManagerDataSource&quot;&gt;</div><div class="line">    &lt;property name=&quot;driverClassName&quot; value=&quot;com.mysql.jdbc.Driver&quot;/&gt;</div><div class="line">    &lt;property name=&quot;url&quot; value=&quot;jdbc:mysql://localhost:3306/spring_data&quot;/&gt;</div><div class="line">    &lt;property name=&quot;username&quot; value=&quot;root&quot;/&gt;</div><div class="line">    &lt;property name=&quot;password&quot; value=&quot;linux&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div><div class="line"></div><div class="line">&lt;bean id=&quot;jdbcTemplate&quot; class=&quot;org.springframework.jdbc.core.JdbcTemplate&quot;&gt;</div><div class="line">    &lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div><div class="line"></div><div class="line">&lt;bean id=&quot;studentDAO&quot; class=&quot;com.imooc.dao.StudentDAOSprignJDBCImpl&quot;&gt;</div><div class="line">    &lt;property name=&quot;jdbcTemplate&quot; ref=&quot;jdbcTemplate&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
+<h2 id="开发Spring-JDBC版本的query和save方法"><a href="#开发Spring-JDBC版本的query和save方法" class="headerlink" title="开发Spring JDBC版本的query和save方法"></a>开发Spring JDBC版本的query和save方法</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line">package com.imooc.dao;</div><div class="line"></div><div class="line">import com.imooc.domain.Student;</div><div class="line">import org.springframework.jdbc.core.JdbcTemplate;</div><div class="line">import org.springframework.jdbc.core.RowCallbackHandler;</div><div class="line"></div><div class="line">import java.sql.ResultSet;</div><div class="line">import java.sql.SQLException;</div><div class="line">import java.util.ArrayList;</div><div class="line">import java.util.List;</div><div class="line"></div><div class="line">/**</div><div class="line"> * StudentDAO访问接口实现类：通过SPring JDBC的方式操作</div><div class="line"> */</div><div class="line">public class StudentDAOSprignJDBCImpl implements StudentDAO&#123;</div><div class="line"></div><div class="line">    private JdbcTemplate jdbcTemplate;</div><div class="line"></div><div class="line">    public List&lt;Student&gt; query() &#123;</div><div class="line">        final List&lt;Student&gt; students = new ArrayList&lt;Student&gt;();</div><div class="line">        String sql = &quot;select id, name, age from student&quot;;</div><div class="line">        jdbcTemplate.query(sql, new RowCallbackHandler() &#123;</div><div class="line">            public void processRow(ResultSet rs) throws SQLException &#123;</div><div class="line">                Student student = new Student();</div><div class="line">                int id = rs.getInt(&quot;id&quot;);</div><div class="line">                String name = rs.getString(&quot;name&quot;);</div><div class="line">                int age = rs.getInt(&quot;age&quot;);</div><div class="line"></div><div class="line">                student.setId(id);</div><div class="line">                student.setAge(age);</div><div class="line">                student.setName(name);</div><div class="line"></div><div class="line">                students.add(student);</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line"></div><div class="line">        return students;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void save(Student student) &#123;</div><div class="line">        String sql = &quot;insert into student (name, age) values (?, ?)&quot;;</div><div class="line">        jdbcTemplate.update(sql, student.getName(), student.getAge());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public JdbcTemplate getJdbcTemplate() &#123;</div><div class="line">        return jdbcTemplate;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) &#123;</div><div class="line">        this.jdbcTemplate = jdbcTemplate;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="传统方式访问数据库的缺点"><a href="#传统方式访问数据库的缺点" class="headerlink" title="传统方式访问数据库的缺点"></a>传统方式访问数据库的缺点</h2><ol>
+<li>DAO里面代码很多</li>
+<li>DAOImpl有很多重复的代码</li>
+<li>开发分页和其他功能需要重新封装</li>
+</ol>
+<hr>
+<h1 id="Spring-Data-JPA快速起步"><a href="#Spring-Data-JPA快速起步" class="headerlink" title="Spring Data JPA快速起步"></a>Spring Data JPA快速起步</h1><h2 id="开发环境搭建"><a href="#开发环境搭建" class="headerlink" title="开发环境搭建"></a>开发环境搭建</h2><h3 id="pom-xml"><a href="#pom-xml" class="headerlink" title="pom.xml"></a>pom.xml</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line">&lt;dependencies&gt;</div><div class="line">    &lt;!--MySQL Driver--&gt;</div><div class="line">    &lt;dependency&gt;</div><div class="line">        &lt;groupId&gt;mysql&lt;/groupId&gt;</div><div class="line">        &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;</div><div class="line">        &lt;version&gt;5.1.38&lt;/version&gt;</div><div class="line">    &lt;/dependency&gt;</div><div class="line"></div><div class="line">    &lt;!--junit--&gt;</div><div class="line">    &lt;dependency&gt;</div><div class="line">        &lt;groupId&gt;junit&lt;/groupId&gt;</div><div class="line">        &lt;artifactId&gt;junit&lt;/artifactId&gt;</div><div class="line">        &lt;version&gt;4.10&lt;/version&gt;</div><div class="line">    &lt;/dependency&gt;</div><div class="line"></div><div class="line">    &lt;!--spring--&gt;</div><div class="line">    &lt;dependency&gt;</div><div class="line">        &lt;groupId&gt;org.springframework&lt;/groupId&gt;</div><div class="line">        &lt;artifactId&gt;spring-jdbc&lt;/artifactId&gt;</div><div class="line">        &lt;version&gt;4.3.5.RELEASE&lt;/version&gt;</div><div class="line">    &lt;/dependency&gt;</div><div class="line"></div><div class="line">    &lt;dependency&gt;</div><div class="line">        &lt;groupId&gt;org.springframework&lt;/groupId&gt;</div><div class="line">        &lt;artifactId&gt;spring-context&lt;/artifactId&gt;</div><div class="line">        &lt;version&gt;4.3.5.RELEASE&lt;/version&gt;</div><div class="line">    &lt;/dependency&gt;</div><div class="line"></div><div class="line">    &lt;!--spring data jpa--&gt;</div><div class="line">    &lt;dependency&gt;</div><div class="line">        &lt;groupId&gt;org.springframework.data&lt;/groupId&gt;</div><div class="line">        &lt;artifactId&gt;spring-data-jpa&lt;/artifactId&gt;</div><div class="line">        &lt;version&gt;1.8.0.RELEASE&lt;/version&gt;</div><div class="line">    &lt;/dependency&gt;</div><div class="line"></div><div class="line">    &lt;dependency&gt;</div><div class="line">        &lt;groupId&gt;org.hibernate&lt;/groupId&gt;</div><div class="line">        &lt;artifactId&gt;hibernate-entitymanager&lt;/artifactId&gt;</div><div class="line">        &lt;version&gt;4.3.6.Final&lt;/version&gt;</div><div class="line">    &lt;/dependency&gt;</div><div class="line"></div><div class="line">&lt;/dependencies&gt;</div></pre></td></tr></table></figure>
+<h3 id="beans-xml"><a href="#beans-xml" class="headerlink" title="beans.xml"></a>beans.xml</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</div><div class="line"></div><div class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</div><div class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</div><div class="line">       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;</div><div class="line">       xmlns:tx=&quot;http://www.springframework.org/schema/tx&quot;</div><div class="line">       xmlns:jpa=&quot;http://www.springframework.org/schema/data/jpa&quot;</div><div class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd</div><div class="line">    http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.3.xsd</div><div class="line">    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd</div><div class="line">    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd&quot;&gt;</div><div class="line"></div><div class="line">    &lt;!--配置数据源--&gt;</div><div class="line">    &lt;bean id=&quot;dataSource&quot; class=&quot;org.springframework.jdbc.datasource.DriverManagerDataSource&quot;&gt;</div><div class="line">        &lt;property name=&quot;driverClassName&quot; value=&quot;com.mysql.jdbc.Driver&quot;/&gt;</div><div class="line">        &lt;property name=&quot;url&quot; value=&quot;jdbc:mysql://localhost:3306/spring_data&quot;/&gt;</div><div class="line">        &lt;property name=&quot;username&quot; value=&quot;root&quot;/&gt;</div><div class="line">        &lt;property name=&quot;password&quot; value=&quot;linux&quot;/&gt;</div><div class="line">    &lt;/bean&gt;</div><div class="line">    &lt;!--配置EntityManagerFactory--&gt;</div><div class="line">    &lt;bean id=&quot;entityManagerFactory&quot; class=&quot;org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean&quot;&gt;</div><div class="line">        &lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot;/&gt;</div><div class="line">        &lt;property name=&quot;jpaVendorAdapter&quot;&gt;</div><div class="line">            &lt;bean class=&quot;org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter&quot;/&gt;</div><div class="line">        &lt;/property&gt;</div><div class="line">        &lt;property name=&quot;packagesToScan&quot; value=&quot;com.imooc&quot;/&gt;</div><div class="line"></div><div class="line">        &lt;property name=&quot;jpaProperties&quot;&gt;</div><div class="line">            &lt;props&gt;</div><div class="line">                &lt;prop key=&quot;hibernate.ejb.naming_strategy&quot;&gt;org.hibernate.cfg.ImprovedNamingStrategy&lt;/prop&gt;</div><div class="line">                &lt;prop key=&quot;hibernate.dialect&quot;&gt;org.hibernate.dialect.MySQL5InnoDBDialect&lt;/prop&gt;</div><div class="line">                &lt;prop key=&quot;hibernate.show_sql&quot;&gt;true&lt;/prop&gt;</div><div class="line">                &lt;prop key=&quot;hibernate.format_sql&quot;&gt;true&lt;/prop&gt;</div><div class="line">                &lt;prop key=&quot;hibernate.hbm2ddl.auto&quot;&gt;update&lt;/prop&gt;</div><div class="line">            &lt;/props&gt;</div><div class="line">        &lt;/property&gt;</div><div class="line">    &lt;/bean&gt;</div><div class="line">    &lt;!--配置事务管理器--&gt;</div><div class="line">    &lt;bean id=&quot;transactionManager&quot; class=&quot;org.springframework.orm.jpa.JpaTransactionManager&quot;&gt;</div><div class="line">        &lt;property name=&quot;entityManagerFactory&quot; ref=&quot;entityManagerFactory&quot;/&gt;</div><div class="line">    &lt;/bean&gt;</div><div class="line"></div><div class="line">    &lt;!--支持注解的事务--&gt;</div><div class="line">    &lt;tx:annotation-driven transaction-manager=&quot;transactionManager&quot;/&gt;</div><div class="line"></div><div class="line">    &lt;!--配置Spring data--&gt;</div><div class="line">    &lt;jpa:repositories base-package=&quot;com.imooc&quot; entity-manager-factory-ref=&quot;entityManagerFactory&quot;/&gt;</div><div class="line"></div><div class="line">    &lt;context:component-scan base-package=&quot;com.imooc&quot; /&gt;</div><div class="line">&lt;/beans&gt;</div></pre></td></tr></table></figure>
+<hr>
+<h1 id="Spring-data-JPA进阶"><a href="#Spring-data-JPA进阶" class="headerlink" title="Spring data JPA进阶"></a>Spring data JPA进阶</h1><h2 id="Repository接口讲解"><a href="#Repository接口讲解" class="headerlink" title="Repository接口讲解"></a>Repository接口讲解</h2><ol>
+<li>Repository是Spring Data的核心接口，不提供任何方法</li>
+<li>Public interface Repository<t, id="" extends="" serializable="">{ }</t,></li>
+<li><code>@RepositoryDefinition</code>注解的使用</li>
+<li>Repository是一个空接口，也叫做标记接口（没有包含方法声明的接口）</li>
+<li>如果我们定义的EmployeeRepository extends Repository，如果我们自己的接口没有继承Repository接口，会报错</li>
+<li>添加注解能够达到不用extends Repository接口 的功能<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@RepositoryDefinition(domainClass = Employee.class, idClass = Integer.class)</div><div class="line">public interface EmployeeRepository&#123;</div><div class="line">    public Employee findByName(String name);</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="Repository子接口讲解"><a href="#Repository子接口讲解" class="headerlink" title="Repository子接口讲解"></a>Repository子接口讲解</h2><ol>
+<li>CrudRepository：继承Repository，实现CRUD相关的方法</li>
+<li>PagingAndSortingRepositoy：继承CrudRepository，实现了分页排序相关的方法</li>
+<li>JPARepository：继承PagingAndSortingRepository，实现JPA规范相关的方法</li>
+</ol>
+<h2 id="Repository中查询方法定义规则和使用"><a href="#Repository中查询方法定义规则和使用" class="headerlink" title="Repository中查询方法定义规则和使用"></a>Repository中查询方法定义规则和使用</h2><ul>
+<li><img src="./spring_data_repository_query_1" alt="Alt text"></li>
+<li><img src="./spring_data_repository_query_2" alt="Alt text"></li>
+<li><p>接口代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">public interface EmployeeRepository extends Repository&lt;Employee, Integer&gt;&#123;</div><div class="line">    public Employee findByName(String name);</div><div class="line">//    where name like ?% and age &lt; ?</div><div class="line">    public List&lt;Employee&gt; findByNameStartingWithAndAgeLessThan(String name, Integer age);</div><div class="line">    //    where name like %? and age &lt; ?</div><div class="line">    public List&lt;Employee&gt; findByNameEndingWithAndAgeLessThan(String name, Integer age);</div><div class="line">//    where name in (?,?) or age &lt; ?</div><div class="line">    public List&lt;Employee&gt; findByNameInOrAgeLessThan(List&lt;String&gt; names, Integer age);</div><div class="line">    //    where name in (?,?) and age &lt; ?</div><div class="line">    public List&lt;Employee&gt; findByNameInAndAgeLessThan(List&lt;String&gt; names, Integer age);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>按照方法命名规则来使用的话的弊端：</p>
+<ol>
+<li>方法名比较常：约定大于配置</li>
+<li>对于一些复杂查询，很难实现</li>
+</ol>
+</li>
+</ul>
+<h2 id="4-Query注解的使用"><a href="#4-Query注解的使用" class="headerlink" title="4. Query注解的使用"></a>4. Query注解的使用</h2><pre><code>1. 在Repository方法中使用，不需要遵循查询方法命名规则
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">@Query(&quot;select o from Employee o where id=(select max (id) from Employee t1)&quot;)</div><div class="line"> public Employee getEmployeeByMaxId();</div></pre></td></tr></table></figure>
+<pre><code>2. 只需要将@Query定义在Repository中的方法之上即可
+    3. 支持命名参数和索引参数的使用
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">  @Query(&quot;select o from Employee o where o.name=?1 and o.age=?2&quot;)</div><div class="line">public List&lt;Employee&gt; queryParams1(String name, Integer age);</div><div class="line"></div><div class="line">@Query(&quot;select o from Employee o where o.name=:name and o.age=:age&quot;)</div><div class="line">public List&lt;Employee&gt; queryParams2(@Param(&quot;name&quot;) String name,</div><div class="line">                                   @Param(&quot;age&quot;) Integer age);</div></pre></td></tr></table></figure>
+<pre><code>4. 支持本地查询
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">      @Query(nativeQuery = true, value = &quot;select COUNT(1) from employee&quot;)</div><div class="line">public long getCount();</div></pre></td></tr></table></figure>
+<h2 id="5-更新和删除操作整合事务的使用"><a href="#5-更新和删除操作整合事务的使用" class="headerlink" title="5. 更新和删除操作整合事务的使用"></a>5. 更新和删除操作整合事务的使用</h2><pre><code>  1. `@Modifying`注解使用
+  2. `@Modifying`结合@Query注解执行更新操作
+  2. `@Transactional`在Spring Data中的使用
+  4. 事务在Spring中的使用：
+      * 事务一般是在Service层
+* @Query、@Modifying、@Transactional的综合使用
+</code></pre><hr>
+<h1 id="Spring-Data-JPA高级"><a href="#Spring-Data-JPA高级" class="headerlink" title="Spring Data JPA高级"></a>Spring Data JPA高级</h1><h2 id="CrudRepository接口使用详解"><a href="#CrudRepository接口使用详解" class="headerlink" title="CrudRepository接口使用详解"></a>CrudRepository接口使用详解</h2><h2 id="PagingAndSortingRepository接口使用详解"><a href="#PagingAndSortingRepository接口使用详解" class="headerlink" title="PagingAndSortingRepository接口使用详解"></a>PagingAndSortingRepository接口使用详解</h2><ol>
+<li>分页和排序</li>
+<li><p>带排序的查询</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">@Test</div><div class="line">public void testPage() &#123;</div><div class="line">    //page: index是从0开始的</div><div class="line">    Pageable pageable = new PageRequest(0,5);</div><div class="line"></div><div class="line">    Page&lt;Employee&gt; page = employeePagingAndSortingRepository.findAll(pageable);</div><div class="line"></div><div class="line">    System.out.println(&quot;查询的总页数：&quot; + page.getTotalPages());</div><div class="line">    System.out.println(&quot;查询的总记录数：&quot; + page.getTotalElements());</div><div class="line">    System.out.println(&quot;查询当前第几页：&quot; + page.getNumber() + 1);</div><div class="line">    System.out.println(&quot;查询的当前页面的集合：&quot; + page.getContent());</div><div class="line">    System.out.println(&quot;查询的当前页面的记录数：&quot; + page.getNumberOfElements());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>带排序的分页查询</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">@Test</div><div class="line">   public void testPageAndSort() &#123;</div><div class="line">       Sort.Order order = new Sort.Order(Sort.Direction.DESC, &quot;id&quot;);</div><div class="line">       Sort sort = new Sort(order);</div><div class="line">       //page: index是从0开始的</div><div class="line">       Pageable pageable = new PageRequest(0,5, sort);</div><div class="line"></div><div class="line">       Page&lt;Employee&gt; page = employeePagingAndSortingRepository.findAll(pageable);</div><div class="line"></div><div class="line">       System.out.println(&quot;查询的总页数：&quot; + page.getTotalPages());</div><div class="line">       System.out.println(&quot;查询的总记录数：&quot; + page.getTotalElements());</div><div class="line">       System.out.println(&quot;查询当前第几页：&quot; + page.getNumber() + 1);</div><div class="line">       System.out.println(&quot;查询的当前页面的集合：&quot; + page.getContent());</div><div class="line">       System.out.println(&quot;查询的当前页面的记录数：&quot; + page.getNumberOfElements());</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="JpaRepository接口使用详解"><a href="#JpaRepository接口使用详解" class="headerlink" title="JpaRepository接口使用详解"></a>JpaRepository接口使用详解</h2><ol>
+<li>findAll</li>
+<li>findAll(Sort sort)</li>
+<li>Save(entities)</li>
+<li>Flush</li>
+<li>deleteInBatche(enties)<h2 id="JpaSpecificationExcutor接口使用详解"><a href="#JpaSpecificationExcutor接口使用详解" class="headerlink" title="JpaSpecificationExcutor接口使用详解"></a>JpaSpecificationExcutor接口使用详解</h2></li>
+</ol>
+<ul>
+<li>封装了JPA Criteria查询条件</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/22/Spring1_Spring的核心/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/09/22/Spring1_Spring的核心/" itemprop="url">1_Spring的核心</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-22T10:28:13+08:00">
+                2017-09-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/Spring/" itemprop="url" rel="index">
+                    <span itemprop="name">Spring</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <hr>
+<h1 id="Spring简介"><a href="#Spring简介" class="headerlink" title="Spring简介"></a>Spring简介</h1><hr>
+<h2 id="Spring的根本使命是：简化Java的开发，采用了四种策略："><a href="#Spring的根本使命是：简化Java的开发，采用了四种策略：" class="headerlink" title="Spring的根本使命是：简化Java的开发，采用了四种策略："></a>Spring的根本使命是：简化Java的开发，采用了四种策略：</h2><ul>
+<li>基于POJO的轻量级和最小浸入性编程,避免了大量的不必要的冗余代码</li>
+<li>通过依赖注入和面向接口事项松耦合，每个对象负责管理与自己相互协作的对象的引用会造成高度的耦合性，测试比较复杂，另一种方式是采用依赖注入，对象的依赖关系将由负责协调系统中各个对象的第三方组件在创建对象时设定，对象无需自行创建或者管理器依赖关系，依赖关系会自动的注入到需要的对象中去。</li>
+<li>基于切面和惯例进行声明式编程</li>
+<li>通过切面和模板减少样式代码，如JDBC查询模板语句</li>
+</ul>
+<h2 id="Spring容器"><a href="#Spring容器" class="headerlink" title="Spring容器"></a>Spring容器</h2><ul>
+<li>Spring应用中，对象存在于Spring容器中，容器创建对象，装配对象，配置对象，管理对象的声明周期。</li>
+<li>Spring容器可以分为两种类型：<ul>
+<li>Bean工厂：最简单的容器，提供基本的DI支持</li>
+<li>应用上下文：基于beanFactory之上构建，提供面向应用的服务，可以从属性文件解析文本信息<ul>
+<li>ClassPathXMLApplicationContext: 从类路径下的XML配置文件中加载上下文定义，把应用上下文定义文件当做类资源</li>
+<li>FileSystemXmlApplocationcontext：读取文件系统下的XML配置文件并加载上下文定义</li>
+<li>XmlWebApplocationContext：读取web应用下的XML配置文件并装载上下文定义。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Bean的生命周期：<ul>
+<li>Spring对Bean进行实例化</li>
+<li>Spring将值和Bean的引用注入进bean对应的属性中去</li>
+<li>如果Bean实现了BeanNameAware接口，Spring将Bean的ID传递给setBeanName()接口方法</li>
+<li>如果Bean实现了BeanFactoryAware接口，Spring将调用setBeanFactory()接口方法,将BeanFactory容器实例传入。</li>
+<li>如果Bean实现了ApplicationContextAweare接口，Spring将调用他们的setApplicationContext()接口方法，将应用上下文的引用传入</li>
+<li>如果Bean实现了BeanPostProcessor接口，Spring将调用他们的postProcessBeforeInitialization()接口方法</li>
+<li>如果Bean实现了InitializingBean接口，Spring将调用他们的afterPropertiesSet()接口方法。类似的，如果Bean使用init-method声明了初始化方法，该方法也会被调用。</li>
+<li>如果Bean实现了BeanPostProcessor接口，Spring将调用他们的postProcessAfterInitialization()接口方法</li>
+<li>此时此刻，Bean已经准备就绪，可以被应用程序调用，Bean会一直驻留在应用上下文中，直到该应用上下文被销毁</li>
+<li>如果Bean实现了DisposableBea接口，Spring将调用他们的destroy()接口方法。同样如果Bean使用destroy-method声明了销毁方法，该方法也会被调用。</li>
+</ul>
+</li>
+</ul>
+<h2 id="Spring的六大模块"><a href="#Spring的六大模块" class="headerlink" title="Spring的六大模块"></a>Spring的六大模块</h2><ul>
+<li>核心Spring容器：负责Bean的创建，配置和管理。BeanFactory提供了依赖注入，应用上下文及其他企业服务。</li>
+<li>AOP模块：对面向切面编程提供了丰富的支持。</li>
+<li>数据访问与集成：JDBC和DAO层模块封装了数据库样板，提供了ORM模块，</li>
+<li>Web和远程调用</li>
+<li>测试</li>
+</ul>
+<hr>
+<h1 id="装配Bean"><a href="#装配Bean" class="headerlink" title="装配Bean"></a>装配Bean</h1><hr>
+<h2 id="声明Bean"><a href="#声明Bean" class="headerlink" title="声明Bean"></a>声明Bean</h2><h3 id="XML命名空间"><a href="#XML命名空间" class="headerlink" title="XML命名空间"></a>XML命名空间</h3><ul>
+<li><p>Java自带了许多XML命名空间，通过这些命名空间可以配置Spring</p>
+<ul>
+<li>aop：为声明切面以及将@AspectJ注解的类代理为Spring切面提供了配置元素</li>
+<li>beans：支持声明Bean和装配Bean，是Spring最核心也是最原始的命名空间</li>
+<li>context：为配置Spring应用上下文提供了配置元素，包括自动检测和自动装配bean，注入非Spring直接管理的对象</li>
+<li>jee：提供了与Java EE API的继承，例如JNDI和EJB</li>
+<li>jms：为声明消息驱动的POJO提供了配置元素</li>
+<li>lang：支持配置由Groovy、JRuby或BeanShell等脚本实现的Bean</li>
+<li>mvc：启动Spring MVC的能力，例如面向注解的控制器、视图控制器和拦截器</li>
+<li>oxm：支持Spring的对象到XML的映射配置</li>
+<li>tx：提供声明式事务配置</li>
+<li>util：提供各种各样的工具类元素，包括把集合配置为Bean，支持属性占位符元素</li>
+</ul>
+</li>
+<li><p>创建Spring配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</div><div class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</div><div class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</div><div class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd&quot;</div><div class="line">&gt;</div><div class="line">  &lt;!--Bean declarations go here --&gt;</div><div class="line">&lt;/beans&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>beans 元素中放置所有的Spring配置文件。</p>
+<h3 id="声明Bean-1"><a href="#声明Bean-1" class="headerlink" title="声明Bean"></a>声明Bean</h3><p>定义一个Perfomer接口：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public interface Performer &#123;</div><div class="line">    void perform() throws Exception;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>新建一个Bean,实现了Performer接口，从而可以进行表演扔袋子的节目：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public class Juggler implements Performer&#123;</div><div class="line">    private int beanBags = 3;</div><div class="line"></div><div class="line">    public Juggler() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public Juggler(int beanBags) &#123;</div><div class="line">        this.beanBags = beanBags;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void perform() throws Exception &#123;</div><div class="line">        System.out.println(&quot;JUGGLING &quot; + beanBags + &quot; BEANBAGS&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在Spring配置文件中声明一个Bean：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;duke&quot; class=&quot;com.springinaction.springidol.Juggler&quot; /&gt;</div></pre></td></tr></table></figure></p>
+<p><bean>元素是Spring中最基本的配置单元，通过该元素，Spring可以创建一个对象，duke相当于Juggler的一个实例，main函数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public class main &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        ApplicationContext ctx = new ClassPathXmlApplicationContext(</div><div class="line">                &quot;com/springinaction/springidol/spring-idol.xml&quot;</div><div class="line">        );</div><div class="line">        Performer performer = (Performer) ctx.getBean(&quot;duke&quot;);</div><div class="line">        try &#123;</div><div class="line">            performer.perform();</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></bean></p>
+<p>打印结果：<code>JUGGLING 3 BEANBAGS</code></p>
+<h3 id="构造器注入"><a href="#构造器注入" class="headerlink" title="构造器注入"></a>构造器注入</h3><p>XML文件中，让duke成为可以抛15个袋子的杂技师：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;duke&quot; class=&quot;com.springinaction.springidol.Juggler&quot; &gt;</div><div class="line">  &lt;constructor-arg value=&quot;15&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure></p>
+<p>当不配置constructor-arg标签时，Spring将使用默认的构造方法，配置之后会使用另外的构造方法来实例化对象。</p>
+<ul>
+<li>构造器注入对象的引用<br>Poem接口：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public interface Poem &#123;</div><div class="line">    void recite();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>注入对象引用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public class PoeticJuggler extends Juggler&#123;</div><div class="line">    private Poem poem;</div><div class="line"></div><div class="line">    public PoeticJuggler(Poem poem) &#123;</div><div class="line">        super();</div><div class="line">        this.poem = poem;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public PoeticJuggler(int beanBags, Poem poem) &#123;</div><div class="line">        super(beanBags);</div><div class="line">        this.poem = poem;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void perform() throws Exception &#123;</div><div class="line">        super.perform();</div><div class="line">        System.out.println(&quot;While reciting...&quot;);</div><div class="line">        poem.recite();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>实现Poem接口的类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public class Sonnet29 implements Poem&#123;</div><div class="line">    private static String[] LINES = &#123;</div><div class="line">            &quot;when I was young&quot;,</div><div class="line">            &quot;I am a boy.....&quot;,</div><div class="line">            &quot;end of the poem&quot;</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">    public Sonnet29() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void recite() &#123;</div><div class="line">        for (int i = 0; i &lt; LINES.length; i++)</div><div class="line">            System.out.println(LINES[i]);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>XML中进行配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;duke&quot; class=&quot;com.springinaction.springidol.PoeticJuggler&quot; &gt;</div><div class="line">  &lt;constructor-arg value=&quot;15&quot;/&gt;</div><div class="line">  &lt;constructor-arg ref=&quot;sonnet29&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div><div class="line">&lt;bean id=&quot;sonnet29&quot; class=&quot;com.springinaction.springidol.Sonnet29&quot;/&gt;</div></pre></td></tr></table></figure>
+<p>这相当于执行了如下的Java语句：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Poem sonnet29 = new Sonnet29();</div><div class="line">Performer duke = new PoeticJuggler(15, sonnet29);</div></pre></td></tr></table></figure>
+<p>打印输出为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">JUGGLING 15 BEANBAGS</div><div class="line">While reciting...</div><div class="line">when I was young</div><div class="line">I am a boy.....</div><div class="line">end of the poem</div></pre></td></tr></table></figure>
+<ul>
+<li>工厂方法构造Bean<br>Spring支持通过<bean>元素的factory-method属性来装配工厂创建的Bean,Stage实例如下,没有公开的构造方法：</bean></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public class Stage &#123;</div><div class="line">    public Stage() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //返回实例</div><div class="line">    public static Stage getInstance() &#123;</div><div class="line">        return StageSingletonHolder.instance;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //延迟加载实例</div><div class="line">    private static class StageSingletonHolder &#123;</div><div class="line">        static Stage instance = new Stage();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;!--通过工厂方法创建Bean--&gt;</div><div class="line">&lt;bean id=&quot;theStage&quot; class=&quot;com.springinaction.springidol.Stage&quot; factory-method=&quot;getInstance&quot;/&gt;</div></pre></td></tr></table></figure>
+<h3 id="Bean的作用域"><a href="#Bean的作用域" class="headerlink" title="Bean的作用域"></a>Bean的作用域</h3><p>Spring的Bean作用域允许用户配置所创建的Bean属于哪一种作用域：</p>
+<pre><code>* singleton：在每一个Spring容器中，一个Bean定义只有一个对象实例（默认）
+* prototype：允许Bean的定义可以被实例化任意次
+* request：在一次HTTP请求中，每个Bean定义对应一个实例。
+* session：在依次HTTP Session中，每个Bean定义对应一个实例。
+* global-session：在一个全局的HTTP Session中，每个Bean定义对应一个实例。
+</code></pre><h3 id="初始化和销毁Bean"><a href="#初始化和销毁Bean" class="headerlink" title="初始化和销毁Bean"></a>初始化和销毁Bean</h3><p>实现开关灯的实体类：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public class Auditorium &#123;</div><div class="line">    public void turnOnLights()&#123;</div><div class="line">        System.out.println(&quot;trun on the lights!!!!&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void trunOffLights() &#123;</div><div class="line">        System.out.println(&quot;turn off the lights!!!!&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>XML配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;!--初始化和销毁bean--&gt;</div><div class="line">&lt;bean id=&quot;auditorium&quot; class=&quot;com.springinaction.springidol.Auditorium&quot; init-method=&quot;turnOnLights&quot; destroy-method=&quot;trunOffLights&quot; /&gt;</div></pre></td></tr></table></figure></p>
+<p>Audiorium实例化后会立刻调用init-method，该Bean移除之后会调用destroy-method。</p>
+<blockquote>
+<p>默认的init-method和destroy-method：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</div><div class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</div><div class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd&quot;</div><div class="line">       default-init-method=&quot;turnOnLights&quot;</div><div class="line">       default-destroy-method=&quot;trunOffLights&quot;</div><div class="line">&gt;</div></pre></td></tr></table></figure></p>
+</blockquote>
+<p>为上下文所有的Bean配置默认的初始化和销毁方法。</p>
+<h2 id="注入Bean属性"><a href="#注入Bean属性" class="headerlink" title="注入Bean属性"></a>注入Bean属性</h2><p>JavaBean的属性通常是私有的，Spring可以借助其set方法配置属性的值，实现setter注入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public class Instrumentalist implements Performer&#123;</div><div class="line"></div><div class="line">    public Instrumentalist() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void perform() throws Exception &#123;</div><div class="line">        System.out.println(&quot;Playing &quot; + song + &quot; : &quot;);</div><div class="line">        instrument.play();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private String song;</div><div class="line"></div><div class="line">    public String getSong() &#123;</div><div class="line">        return song;</div><div class="line">    &#125;</div><div class="line">    //注入歌曲</div><div class="line">    public void setSong(String song) &#123;</div><div class="line">        this.song = song;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String screanSong() &#123;</div><div class="line">        return song;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private Instrument instrument;</div><div class="line">//    注入乐器</div><div class="line">    public void setInstrument(Instrument instrument) &#123;</div><div class="line">        this.instrument = instrument;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>其有两个属性，song和Instrument,Instrument接口如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public interface Instrument &#123;</div><div class="line">    public void play();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>XML中配置其默认的构造方法生成Bean kenny:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;kenny&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot;/&gt;</div></pre></td></tr></table></figure></p>
+<p>此时kenny没有歌曲也没有乐器，需要对其进行注入属性。</p>
+<h3 id="注入简单值"><a href="#注入简单值" class="headerlink" title="注入简单值"></a>注入简单值</h3><p>使用<property>元素配置Bean的属性。一旦Instrumentalist被实例化，Spring就会调用<property>元素所指定属性的setter方法为该属性注入值。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;!--注入Bean属性--&gt;</div><div class="line">&lt;bean id=&quot;kenny&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot; &gt;</div><div class="line">  &lt;property name=&quot;song&quot; value=&quot;Jingle Bells&quot; /&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure></property></property></p>
+<h3 id="引用其他Bean"><a href="#引用其他Bean" class="headerlink" title="引用其他Bean"></a>引用其他Bean</h3><p>定义两个实现了Instrument接口的类：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public class saxophone implements Instrument&#123;</div><div class="line">    public saxophone() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void play() &#123;</div><div class="line">        System.out.println(&quot;tttttttoooooooo&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public class Piano implements Instrument&#123;</div><div class="line">    public Piano() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void play() &#123;</div><div class="line">        System.out.println(&quot;play the piano!!!&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Spring支持将其他Bean注入到当前Bean：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;kenny&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot; &gt;</div><div class="line">    &lt;property name=&quot;song&quot; value=&quot;Jingle Bells&quot; /&gt;</div><div class="line">    &lt;property name=&quot;instrument&quot; ref=&quot;saxophone&quot;/&gt;</div><div class="line">    &lt;property name=&quot;instrument&quot; ref=&quot;piano&quot; /&gt;</div><div class="line">&lt;/bean&gt;</div><div class="line">&lt;bean id=&quot;saxophone&quot; class=&quot;com.springinaction.springidol.saxophone&quot; /&gt;</div><div class="line">&lt;bean id=&quot;piano&quot; class=&quot;com.springinaction.springidol.Piano&quot; /&gt;</div></pre></td></tr></table></figure></p>
+<ul>
+<li>注入内部Bean<br>注入的Bean仅当前Bean可以使用，此时可以采用内部Bean的注入方法：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;!-- 内部BEAN --&gt;</div><div class="line">&lt;bean id=&quot;kenny&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot;&gt;</div><div class="line">  &lt;property name=&quot;song&quot; value=&quot;Jingle Bells&quot; /&gt;</div><div class="line">  &lt;property name=&quot;instrument&quot;&gt;</div><div class="line">    &lt;bean class=&quot;com.springinaction.springidol.saxophone&quot; /&gt;</div><div class="line">  &lt;/property&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>除了<property>标签外，<constructor-arg>标签同样可以注入内部Bean</constructor-arg></property></p>
+<h3 id="Spring命名空间的P装配属性"><a href="#Spring命名空间的P装配属性" class="headerlink" title="Spring命名空间的P装配属性"></a>Spring命名空间的P装配属性</h3><p>XML声明：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</div><div class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</div><div class="line">       xmlns:p=&quot;http://www.springframework.org/schema/p&quot;</div><div class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</div><div class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd&quot;</div><div class="line">       default-init-method=&quot;turnOnLights&quot;</div><div class="line">       default-destroy-method=&quot;trunOffLights&quot;</div><div class="line">&gt;</div></pre></td></tr></table></figure></p>
+<p>p标签和property功能类似，但是更加简洁：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;kenny&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot; p:song = &quot;Jingle Bells&quot; p:instrument-ref=&quot;saxophone&quot;/&gt;</div></pre></td></tr></table></figure></p>
+<h3 id="装配集合"><a href="#装配集合" class="headerlink" title="装配集合"></a>装配集合</h3><ul>
+<li><list>：装配list类型的值，不允许重复</list></li>
+<li><set>：装配set类型的值，不允许重复</set></li>
+<li><map>：装配map类型的值，名称和值可以是任意类型</map></li>
+<li><props>：装配properties类型的值，名称和值必须都是String类型</props></li>
+</ul>
+<p>属性实际定义的集合类型和选择<list>、<set>没有任何的关系。新建一人可以同时演奏多种乐器的实体类：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">import java.util.Collection;</div><div class="line"></div><div class="line">public class OneManBand implements Performer&#123;</div><div class="line">    public OneManBand() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void perform() throws Exception &#123;</div><div class="line">        for (Instrument instrument : instruments) &#123;</div><div class="line">            instrument.play();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private Collection&lt;Instrument&gt; instruments;</div><div class="line"></div><div class="line">    public void setInstruments(Collection&lt;Instrument&gt; instruments) &#123;</div><div class="line">        this.instruments = instruments;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></set></list></p>
+<p>装配list Set Array分别为:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;hank&quot; class=&quot;com.springinaction.springidol.OneManBand&quot;&gt;</div><div class="line">  &lt;property name=&quot;instruments&quot;&gt;</div><div class="line">    &lt;list&gt;</div><div class="line">      &lt;ref bean=&quot;saxophone&quot;/&gt;</div><div class="line">      &lt;ref bean=&quot;piano&quot;/&gt;</div><div class="line">    &lt;/list&gt;</div><div class="line">  &lt;/property&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure></p>
+<p>list实际上可以包含另一个list作为其成员构成多维列表，无论<list>还是<set>都可以用来装配类型为Collection的任意实现或者数组的属性。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;hank2&quot; class=&quot;com.springinaction.springidol.OneManBand2&quot;&gt;</div><div class="line">  &lt;property name=&quot;instruments&quot;&gt;</div><div class="line">    &lt;map&gt;</div><div class="line">      &lt;entry key=&quot;PIANO&quot; value-ref=&quot;piano&quot;/&gt;</div><div class="line">      &lt;entry key=&quot;SAX&quot; value-ref=&quot;saxophone&quot;/&gt;</div><div class="line">    &lt;/map&gt;</div><div class="line">  &lt;/property&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure></set></list></p>
+<p>装配map类型：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">import java.util.Collection;</div><div class="line">import java.util.Map;</div><div class="line"></div><div class="line">public class OneManBand2 implements Performer&#123;</div><div class="line">    public OneManBand2() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void perform() throws Exception &#123;</div><div class="line">        for (String key : instruments.keySet()) &#123;</div><div class="line">            System.out.println(key + &quot; : &quot;);</div><div class="line">            instruments.get(key).play();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private Map&lt;String, Instrument&gt; instruments;</div><div class="line"></div><div class="line">    public void setInstruments(Map&lt;String, Instrument&gt; instruments) &#123;</div><div class="line">        this.instruments = instruments;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;hank2&quot; class=&quot;com.springinaction.springidol.OneManBand2&quot;&gt;</div><div class="line">  &lt;property name=&quot;instruments&quot;&gt;</div><div class="line">    &lt;map&gt;</div><div class="line">      &lt;entry key=&quot;PIANO&quot; value-ref=&quot;piano&quot;/&gt;</div><div class="line">      &lt;entry key=&quot;SAX&quot; value-ref=&quot;saxophone&quot;/&gt;</div><div class="line">    &lt;/map&gt;</div><div class="line">  &lt;/property&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
+<h2 id="使用表达式装配"><a href="#使用表达式装配" class="headerlink" title="使用表达式装配"></a>使用表达式装配</h2><p>Spring引入了表达式语言Spring Expression Language，SpEL通过运行期执行的表达式将值装配到Bean的属性和构造器参数中去。SpEL的特性包括：</p>
+<pre><code>* 使用Bean的ID来引用Bean
+* 调用方法和访问对象的属性
+* 对值进行算数、关系和逻辑运算
+* 正则表达式匹配
+* 集合操作
+</code></pre><h3 id="基本要素"><a href="#基本要素" class="headerlink" title="基本要素"></a>基本要素</h3><p> #{}会提示Spring这个标记里的内容时SpEL表达式，其格式可以为整型数，浮点数，科学计数法，字符串类型(单引号或者双引号都可以),bool类型</p>
+<ul>
+<li><p>字面值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;property name=&quot;count&quot; value=&quot;#&#123;5&#125;&quot;/&gt;</div><div class="line">&lt;property name=&quot;frequency&quot; value=&quot;#&#123;89.22&#125;&quot;/&gt;</div><div class="line">&lt;property name=&quot;capacity&quot; value=&quot;#&#123;1e6&#125;&quot;/&gt;</div><div class="line">&lt;property name=&quot;name&quot; value=&quot;#&#123;&quot;Chuck&quot;&#125;&quot;/&gt;</div><div class="line">&lt;property name=&quot;name&quot; value=&quot;#&#123;&apos;Chuck&apos;&#125;&quot;/&gt;</div><div class="line">&lt;property name=&quot;enable&quot; value=&quot;#&#123;false&#125;&quot;/&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>引用Bean属性和方法<br>SpEL表达式不仅可以装配字面值，还可以装配Bean的属性和方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;carl&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot;&gt;</div><div class="line">  &lt;property name=&quot;song&quot; value=&quot;#&#123;kenny.song&#125;&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;carl&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot;&gt;</div><div class="line">  &lt;property name=&quot;song&quot; value=&quot;#&#123;songSelector.selectSong().toUpperCase()&#125;&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
+<p>返回值<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;carl&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot;&gt;</div><div class="line">  &lt;property name=&quot;song&quot; value=&quot;#&#123;songSelector.selectSong().toUpperCase()&#125;&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure></p>
+<p>为NULL会报空指针错误，解决空指针错误的方法为使用null-safe存取器：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;carl&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot;&gt;</div><div class="line">  &lt;property name=&quot;song&quot; value=&quot;#&#123;songSelector.selectSong()?.toUpperCase()&#125;&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure></p>
+<ul>
+<li>操作类<br>T()运算符会调用类作用域的方法和常量。例如T(java.lang.Math)，该运算符可以调用指定类的静态方法和常量，当需要把PI装配到Bean中去：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;property name=&quot;PI&quot; value=&quot;#&#123;T(java.lang.Math).PI&#125;&quot;/&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="值操作"><a href="#值操作" class="headerlink" title="值操作"></a>值操作</h3><ul>
+<li><p>运算符</p>
+<ul>
+<li><p>算数运算：+、-、<code>*</code>，/, %, ^</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;property name=&quot;adjustedAmount&quot; value=&quot;#&#123;counter.total-20&#125;&quot;/&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>关系运算：&lt;、&gt;、==、 &gt;=、 &lt;=、lt、 gt、 eq、 le、 ge</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;property name=&quot;equal&quot; value=&quot;#&#123;counter.total == 100&#125;&quot;/&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>逻辑运算：and、 or、 not、 |</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;property name=&quot;largeCircle&quot; value=&quot;#&#123;shape.kind == &apos;circle&apos; and shape.perimeter gt 100000&#125;&quot;/&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>条件运算：?:(ternary)、?:(Elvis)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;property name=&quot;instrument&quot; value=&quot;#&#123;songSelector.selectSong()==&apos;Jingle Bells&apos;?piano:saxophone&#125;&quot;/&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>正则表达式：matches</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;property name=&quot;validEmail&quot; value=&quot;#&#123;admin.email matches &apos;[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.com&apos;&#125;&quot;/&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="SpEL中筛选集合"><a href="#SpEL中筛选集合" class="headerlink" title="SpEL中筛选集合"></a>SpEL中筛选集合</h3><p>设定一个City类：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public class City &#123;</div><div class="line">    private String name;</div><div class="line">    private String state;</div><div class="line">    private int population;</div><div class="line"></div><div class="line">    public String getName() &#123;</div><div class="line">        return name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setName(String name) &#123;</div><div class="line">        this.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String getState() &#123;</div><div class="line">        return state;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setState(String state) &#123;</div><div class="line">        this.state = state;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public int getPopulation() &#123;</div><div class="line">        return population;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setPopulation(int population) &#123;</div><div class="line">        this.population = population;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>通过Spring的<util:list>元素定义一个City的List集合：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;util:list id=&quot;cities&quot;&gt;</div><div class="line">  &lt;bean class=&quot;com.springinaction.springidol.City&quot; p:name=&quot;Chicago&quot; p:state=&quot;IL&quot; p:population=&quot;285114&quot;/&gt;</div><div class="line">  &lt;bean class=&quot;com.springinaction.springidol.City&quot; p:name=&quot;Atlanta&quot; p:state=&quot;GA&quot; p:population=&quot;537958&quot;/&gt;</div><div class="line">  &lt;bean class=&quot;com.springinaction.springidol.City&quot; p:name=&quot;Dallas&quot; p:state=&quot;TX&quot; p:population=&quot;1279910&quot;/&gt;</div><div class="line">&lt;/util:list&gt;</div></pre></td></tr></table></figure></util:list></p>
+<ul>
+<li>访问集合成员：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;property name=&quot;chosenCity&quot; value=&quot;#&#123;cities[1]&#125;&quot;/&gt;</div><div class="line">&lt;property name=&quot;chosenCity&quot; value=&quot;#&#123;cities[T(java.lang.Math).random * cities.size()]&#125;&quot;/&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>选择属性的方式：</p>
+<ul>
+<li>systemEnvironment：包含应用程序所在机器上的所有的环境变量，Propert集合<br><code>&lt;property name=&quot;homePath&quot; value=&quot;#{systemEnvironment[&#39;HOME&#39;]}&quot;/&gt;</code></li>
+<li>systemProperties：包含了Java应用程序启动时所设置的所有的属性</li>
+</ul>
+<ul>
+<li><p>查询集合成员<br>查询运算符<code>.?[]</code>，会创建一个新的集合存放符合条件的CITY：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;property name=&quot;bigCities&quot; value=&quot;#&#123;cities.?[population gt 100000]&#125;&quot;/&gt;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>.^[]</code>：从集合中查询出第一个匹配项</li>
+<li><code>.$[]</code>：从集合中查询出最后一个匹配项</li>
+</ul>
+</li>
+<li><p>投影集合<br><code>.![]</code>：从集合中的每一个成员中取出特定的属性放入一个新的集合中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;property name=&quot;CityName&quot; value=&quot;#&#123;cities.![name]&#125;&quot;/&gt;</div><div class="line">&lt;property name=&quot;CityName&quot; value=&quot;#&#123;cities.![name + &apos;, &apos; + state]&#125;&quot;/&gt;</div><div class="line">&lt;property name=&quot;bigCities&quot; value=&quot;#&#123;cities.?[population gt 100000].![name + &apos;, &apos; + state]&#125;&quot; /&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<hr>
+<h1 id="最小化Spring-XML配置"><a href="#最小化Spring-XML配置" class="headerlink" title="最小化Spring XML配置"></a>最小化Spring XML配置</h1><hr>
+<p>Spring提供了几种技巧解决大量Bean下XML文件的配置：</p>
+<ul>
+<li>自动装配(autowiring)：有助于减少甚至消除配置<property>元素和<constructor-arg>元素，让Spring自动识别如何装配Bean的依赖关系。</constructor-arg></property></li>
+<li>自动检测(autodiscovery)：比自动装配更进一步，让Spring能够自动识别哪些类需要被配置成Spring Bean，减少对<bean>的使用。</bean></li>
+</ul>
+<h2 id="自动装配Bean属性"><a href="#自动装配Bean属性" class="headerlink" title="自动装配Bean属性"></a>自动装配Bean属性</h2><h3 id="四种类型的自动装配"><a href="#四种类型的自动装配" class="headerlink" title="四种类型的自动装配"></a>四种类型的自动装配</h3><ul>
+<li><p>byName：把与Bean的属性具有相同名字(ID)的其他Bean自动装配到Bean的对应属性中。如果没有和属性名字相匹配的Bean，则该属性不装配。<br>  kenny Bean中,使用property标签显式配置了instrument的属性，如果将saxophone Bean的名字改为instrument：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;kenny&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot; &gt;</div><div class="line">  &lt;property name=&quot;song&quot; value=&quot;Jingle Bells&quot; /&gt;</div><div class="line">  &lt;property name=&quot;instrument&quot; ref=&quot;saxophone&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
+<p>  等价于：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;kenny3&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot; autowire=&quot;byName&quot;&gt;</div><div class="line">  &lt;property name=&quot;song&quot; value=&quot;Jingle Bells&quot; /&gt;</div><div class="line">&lt;/bean&gt;</div><div class="line">&lt;bean id=&quot;instrument&quot; class=&quot;com.springinaction.springidol.saxophone&quot;/&gt;</div></pre></td></tr></table></figure>
+<p>  <em>byName自动装配遵循的一项约定：为属性自动装配ID与该属性的名字相同的Bean</em></p>
+</li>
+<li><p>byType：把与Bean的属性具有相同类型的其他Bean自动装配到Bean的对应属性中，如果没有跟属性的类型相匹配的Bean，则该属性不装配。<br>  与byName类似，不过是检查属性的类型，Spring会寻找哪一个Bean的类型与属性的类型相匹配，但是当Spring找到多个Bean的类型与属性相同时，会抛出错误，应用只允许一个与属性类型相同的Bean。解决方法是为：</p>
+<pre><code>* 自动装配标示一个首选Bean,有且仅有一个Bean的primary=true
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;instrument&quot; class=&quot;com.springinaction.springidol.saxophone&quot; primary=&quot;true&quot;/&gt;</div></pre></td></tr></table></figure>
+
+* 取消某个Bean自动装配的资格。
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;instrument&quot; class=&quot;com.springinaction.springidol.saxophone&quot; autowire-candidate=&quot;false&quot; /&gt;</div></pre></td></tr></table></figure>
+</code></pre></li>
+<li><p>constructor：把与Bean的构造器入参具有相同类型的其他Bean自动装配到Bean构造器对应入参中去。</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;duke1&quot; class=&quot;com.springinaction.springidol.PoeticJuggler&quot; autowire=&quot;constructor&quot;/&gt;</div></pre></td></tr></table></figure>
+<p>  Spring会去寻找和Bean的构造方法中的属性类型相同的Bean注入到当前Bean，局限性和byType一样。多个合适的Bean或者多个构造器都会出错。</p>
+</li>
+<li>autodetect：首先尝试用constructor进行自动装配，如果失败，再尝试用byType进行自动装配。</li>
+</ul>
+<h3 id="默认自动装配"><a href="#默认自动装配" class="headerlink" title="默认自动装配"></a>默认自动装配</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;beans ...  default-autowire=&quot;byType&quot;&gt;</div></pre></td></tr></table></figure>
+<p>该参数的默认值为none,特定Bean可以设定其自动装配方式来覆盖默认的装配方式。</p>
+<h3 id="混合使用自动装配和显示装配"><a href="#混合使用自动装配和显示装配" class="headerlink" title="混合使用自动装配和显示装配"></a>混合使用自动装配和显示装配</h3><p>对某个Bean选择了自动装配策略，同时也可以进行显示装配。可以通过显示装配来解决自动装配中存在的不确定的问题，覆盖掉其自动装配的值。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;kenny4&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot; autowire=&quot;byType&quot;&gt;</div><div class="line">  &lt;property name=&quot;song&quot; value=&quot;Jingle Bell&quot; /&gt;</div><div class="line">  &lt;property name=&quot;instrument&quot;&gt;&lt;null /&gt;&lt;/property&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure></p>
+<ul>
+<li><em>NOTE：不能混合使用constructor自动装配策略和<constructor-arg>元素</constructor-arg></em></li>
+</ul>
+<h2 id="使用注解装配"><a href="#使用注解装配" class="headerlink" title="使用注解装配"></a>使用注解装配</h2><p>Spring默认不使用注解，使用注解需要在XML中进行配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</div><div class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</div><div class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</div><div class="line">       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;</div><div class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd&quot;&gt;</div><div class="line">&lt;context:annotation-config /&gt;</div><div class="line">&lt;/beans&gt;</div></pre></td></tr></table></figure></p>
+<p>Spring支持几种不同的用于自动装配的注解：</p>
+<pre><code>* Spring自带的@Autowired注解
+* JSR-330的@Inject注解
+* JSR-250的@Resource注解
+</code></pre><h3 id="使用-Autowired注解"><a href="#使用-Autowired注解" class="headerlink" title="使用@Autowired注解"></a>使用@Autowired注解</h3><p>对属性的setter方法添加注解：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@Autowired</div><div class="line">public void setInstrument(Instrument instrument) &#123;</div><div class="line">    this.instrument = instrument;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>Autowired注解可以用在setter方法，任意方法以及构造方法。当对构造器进行标注时，Autowired注解表示当创建Bean时，即使在Spring XML文件中没有使用<constructor-arg>元素配置Bean，该构造器也需要进行自动装配。我们也可以使用@AutoWired注解直接标注属性，并删除setter方法。@AutoWired存在问题在于没有Bean装配到注解属性或者多个Bean装配到注解属性：</constructor-arg></p>
+<ul>
+<li><p>可选的自动装配：@Autowired所标注的属性和参数必须是可装配的，如果没有Bean装配到所标注的属性和参数时，会报错。设定required参数来限定@Autowired，当没有找到可装载的Bean时，属性和参数的值为NULL。</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">@Autowired(required = false)</div><div class="line">private Instrument instrument;</div></pre></td></tr></table></figure>
+<p>  但是当其注解构造方法时，只能有一个构造器的required的值为true。</p>
+</li>
+<li><p>限定歧义性的依赖：当有同时满足装配的条件的多个Bean存在时，Spring会抛出NoSuchBeanDefineException错误，表明装配失败。使用@Qualifier注解来制定装配的具体Bean：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@AutoWired</div><div class="line">@Qualifier(&quot;guitar&quot;)</div><div class="line">private Instrument instrument;</div></pre></td></tr></table></figure>
+<p>  XML配置也可以同样使用qualifier标签来缩小Bean搜索范围：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;bean class=&quot;com.springinaction.springidol.Piano&quot;&gt;</div><div class="line">  &lt;qualifier value=&quot;piano&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>自定义的限定器<br>  使用@Qualifier作为自定义注解的元注解：@</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@Qualifier</div><div class="line">public @Interface StringedInstrument&#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>  这样就可以用@StringedInstrument注解来标注guitar</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@StringedInstrument</div><div class="line">public class Guitar implements Instrument&#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>  自动装配时对Instrument进行限定，从而查找所有被StringedInstrument标注的Bean，不能确定到一个Bean会再进行其他限定。</p>
+<blockquote>
+<p>使用@Autowired的缺点在于引入了对Spring注解的依赖，可以使用Java的@Inject注解来解决这个问题</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="Inject注解"><a href="#Inject注解" class="headerlink" title="@Inject注解"></a><code>@</code>Inject注解</h3><p>与Spring的@Autowired注解类似，JCP的@Inject注解可以用来自动装配属性、方法和构造器；区别在于@Inject没有required属性，所有其所标注的依赖关系必须存在！</p>
+<ul>
+<li><p>限定@Inject使用注解@Named</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@Inject</div><div class="line">@Named(&quot;guitar&quot;)</div><div class="line">private Instrument Instrument;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>@Named注解表明选择了一个Bean，@Qualifier表明满足条件的Bean</p>
+</blockquote>
+</li>
+<li><p>自定义的JSR-330 Qualifier</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@Qualifier</div><div class="line">public @Interface StringedInstrument&#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>  区别在于这里的@Qualifier来自JSR-330而不是Spring</p>
+</li>
+</ul>
+<h3 id="注解中使用表达式"><a href="#注解中使用表达式" class="headerlink" title="注解中使用表达式"></a>注解中使用表达式</h3><p><code>@Value</code>可以用来装配String类型的值和基本类型的值：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">@value(&quot;Eruption&quot;)</div><div class="line">private String song;</div></pre></td></tr></table></figure></p>
+<p>SpEL和注解结合,实现注解驱动的装配方式：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">@value(&quot;#&#123;systemProperties.myFavoriteSong&#125;&quot;)</div><div class="line">private String song;</div></pre></td></tr></table></figure></p>
+<h2 id="自动检测Bean"><a href="#自动检测Bean" class="headerlink" title="自动检测Bean"></a>自动检测Bean</h2><p><code>&lt;context:annotation-config&gt;</code>可以消除Bean里面的配置，<code>&lt;context:component-scan&gt;</code>还可以完成自动检测Bean的功能，从而XML中不需要创建Bean：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</div><div class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</div><div class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</div><div class="line">       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;</div><div class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd&quot;&gt;</div><div class="line">&lt;context:component-scan base-package=&quot;com.springinaction.springidol&quot;/&gt;</div><div class="line">&lt;/beans&gt;</div></pre></td></tr></table></figure></p>
+<h3 id="标注Bean"><a href="#标注Bean" class="headerlink" title="标注Bean"></a>标注Bean</h3><p>context:component-scan默认查找构造型注解所标注的类：</p>
+<ul>
+<li><code>@Component</code> 通用的构造型注解，标示该类为Spring组件</li>
+<li><code>@Controller</code> 标示该类定义为SpringMVC controller</li>
+<li><code>@Repository</code> 标识将该类定义为数据仓库</li>
+<li><code>@Service</code> 标识将该类定义为服务</li>
+<li><code>@Component</code>也可以标注自定义注解</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">import org.springframework.stereotype.Component;</div><div class="line"></div><div class="line">@Component</div><div class="line">public class Guitar implements Instrument&#123;</div><div class="line">    @Override</div><div class="line">    public void play() &#123;</div><div class="line">        System.out.println(&quot;ssss ddd fff .&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Spring扫描com.springinaction.springidol包时，会发现@Component注解标识的Guitar类，将其自动注册为Spring Bean。默认ID为guitar。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">import org.springframework.beans.factory.annotation.Autowired;</div><div class="line">import org.springframework.stereotype.Component;</div><div class="line"></div><div class="line">@Component(&quot;eddie&quot;)</div><div class="line">public class Instrumentalist implements Performer&#123;</div><div class="line">...</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="过滤组件扫描"><a href="#过滤组件扫描" class="headerlink" title="过滤组件扫描"></a>过滤组件扫描</h3><p>Spring默认会扫描包下的所有类的@Component注解来生成Bean，我们可以自己定义过滤规则来实现自动注册特定的类：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;context:component-scan base-package=&quot;com.springinaction.springidol&quot;&gt;</div><div class="line">    &lt;context:include-filter type=&quot;assignable&quot; expression=&quot;com.springinaction.springidol.Instrument&quot;</div><div class="line">&lt;/context:component-scan&gt;</div></pre></td></tr></table></figure></p>
+<p>可以自动将所有派生与Instrument的类注册到Spring Bean中。<br>过滤器类型包含5种：</p>
+<ul>
+<li>annotation：顾虑器扫描使用指定注解所标注的那些类，通过expression属性指定要扫描的注解</li>
+<li>assignable：过滤器通过扫描派生于expression属性所指定的那些类</li>
+<li>aspectj：过滤器扫描与expression属性所指定的AspectJ表达式所匹配的类</li>
+<li>custom：使用自定义的org.springframework.core.type.TypeFilter实现类，该类由expression属性指定</li>
+<li>regex：过滤器扫描类的名称与expression属性所指定的正则表达式所匹配的那些类。</li>
+</ul>
+<p>context:exclude-filter表示不注册那些类：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;context:component-scan base-package=&quot;com.springinaction.springidol&quot;&gt;</div><div class="line">    &lt;context:include-filter type=&quot;assignable&quot; expression=&quot;com.springinaction.springidol.Instrument&quot;/&gt;</div><div class="line">    &lt;context:exclude-filter type=&quot;assignable&quot; expression=&quot;com.springinaction.springidol.Instrumentalist&quot;/&gt;</div><div class="line">&lt;/context:component-scan&gt;</div></pre></td></tr></table></figure></p>
+<h2 id="使用Spring基于Java的配置"><a href="#使用Spring基于Java的配置" class="headerlink" title="使用Spring基于Java的配置"></a>使用Spring基于Java的配置</h2><h3 id="启动Java配置"><a href="#启动Java配置" class="headerlink" title="启动Java配置"></a>启动Java配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</div><div class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</div><div class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</div><div class="line">       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;</div><div class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd&quot;&gt;</div><div class="line">    &lt;context:component-scan base-package=&quot;com.springinaction.springidol&quot;/&gt;</div><div class="line">&lt;/beans&gt;</div></pre></td></tr></table></figure>
+<p>context:component-scan会自动加载@Configuration注解的类。</p>
+<h3 id="定义一个配置类"><a href="#定义一个配置类" class="headerlink" title="定义一个配置类"></a>定义一个配置类</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">import org.springframework.context.annotation.Configuration;</div><div class="line"></div><div class="line">@Configuration</div><div class="line">public class SpringIdolConfig &#123;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>@</code>Configuration注解会告知Spring，这个类将包含一个或者多个Bean的定义。</p>
+<h3 id="声明一个Bean"><a href="#声明一个Bean" class="headerlink" title="声明一个Bean"></a>声明一个Bean</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@Bean</div><div class="line">public Performer duke() &#123;</div><div class="line">    return new Juggler();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>等价于XML中配置<bean>标签。@Bean告知Spring这个方法将返回一个对象，该对象应该被注册到Spring应用上下文中的一个Bean。</bean></p>
+<h3 id="使用Spring的基于Java的配置进行注入"><a href="#使用Spring的基于Java的配置进行注入" class="headerlink" title="使用Spring的基于Java的配置进行注入"></a>使用Spring的基于Java的配置进行注入</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@Bean</div><div class="line">public Performer duke10() &#123;</div><div class="line">  return new Juggle(15);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">@Bean</div><div class="line">private Poem sonnet29()&#123;</div><div class="line">  return new sonnet29();</div><div class="line">&#125;</div><div class="line"></div><div class="line">@Bean</div><div class="line">private Performer pueticDuke()&#123;</div><div class="line">  return new PoeticJuggler(sonnet29());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<hr>
+<h1 id="面向切面的Spring"><a href="#面向切面的Spring" class="headerlink" title="面向切面的Spring"></a>面向切面的Spring</h1><p>两个概念：</p>
+<ul>
+<li>横切关注点：分布于应用中的多处的功能，例如安全、日志、事务管理等。</li>
+<li>AOP：将横切关注点和业务逻辑进行分离</li>
+</ul>
+<h2 id="面向切面编程"><a href="#面向切面编程" class="headerlink" title="面向切面编程"></a>面向切面编程</h2><p>Spring中首先在一个地方定义通用功能，然后通过声明的方式定义一个功能以何种方式在何处应用，而无需修改受影响的类。横切关注点可以被模块化为特殊的类，这些类成为切面。其好处有两点：</p>
+<ul>
+<li>每个关注点集中与移除</li>
+<li>服务模块更简洁</li>
+</ul>
+<h3 id="定义AOP术语"><a href="#定义AOP术语" class="headerlink" title="定义AOP术语"></a>定义AOP术语</h3><ul>
+<li><p>通知(Advice)：通知定义了切面是什么以及如何使用。Spring切面可以应用的5中类型的通知：</p>
+<ul>
+<li>Before：在方法被调用之前调用通知</li>
+<li>After：在方法完成之后调用通知，无论方法执行是否成功</li>
+<li>After-retruning：在方法成功执行之后调用通知</li>
+<li>After-throwing：在方法抛出异常后调用通知</li>
+<li>Around：通知包裹了被通知的方法，在被通知的方法调用之前和调用之后执行自定义的行为。</li>
+</ul>
+</li>
+<li><p>连接点(Joinpoint)：在应用执行过程中能够插入切面的一个点。</p>
+</li>
+<li>切点(Poincut)：指定了切面应用的范围。</li>
+<li>切面(Aspect)：切面是切点和通知的结合。</li>
+<li>引入(Introduction)：引用允许我们向现有的类添加新方法和属性。</li>
+<li>织入(Weaving)：织入是将切面应用到目标对象来创建新的代理对象的过程。切面在指定的连接点被织入到目标对象中去。在目标对象的声明周期中有多个点可以进行织入：<ul>
+<li>编译期：需要特殊的编译器，AspectJ的织入编译器就是以这种方式织入的。</li>
+<li>类加载期：切面在目标类加载到JVM时被织入。这种方式需要特殊的类加载器(ClassLoader)，在引入之前增强该类的字节码。</li>
+<li>运行期：切面在应用运行的某个时刻被织入。一般在织入切面时，AOP容器会为目标对象动态的创建一个代理对象。Spring AOP就是这样。</li>
+</ul>
+</li>
+</ul>
+<h3 id="Spring对AOP的支持"><a href="#Spring对AOP的支持" class="headerlink" title="Spring对AOP的支持"></a>Spring对AOP的支持</h3><p>Spring提供了4种AOP支持：</p>
+<ul>
+<li>基于代理的经典AOP</li>
+<li><code>@AspectJ</code>注解驱动的切面</li>
+<li>纯POJO切面</li>
+<li>注入式AspectJ切面</li>
+</ul>
+<p>一些关键点：</p>
+<ul>
+<li>Spring通知是Java编写的</li>
+<li>Spring在运行期间通知对象</li>
+<li>Spring只支持方法连接点</li>
+</ul>
+<h2 id="使用切点选择连接点"><a href="#使用切点选择连接点" class="headerlink" title="使用切点选择连接点"></a>使用切点选择连接点</h2><p>Spring AOP中需要使用AspectJ的切点表达式语言来定义切点。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">AspectJ指示器</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">arg()</td>
+<td style="text-align:center">限制连接点匹配参数为指定类型的执行方法</td>
+</tr>
+<tr>
+<td style="text-align:left">@args()</td>
+<td style="text-align:center">限制连接点匹配参数由指定注解的执行方法</td>
+</tr>
+<tr>
+<td style="text-align:left">execution()</td>
+<td style="text-align:center">用于匹配是连接点的执行方法</td>
+</tr>
+<tr>
+<td style="text-align:left">this()</td>
+<td style="text-align:center">限制连接点匹配AOP代理的Bean引用为指定类型的类</td>
+</tr>
+<tr>
+<td style="text-align:left">target()</td>
+<td style="text-align:center">限制连接点匹配目标对象为指定类型的类</td>
+</tr>
+<tr>
+<td style="text-align:left">@target()</td>
+<td style="text-align:center">限制连接点匹配特定的执行对象，这些对象对应的类要具备指定类型的注解</td>
+</tr>
+<tr>
+<td style="text-align:left">within()</td>
+<td style="text-align:center">限制连接点匹配指定的类型</td>
+</tr>
+<tr>
+<td style="text-align:left">@within()</td>
+<td style="text-align:center">限制连接点匹配指定注解所标注的类型</td>
+</tr>
+<tr>
+<td style="text-align:left">@annotation()</td>
+<td style="text-align:center">限制匹配带有指定注解连接点</td>
+</tr>
+</tbody>
+</table>
+<p>只有execution指示器是唯一的执行匹配，其他都是限制匹配。</p>
+<h3 id="编写切点"><a href="#编写切点" class="headerlink" title="编写切点"></a>编写切点</h3><p><code>execution(* com.springinaction.springidol.Instrument.play(..))</code><br>我们使用execution()指示器去选择Instrument的play()方法。方法表达式以<em>开始，标示了方法返回值的类型，然后指定全限定类名和方法名，使用(..)标示切点选择任意的play方法。<br>如果需要限定匹配该包下的play方法，需要添加限定<br>`execution(</em> com.springinaction.springidol.Instrument.play(..)) and withi n(com.springinaction.springidol.*)`</p>
+<h3 id="使用Spring的bean-指示器"><a href="#使用Spring的bean-指示器" class="headerlink" title="使用Spring的bean()指示器"></a>使用Spring的bean()指示器</h3><p>bean()指示器允许我们在切点表达式中使用Bean的ID来标识Bean。<br><code>execution(* com.springinaction.springidol.Instrument.play() and bean(eddie))</code>表示限定Bean的ID为Eddie。</p>
+<h2 id="在XML中声明切面"><a href="#在XML中声明切面" class="headerlink" title="在XML中声明切面"></a>在XML中声明切面</h2><p>Spring的AOP配置元素简化了基于POJO切面的声明：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">AOP配置元素</th>
+<th style="text-align:left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><aop:advisor></aop:advisor></td>
+<td style="text-align:left">定义AOP通知器</td>
+</tr>
+<tr>
+<td style="text-align:left"><aop:after></aop:after></td>
+<td style="text-align:left">定义AOP后置通知，不管通知的方法是否执行成功</td>
+</tr>
+<tr>
+<td style="text-align:left"><aop:after-returning></aop:after-returning></td>
+<td style="text-align:left">定义AOP After-retruning通知</td>
+</tr>
+<tr>
+<td style="text-align:left"><aop:after-throwing></aop:after-throwing></td>
+<td style="text-align:left">定义After-throwing通知</td>
+</tr>
+<tr>
+<td style="text-align:left"><aop:around></aop:around></td>
+<td style="text-align:left">定义AOP环绕通知</td>
+</tr>
+<tr>
+<td style="text-align:left"><aop:aspect></aop:aspect></td>
+<td style="text-align:left">定义切面</td>
+</tr>
+<tr>
+<td style="text-align:left"><aop:aspect-autoproxy></aop:aspect-autoproxy></td>
+<td style="text-align:left">启用@AspectJ注解驱动的切面</td>
+</tr>
+<tr>
+<td style="text-align:left"><aop:before></aop:before></td>
+<td style="text-align:left">定义AOP前置通知</td>
+</tr>
+<tr>
+<td style="text-align:left"><aop:config></aop:config></td>
+<td style="text-align:left">顶层的AOP配置元素，大多数的<aop:*>元素必须在<aop:config>元素内部</aop:config></aop:*></td>
+</tr>
+<tr>
+<td style="text-align:left"><aop:declare-parents></aop:declare-parents></td>
+<td style="text-align:left">为被通知的对象引入额外的接口，并透明的实现</td>
+</tr>
+<tr>
+<td style="text-align:left"><aop:pointcut></aop:pointcut></td>
+<td style="text-align:left">定义切点</td>
+</tr>
+</tbody>
+</table>
+<p>选秀节目需要装配观众，每一个选手都需要装配同样的观众，创建一个观众类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public class Audience &#123;</div><div class="line">    //before perform</div><div class="line">    public void takeSeats() &#123;</div><div class="line">        System.out.println(&quot;The Audience is taking their seats!&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void turnOffCellPhone() &#123;</div><div class="line">        System.out.println(&quot;The audience is turning off their cell phones.&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //after perform</div><div class="line">    public void applaud() &#123;</div><div class="line">        System.out.println(&quot;Clap! Clap! Clap!&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //after perform failure</div><div class="line">    public void demandRefund() &#123;</div><div class="line">        System.out.println(&quot;We want our money back!&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>将其注册为Spring上下文的一个Bean：<code>&lt;bean id=&quot;audience&quot; class=&quot;com.springinaction.springidol.Audience&quot;/&gt;</code></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/20/hibernate总结/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2339,440 +3190,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/09/9.进程和线程/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/09/9.进程和线程/" itemprop="url">9. 进程和线程</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-09T15:30:53+08:00">
-                2017-09-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="进程和线程"><a href="#进程和线程" class="headerlink" title="进程和线程"></a>进程和线程</h1><p>多任务：操作系统可以同时运行多个任务。比如一遍浏览器上网一遍听音乐，Word写文档等，这就是多任务。</p>
-<p>单核CPU怎么进行多任务处理?操作系统轮流让各个任务交替进行，任务1执行0.01s，任务2执行0.01s，任务3执行0.01s，反复执行下去。表面上看每个任务都是交替执行的，但是由于CPU的执行速度很快，感觉所有任务是在同时执行一样。</p>
-<p>真正的并行执行多任务只能在多核cpu上实现，但是由于任务数远远多于CPU的核心数，所以操作系统也会自动把很多任务轮流调度到每个核心上执行。</p>
-<p>对于操作系统来说，一个任务是一个进程（process），比如打开一个浏览器就是启动了一个浏览器进程，打开一个记事本就是启动了一个记事本进程。</p>
-<p>有些进程不止同时干一件事，比如Word，它可以同时进行打字、拼写检查、打印等事情。在一个进程内部，要同时干多件事，就需要同时运行多个“子任务”，我们把进程内这些子任务称为线程（thread）。</p>
-<p>由于每个进程至少要做一件事，所以一个进程最少有一个线程。像Word这种复杂的进程可以有多个线程，多个线程可以同时执行，多线程的执行方式和多进程一样的，也是由操作系统在多个线程之间快速切换，让每个线程都短暂地交替运行，看起来像同时执行一样。</p>
-<p>前面写的Python程序都是执行单任务的进程，也就是只有一个线程，如果要同时执行多个任务怎么办？有两种解决方案：</p>
-<p>一种是启动多个进程，每个进程虽然只有一个线程，但多个进程可以一块执行多个任务。</p>
-<p>还有一种方法是启动一个进程，在一个进程内启动多个线程，这样多个线程也可以一块执行多个任务。</p>
-<p>还可以启动多个进程，每个进程启动多个线程。</p>
-<p>同时执行的多个任务通常各个任务之间并不是没有关联的，而是需要相互通信和协调，有时，任务1必须暂停等待任务2完成后才能继续执行，任务3和任务4不能共同执行  ，所以多进程和多线程的程序的复杂度要远远高于我们前面写的单进程单线程的程序。</p>
-<p>Python既支持多进程又支持多进程。</p>
-<h2 id="多进程"><a href="#多进程" class="headerlink" title="多进程"></a>多进程</h2><p>要让Python实现多进程（multiprocessing），我们先了解操作系统的相关知识。</p>
-<p>Unix/Linux操作系统提供了一个<code>fork()</code>系统调用，它非常特殊。普通的函数调用，调用一次返回一次。但是<code>fork()</code>调用一次返回两次，因为操作系统自动把当前进程复制一份，然后分别在父进程和子进程内返回。</p>
-<p>子进程永远返回0，而父进程返回子进程的ID。这样做的理由是一个父进程可以fork出很多子进程，多以父进程要记下每个子进程的ID，而子进程只需要调用<code>getppid()</code>就可以拿到父进程的ID。</p>
-<p>Python的<code>os</code>模块封装了常见的系统调用，其中就包括<code>fork</code>，可以在Python程序中轻松创建子进程：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> os</div><div class="line"></div><div class="line">print(<span class="string">'Process (%s)'</span> %os.getpid())</div><div class="line"></div><div class="line">pid=os.fork()</div><div class="line"><span class="keyword">if</span> pid==<span class="number">0</span>:</div><div class="line">	print(<span class="string">'I am child prcess (%s) and my parent is %s'</span> %(os.getpid(),os.getppid()))</div><div class="line"></div><div class="line"><span class="keyword">else</span>:</div><div class="line">	<span class="keyword">print</span> (<span class="string">'I (%s) just created a child process(%s)'</span> %(os.getpid(),pid))</div></pre></td></tr></table></figure></p>
-<p>由于Windows系统没有fork调用，上面的代码无法再windows运行。</p>
-<p>###multiprocessing<br>Linux、Unix编写多进程的服务程序是正确的选择。由于windows没有<code>fork</code>调用，可以用<code>multiprocessing</code>模块进行多进程编程。</p>
-<p><code>multiprocessing</code>模块提供了一个<code>Process</code>类来代表一个进程对象：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> multiprocessing</div><div class="line"><span class="keyword">import</span> os</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">run_proc</span><span class="params">(name)</span>:</span></div><div class="line">	print(<span class="string">'Run child process %s(%s)...'</span> %(name,os.getpid()))</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</div><div class="line">	print(<span class="string">'Parent process %s'</span> %os.getpid())</div><div class="line">	p=multiprocessing.Process(target=run_proc,args=(<span class="string">'test'</span>,))</div><div class="line">	print(<span class="string">'Child process will start.'</span>)</div><div class="line">	p.start()</div><div class="line">	p.join()</div><div class="line">	print(<span class="string">'Child process end.'</span>)</div></pre></td></tr></table></figure></p>
-<p>执行结果如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Parent process <span class="number">4396</span></div><div class="line">Child process will start.</div><div class="line">Run child process test(<span class="number">10168</span>)...</div><div class="line">Child process end.</div></pre></td></tr></table></figure></p>
-<p>创建子进程时，只需要传入一个执行函数和函数的参数，创建一个<code>Process</code>实例，用<code>start</code>方法启动，这样创建的进程比<code>fork</code>要简单。</p>
-<p><code>join()</code>方法可以等待子进程结束再继续往下运行，通常用于进程间的同步。</p>
-<h3 id="Pool"><a href="#Pool" class="headerlink" title="Pool"></a>Pool</h3><p>如果要启动大量的子进程，可以用进程池的方式批量创建子进程：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Pool</div><div class="line"><span class="keyword">import</span> os,time,random</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">long_time_task</span><span class="params">(name)</span>:</span></div><div class="line">	print(<span class="string">'Run task %s (%s)...'</span> %(name,os.getpid()))</div><div class="line">	start=time.time()</div><div class="line">	time.sleep(random.random()*<span class="number">3</span>)</div><div class="line">	end=time.time()</div><div class="line">	print(<span class="string">'Task %s runs %0.2f seconds'</span> %(name, (end-start)))</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</div><div class="line">	print(<span class="string">'Parent process %s'</span> %os.getpid())</div><div class="line">	p=Pool(<span class="number">4</span>)</div><div class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">5</span>):</div><div class="line">		p.apply_async(long_time_task,args=(i,))</div><div class="line">	print(<span class="string">'Waiting for all subprocesses done...'</span>)</div><div class="line">	p.close()</div><div class="line">	p.join()</div><div class="line">	print(<span class="string">'All subprocesses done.'</span>)</div></pre></td></tr></table></figure></p>
-<p>运行结果：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++&gt;python jincheng_pool.py</div><div class="line">Parent process <span class="number">11184</span></div><div class="line">Waiting <span class="keyword">for</span> all subprocesses done...</div><div class="line">Run task <span class="number">0</span> (<span class="number">1604</span>)...</div><div class="line">Run task <span class="number">1</span> (<span class="number">7696</span>)...</div><div class="line">Run task <span class="number">2</span> (<span class="number">17592</span>)...</div><div class="line">Run task <span class="number">3</span> (<span class="number">10544</span>)...</div><div class="line">Task <span class="number">1</span> runs <span class="number">1.20</span> seconds</div><div class="line">Run task <span class="number">4</span> (<span class="number">7696</span>)...</div><div class="line">Task <span class="number">2</span> runs <span class="number">1.73</span> seconds</div><div class="line">Task <span class="number">0</span> runs <span class="number">2.17</span> seconds</div><div class="line">Task <span class="number">3</span> runs <span class="number">2.98</span> seconds</div><div class="line">Task <span class="number">4</span> runs <span class="number">2.09</span> seconds</div><div class="line">All subprocesses done.</div></pre></td></tr></table></figure></p>
-<p>代码解读：</p>
-<p>对<code>Pool</code>对象调用<code>join()</code>方法会等待所有子进程执行完毕，调用<code>join()</code>之前必须先调用<code>close()</code>，调用<code>close()</code>之后就不能继续添加新的Process了。</p>
-<p>注意输出结果，task0，1,2,3是立刻执行的，而4要等待前面某个task完成后才执行，这是因为Pool的默认大小在我的电脑上是4，因此最多同时执行四个进程。这是Pool有意设计的限制，并不是操作系统的限制，改为<code>p=Pool(5)</code>就可以同时跑五个进程。Pool的默认大小是CPU的核心数。</p>
-<h3 id="子进程"><a href="#子进程" class="headerlink" title="子进程"></a>子进程</h3><p>很多时候，子进程并不是自身，而是一个外部进程。我们创建了子进程后，还需要控制子进程的输入和输出。</p>
-<p><code>subprocess</code>模块可以让我们非常方便的启动一个子进程，然后控制其输入和输出。下面例子演示了如何在python代码中运行命令<code>nslookup www.python.org</code>，这和行命令直接运行的效果是一样的：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> subprocess</div><div class="line">&gt;&gt;&gt;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(<span class="string">'$ nslookup www.python.org'</span>)</div><div class="line">$ nslookup www.python.org</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>r=subprocess.call([<span class="string">'nslookup'</span>,<span class="string">'www.python.org'</span>])</div><div class="line">服务器:  UnKnown</div><div class="line">Address:  <span class="number">10.3</span><span class="number">.9</span><span class="number">.6</span></div><div class="line"></div><div class="line">非权威应答:</div><div class="line">名称:    prod.python.map.fastlylb.net</div><div class="line">Addresses:  <span class="number">2</span>a04:<span class="number">4e42</span>:<span class="number">4</span>::<span class="number">223</span></div><div class="line">          <span class="number">151.101</span><span class="number">.16</span><span class="number">.223</span></div><div class="line">Aliases:  www.python.org</div><div class="line">          python.map.fastly.net</div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(<span class="string">'Exit code:'</span>,r)</div><div class="line">Exit code: <span class="number">0</span></div></pre></td></tr></table></figure></p>
-<p>如果子进程还需要输入，则可以通过<code>communicate()</code>方法输入：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> subprocess</div><div class="line"></div><div class="line">print(<span class="string">'$ nslookup'</span>)</div><div class="line">p = subprocess.Popen([<span class="string">'nslookup'</span>], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)</div><div class="line">output, err = p.communicate(<span class="string">b'set q=mx\npython.org\nexit\n'</span>)</div><div class="line">print(output.decode(<span class="string">'gbk'</span>))</div><div class="line">print(<span class="string">'Exit code:'</span>, p.returncode)</div></pre></td></tr></table></figure></p>
-<p>运行结果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">$ nslookup</div><div class="line">默认服务器:  UnKnown</div><div class="line">Address:  10.3.9.5</div><div class="line"></div><div class="line">&gt; &gt; 服务器:  UnKnown</div><div class="line">Address:  10.3.9.5</div><div class="line"></div><div class="line">python.org      MX preference = 50, mail exchanger = mail.python.org</div><div class="line">&gt;</div><div class="line">Exit code: 0</div></pre></td></tr></table></figure></p>
-<h3 id="进程间通信"><a href="#进程间通信" class="headerlink" title="进程间通信"></a>进程间通信</h3><p><code>Process</code>之间肯定是需要通信的，操作系统提供了很多机制来实现进程间的通信。Python的<code>multiprocessing</code>模块包装了底层的机制，提供了<code>Queeu</code>、<code>Pipes</code>等方式来交换数据。</p>
-<p>以<code>Queue</code>为例，在父进程中创建两个子进程，一个往<code>Queue</code>里写数据，一个从<code>Queue</code>里读取数据：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python3</span></div><div class="line"><span class="comment">#-*- coding: utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process, Queue</div><div class="line"><span class="keyword">import</span> os, time, random</div><div class="line"></div><div class="line"><span class="comment">#写数据</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">write</span><span class="params">(q)</span>:</span></div><div class="line">	print(<span class="string">'Process to write %s'</span> %os.getpid())</div><div class="line">	<span class="keyword">for</span> value <span class="keyword">in</span> [<span class="string">'A'</span>,<span class="string">'B'</span>,<span class="string">'C'</span>]:</div><div class="line">		print(<span class="string">'Put %s to queue...'</span> % value)</div><div class="line">		q.put(value)</div><div class="line">		time.sleep(random.random())</div><div class="line"></div><div class="line"><span class="comment">#读数据</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">read</span><span class="params">(q)</span>:</span></div><div class="line">	print(<span class="string">'Process to read %s'</span> %os.getpid())</div><div class="line">	<span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">		value=q.get(<span class="keyword">True</span>)</div><div class="line">		print(<span class="string">'Get %s from queue...'</span> % value)</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</div><div class="line">	<span class="comment">#父进程创建Queue，并传给各个子进程</span></div><div class="line">	q=Queue()</div><div class="line">	pw=Process(target=write, args=(q,))</div><div class="line">	pr=Process(target=read, args=(q,))</div><div class="line">	<span class="comment">#启动子程序pw，写入</span></div><div class="line">	pw.start()</div><div class="line">	pr.start()</div><div class="line">	pw.join()</div><div class="line">	pr.terminate()</div></pre></td></tr></table></figure></p>
-<p>运行结果：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++&gt;python  <span class="number">1.</span>py</div><div class="line">Process to write <span class="number">4288</span></div><div class="line">Put A to queue...</div><div class="line">Process to read <span class="number">16844</span></div><div class="line">Get A <span class="keyword">from</span> queue...</div><div class="line">Put B to queue...</div><div class="line">Get B <span class="keyword">from</span> queue...</div><div class="line">Put C to queue...</div><div class="line">Get C <span class="keyword">from</span> queue...</div></pre></td></tr></table></figure></p>
-<h2 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h2><p>多任务可以由多进程完成，也可以有一个进程池内的多线程完成。一个进程最少有一个线程。Python内置了多线程的支持，Python的线程是真正的Posix Thread，不是模拟出来的线程。</p>
-<p>Python的标准库提供了两个模块：<code>_thread</code>和<code>threading</code>，<code>_thread</code>是低级模块，<code>threading</code>是高级模块，对<code>_thread</code>进行了封装。</p>
-<p>启动一个线程就是把一个函数传入并创建<code>Thread</code>实例，然后调用<code>start()</code>开始执行：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> time, threading</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">loop</span><span class="params">()</span>:</span></div><div class="line">		print(<span class="string">'thread %s is running...'</span> %threading.current_thread().name)</div><div class="line">		n=<span class="number">0</span></div><div class="line">		<span class="keyword">while</span> n&lt;<span class="number">5</span>:</div><div class="line">			n=n+<span class="number">1</span></div><div class="line">			print(<span class="string">'thread %s &gt;&gt;&gt; %s'</span> %(threading.current_thread().name,n))</div><div class="line">			time.sleep(<span class="number">1</span>)</div><div class="line">		print(<span class="string">'thread %s ended.'</span> %threading.current_thread().name)</div><div class="line"></div><div class="line">print(<span class="string">'thread %s is running....'</span>%threading.current_thread().name)</div><div class="line">t=threading.Thread(target=loop,name=<span class="string">'LoopThread'</span>)</div><div class="line">t.start()</div><div class="line">t.join()</div><div class="line">print(<span class="string">'thread %s ended'</span> %threading.current_thread().name)</div></pre></td></tr></table></figure></p>
-<p>运行结果如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++&gt;python  <span class="number">2.</span>py</div><div class="line">thread MainThread <span class="keyword">is</span> running....</div><div class="line">thread LoopThread <span class="keyword">is</span> running...</div><div class="line">thread LoopThread &gt;&gt;&gt; <span class="number">1</span></div><div class="line">thread LoopThread &gt;&gt;&gt; <span class="number">2</span></div><div class="line">thread LoopThread &gt;&gt;&gt; <span class="number">3</span></div><div class="line">thread LoopThread &gt;&gt;&gt; <span class="number">4</span></div><div class="line">thread LoopThread &gt;&gt;&gt; <span class="number">5</span></div><div class="line">thread LoopThread ended.</div><div class="line">thread MainThread ended</div></pre></td></tr></table></figure></p>
-<p>由于任何进程默认就会启动一个线程，我们把这个线程称为主线程，主线程又可以启动信的线程，Python的<code>threading</code>模块有个<code>current_thresd()</code>函数，永远返回当前进程的实例。主线程实例的名字叫做MainThread，子线程的名字在创建时指定。名字仅仅在打印时用来显示，没有任何其他意义。</p>
-<h3 id="Lcok"><a href="#Lcok" class="headerlink" title="Lcok"></a>Lcok</h3><p>多线程和多进程最大的不同在于，在多进程中，同一个变量，各自有一份拷贝存于每个进程当中，互不影响，而多线程中，所有变量都由所有线程共享，所以，任何一个变量都可以被任何一个线程修改，因此，线程之间共享数据最大 的危险在于多个线程同时修改一个变量，内容会变混乱。参看下例：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> time, threading</div><div class="line"></div><div class="line">balance=<span class="number">0</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_it</span><span class="params">(n)</span>:</span></div><div class="line">	<span class="comment">#先存后取，结果应为0</span></div><div class="line">	<span class="keyword">global</span> balance</div><div class="line">	balance=balance+n</div><div class="line">	balance=balance-n</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">run_thread</span><span class="params">(n)</span>:</span></div><div class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1000000</span>):</div><div class="line">		change_it(n)</div><div class="line"></div><div class="line">t1=threading.Thread(target=run_thread,args=(<span class="number">5</span>,))</div><div class="line">t2=threading.Thread(target=run_thread,args=(<span class="number">8</span>,))</div><div class="line">t1.start()</div><div class="line">t2.start()</div><div class="line">t1.join()</div><div class="line">t2.join()</div><div class="line">print(balance)</div></pre></td></tr></table></figure></p>
-<p>我们定义了一个共享变量<code>balance</code>，初始值为<code>0</code>，并且启动两个线程，先存后取，理论上结果应该为<code>0</code>，但是由于线程的调度是由操作系统决定的，当t1,t1交替执行时，只要循环次数够多，<code>balance</code>的结果就不一定是<code>0</code>了。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++&gt;python <span class="number">3.</span>py</div><div class="line"><span class="number">18</span></div><div class="line"></div><div class="line">D:\笔记\Python\Notepad++&gt;python <span class="number">3.</span>py</div><div class="line"><span class="number">21</span></div><div class="line"></div><div class="line">D:\笔记\Python\Notepad++&gt;python <span class="number">3.</span>py</div><div class="line"><span class="number">21</span></div><div class="line"></div><div class="line">D:\笔记\Python\Notepad++&gt;python <span class="number">3.</span>py</div><div class="line"><span class="number">10</span></div><div class="line"></div><div class="line">D:\笔记\Python\Notepad++&gt;python <span class="number">3.</span>py</div><div class="line"><span class="number">15</span></div></pre></td></tr></table></figure>
-<p>原因为高级语言的一条语句在CPU执行时是若干条语句，即使一个简单的计算<code>balance=balance+n</code>也要分成两步计算：</p>
-<blockquote>
-<p>1.计算<code>balance+n</code>，存入临时变量中<br>2.将临时变量的值赋给balance</p>
-</blockquote>
-<p>由于x是局部变量，两个线程各自都有自己的x，当代码正常执行时:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">初始值 balance = 0</div><div class="line"></div><div class="line">t1: x1 = balance + 5 # x1 = 0 + 5 = 5</div><div class="line">t1: balance = x1     # balance = 5</div><div class="line">t1: x1 = balance - 5 # x1 = 5 - 5 = 0</div><div class="line">t1: balance = x1     # balance = 0</div><div class="line"></div><div class="line">t2: x2 = balance + 8 # x2 = 0 + 8 = 8</div><div class="line">t2: balance = x2     # balance = 8</div><div class="line">t2: x2 = balance - 8 # x2 = 8 - 8 = 0</div><div class="line">t2: balance = x2     # balance = 0</div><div class="line"></div><div class="line">结果 balance = 0</div></pre></td></tr></table></figure>
-<p>但是t1和t2是交替运行的，如果操作系统以下面的顺序执行t1、t2：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">初始值 balance = 0</div><div class="line"></div><div class="line">t1: x1 = balance + 5  # x1 = 0 + 5 = 5</div><div class="line"></div><div class="line">t2: x2 = balance + 8  # x2 = 0 + 8 = 8</div><div class="line">t2: balance = x2      # balance = 8</div><div class="line"></div><div class="line">t1: balance = x1      # balance = 5</div><div class="line">t1: x1 = balance - 5  # x1 = 5 - 5 = 0</div><div class="line">t1: balance = x1      # balance = 0</div><div class="line"></div><div class="line">t2: x2 = balance - 8  # x2 = 0 - 8 = -8</div><div class="line">t2: balance = x2   # balance = -8</div><div class="line"></div><div class="line">结果 balance = -8</div></pre></td></tr></table></figure>
-<p>究其原因，是因为修改balance需要多条语句，而执行这几条语句时，线程可能中断，从而导致多个线程把同一个对象的内容改乱了。</p>
-<p>两个线程同时一存一取，就可能导致余额不足，我们必须确保有一个线程在修改balance的时候，别的线程一定不能改。如果我们要确保<code>balance</code>计算正确，就要给<code>change_it()</code>上一把锁，因此其他线程不能同时执行<code>change_it()</code>，只能等待，直到锁被释放后，获得该锁以后才能改。由于锁只有一个，无论多少进程，同一时刻最多只有一个线程持有该锁，所以不会造成修改的冲突。创建一个锁就是通过<code>threading.Lock()</code>来实现：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">balance=<span class="number">0</span></div><div class="line">lock=threading.Lock()</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">run_thread</span><span class="params">(n)</span>:</span></div><div class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1000000</span>):</div><div class="line">		lock.acquire()</div><div class="line">		<span class="keyword">try</span>:</div><div class="line">			change_it(n)</div><div class="line">		<span class="keyword">finally</span>:</div><div class="line">			lock.release</div></pre></td></tr></table></figure></p>
-<p>当多个线程同时执行<code>lock.acquire()</code>时，只有一个线程能成功地获得锁，然后继续执行代码，其他线程就继续等待直到获得锁为止。</p>
-<p>获得锁的线程用完后一定要释放锁，否则那些裤裤等待锁的线程将永远等待下去，称为死进程。所以我们用<code>try..finally</code>来确保锁一定会释放。</p>
-<p>锁的好处就是确保了某段关键代码只能由一个线程从头到尾完整的执行，坏处是阻止了多线程并发执行，包含锁的某段代码实际上只能以单线程模式执行，效率就大大降低了。其次由于可以存在多个锁，不同的线程持有不同的锁，并试图获取对方持有的锁时，可能会造成死锁，导致多个线程全部挂起，即不能执行，也无法结束，只能靠操作系统强制终止。</p>
-<h3 id="多核CPU"><a href="#多核CPU" class="headerlink" title="多核CPU"></a>多核CPU</h3><p>多核可以同时执行多个线程，如果写一个死循环，会100%占用一个CPU。要把N核CPU全部跑满，就必须启动N个死循环线程。写一个python死循环：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> threading,multiprocessing</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">loop</span><span class="params">()</span>:</span></div><div class="line">	x=<span class="number">0</span></div><div class="line">	<span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">		x=x^<span class="number">1</span></div><div class="line"></div><div class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(multiprocessing.cpu_count()):</div><div class="line">	t=threading.Thread(target=loop)</div><div class="line">	t.start()i</div></pre></td></tr></table></figure></p>
-<p>启动和CPU核心数量相同的N个线程，在4核CPU上可以监控到CPU占有率仅为102%，也就是只使用了一个核。用C、C++、Java来改写相同的死循环，直接可以把全部核新跑满，Python就不行。因为python的现场虽然是真的线程，但是解释器执行代码时，有一个GIL锁：Global Interpr Lock，任何Python线程在执行前，必须先获得GIL锁，然后，每执行100条字节码，解释器就自动释放GIL锁，让别的线程有机会执行。这个GIL全局锁实际上把所有线程的执行代码都给上了锁。所以在多线程python中只能交替执行。</p>
-<p>所以在Python中，可以使用多线程，但不要指望能有效利用多核。如果一定要通过线程利用多核，只能通过C扩展实现，不过这样就失去了Python简单易用的特性。</p>
-<p>不过可以通过多进程实现多核任务，多个Python进程有各自独立的GIL锁，互不影响。</p>
-<hr>
-<h2 id="ThreadLocal"><a href="#ThreadLocal" class="headerlink" title="ThreadLocal"></a>ThreadLocal</h2><p>在多线程环境下，每个线程都有自己的数据。一个线程使用自己的局部变量比使用全局变量好，因为局部变量只有线程自己能看见，不会影响其他线程，而全局变量的修改必须加锁。</p>
-<p>但是局部变量的问题在于函数调用的时候，传递起来很麻烦：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">process_student</span><span class="params">(name)</span>:</span></div><div class="line">	std=Student(name)</div><div class="line">	<span class="comment">#std是局部变量，但是每个函数都要用它，因此必须传进去</span></div><div class="line">	do_task_1(std)</div><div class="line">	do_task_2(std)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">do_task_1</span><span class="params">(std)</span>:</span></div><div class="line">	do_subtask_1(std)</div><div class="line">	do_subtask_2(std)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">do_task_2</span><span class="params">(std)</span></span></div><div class="line"><span class="function">	<span class="title">do_subtask_1</span></span></div><div class="line"><span class="function">	<span class="title">do_subtask_2</span></span></div></pre></td></tr></table></figure></p>
-<p>每个函数一层一层的调用都传参数会很麻烦。也不能用全局变量，因为每个线程处理不同的<code>Student</code>对象，不能共享。如果用一个全局<code>dict</code>存放所有的<code>Student</code>对象，然后以<code>thread</code>自身作为<code>key</code>获取线程对应的<code>Student</code>对象：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">global_dict=&#123;&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">std_thread</span><span class="params">(name)</span>:</span></div><div class="line">	std=Student(name)</div><div class="line">	<span class="comment">#把std放到全局变量global_dict中</span></div><div class="line">	global_dict[threading.current_thread()]=std</div><div class="line">	do_task_1()</div><div class="line">	do_task_2()</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">do_task_1</span><span class="params">()</span>:</span></div><div class="line">	<span class="comment">#不传入std，根据当前线程查找</span></div><div class="line">	std=global_dict[threading.current_thread()]</div><div class="line">	...</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">do_task_2</span><span class="params">()</span>:</span></div><div class="line">	std=global_dict[threading.current_thread()]</div><div class="line">	...</div></pre></td></tr></table></figure></p>
-<p>这种方法理论上是可行的，最大的优点是消除了<code>std</code>对象在每层函数中的传递问题。Python还提供了更简单的方式，<code>ThreadLocal</code>：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> threading</div><div class="line"></div><div class="line"><span class="comment">#创建全局ThreadLocal对象：</span></div><div class="line">local_school=threading.local()</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">process_student</span><span class="params">()</span>:</span></div><div class="line">	<span class="comment">#获取当前线程关联的student：</span></div><div class="line">	std=local_school.student</div><div class="line">	print(<span class="string">'Hello, %s (in %s)'</span> %(std,threading.current_thread().name))</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">process_thread</span><span class="params">(name)</span>:</span></div><div class="line">	<span class="comment">#绑定ThreadLocal的student：</span></div><div class="line">	local_school.student=name</div><div class="line">	process_student()</div><div class="line"></div><div class="line">t1=threading.Thread(target=process_thread,args=(<span class="string">'Alice'</span>,),name=<span class="string">'Thread-A'</span>)</div><div class="line">t2=threading.Thread(target=process_thread,args=(<span class="string">'Bob'</span>,),name=<span class="string">'Thread-B'</span>)</div><div class="line">t1.start()</div><div class="line">t2.start()</div><div class="line">t1.join()</div><div class="line">t2.join()</div></pre></td></tr></table></figure></p>
-<p>执行结果：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++&gt;python <span class="number">6.</span>py</div><div class="line">Hello, Alice (<span class="keyword">in</span> Thread-A)</div><div class="line">Hello, Bob (<span class="keyword">in</span> Thread-B)</div></pre></td></tr></table></figure></p>
-<p>全局变量<code>local_school</code>就是一个<code>ThreadLocal</code>对象，每个<code>Thread</code>对它都可以读写<code>student</code>属性，但互不影响。你可以把<code>local_school</code>看成全局变量，但每个属性如<code>local_school.student</code>都是线程的局部变量，可以任意读写而互不干扰，也不用管理锁的问题，<code>ThreadLocal</code>内部会处理。</p>
-<p>可以理解为全局变量<code>local_school</code>是一个<code>dict</code>，不但可以用<code>local_school.student</code>，还可以绑定其他变量。</p>
-<p><code>ThreadLocal</code>最常用的地方就是为每个线程绑定一个数据库连接，HTTP请求，用户身份信息等，这样一个线程的所有调用到的处理函数都非常方便的访问这些资源。</p>
-<hr>
-<h2 id="进程vs线程"><a href="#进程vs线程" class="headerlink" title="进程vs线程"></a>进程vs线程</h2><p>讨论进程和线程的优缺点：</p>
-<p>首先，要实现多任务，通常我们会设计Master-Worker模式，master负责分配任务，worker负责执行任务，因此多任务环境下，通常是一个Master，多个worker。</p>
-<p>如果用多进程实现Master-Worker，主进程就是Master，其他进程就是Worker。<br>如果用多进程实现Master-Worker，主线程就是Master，其他线程就是Worker。</p>
-<p>多进程模式的缺点是创建进程的代价大，在Unix/Linux系统下，用<code>fork</code>调用还不算麻烦。在Windows下创建进程开销巨大。另外操作系统能同时运行的进程数也是有限的，在内存和CPU的限制下，如果有几千个进程同时运行，操作系统调度都很难。</p>
-<p>多线程模式通常比多进程快一点，但是有限。而且多线程模式致命的缺点是任何一个线程挂掉都可能造成整个进程的崩  溃，以内所有的线程共享进程的内存。在Windows上，如果一个线程的代码处理问题，操作系统会强制结束整个进程。</p>
-<p>在WIndows下，多线程的效率比多进程要高，所以微软的IIS服务器默认采用多线程模式。由于多线程存在稳定性的问题，IIS的稳定性就不如Apache。为了缓解这个问题，IIS和Apache现在又有了多进程+多进程的混合模式。</p>
-<h3 id="线程切换"><a href="#线程切换" class="headerlink" title="线程切换"></a>线程切换</h3><p><em>无论是多进程还是多线程，只要数量多了，效率就低了。</em></p>
-<p>操作系统在切换进程或者线程时，首先要保存当前执行的现场环境（CPU寄存器状态、内存页等），然后把新任务的执行环境准备好（恢复上次的寄存器状态，切换内存页等），才能开始执行。这个切换过程虽然很快，也需要耗费时间，如果有几千个任务同时进行，操作系统可能会主要忙着切换任务，执行任务的时间会减少，造成系统处于假死状态。多任务一旦到达一个限度，就会消耗掉系统所有的资源，效率急剧下降。</p>
-<h3 id="计算密集型vs-IO密集型"><a href="#计算密集型vs-IO密集型" class="headerlink" title="计算密集型vs.IO密集型"></a>计算密集型vs.IO密集型</h3><p>是否采用多任务的第二个考虑是任务的类型。</p>
-<p>计算密集型任务的特点是要进行大量的计算，消耗CPU的资源。计算密集型任务虽然也可以用多任务完成，但是任务越多，任务切换的时间就越多，CPU执行任务的效率就越低。要高效的利用CPU，计算密集型任务同时进行的数量应当等于CPU的核心数。</p>
-<p>计算密集型任务由于主要消耗CPU资源，因此，代码运行效率至关重要。Python这样的脚本语言运行效率很低，完全不适应计算密集型任务。对于计算密集型任务，最好用C语言编写。</p>
-<p>IO密集型任务涉及到网络、磁盘IO的任务，这类任务的特点是CPU消耗很少，任务的大部分时间在等待IO操作完成（因为IO的速度远远低于CPU和内存的速度）。对于IO密集型任务，任务越多，CPU效率越高，但也有一个限度。常见的大部分任务都是IO密集型任务，比如Web应用。</p>
-<p>IO密集型任务执行期间，99%的时间都花在IO上，花在CPU上的时间很少，因此，用运行速度极快的C语言替换用python这样运行速度极低的脚本语言，完全无法提升运行效率。对于IO密集型任务，最合适的语言就是开发效率最高的语言。</p>
-<h3 id="异步IO"><a href="#异步IO" class="headerlink" title="异步IO"></a>异步IO</h3><p>考虑到CPU和IO之间巨大的速度差异，一个任务在执行过程中大部分时间都在等待IO操作，单进程单线程模型会导致别的任务无法并行执行，因此我们才需要多进程模型或者多线程模型来支持多任务并发执行。</p>
-<p>现代操作系统对IO操作已经做了巨大的改进，最大的特点就是支持异步IO。如果充分利用操作系统提供的异步IO支持，就可以用单进程单线程的模型来执行多任务，这种全新的模型称为事件驱动模型，Nginx就是支持异步IO的Web服务器，它在单核CPU上采用单进程模型就可以高效的支持多任务。在多核CPU上可以运行多个进程，充分利用多核CPU。由于系统总的进程数量十分有限，因此操作系统调度非常高效。用异步IO编程模型来实现多任务是一个主要的趋势。</p>
-<hr>
-<h2 id="分布式进程"><a href="#分布式进程" class="headerlink" title="分布式进程"></a>分布式进程</h2><p>在Thread和Process中，应当优选Process，因为Process更稳定，而且Process可以分布到多台机器上，而Thread最多只能分布到一台机器的多个CPU上。</p>
-<p>Python的<code>multiprocessing</code>模块不但支持多进程，其中<code>managers</code>子模块还支持把多个进程分布到多台机器上。一个服务进程可以作为调度者，将任务分布到其他多个进程中，依靠网络通信。由于<code>managers</code>模块的封装很好，不必了解网络通信的细节，就可以很容易地编写分布式多进程程序。</p>
-<p>例如：如果我们已经有一个通过<code>Queue</code>通信的多进程程序在同一台机器上运行，现在，由于处理任务的进程任务繁重，希望把发送任务的进程和处理任务的进程分布到两台机器上。怎么用分布式进程实现呢？</p>
-<p>原有的<code>Queue</code>可以继续使用，但是，通过<code>managers</code>模块把<code>Queue</code>通过网络暴露出去，就可以让其他机器的进程访问<code>Queue</code>了。</p>
-<p>我们先看服务进程，服务进程负责启动<code>Queue</code>,把<code>Queue</code>注册到网络上，然后往<code>Queue</code>里面写入任务：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python3</span></div><div class="line"><span class="comment"># -*- coding: utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> random, time, queue</div><div class="line"><span class="keyword">from</span> multiprocessing.managers <span class="keyword">import</span> BaseManager</div><div class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> freeze_support</div><div class="line"></div><div class="line"><span class="comment"># 发送任务的队列:</span></div><div class="line">task_queue = queue.Queue()</div><div class="line"><span class="comment"># 接收结果的队列:</span></div><div class="line">result_queue = queue.Queue()</div><div class="line"></div><div class="line"><span class="comment"># 从BaseManager继承的QueueManager:</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">QueueManager</span><span class="params">(BaseManager)</span>:</span></div><div class="line">    <span class="keyword">pass</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">return_task_queue</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">global</span> task_queue</div><div class="line">	<span class="keyword">return</span> task_queue</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">return_result_queue</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">global</span> result_queue</div><div class="line">	<span class="keyword">return</span> result_queue</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">()</span>:</span></div><div class="line"><span class="comment"># 把两个Queue都注册到网络上, callable参数关联了Queue对象:</span></div><div class="line">	QueueManager.register(<span class="string">'get_task_queue'</span>, callable=return_task_queue)</div><div class="line">	QueueManager.register(<span class="string">'get_result_queue'</span>, callable=return_result_queue)</div><div class="line"></div><div class="line">	<span class="comment"># 绑定端口5000, 设置验证码'abc':</span></div><div class="line">	manager = QueueManager(address=(<span class="string">'127.0.0.1'</span>, <span class="number">5000</span>), authkey=<span class="string">b'abc'</span>)</div><div class="line">	<span class="comment"># 启动Queue:</span></div><div class="line">	manager.start()</div><div class="line">	<span class="comment"># 获得通过网络访问的Queue对象:</span></div><div class="line">	task = manager.get_task_queue()</div><div class="line">	result = manager.get_result_queue()</div><div class="line">	<span class="comment"># 放几个任务进去:</span></div><div class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>):</div><div class="line">		n = random.randint(<span class="number">0</span>, <span class="number">10000</span>)</div><div class="line">		print(<span class="string">'Put task %d...'</span> % n)</div><div class="line">		task.put(n)</div><div class="line">	<span class="comment"># 从result队列读取结果:</span></div><div class="line">	print(<span class="string">'Try get results...'</span>)</div><div class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>):</div><div class="line">		r = result.get(timeout=<span class="number">10</span>)</div><div class="line">		print(<span class="string">'Result: %s'</span> % r)</div><div class="line">	<span class="comment"># 关闭:</span></div><div class="line">	manager.shutdown()</div><div class="line">	print(<span class="string">'master exit.'</span>)</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</div><div class="line">	freeze_support()</div><div class="line">	test()</div></pre></td></tr></table></figure></p>
-<p>当我们在一台机器上写多进程程序时，创建的<code>Queue</code>可以直接拿来用，但是再分布式多进程环境下，添加任务到<code>Queue</code>不可以直接对原始的<code>task_queue</code>进行操作，那样就绕开了<code>QueueManager</code>的封装，必须通过<code>manager.get_task_queue()</code>获得<code>Queue</code>接口添加。</p>
-<p>然后在另外一台机器上启动任务程序：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python3</span></div><div class="line"><span class="comment">#-*- coding: utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> sys, time, queue</div><div class="line"><span class="keyword">from</span> multiprocessing.manager <span class="keyword">import</span> BaseManager</div><div class="line"></div><div class="line"><span class="comment">#创建类似的QueueManager：</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">QueueManager</span><span class="params">(BaseManager)</span>:</span></div><div class="line">	<span class="keyword">pass</span></div><div class="line"></div><div class="line"><span class="comment">#由于这个QueueManager只能从网络上获取QUeue，所以注册时只提供名字：</span></div><div class="line">QueueManager.register(<span class="string">'get_task_queue'</span>)</div><div class="line">QueueManager.register(<span class="string">'get_result_queue'</span>)</div><div class="line"></div><div class="line"><span class="comment">#连接到服务器，也就是task_master.py运行的机器：</span></div><div class="line">server_addr=<span class="string">'127.0.0.1'</span></div><div class="line">print(<span class="string">'Connect to server %s...'</span> %server_addr)</div><div class="line"><span class="comment">#端口和验证码注意保持与task_master.py设置的完全一致：</span></div><div class="line">m=QueueManager(address=(server_addr,<span class="number">5000</span>),authkey=<span class="string">b'abc'</span>)</div><div class="line"><span class="comment">#从网络连接：</span></div><div class="line">m.connect()</div><div class="line"><span class="comment">#获取Queue的对象：</span></div><div class="line">task=m.get_task_queue()</div><div class="line">result=m.get_result_queue()</div><div class="line"><span class="comment">#从task队列获取任务，并把结果写入result队列：</span></div><div class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>):</div><div class="line">	<span class="keyword">try</span>:</div><div class="line">		n=task.get(timeout=<span class="number">1</span>)</div><div class="line">		print(<span class="string">'run task %d*%d...'</span>%(n,n))</div><div class="line">		r=<span class="string">'%d*%d=%d'</span> %(n,n,n*n)</div><div class="line">		time.sleep(<span class="number">1</span>)</div><div class="line">		result.put(r)</div><div class="line">	<span class="keyword">except</span> Queue.Empty:</div><div class="line">		print(<span class="string">'task queue is empty.'</span>)</div><div class="line"><span class="comment">#处理结束：</span></div><div class="line">print(<span class="string">'worker exit'</span>)</div></pre></td></tr></table></figure></p>
-<p>任务进程要通过网络连接到服务进程，所以要指定任务进程的IP。</p>
-<p>首先启动<code>task_master.py</code>服务进程：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++&gt;python task_master1.py</div><div class="line">Put task <span class="number">9516.</span>..</div><div class="line">Put task <span class="number">24.</span>..</div><div class="line">Put task <span class="number">7549.</span>..</div><div class="line">Put task <span class="number">6291.</span>..</div><div class="line">Put task <span class="number">9628.</span>..</div><div class="line">Put task <span class="number">9821.</span>..</div><div class="line">Put task <span class="number">8142.</span>..</div><div class="line">Put task <span class="number">3530.</span>..</div><div class="line">Put task <span class="number">5915.</span>..</div><div class="line">Put task <span class="number">9900.</span>..</div><div class="line">Try get results...</div></pre></td></tr></table></figure></p>
-<p><code>task_master.py</code>进程发送完任务后，开始等待<code>result</code>队列的结果，现在启动<code>task_worker.py</code>进程：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++&gt;python task_worker.py</div><div class="line">Connect to server <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>...</div><div class="line">run task <span class="number">6999</span>*<span class="number">6999.</span>..</div><div class="line">run task <span class="number">204</span>*<span class="number">204.</span>..</div><div class="line">run task <span class="number">7592</span>*<span class="number">7592.</span>..</div><div class="line">run task <span class="number">2210</span>*<span class="number">2210.</span>..</div><div class="line">run task <span class="number">3849</span>*<span class="number">3849.</span>..</div><div class="line">run task <span class="number">5265</span>*<span class="number">5265.</span>..</div><div class="line">run task <span class="number">4221</span>*<span class="number">4221.</span>..</div><div class="line">run task <span class="number">7808</span>*<span class="number">7808.</span>..</div><div class="line">run task <span class="number">3512</span>*<span class="number">3512.</span>..</div><div class="line">run task <span class="number">7448</span>*<span class="number">7448.</span>..</div><div class="line">worker exit</div></pre></td></tr></table></figure></p>
-<p><code>task_worker.py</code>进程结束，在<code>task_master.py</code>进程中会继续打印出结果：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">Result: <span class="number">6999</span>*<span class="number">6999</span>=<span class="number">48986001</span></div><div class="line">Result: <span class="number">204</span>*<span class="number">204</span>=<span class="number">41616</span></div><div class="line">Result: <span class="number">7592</span>*<span class="number">7592</span>=<span class="number">57638464</span></div><div class="line">Result: <span class="number">2210</span>*<span class="number">2210</span>=<span class="number">4884100</span></div><div class="line">Result: <span class="number">3849</span>*<span class="number">3849</span>=<span class="number">14814801</span></div><div class="line">Result: <span class="number">5265</span>*<span class="number">5265</span>=<span class="number">27720225</span></div><div class="line">Result: <span class="number">4221</span>*<span class="number">4221</span>=<span class="number">17816841</span></div><div class="line">Result: <span class="number">7808</span>*<span class="number">7808</span>=<span class="number">60964864</span></div><div class="line">Result: <span class="number">3512</span>*<span class="number">3512</span>=<span class="number">12334144</span></div><div class="line">Result: <span class="number">7448</span>*<span class="number">7448</span>=<span class="number">55472704</span></div><div class="line">master exit.</div></pre></td></tr></table></figure></p>
-<p>这个简单的Master/Worker模型就是一个简单但真正的分布式计算，把代码稍加改变，启动多个Worker，就可以把任务分布到几台甚至几十台机器上，比如把计算n*n的代码换为发送邮件，就实现了邮件队列的异步发送。</p>
-<p>Queue对象存储在<code>task_master.py</code>中：<br><img src="/img/1477818063049.png" alt="Alt text"></p>
-<p>而<code>Queue</code>可以通过<code>QueueManager</code>实现通过网络访问。由于<code>QueueManager</code>管理的不止一个<code>Queue</code>，所以要给每个<code>Queue</code>的网络调用接口起个名字，比如<code>get_task_queue</code>。</p>
-<p><code>authkey</code>是为了保证两台计算机正常通信，不被其他机器恶意干扰。</p>
-<p>Python的分布式进程接口简单，封装良好，适合需要把繁重任务分布到多台机器的环境下。注意Queue的作用是用来传递任务和接收任务，每个任务的描述数据量要尽量小。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/09/4.模块/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/09/4.模块/" itemprop="url">4. 模块</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-09T15:30:31+08:00">
-                2017-09-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="模块"><a href="#模块" class="headerlink" title="模块"></a>模块</h1><p>在计算机程序的开发过程中，随着程序代码越来越多，在一个文件里代码就会越来越长，越来越不容易维护。</p>
-<p>为了编写可维护的代码，我们可以把很多函数分组，分别放到不同的文件里，这样，每个文件包含的代码就越来越少，很多编程语言都采用这种组织代码的方式。在Python中，一个.py文件就称之为一个模块。</p>
-<p>使用模块的好处在哪里？</p>
-<p>最大的好处是大大提高了代码的可维护性，其次，编写代码不用从零开始。当一个模块编写完毕，就可以被其他地方引用。我们在编写程序的时候，也经常引用其他模块，包括Python内置的模块和来自第三方的模块。</p>
-<p>使用模块还可以避免函数名和变量名冲突。相同名字的函数和变量完全可以分别存在不同的模块中，因此，我们在编写模块时，不必考虑名字会和其他模块冲突。但是也要注意，尽量不要与内置函数名字冲突。Python的内置函数在这里：          [<a href="https://docs.python.org/3/library/functions.html" target="_blank" rel="external">https://docs.python.org/3/library/functions.html</a>]</p>
-<p>同时，为了避免模块名冲突，Python又引入了按目录来组织模块的方法，称为包(Package)。</p>
-<p>例如，一个<code>abc.py</code>的文件就是一个名字叫<code>abc</code>的模块，一个<code>xyz.py</code>的文件就是一个名字叫<code>xyz</code>的模块。现在我们假设abc和xyz这两个模块名字与其他模块冲突了，于是我们通过包来组织模块，避免冲突。方法是选择一个顶层包名，比如<code>mycompany</code>，按照如下目录来存放：<br><img src="./1470055483538.png" alt="Alt text"><br>引入了包之后，只要顶层的包名不与别人冲突，那所有模块都不会与别人冲突。现在，<code>abc.py</code>模块的名字就变为了<code>mycompany.abc</code>。请注意，在每一个包目录下面都会有一个<code>__init__.py</code>的文件，这个文件是必须存在的，否则，Python就把这个目录当做普通目录，而不是一个包。<code>__init__.py</code>可以是空文件也可以有Python代码，因为其本身就是一个模块，其模块名为<code>mycompany</code>。</p>
-<p>类似的，可以有多级目录，组成多级层次的包结构，比如：<br><img src="./1470055757208.png" alt="Alt text"><br>文件<code>www.py</code>的模块名就是<code>mycompany.web.www</code>，两个文件<code>utils.py</code>的模块名分比为<code>mycompany.utils</code>和<code>mycompany.web.utils</code>。</p>
-<p>自己创建模块时要注意命名，不能喝Python自带的模块名称冲突。例如，系统自带了<code>sys</code>模块，自己模块就不可命名为<code>sys.py</code>，否则就无法导入系统自带的<code>sys</code>模块。<code>mycompany.web</code>也是一个模块，对应的文件为<code>__init__.py</code>。</p>
-<hr>
-<h2 id="使用模块"><a href="#使用模块" class="headerlink" title="使用模块"></a>使用模块</h2><p>Python本身就内置了很多非常有用的模块，只要安装完毕，这些模块就可以立即使用。</p>
-<p>我们以内建的<code>sys</code>模块为例，编写一个hello的模块：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python3</span></div><div class="line"><span class="comment">#-*- coding: utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="string">'a test module'</span></div><div class="line"></div><div class="line">__author__=<span class="string">'cdx'</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> sys</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">()</span>:</span></div><div class="line">	args=sys.argv</div><div class="line">	<span class="keyword">if</span> len(args)==<span class="number">1</span>:</div><div class="line">		print(<span class="string">'Hello,world!'</span>)</div><div class="line">	<span class="keyword">elif</span> len(args==<span class="number">2</span>):</div><div class="line">		print(<span class="string">'Hello,%s!'</span> %args[<span class="number">1</span>])</div><div class="line">	<span class="keyword">else</span>:</div><div class="line">		print(<span class="string">'too many arguments!'</span>)</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</div><div class="line">	test()</div></pre></td></tr></table></figure>
-<p>第一行和第二行是标准注释，第一行注释可以让这个<code>hello.py</code>文件直接在Unix/Linux/Mac上运行，第二行注释表示.py文件本身使用标准的UTF-8编码。<br>第四行是一个字符串，表示模块的文档注释，任何模块代码的第一个字符串都被视为模块的文档注释；第六行使用<code>__author__</code>变量把作者写进去，开源后可以查看作者姓名。签名都是一些标准写法，虽然可以不写，但是按照标准是没有任何问题的。</p>
-<p>使用<code>sys</code>的第一步是导入该模块：</p>
-<blockquote>
-<p>import sys</p>
-</blockquote>
-<p>导入该模块后，我们就有了变量<code>sys</code>指向该模块，利用<code>sys</code>这个变量，就可以访问<code>sys</code>模块的所有功能。<code>sys</code>模块有一个<code>argv</code>变量，用list存储了命令行的所有参数。<code>argv</code>至少有一个元素，因为第一个参数永远是该.py文件的名称，例如：</p>
-<p>运行<code>python hello.py</code>获得的<code>sys.argv</code>就是<code>[&#39;hello.py&#39;,&#39;cdx&#39;]</code>。</p>
-<p>最后注意到这两行代码：</p>
-<blockquote>
-<p>if <strong>name</strong>==’<strong>main</strong>‘:<br>    test()</p>
-</blockquote>
-<p>当我们在命令行运行hello模块文件时，Python解释器把一个特殊变量<code>__name__</code>置为<code>__main__</code>，而如果在其他地方导入该hello模块时，if判断将失败，因此这种if测试可以让一个模块通过命令行运行时执行一些额外的代码，最常见的就是运行测试。</p>
-<p>我们可以通过命令行运行<code>hello.py</code>看看效果：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++&gt;python hello.py</div><div class="line">Hello,world!</div></pre></td></tr></table></figure>
-<p>如果进入Python交互换将，再导入hello模块：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Python 3.5.0 (v3.5.0:374f501f4567, Sep 13 2015, 02:27:37) [MSC v.1900 64 bit (AMD64)] on win32</div><div class="line">Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.</div><div class="line">&gt;&gt;&gt; import hello</div><div class="line">&gt;&gt;&gt; hello.test()</div><div class="line">Hello,world!</div></pre></td></tr></table></figure>
-<p>导入时，没有打印<code>Hello,world!</code>，因为没有执行<code>test()</code>函数，调用<code>Hello,world!</code>时就会打印了。</p>
-<h2 id="作用域"><a href="#作用域" class="headerlink" title="作用域"></a>作用域</h2><p>在一个模块中，我们会定义很多函数和变量，但有的函数和变量我们希望给别人使用，有的函数和变量我们希望仅仅在模块内部使用。在Python中，是通过前缀<code>_</code>来实现的。</p>
-<p>正常函数和变量名是公开的public，可以被直接引用，比如：<code>abc</code>,<code>x123</code>,<code>PI</code>等。</p>
-<p>类似<code>__xxx__</code>这样的变量是特殊变量，可以别直接引用，但是有特殊用途，比如上面的<code>__author__</code>，<code>__name__</code>就是特殊变量，hello模块定义的文档注释也可以用特殊变量<code>__doc__</code>来访问，我们自己的变量一般不要用这种变量名；</p>
-<p>类似<code>_xxx</code>和<code>__xxx</code>这种函数或变量就是非公开的private，不应该被直接引用，比如<code>_abc``__abc_</code>等。</p>
-<p>之所以说，private函数和变量不应该被直接引用，而不是不能被直接引用，是因为Python并没有一种方法可以完全限制访问private函数或变量，但是，从编程习惯上不应该引用private函数或变量。</p>
-<p>private变量或函数的作用示例：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">def _private_1(name):</div><div class="line">    return &apos;Hello, %s&apos; % name</div><div class="line"></div><div class="line">def _private_2(name):</div><div class="line">    return &apos;Hi, %s&apos; % name</div><div class="line"></div><div class="line">def greeting(name):</div><div class="line">    if len(name) &gt; 3:</div><div class="line">        return _private_1(name)</div><div class="line">    else:</div><div class="line">        return _private_2(name)</div></pre></td></tr></table></figure>
-<p>我们在模块里公开<code>greeting()</code>函数，而把内部逻辑用private函数隐藏起来了，这样，调用<code>greeting()</code>函数不关心内部的private细节，这也是一种非常有用的代码封装和抽象方法，即：</p>
-<p>外部不需要引用的函数全部定义为private，只有外部需要引用的函数才定义为public。</p>
-<h2 id="安装第三方模块"><a href="#安装第三方模块" class="headerlink" title="安装第三方模块"></a>安装第三方模块</h2><p>在Python中，安装第三方模块，是通过管理工具pip完成的。</p>
-<p>现在我们来安装一个第三方库—-Python Imaging Library，这是Python下非常强大的处理图像的工具库。一般来说，第三方库都会在Python官方的pypi.python.org网站注册，要安装一个第三方库，必须知道该库的名称，可以在官网或者pipy上搜索，比如Pillow的名称叫pillow，因此，安装Pillow的命令就是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pip install Pillow</div></pre></td></tr></table></figure>
-<p>安装了Pillow之后，就可以处理图片了，随便找一个图片生成缩略图：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; from PIL import Image</div><div class="line">&gt;&gt;&gt; im=Image.open(r&apos;desktop\test.png&apos;)</div><div class="line">&gt;&gt;&gt; print(im.format, im.size, im.mode)</div><div class="line">PNG (1841, 959) RGBA</div><div class="line">&gt;&gt;&gt; im.thumbnail((200,100))</div><div class="line">&gt;&gt;&gt;im.save(r&apos;desktop\thumb.jpg&apos;,&apos;JPEG&apos;)</div></pre></td></tr></table></figure>
-<p>其他常用的第三方库还有MySQL的驱动，<code>mysql-connector-python</code>，用于科学计算的NumPy库<code>numpy</code>，用于生成文本的模板工具<code>Jinja2</code>等。</p>
-<h2 id="模块搜索路径"><a href="#模块搜索路径" class="headerlink" title="模块搜索路径"></a>模块搜索路径</h2><p>当我们试图加载一个模块时，Python会在指定的路径下搜索对应的.py文件，如果找不到，就会报错；默认情况下，Python解释器会搜索当前目录，所有已安装的内置模块和第三方模块，搜索路径存放在sys模块中的path变量中：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> sys</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>sys.path</div><div class="line">[<span class="string">''</span>, <span class="string">'C:\\Users\\cdxu0\\AppData\\Local\\Programs\\Python\\Python35\\python35.zip'</span>, <span class="string">'C:\\Users\\cdxu0\\AppData\\Local\\Programs\\Python\\Python35\\DLLs'</span>, <span class="string">'C:\\Users\\cdxu0\\AppData\\Local\\Programs\\Python\\Python35\\lib'</span>, <span class="string">'C:\\Users\\cdxu0\\AppData\\Local\\Programs\\Python\\Python35'</span>, <span class="string">'C:\\Users\\cdxu0\\AppData\\Local\\Programs\\Python\\Python35\\lib\\site-packages'</span>]</div></pre></td></tr></table></figure>
-<p>如果要添加自己的搜索目录，有两种方法：</p>
-<blockquote>
-<p>1.直接修改<code>sys.path</code>，添加要搜索的目录<br>2.设置环境变量PYTHONPATH，该环境变量的内容会被自动添加到模块搜索路径中，设置方法和设置path 环境变量类似。</p>
-</blockquote>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2826,7 +3243,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">34</span>
+                <span class="site-state-item-count">36</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2837,7 +3254,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">12</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -2848,7 +3265,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

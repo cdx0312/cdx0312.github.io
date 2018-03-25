@@ -95,20 +95,20 @@
 
 
 
-<meta name="description" content="运行时数据区域 Java和C++之间有一堵由内存动态分配和垃圾收集机制所围成的墙，墙外面的人想出去，墙里面的人向出去。深入理解Java虚拟机这本书的坐着在介绍自动化内存管理时写到。个人认为内存动态分配和垃圾收集机制是Java的特点，不同于C++，一个对象从创建的内存分配，到销毁的内存回收都需要程序员来掌控，Java把这部分权限从程序员手中收回，限制了程序员的权限，但同时也减少了开发中存在的内存泄漏">
+<meta name="description" content="运行时数据区域 Java和C++之间有一堵由内存动态分配和垃圾收集机制所围成的墙，墙外面的人想进来，墙里面的人想出去。深入理解Java虚拟机这本书的作者在介绍自动化内存管理时写到。个人认为内存动态分配和垃圾收集机制是Java的特点，不同于C++，一个对象从创建的内存分配，到销毁的内存回收都需要程序员来掌控，Java把这部分权限从程序员手中收回，限制了程序员的权限，但同时也减少了开发中存在的内存泄漏">
 <meta name="keywords" content="Java,JVM">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java内存区域">
 <meta property="og:url" content="http://yoursite.com/2018/03/20/Java虚拟机_1/index.html">
 <meta property="og:site_name" content="小黄">
-<meta property="og:description" content="运行时数据区域 Java和C++之间有一堵由内存动态分配和垃圾收集机制所围成的墙，墙外面的人想出去，墙里面的人向出去。深入理解Java虚拟机这本书的坐着在介绍自动化内存管理时写到。个人认为内存动态分配和垃圾收集机制是Java的特点，不同于C++，一个对象从创建的内存分配，到销毁的内存回收都需要程序员来掌控，Java把这部分权限从程序员手中收回，限制了程序员的权限，但同时也减少了开发中存在的内存泄漏">
+<meta property="og:description" content="运行时数据区域 Java和C++之间有一堵由内存动态分配和垃圾收集机制所围成的墙，墙外面的人想进来，墙里面的人想出去。深入理解Java虚拟机这本书的作者在介绍自动化内存管理时写到。个人认为内存动态分配和垃圾收集机制是Java的特点，不同于C++，一个对象从创建的内存分配，到销毁的内存回收都需要程序员来掌控，Java把这部分权限从程序员手中收回，限制了程序员的权限，但同时也减少了开发中存在的内存泄漏">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/img/jvm-1.png">
 <meta property="og:image" content="http://yoursite.com/img/jvm-2.png">
-<meta property="og:updated_time" content="2018-03-20T08:18:28.857Z">
+<meta property="og:updated_time" content="2018-03-25T06:35:28.410Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java内存区域">
-<meta name="twitter:description" content="运行时数据区域 Java和C++之间有一堵由内存动态分配和垃圾收集机制所围成的墙，墙外面的人想出去，墙里面的人向出去。深入理解Java虚拟机这本书的坐着在介绍自动化内存管理时写到。个人认为内存动态分配和垃圾收集机制是Java的特点，不同于C++，一个对象从创建的内存分配，到销毁的内存回收都需要程序员来掌控，Java把这部分权限从程序员手中收回，限制了程序员的权限，但同时也减少了开发中存在的内存泄漏">
+<meta name="twitter:description" content="运行时数据区域 Java和C++之间有一堵由内存动态分配和垃圾收集机制所围成的墙，墙外面的人想进来，墙里面的人想出去。深入理解Java虚拟机这本书的作者在介绍自动化内存管理时写到。个人认为内存动态分配和垃圾收集机制是Java的特点，不同于C++，一个对象从创建的内存分配，到销毁的内存回收都需要程序员来掌控，Java把这部分权限从程序员手中收回，限制了程序员的权限，但同时也减少了开发中存在的内存泄漏">
 <meta name="twitter:image" content="http://yoursite.com/img/jvm-1.png">
 
 
@@ -383,7 +383,7 @@
 
       
         <h1 id="运行时数据区域"><a href="#运行时数据区域" class="headerlink" title="运行时数据区域"></a>运行时数据区域</h1><ul>
-<li><p>Java和C++之间有一堵由内存动态分配和垃圾收集机制所围成的墙，墙外面的人想出去，墙里面的人向出去。深入理解Java虚拟机这本书的坐着在介绍自动化内存管理时写到。个人认为内存动态分配和垃圾收集机制是Java的特点，不同于C++，一个对象从创建的内存分配，到销毁的内存回收都需要程序员来掌控，Java把这部分权限从程序员手中收回，限制了程序员的权限，但同时也减少了开发中存在的内存泄漏，内存溢出的频率。Java中不是没有内存泄漏和内存溢出，但是相对来说没有c++里面那么频繁，排查起来相对简单。了解虚拟机的相关知识对一个Java程序员是必不可少的技能。</p>
+<li><p>Java和C++之间有一堵由内存动态分配和垃圾收集机制所围成的墙，墙外面的人想进来，墙里面的人想出去。深入理解Java虚拟机这本书的作者在介绍自动化内存管理时写到。个人认为内存动态分配和垃圾收集机制是Java的特点，不同于C++，一个对象从创建的内存分配，到销毁的内存回收都需要程序员来掌控，Java把这部分权限从程序员手中收回，限制了程序员的权限，但同时也减少了开发中存在的内存泄漏，内存溢出的频率。Java中不是没有内存泄漏和内存溢出，但是相对来说没有c++里面那么频繁，排查起来相对简单。了解虚拟机的相关知识对一个Java程序员是必不可少的技能。</p>
 </li>
 <li><p>Java虚拟机是Java实现跨平台的基础，也就是一直宣称的一次编译，到处执行，Java文件编译后生成的文件并不是调用操作系统的native方法，而是运行在JVM上，由JVM来调用操作系统的native方法。JVM在执行Java程序时，会将自身管理的内存划分为若干个数据区域：<br>  <img src="/img/jvm-1.png" alt="Alt text"></p>
 <ol>
@@ -639,7 +639,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">34</span>
+                <span class="site-state-item-count">36</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -650,7 +650,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">12</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -661,7 +661,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

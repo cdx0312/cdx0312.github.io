@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="redis," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="Redis介绍  redis是一个基于键值对的分布式存储系统，与memcached类似，却优于memcached的一个高性能的key-value数据库。其中键值对的key总是为一个字符串对象，字符串的值可以为字符串对象，列表对象，哈希对象，集合对象，有序集合对象之一。   Redis中value的值为上面五种，但是底层数据结构包括：  简单动态字符串 链表 字典 跳跃表 整数集合 压缩列表 对象">
+<meta name="keywords" content="redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis底层数据结构">
+<meta property="og:url" content="http://yoursite.com/2018/03/29/Redis底层数据结构/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="Redis介绍  redis是一个基于键值对的分布式存储系统，与memcached类似，却优于memcached的一个高性能的key-value数据库。其中键值对的key总是为一个字符串对象，字符串的值可以为字符串对象，列表对象，哈希对象，集合对象，有序集合对象之一。   Redis中value的值为上面五种，但是底层数据结构包括：  简单动态字符串 链表 字典 跳跃表 整数集合 压缩列表 对象">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/img/redis-sds-example.png">
+<meta property="og:image" content="http://yoursite.com/img/redis-linked-example.png">
+<meta property="og:image" content="http://yoursite.com/img/redis-ziplist.png">
+<meta property="og:updated_time" content="2018-03-29T08:18:09.664Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis底层数据结构">
+<meta name="twitter:description" content="Redis介绍  redis是一个基于键值对的分布式存储系统，与memcached类似，却优于memcached的一个高性能的key-value数据库。其中键值对的key总是为一个字符串对象，字符串的值可以为字符串对象，列表对象，哈希对象，集合对象，有序集合对象之一。   Redis中value的值为上面五种，但是底层数据结构包括：  简单动态字符串 链表 字典 跳跃表 整数集合 压缩列表 对象">
+<meta name="twitter:image" content="http://yoursite.com/img/redis-sds-example.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/03/29/Redis底层数据结构/"/>
+
+
+
+
+
+  <title>Redis底层数据结构 | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/29/Redis底层数据结构/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Redis底层数据结构</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-29T10:52:55+08:00">
+                2018-03-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/redis/" itemprop="url" rel="index">
+                    <span itemprop="name">redis</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Redis介绍"><a href="#Redis介绍" class="headerlink" title="Redis介绍"></a>Redis介绍</h1><p>  redis是一个基于键值对的分布式存储系统，与memcached类似，却优于memcached的一个高性能的key-value数据库。其中键值对的key总是为一个字符串对象，字符串的值可以为字符串对象，列表对象，哈希对象，集合对象，有序集合对象之一。</p>
+<p>  Redis中value的值为上面五种，但是底层数据结构包括：</p>
+<ul>
+<li>简单动态字符串</li>
+<li>链表</li>
+<li>字典</li>
+<li>跳跃表</li>
+<li>整数集合</li>
+<li>压缩列表</li>
+<li>对象</li>
+</ul>
+<h1 id="简单动态字符串（simple-dynamic-string）"><a href="#简单动态字符串（simple-dynamic-string）" class="headerlink" title="简单动态字符串（simple dynamic string）"></a>简单动态字符串（simple dynamic string）</h1><h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>Redis底层是由C编写的，但是其对C中字符串做了一个封装，构建了种名为简单动态字符串的抽象类型，并将SDS设置为redis默认采用的字符串表示</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">redis&gt;SET msg &quot;sdsTest&quot;</div><div class="line">OK</div></pre></td></tr></table></figure>
+<p>key是一个字符串对象，字符串对象的低层是一个保存着“msg”的SDS；<br>value是一个字符串对象，低层是一个保存着字符串“sdsTest”的SDS。</p>
+<h2 id="SDS的定义"><a href="#SDS的定义" class="headerlink" title="SDS的定义"></a>SDS的定义</h2><p>redis中定义动态字符串的结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">typedef char *sds;  </div><div class="line">//指向sdshdr结构buf成员的地址</div><div class="line"></div><div class="line">struct sdshdr &#123;</div><div class="line">    int len;        //buf中已占用空间的长度</div><div class="line">    int free;       //buf中剩余可用空间的长度</div><div class="line">    char buf[];     //初始化sds分配的数据空间</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>则msg可以被表示为：</p>
+<p><img src="/img/redis-sds-example.png" alt="Alt text"></p>
+<ul>
+<li>len为7，表示这个sds的长度为7</li>
+<li>free为0，表示这个sds可用空间为0</li>
+<li>buf是一个char数组，分配了len + 1 + free个字节的长度，前len个字节保存着SDS的信息，接下来一个字符保存字符串终止符’\0’,剩下free个字节是未使用的。</li>
+</ul>
+<h2 id="SDS与C字符串的区别"><a href="#SDS与C字符串的区别" class="headerlink" title="SDS与C字符串的区别"></a>SDS与C字符串的区别</h2><p>  redis不直接使用C字符串而采用SDS的原因主要在于传统C语言使用长度为N+1的字符数组来存储长度为N的字符串，这样在获取字符串长度，字符串扩展操作时效率低，不能满足redis对字符串在安全性、功能、效率等的要求。</p>
+<ol>
+<li><p>获取字符串长度</p>
+<ul>
+<li>传统C语言：获取字符串长度需要遍历字符数组，复杂度为O(N);</li>
+<li>Redis SDS：获取len属性的值就是字符串的长度 O(1);</li>
+</ul>
+</li>
+<li><p>杜绝缓冲区溢出</p>
+<ul>
+<li>C语言中字符串不记录字符串的长度，容易造成缓冲区溢出。比如拼接字符串过程容易发生缓冲区溢出。</li>
+<li>redis中sds的空间分配策略杜绝了发生缓冲区溢出：redis会在拼接字符串之前，预先检查给定SDS空间是否足够，如果不够会先扩展SDS空间，然后再执行拼接操作。</li>
+</ul>
+</li>
+<li><p>减少修改字符串时带来的内存重新分配次数。</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">/* Enlarge the free space at the end of the sds string so that the caller</div><div class="line"> * is sure that after calling this function can overwrite up to addlen</div><div class="line"> * bytes after the end of the string, plus one more byte for nul term.</div><div class="line"> *</div><div class="line"> * Note: this does not change the *length* of the sds string as returned</div><div class="line"> * by sdslen(), but only the free buffer space we have. */</div><div class="line">sds sdsMakeRoomFor(sds s, size_t addlen) &#123;</div><div class="line">    void *sh, *newsh;</div><div class="line">    size_t avail = sdsavail(s);</div><div class="line">    size_t len, newlen;</div><div class="line">    char type, oldtype = s[-1] &amp; SDS_TYPE_MASK;</div><div class="line">    int hdrlen;</div><div class="line"></div><div class="line">    /* Return ASAP if there is enough space left. */</div><div class="line">    if (avail &gt;= addlen) return s;</div><div class="line"></div><div class="line">    len = sdslen(s);</div><div class="line">    sh = (char*)s-sdsHdrSize(oldtype);</div><div class="line">    newlen = (len+addlen);</div><div class="line">    if (newlen &lt; SDS_MAX_PREALLOC)</div><div class="line">        newlen *= 2;</div><div class="line">    else</div><div class="line">        newlen += SDS_MAX_PREALLOC;</div><div class="line"></div><div class="line">    type = sdsReqType(newlen);</div><div class="line"></div><div class="line">    /* Don&apos;t use type 5: the user is appending to the string and type 5 is</div><div class="line">     * not able to remember empty space, so sdsMakeRoomFor() must be called</div><div class="line">     * at every appending operation. */</div><div class="line">    if (type == SDS_TYPE_5) type = SDS_TYPE_8;</div><div class="line"></div><div class="line">    hdrlen = sdsHdrSize(type);</div><div class="line">    if (oldtype==type) &#123;</div><div class="line">        newsh = s_realloc(sh, hdrlen+newlen+1);</div><div class="line">        if (newsh == NULL) return NULL;</div><div class="line">        s = (char*)newsh+hdrlen;</div><div class="line">    &#125; else &#123;</div><div class="line">        /* Since the header size changes, need to move the string forward,</div><div class="line">         * and can&apos;t use realloc */</div><div class="line">        newsh = s_malloc(hdrlen+newlen+1);</div><div class="line">        if (newsh == NULL) return NULL;</div><div class="line">        memcpy((char*)newsh+hdrlen, s, len+1);</div><div class="line">        s_free(sh);</div><div class="line">        s = (char*)newsh+hdrlen;</div><div class="line">        s[-1] = type;</div><div class="line">        sdssetlen(s, len);</div><div class="line">    &#125;</div><div class="line">    sdssetalloc(s, newlen);</div><div class="line">    return s;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><p>C语言在进行字符串的扩展和收缩的时候，都会面临着内存空间的重新分配问题。字符串拼接会产生字符串的内存空间的扩充，忘记申请分配空间会导致内存溢出；而字符串切割的时候，如果没有对内存空间重新分配会造成内存泄漏。</p>
+</li>
+<li><p>redis对SDS进行扩展，修改是SDS的长度，通过预分配侧率，SDS将连续增长的N次字符串所需的内存重分配次数从固定N次，降低为最多N次。</p>
+</li>
+</ul>
+</li>
+<li><p>惰性空间的释放</p>
+<p>redis字符串进行收缩时，修改free属性来记录剩余的空间，并不直接回收那些不使用的内存，这样可以避免下次对字符串再次修改过程中可能存在的空间扩展，避免了缩短字符串所需要的内存重分配操作和将来可能存在的增长字符串操作。</p>
+</li>
+<li><p>二进制安全<br>C语言中字符串以空字符串为结束符，所以传统字符串不能保存图片视频等二级制文件。redis中依靠len来判断字符串是否结束，而不是寻找空字符串，这样可以用来保存图片，音频，视频等二进制数据，实现了二级制安全。SDS遵循C字符串以空字符串结尾的惯例。</p>
+</li>
+</ol>
+<h1 id="链表"><a href="#链表" class="headerlink" title="链表"></a>链表</h1><p>链表在redis中使用很多，比如列表件的低层实现之一就是链表。而且在redis中链表的结构被实现为双向链表，收尾操作很快。</p>
+<h2 id="链表的数据结构"><a href="#链表的数据结构" class="headerlink" title="链表的数据结构"></a>链表的数据结构</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">/* Node, List, and Iterator are the only data structures used currently. */</div><div class="line"></div><div class="line">typedef struct listNode &#123;</div><div class="line">    struct listNode *prev;</div><div class="line">    struct listNode *next;</div><div class="line">    void *value;</div><div class="line">&#125; listNode;</div></pre></td></tr></table></figure>
+<ul>
+<li>双向链表通过prev和next指针来会获取当前节点的前驱节点和后继节点的复杂度为O(1);</li>
+</ul>
+<p>我们可以直接通过list来操作链表结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">typedef struct list &#123;</div><div class="line">    listNode *head;</div><div class="line">    listNode *tail;</div><div class="line">    void *(*dup)(void *ptr);</div><div class="line">    void (*free)(void *ptr);</div><div class="line">    int (*match)(void *ptr, void *key);</div><div class="line">    unsigned long len;</div><div class="line">&#125; list;</div></pre></td></tr></table></figure>
+<p><img src="/img/redis-linked-example.png" alt="Alt text"></p>
+<ul>
+<li>其中head指针指向链表头，tail指针指向链表尾，获取收尾节点复杂度O(1)</li>
+<li>len记载链表的长度 获取长度复杂度为O(1);</li>
+<li>dup,free,match指针实现多态，链表节点listNode使用空指针来保存节点的值，表头list使用dup，free, match指针来针对链表中存放非不同对象来实现不同的方法。</li>
+</ul>
+<h1 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h1><p>  或者成为map,是一种用于保存键值对的抽象数据结构。字典中一个key可以和一个value进行关联，每一个key独一无二并且指向一个value，一个value可以被多个可以同时指定。C语言中不存在字典这种数据结构，redis实现了字典的数据结构。redis存取数据采用的都是key-value的形式，其中key为一个字符串对象，而value取值可以是字符串，可以是列表，可以是集合等。</p>
+<h2 id="字典的实现"><a href="#字典的实现" class="headerlink" title="字典的实现"></a>字典的实现</h2><p>  redis中字典是通过哈希表实现的，一个哈希表有多个节点，每个节点保存一个键值对。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">typedef struct dict &#123;</div><div class="line">    dictType *type;</div><div class="line">    void *privdata;</div><div class="line">    dictht ht[2];</div><div class="line">    long rehashidx; /* rehashing not in progress if rehashidx == -1 */</div><div class="line">    int iterators; /* number of iterators currently running */</div><div class="line">&#125; dict;</div></pre></td></tr></table></figure>
+<ul>
+<li>type: 指针指向dictType结构，该结构使得key和value能够存储任何类型的数据。</li>
+<li>privdata: 私有数据，存放dictType结构中的函数的参数</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">typedef struct dictType &#123;</div><div class="line">    unsigned int (*hashFunction)(const void *key);      //计算hash值的函数</div><div class="line">    void *(*keyDup)(void *privdata, const void *key);   //复制key的函数</div><div class="line">    void *(*valDup)(void *privdata, const void *obj);   //复制value的函数</div><div class="line">    int (*keyCompare)(void *privdata, const void *key1, const void *key2);  //比较key的函数</div><div class="line">    void (*keyDestructor)(void *privdata, void *key);   //销毁key的析构函数</div><div class="line">    void (*valDestructor)(void *privdata, void *obj);   //销毁val的析构函数</div><div class="line">&#125; dictType;</div></pre></td></tr></table></figure>
+<ul>
+<li>ht[2]: 两张哈希表</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">typedef struct dictht &#123;</div><div class="line">    dictEntry **table;        //哈希表节点dictEntry位置</div><div class="line">    unsigned long size;       //哈希表大小，初始4</div><div class="line">    unsigned long sizemask;   //将哈希值映射到table索引</div><div class="line">    unsigned long used;       //记录哈希表已有节点数量</div><div class="line">&#125; dictht;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">typedef struct dictEntry &#123;</div><div class="line">    void *key;</div><div class="line">    union &#123;</div><div class="line">        void *val;</div><div class="line">        uint64_t u64;</div><div class="line">        int64_t s64;</div><div class="line">        double d;</div><div class="line">    &#125; v;</div><div class="line">    struct dictEntry *next;   //解决哈希冲突</div><div class="line">&#125; dictEntry;</div></pre></td></tr></table></figure>
+<ul>
+<li>rehashidx: rehash的标志位</li>
+<li>iterators：记录迭代器的数量</li>
+</ul>
+<h2 id="Redis中使用的哈希算法"><a href="#Redis中使用的哈希算法" class="headerlink" title="Redis中使用的哈希算法"></a>Redis中使用的哈希算法</h2><ul>
+<li>计算int的哈希函数</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">unsigned int dictIntHashFunction(unsigned int key)</div><div class="line">&#123;</div><div class="line">    key += ~(key &lt;&lt; 15);</div><div class="line">    key ^=  (key &gt;&gt; 10);</div><div class="line">    key +=  (key &lt;&lt; 3);</div><div class="line">    key ^=  (key &gt;&gt; 6);</div><div class="line">    key += ~(key &lt;&lt; 11);</div><div class="line">    key ^=  (key &gt;&gt; 16);</div><div class="line">    return key;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>MurmurHash2哈希算法：redis使用MurmurHash2算法来计算法哈希值，能产生32-bit或64-bit哈希值。该算法对硬件的要求在于：1.机器可以从任意一个地址读取一个4-bit大小的值，并且int的大小为4bit。seed默认值为5381，可以人为改变，不过没什么意义。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line">unsigned int dictGenHashFunction(const void *key, int len) &#123;</div><div class="line">    /* &apos;m&apos; and &apos;r&apos; are mixing constants generated offline.</div><div class="line">     They&apos;re not really &apos;magic&apos;, they just happen to work well.  */</div><div class="line">    uint32_t seed = dict_hash_function_seed;</div><div class="line">    const uint32_t m = 0x5bd1e995;</div><div class="line">    const int r = 24;</div><div class="line"></div><div class="line">    /* Initialize the hash to a &apos;random&apos; value */</div><div class="line">    uint32_t h = seed ^ len;</div><div class="line"></div><div class="line">    /* Mix 4 bytes at a time into the hash */</div><div class="line">    const unsigned char *data = (const unsigned char *)key;</div><div class="line"></div><div class="line">    while(len &gt;= 4) &#123;</div><div class="line">        uint32_t k = *(uint32_t*)data;</div><div class="line"></div><div class="line">        k *= m;</div><div class="line">        k ^= k &gt;&gt; r;</div><div class="line">        k *= m;</div><div class="line"></div><div class="line">        h *= m;</div><div class="line">        h ^= k;</div><div class="line"></div><div class="line">        data += 4;</div><div class="line">        len -= 4;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /* Handle the last few bytes of the input array  */</div><div class="line">    switch(len) &#123;</div><div class="line">    case 3: h ^= data[2] &lt;&lt; 16;</div><div class="line">    case 2: h ^= data[1] &lt;&lt; 8;</div><div class="line">    case 1: h ^= data[0]; h *= m;</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">    /* Do a few final mixes of the hash to ensure the last few</div><div class="line">     * bytes are well-incorporated. */</div><div class="line">    h ^= h &gt;&gt; 13;</div><div class="line">    h *= m;</div><div class="line">    h ^= h &gt;&gt; 15;</div><div class="line"></div><div class="line">    return (unsigned int)h;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>djb哈希算法: seed和字符串的ascii值，len次变换之后得到hash值。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">/* And a case insensitive hash function (based on djb hash) */</div><div class="line">unsigned int dictGenCaseHashFunction(const unsigned char *buf, int len) &#123;</div><div class="line">    unsigned int hash = (unsigned int)dict_hash_function_seed;</div><div class="line"></div><div class="line">    while (len--)</div><div class="line">        hash = ((hash &lt;&lt; 5) + hash) + (tolower(*buf++)); /* hash * 33 + c */</div><div class="line">    return hash;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="rehash"><a href="#rehash" class="headerlink" title="rehash"></a>rehash</h2><p>当哈希表的大小不能满足需求，可能会有两个以上的键值被分配到同一个位置上，这时候就发生了冲突，redis中解决冲突的方法和HashMap中类似，使用链表法。但是当这种情况频繁发生，会影响查找的性能，需要尽力避免。这个时候希望通过哈希表的load factor来动态的决定扩展哈希表或者收缩哈希表。</p>
+<ul>
+<li>rehash流程：<ol>
+<li>根据要求扩展或者收缩ht[1]</li>
+<li>将ht[0]上的节点rehash到ht[1]上</li>
+<li>释放ht[0], 将ht[1]设置为ht[0],新建一个ht[1]</li>
+</ol>
+</li>
+</ul>
+<p>扩展操作：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">/* Expand the hash table if needed */</div><div class="line">static int _dictExpandIfNeeded(dict *d)</div><div class="line">&#123;</div><div class="line">    /* Incremental rehashing already in progress. Return. */</div><div class="line">    if (dictIsRehashing(d)) return DICT_OK;</div><div class="line"></div><div class="line">    /* If the hash table is empty expand it to the initial size. */</div><div class="line">    if (d-&gt;ht[0].size == 0) return dictExpand(d, DICT_HT_INITIAL_SIZE);</div><div class="line"></div><div class="line">    /* If we reached the 1:1 ratio, and we are allowed to resize the hash</div><div class="line">     * table (global setting) or we should avoid it but the ratio between</div><div class="line">     * elements/buckets is over the &quot;safe&quot; threshold, we resize doubling</div><div class="line">     * the number of buckets. */</div><div class="line">    if (d-&gt;ht[0].used &gt;= d-&gt;ht[0].size &amp;&amp;</div><div class="line">        (dict_can_resize ||</div><div class="line">         d-&gt;ht[0].used/d-&gt;ht[0].size &gt; dict_force_resize_ratio))</div><div class="line">    &#123;</div><div class="line">        return dictExpand(d, d-&gt;ht[0].used*2);</div><div class="line">    &#125;</div><div class="line">    return DICT_OK;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>收缩操作：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">int dictResize(dict *d)</div><div class="line">&#123;</div><div class="line">    int minimal;</div><div class="line"></div><div class="line">    if (!dict_can_resize || dictIsRehashing(d)) return DICT_ERR;</div><div class="line">    minimal = d-&gt;ht[0].used;</div><div class="line">    if (minimal &lt; DICT_HT_INITIAL_SIZE)</div><div class="line">        minimal = DICT_HT_INITIAL_SIZE;</div><div class="line">    return dictExpand(d, minimal);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>根据传入的size来跳帧过着创建字典d的哈希表</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">/* Expand or create the hash table */</div><div class="line">int dictExpand(dict *d, unsigned long size)</div><div class="line">&#123;</div><div class="line">    dictht n; /* the new hash table */</div><div class="line">    unsigned long realsize = _dictNextPower(size);</div><div class="line"></div><div class="line">    /* the size is invalid if it is smaller than the number of</div><div class="line">     * elements already inside the hash table */</div><div class="line">    if (dictIsRehashing(d) || d-&gt;ht[0].used &gt; size)</div><div class="line">        return DICT_ERR;</div><div class="line"></div><div class="line">    /* Rehashing to the same table size is not useful. */</div><div class="line">    if (realsize == d-&gt;ht[0].size) return DICT_ERR;</div><div class="line"></div><div class="line">    /* Allocate the new hash table and initialize all pointers to NULL */</div><div class="line">    n.size = realsize;</div><div class="line">    n.sizemask = realsize-1;</div><div class="line">    n.table = zcalloc(realsize*sizeof(dictEntry*));</div><div class="line">    n.used = 0;</div><div class="line"></div><div class="line">    /* Is this the first initialization? If so it&apos;s not really a rehashing</div><div class="line">     * we just set the first hash table so that it can accept keys. */</div><div class="line">    if (d-&gt;ht[0].table == NULL) &#123;</div><div class="line">        d-&gt;ht[0] = n;</div><div class="line">        return DICT_OK;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /* Prepare a second hash table for incremental rehashing */</div><div class="line">    d-&gt;ht[1] = n;</div><div class="line">    d-&gt;rehashidx = 0;</div><div class="line">    return DICT_OK;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>rehash过程不是一次性集中完成的，而是分多次，渐进式的，断续进行的，这样可以减少对服务器的影响。</p>
+<h2 id="渐进式rehash-incremental-rehashing"><a href="#渐进式rehash-incremental-rehashing" class="headerlink" title="渐进式rehash(incremental rehashing)"></a>渐进式rehash(incremental rehashing)</h2><ol>
+<li>dict中有一个成员为rehashidx，表示rehash的状态标志，-1表示不进行rehash，0表示开始进行rehash。</li>
+<li>rehash过程中，每次对字典的CRUD时，会检查rehashidx标志位，如果在进行rehash，CRUD结束之后顺带进行单步rehash，同时rehashidx+1;</li>
+<li>rehash结束之后，将rehashidx该为-1。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">static void _dictRehashStep(dict *d) &#123;</div><div class="line">    if (d-&gt;iterators == 0) dictRehash(d,1);</div><div class="line">&#125;</div><div class="line"></div><div class="line">int dictRehash(dict *d, int n) &#123;</div><div class="line">    int empty_visits = n*10; /* Max number of empty buckets to visit. */</div><div class="line">    if (!dictIsRehashing(d)) return 0;</div><div class="line"></div><div class="line">    while(n-- &amp;&amp; d-&gt;ht[0].used != 0) &#123;</div><div class="line">        dictEntry *de, *nextde;</div><div class="line"></div><div class="line">        /* Note that rehashidx can&apos;t overflow as we are sure there are more</div><div class="line">         * elements because ht[0].used != 0 */</div><div class="line">        assert(d-&gt;ht[0].size &gt; (unsigned long)d-&gt;rehashidx);</div><div class="line">        while(d-&gt;ht[0].table[d-&gt;rehashidx] == NULL) &#123;</div><div class="line">            d-&gt;rehashidx++;</div><div class="line">            if (--empty_visits == 0) return 1;</div><div class="line">        &#125;</div><div class="line">        de = d-&gt;ht[0].table[d-&gt;rehashidx];</div><div class="line">        /* Move all the keys in this bucket from the old to the new hash HT */</div><div class="line">        while(de) &#123;</div><div class="line">            unsigned int h;</div><div class="line"></div><div class="line">            nextde = de-&gt;next;</div><div class="line">            /* Get the index in the new hash table */</div><div class="line">            h = dictHashKey(d, de-&gt;key) &amp; d-&gt;ht[1].sizemask;</div><div class="line">            de-&gt;next = d-&gt;ht[1].table[h];</div><div class="line">            d-&gt;ht[1].table[h] = de;</div><div class="line">            d-&gt;ht[0].used--;</div><div class="line">            d-&gt;ht[1].used++;</div><div class="line">            de = nextde;</div><div class="line">        &#125;</div><div class="line">        d-&gt;ht[0].table[d-&gt;rehashidx] = NULL;</div><div class="line">        d-&gt;rehashidx++;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /* Check if we already rehashed the whole table... */</div><div class="line">    if (d-&gt;ht[0].used == 0) &#123;</div><div class="line">        zfree(d-&gt;ht[0].table);</div><div class="line">        d-&gt;ht[0] = d-&gt;ht[1];</div><div class="line">        _dictReset(&amp;d-&gt;ht[1]);</div><div class="line">        d-&gt;rehashidx = -1;</div><div class="line">        return 0;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /* More to rehash... */</div><div class="line">    return 1;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="跳跃表"><a href="#跳跃表" class="headerlink" title="跳跃表"></a>跳跃表</h1><p>跳跃表示一种有序的数据结构，它通过在每个节点中维持多个指向其他节点的指针，从而可以快速到达要访问的节点。跳跃表是一个有序链表，其查找复杂度平均为O(logN)，最坏O(N)。redis中将跳跃表应用在有序集合键。</p>
+<p>Redis中跳跃表主要有两部分组成：zskiplist和中skiplistNode：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">typedef struct zskiplist &#123;</div><div class="line">    struct zskiplistNode *header, *tail;</div><div class="line">    unsigned long length;       </div><div class="line">    int level;                  //跳跃表中节点的最大层数，除了第一个节点</div><div class="line">&#125; zskiplist;</div><div class="line"></div><div class="line">typedef struct zskiplistNode &#123;</div><div class="line">    robj *obj;                          </div><div class="line">    double score;                       </div><div class="line">    struct zskiplistNode *backward;     </div><div class="line">    struct zskiplistLevel &#123;</div><div class="line">        struct zskiplistNode *forward;  </div><div class="line">        unsigned int span;              </div><div class="line">    &#125; level[];                          </div><div class="line">&#125; zskiplistNode;</div></pre></td></tr></table></figure>
+<ul>
+<li>level：层，每个元素包含一个指向其他节点的指针，实现跳跃查询的关键。</li>
+</ul>
+<h1 id="整数集合"><a href="#整数集合" class="headerlink" title="整数集合"></a>整数集合</h1><p>整数结合是集合键低层实现之一。集合键另一实现为值为空的散列表。整数集合是为了节省使用散列表存储整形对象时的空间浪费。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">typedef struct intset &#123;</div><div class="line">    uint32_t encoding;</div><div class="line">    uint32_t length;</div><div class="line">    int8_t contents[];</div><div class="line">&#125; intset;</div></pre></td></tr></table></figure>
+<ul>
+<li>encoding:编码格式，默认用2个字节存储，还有4个字节和8个字节</li>
+<li>length:集合元素的数量</li>
+<li>contents:数组类型</li>
+</ul>
+<p>新的元素插入到集合的流程：</p>
+<ol>
+<li>判断新元素的编码格式</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">/* Return the required encoding for the provided value. */</div><div class="line">static uint8_t _intsetValueEncoding(int64_t v) &#123;</div><div class="line">    if (v &lt; INT32_MIN || v &gt; INT32_MAX)</div><div class="line">        return INTSET_ENC_INT64;</div><div class="line">    else if (v &lt; INT16_MIN || v &gt; INT16_MAX)</div><div class="line">        return INTSET_ENC_INT32;</div><div class="line">    else</div><div class="line">        return INTSET_ENC_INT16;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li>调整内存空间</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">/* Resize the intset */</div><div class="line">static intset *intsetResize(intset *is, uint32_t len) &#123;</div><div class="line">    uint32_t size = len*intrev32ifbe(is-&gt;encoding);</div><div class="line">    is = zrealloc(is,sizeof(intset)+size);</div><div class="line">    return is;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li>根据编码格式设置对应的值</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">/* Set the value at pos, using the configured encoding. */</div><div class="line">static void _intsetSet(intset *is, int pos, int64_t value) &#123;</div><div class="line">    uint32_t encoding = intrev32ifbe(is-&gt;encoding);</div><div class="line"></div><div class="line">    if (encoding == INTSET_ENC_INT64) &#123;</div><div class="line">        ((int64_t*)is-&gt;contents)[pos] = value;</div><div class="line">        memrev64ifbe(((int64_t*)is-&gt;contents)+pos);</div><div class="line">    &#125; else if (encoding == INTSET_ENC_INT32) &#123;</div><div class="line">        ((int32_t*)is-&gt;contents)[pos] = value;</div><div class="line">        memrev32ifbe(((int32_t*)is-&gt;contents)+pos);</div><div class="line">    &#125; else &#123;</div><div class="line">        ((int16_t*)is-&gt;contents)[pos] = value;</div><div class="line">        memrev16ifbe(((int16_t*)is-&gt;contents)+pos);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>数组集合的好处：提升灵活性并节省内存空间。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">/* Upgrades the intset to a larger encoding and inserts the given integer. */</div><div class="line">static intset *intsetUpgradeAndAdd(intset *is, int64_t value) &#123;</div><div class="line">    uint8_t curenc = intrev32ifbe(is-&gt;encoding);</div><div class="line">    uint8_t newenc = _intsetValueEncoding(value);</div><div class="line">    int length = intrev32ifbe(is-&gt;length);</div><div class="line">    int prepend = value &lt; 0 ? 1 : 0;</div><div class="line"></div><div class="line">    /* First set new encoding and resize */</div><div class="line">    is-&gt;encoding = intrev32ifbe(newenc);</div><div class="line">    is = intsetResize(is,intrev32ifbe(is-&gt;length)+1);</div><div class="line"></div><div class="line">    /* Upgrade back-to-front so we don&apos;t overwrite values.</div><div class="line">     * Note that the &quot;prepend&quot; variable is used to make sure we have an empty</div><div class="line">     * space at either the beginning or the end of the intset. */</div><div class="line">    while(length--)</div><div class="line">        _intsetSet(is,length+prepend,_intsetGetEncoded(is,length,curenc));</div><div class="line"></div><div class="line">    /* Set the value at the beginning or the end. */</div><div class="line">    if (prepend)</div><div class="line">        _intsetSet(is,0,value);</div><div class="line">    else</div><div class="line">        _intsetSet(is,intrev32ifbe(is-&gt;length),value);</div><div class="line">    is-&gt;length = intrev32ifbe(intrev32ifbe(is-&gt;length)+1);</div><div class="line">    return is;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="压缩列表"><a href="#压缩列表" class="headerlink" title="压缩列表"></a>压缩列表</h1><p>ziplist是哈希键的低层实现之一。为特殊编码的双向链表，和整数集合一样是为了提高内存的存储效率而的设计的。当保存的对象是小整数，或者长度较短的字符串，redis就会使用压缩列表来作为哈希键的实现。</p>
+<h2 id="压缩列表的构成"><a href="#压缩列表的构成" class="headerlink" title="压缩列表的构成"></a>压缩列表的构成</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">/* Macro to determine type */</div><div class="line">#define ZIP_IS_STR(enc) (((enc) &amp; ZIP_STR_MASK) &lt; ZIP_STR_MASK)</div><div class="line"></div><div class="line">/* Utility macros */</div><div class="line">#define ZIPLIST_BYTES(zl)       (*((uint32_t*)(zl)))</div><div class="line">#define ZIPLIST_TAIL_OFFSET(zl) (*((uint32_t*)((zl)+sizeof(uint32_t))))</div><div class="line">#define ZIPLIST_LENGTH(zl)      (*((uint16_t*)((zl)+sizeof(uint32_t)*2)))</div><div class="line">#define ZIPLIST_HEADER_SIZE     (sizeof(uint32_t)*2+sizeof(uint16_t))</div><div class="line">#define ZIPLIST_END_SIZE        (sizeof(uint8_t))</div><div class="line">#define ZIPLIST_ENTRY_HEAD(zl)  ((zl)+ZIPLIST_HEADER_SIZE)</div><div class="line">#define ZIPLIST_ENTRY_TAIL(zl)  ((zl)+intrev32ifbe(ZIPLIST_TAIL_OFFSET(zl)))</div><div class="line">#define ZIPLIST_ENTRY_END(zl)   ((zl)+intrev32ifbe(ZIPLIST_BYTES(zl))-1)</div></pre></td></tr></table></figure>
+<p><img src="/img/redis-ziplist.png" alt="Alt text"></p>
+<p>压缩链表可以包含任意多个节点，每个节点保存一个字节数组或者一个整数值。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/redis/" rel="tag"># redis</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/28/堆排序与快速排序/" rel="next" title="堆排序与快速排序">
+                <i class="fa fa-chevron-left"></i> 堆排序与快速排序
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">40</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis介绍"><span class="nav-number">1.</span> <span class="nav-text">Redis介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#简单动态字符串（simple-dynamic-string）"><span class="nav-number">2.</span> <span class="nav-text">简单动态字符串（simple dynamic string）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍"><span class="nav-number">2.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SDS的定义"><span class="nav-number">2.2.</span> <span class="nav-text">SDS的定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SDS与C字符串的区别"><span class="nav-number">2.3.</span> <span class="nav-text">SDS与C字符串的区别</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#链表"><span class="nav-number">3.</span> <span class="nav-text">链表</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#链表的数据结构"><span class="nav-number">3.1.</span> <span class="nav-text">链表的数据结构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#字典"><span class="nav-number">4.</span> <span class="nav-text">字典</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#字典的实现"><span class="nav-number">4.1.</span> <span class="nav-text">字典的实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis中使用的哈希算法"><span class="nav-number">4.2.</span> <span class="nav-text">Redis中使用的哈希算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rehash"><span class="nav-number">4.3.</span> <span class="nav-text">rehash</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#渐进式rehash-incremental-rehashing"><span class="nav-number">4.4.</span> <span class="nav-text">渐进式rehash(incremental rehashing)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#跳跃表"><span class="nav-number">5.</span> <span class="nav-text">跳跃表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#整数集合"><span class="nav-number">6.</span> <span class="nav-text">整数集合</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#压缩列表"><span class="nav-number">7.</span> <span class="nav-text">压缩列表</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#压缩列表的构成"><span class="nav-number">7.1.</span> <span class="nav-text">压缩列表的构成</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

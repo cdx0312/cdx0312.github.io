@@ -95,22 +95,22 @@
 
 
 
-<meta name="description" content="简介HTTP协议是基于TCP/IP协议来传递数据的应用层协议，规定了客户端和服务器之间的通信格式，其默认端口为80，HTTP是无连接无状态的。 #主要特点：  简单快速：客户向服务器请求服务时只需要传送请求方法和路径，请求方法常用的有GET，POST，不同方法规定了客户和服务器不同的联系类型。协议通信速度很快。 灵活：HTTP协议允许传输任意类型的数据对象，正在传输的类型由Content-Type">
+<meta name="description" content="简介HTTP协议是基于TCP/IP协议来传递数据的应用层协议，规定了客户端和服务器之间的通信格式，其默认端口为80，HTTP是无连接无状态的。 主要特点： 简单快速：客户向服务器请求服务时只需要传送请求方法和路径，请求方法常用的有GET，POST，不同方法规定了客户和服务器不同的联系类型。协议通信速度很快。 灵活：HTTP协议允许传输任意类型的数据对象，正在传输的类型由Content-Type加以">
 <meta name="keywords" content="HTTP,TCP">
 <meta property="og:type" content="article">
 <meta property="og:title" content="HTTP协议小结">
 <meta property="og:url" content="http://yoursite.com/2018/04/01/HTTP协议小结/index.html">
 <meta property="og:site_name" content="小黄">
-<meta property="og:description" content="简介HTTP协议是基于TCP/IP协议来传递数据的应用层协议，规定了客户端和服务器之间的通信格式，其默认端口为80，HTTP是无连接无状态的。 #主要特点：  简单快速：客户向服务器请求服务时只需要传送请求方法和路径，请求方法常用的有GET，POST，不同方法规定了客户和服务器不同的联系类型。协议通信速度很快。 灵活：HTTP协议允许传输任意类型的数据对象，正在传输的类型由Content-Type">
+<meta property="og:description" content="简介HTTP协议是基于TCP/IP协议来传递数据的应用层协议，规定了客户端和服务器之间的通信格式，其默认端口为80，HTTP是无连接无状态的。 主要特点： 简单快速：客户向服务器请求服务时只需要传送请求方法和路径，请求方法常用的有GET，POST，不同方法规定了客户和服务器不同的联系类型。协议通信速度很快。 灵活：HTTP协议允许传输任意类型的数据对象，正在传输的类型由Content-Type加以">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/img/http-1.png">
 <meta property="og:image" content="http://yoursite.com/img/http-2.png">
 <meta property="og:image" content="http://yoursite.com/img/tcp-conn.png">
 <meta property="og:image" content="http://yoursite.com/img/tcp-close.png">
-<meta property="og:updated_time" content="2018-04-01T14:48:16.916Z">
+<meta property="og:updated_time" content="2018-04-03T13:49:30.065Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="HTTP协议小结">
-<meta name="twitter:description" content="简介HTTP协议是基于TCP/IP协议来传递数据的应用层协议，规定了客户端和服务器之间的通信格式，其默认端口为80，HTTP是无连接无状态的。 #主要特点：  简单快速：客户向服务器请求服务时只需要传送请求方法和路径，请求方法常用的有GET，POST，不同方法规定了客户和服务器不同的联系类型。协议通信速度很快。 灵活：HTTP协议允许传输任意类型的数据对象，正在传输的类型由Content-Type">
+<meta name="twitter:description" content="简介HTTP协议是基于TCP/IP协议来传递数据的应用层协议，规定了客户端和服务器之间的通信格式，其默认端口为80，HTTP是无连接无状态的。 主要特点： 简单快速：客户向服务器请求服务时只需要传送请求方法和路径，请求方法常用的有GET，POST，不同方法规定了客户和服务器不同的联系类型。协议通信速度很快。 灵活：HTTP协议允许传输任意类型的数据对象，正在传输的类型由Content-Type加以">
 <meta name="twitter:image" content="http://yoursite.com/img/http-1.png">
 
 
@@ -385,15 +385,16 @@
 
       
         <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>HTTP协议是基于TCP/IP协议来传递数据的应用层协议，规定了客户端和服务器之间的通信格式，其默认端口为80，HTTP是无连接无状态的。</p>
-<p>#主要特点：</p>
-<ol>
+<h1 id="主要特点："><a href="#主要特点：" class="headerlink" title="主要特点："></a>主要特点：</h1><ol>
 <li>简单快速：客户向服务器请求服务时只需要传送请求方法和路径，请求方法常用的有GET，POST，不同方法规定了客户和服务器不同的联系类型。协议通信速度很快。</li>
 <li>灵活：HTTP协议允许传输任意类型的数据对象，正在传输的类型由Content-Type加以标记。</li>
 <li>无连接：限制每次连接只处理一个请求，服务端确定用户端收到了处理后的结果之后，立刻断开连接。节省传输时间。</li>
 <li>无状态：HTTP协议是无状态协议。无状态指的是协议对于事务处理没有记忆能力。</li>
 <li>支持BS及CS模式</li>
 </ol>
-<h1 id="URL"><a href="#URL" class="headerlink" title="URL"></a>URL</h1><p><code>http://host[:port][abs_path]</code><br>例如：<code>https://www.baidu.com/s?wd=HttP%E5%8D%8F%E8%AE%AE%E6%80%BB%E7%BB%93&amp;rsv_spt=1&amp;rsv_iqid=0xbb6ac0d200022f6c&amp;issp=1&amp;f=8&amp;rsv_bp=1&amp;rsv_idx=2&amp;ie=utf-8&amp;rqlang=cn&amp;tn=baiduhome_pg&amp;rsv_enter=1&amp;oq=HttP%25E6%2580%25BB%25E7%25BB%2593&amp;inputT=7363&amp;rsv_t=089bmiWk56%2BnKt5Ljs7CZihPEekxaufgYcpdefPyy4J6qS3KjJEt6Qzyg5XhLwQPRZTF&amp;rsv_pq=c43d53970003ea1e&amp;rsv_sug3=58&amp;rsv_sug1=42&amp;rsv_sug7=100&amp;rsv_sug2=0&amp;rsv_sug4=8625&amp;rsv_sug=2</code></p>
+<h1 id="URL"><a href="#URL" class="headerlink" title="URL"></a>URL</h1><p><code>http://host[:port][abs_path]</code></p>
+<p>例如：</p>
+<p><code>https://www.baidu.com/s?wd=HttP%E5%8D%8F%E8%AE%AE%E6%80%BB%E7%BB%93&amp;rsv_spt=1&amp;rsv_iqid=0xbb6ac0d200022f6c&amp;issp=1&amp;f=8&amp;rsv_bp=1&amp;rsv_idx=2&amp;ie=utf-8&amp;rqlang=cn&amp;tn=baiduhome_pg&amp;rsv_enter=1&amp;oq=HttP%25E6%2580%25BB%25E7%25BB%2593&amp;inputT=7363&amp;rsv_t=089bmiWk56%2BnKt5Ljs7CZihPEekxaufgYcpdefPyy4J6qS3KjJEt6Qzyg5XhLwQPRZTF&amp;rsv_pq=c43d53970003ea1e&amp;rsv_sug3=58&amp;rsv_sug1=42&amp;rsv_sug7=100&amp;rsv_sug2=0&amp;rsv_sug4=8625&amp;rsv_sug=2</code></p>
 <ul>
 <li>协议部分：如http,https,tcp，其后加<code>://</code></li>
 <li>域名部分：<code>www.baidu.com</code>,合法的Internet主机域名或者IP地址</li>
@@ -658,8 +659,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/03/30/设计模式之七种单例模式/" rel="next" title="设计模式简介">
-                <i class="fa fa-chevron-left"></i> 设计模式简介
+              <a href="/2018/03/30/设计模式之七种单例模式/" rel="next" title="设计模式之七种单例模式">
+                <i class="fa fa-chevron-left"></i> 设计模式之七种单例模式
               </a>
             
           </div>
@@ -667,6 +668,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/04/02/数据库整理/" rel="prev" title="数据库整理">
+                数据库整理 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -746,7 +751,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">42</span>
+                <span class="site-state-item-count">45</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -757,7 +762,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-count">17</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -768,7 +773,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-count">15</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -817,7 +822,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#URL"><span class="nav-number">2.</span> <span class="nav-text">URL</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#URL和URI的区别："><span class="nav-number">3.</span> <span class="nav-text">URL和URI的区别：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#请求消息Request"><span class="nav-number">4.</span> <span class="nav-text">请求消息Request</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#请求头的常用字段："><span class="nav-number">4.1.</span> <span class="nav-text">请求头的常用字段：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#消息相应Response"><span class="nav-number">5.</span> <span class="nav-text">消息相应Response</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#状态码："><span class="nav-number">5.1.</span> <span class="nav-text">状态码：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见响应头"><span class="nav-number">5.2.</span> <span class="nav-text">常见响应头</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTTP请求方法"><span class="nav-number">6.</span> <span class="nav-text">HTTP请求方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTTP工作原理"><span class="nav-number">7.</span> <span class="nav-text">HTTP工作原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#GET和POST请求的区别"><span class="nav-number">8.</span> <span class="nav-text">GET和POST请求的区别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TCP连接建立过程"><span class="nav-number">9.</span> <span class="nav-text">TCP连接建立过程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TCP连接断开的过程"><span class="nav-number">10.</span> <span class="nav-text">TCP连接断开的过程</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#主要特点："><span class="nav-number">2.</span> <span class="nav-text">主要特点：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#URL"><span class="nav-number">3.</span> <span class="nav-text">URL</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#URL和URI的区别："><span class="nav-number">4.</span> <span class="nav-text">URL和URI的区别：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#请求消息Request"><span class="nav-number">5.</span> <span class="nav-text">请求消息Request</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#请求头的常用字段："><span class="nav-number">5.1.</span> <span class="nav-text">请求头的常用字段：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#消息相应Response"><span class="nav-number">6.</span> <span class="nav-text">消息相应Response</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#状态码："><span class="nav-number">6.1.</span> <span class="nav-text">状态码：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见响应头"><span class="nav-number">6.2.</span> <span class="nav-text">常见响应头</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTTP请求方法"><span class="nav-number">7.</span> <span class="nav-text">HTTP请求方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTTP工作原理"><span class="nav-number">8.</span> <span class="nav-text">HTTP工作原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#GET和POST请求的区别"><span class="nav-number">9.</span> <span class="nav-text">GET和POST请求的区别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TCP连接建立过程"><span class="nav-number">10.</span> <span class="nav-text">TCP连接建立过程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TCP连接断开的过程"><span class="nav-number">11.</span> <span class="nav-text">TCP连接断开的过程</span></a></li></ol></div>
             
 
           </div>

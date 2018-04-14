@@ -103,7 +103,7 @@
 <meta property="og:site_name" content="小黄">
 <meta property="og:description" content="LinkedHashMap继承了HashMap类并实现了Map接口，其内部维护了一个双向链表，在每次插入数据或者修改访问数据，在双链表中会存在相应的增删高的操作，从而实现将无序的HashMap通过双链表将其管理为有序状态的map类型。 内部节点123456static class Entry&amp;lt;K,V&amp;gt; extends HashMap.Node&amp;lt;K,V&amp;gt; &amp;#123;">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-04-04T14:34:11.585Z">
+<meta property="og:updated_time" content="2018-04-13T12:39:19.334Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="LinkedHashMap源码剖析">
 <meta name="twitter:description" content="LinkedHashMap继承了HashMap类并实现了Map接口，其内部维护了一个双向链表，在每次插入数据或者修改访问数据，在双链表中会存在相应的增删高的操作，从而实现将无序的HashMap通过双链表将其管理为有序状态的map类型。 内部节点123456static class Entry&amp;lt;K,V&amp;gt; extends HashMap.Node&amp;lt;K,V&amp;gt; &amp;#123;">
@@ -441,36 +441,7 @@
 <li>LinkedhashMap重写了get方法。</li>
 <li>LinkedHashMap优化了containsValue方法，提高其遍历性能。</li>
 </ul>
-<blockquote>
-<p>测试代码<br>import java.util.LinkedHashMap;<br>import java.util.Map;</p>
-</blockquote>
-<p>/**</p>
-<ul>
-<li>Created by cdx0312</li>
-<li><p>2018/4/4<br>*/<br>public class LinkedHashMapDemo {<br> public static void main(String[] args) {</p>
-<pre><code>Map&lt;Integer,String&gt; map = new LinkedHashMap&lt;&gt;();
-for (int i = 1; i &lt; 7; i++) {
-    map.put(i, &quot;&quot; + i);
-</code></pre><p>//            System.out.println(map.toString());</p>
-<pre><code>}
-System.out.println(map.toString());
-</code></pre><p>//        map.remove(6);<br>//        System.out.println(map.toString());<br>//        map.remove(3);<br>//        System.out.println(map.toString());</p>
-<pre><code>map.get(3);
-map.get(6);
-System.out.println(map);
-
-Map&lt;Integer,String&gt; orderMap = new LinkedHashMap&lt;Integer, String &gt;(16,0.75f, true);
-for (int i = 1; i &lt; 7; i++) {
-    orderMap.put(i, &quot;&quot; + i);
-}
-System.out.println(orderMap.toString());
-orderMap.get(3);
-System.out.println(orderMap);
-orderMap.get(1);
-System.out.println(orderMap);
-</code></pre><p> }<br>}</p>
-</li>
-</ul>
+<p>测试代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">import java.util.LinkedHashMap;</div><div class="line">import java.util.Map;</div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class LinkedHashMapDemo &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Map&lt;Integer,String&gt; map = new LinkedHashMap&lt;&gt;();</div><div class="line">        for (int i = 1; i &lt; 7; i++) &#123;</div><div class="line">            map.put(i, &quot;&quot; + i);</div><div class="line">//            System.out.println(map.toString());</div><div class="line">        &#125;</div><div class="line">        System.out.println(map.toString());</div><div class="line">//        map.remove(6);</div><div class="line">//        System.out.println(map.toString());</div><div class="line">//        map.remove(3);</div><div class="line">//        System.out.println(map.toString());</div><div class="line">        map.get(3);</div><div class="line">        map.get(6);</div><div class="line">        System.out.println(map);</div><div class="line"></div><div class="line">        Map&lt;Integer,String&gt; orderMap = new LinkedHashMap&lt;Integer, String &gt;(16,0.75f, true);</div><div class="line">        for (int i = 1; i &lt; 7; i++) &#123;</div><div class="line">            orderMap.put(i, &quot;&quot; + i);</div><div class="line">        &#125;</div><div class="line">        System.out.println(orderMap.toString());</div><div class="line">        orderMap.get(3);</div><div class="line">        System.out.println(orderMap);</div><div class="line">        orderMap.get(1);</div><div class="line">        System.out.println(orderMap);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -544,6 +515,10 @@ System.out.println(orderMap);
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/04/13/算法之动态规划问题/" rel="prev" title="算法-动态规划">
+                算法-动态规划 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -623,7 +598,7 @@ System.out.println(orderMap);
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">45</span>
+                <span class="site-state-item-count">47</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

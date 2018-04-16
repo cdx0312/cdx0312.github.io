@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java,redis," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="redis简介redis是一个开源的，C语言编写的、支持网络交互的，可基于内存也可以持久化的key-value数据库，是当前最为热门的非关系型数据库。其官网为redis.io。 redis的安装 下载redis源码并解压缩 进入redis源码目录，make编译一下。 make install PREFIX=/usr/local/redis  安装完毕，其目录如下：  ./redis-benchma">
+<meta name="keywords" content="Java,redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis-redis基础总结">
+<meta property="og:url" content="http://yoursite.com/2018/04/15/Redis-redis基础总结/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="redis简介redis是一个开源的，C语言编写的、支持网络交互的，可基于内存也可以持久化的key-value数据库，是当前最为热门的非关系型数据库。其官网为redis.io。 redis的安装 下载redis源码并解压缩 进入redis源码目录，make编译一下。 make install PREFIX=/usr/local/redis  安装完毕，其目录如下：  ./redis-benchma">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-04-16T02:13:05.915Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis-redis基础总结">
+<meta name="twitter:description" content="redis简介redis是一个开源的，C语言编写的、支持网络交互的，可基于内存也可以持久化的key-value数据库，是当前最为热门的非关系型数据库。其官网为redis.io。 redis的安装 下载redis源码并解压缩 进入redis源码目录，make编译一下。 make install PREFIX=/usr/local/redis  安装完毕，其目录如下：  ./redis-benchma">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/04/15/Redis-redis基础总结/"/>
+
+
+
+
+
+  <title>Redis-redis基础总结 | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/15/Redis-redis基础总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Redis-redis基础总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-15T20:55:44+08:00">
+                2018-04-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/redis/" itemprop="url" rel="index">
+                    <span itemprop="name">redis</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="redis简介"><a href="#redis简介" class="headerlink" title="redis简介"></a>redis简介</h1><p>redis是一个开源的，C语言编写的、支持网络交互的，可基于内存也可以持久化的key-value数据库，是当前最为热门的非关系型数据库。其官网为redis.io。</p>
+<h2 id="redis的安装"><a href="#redis的安装" class="headerlink" title="redis的安装"></a>redis的安装</h2><ol>
+<li>下载redis源码并解压缩</li>
+<li>进入redis源码目录，make编译一下。</li>
+<li>make install PREFIX=/usr/local/redis</li>
+</ol>
+<p>安装完毕，其目录如下：</p>
+<blockquote>
+<p>./redis-benchmark //用于进行redis性能测试的工具<br>  ./redis-check-dump //用于修复出问题的dump.rdb文件<br>  ./redis-cli //redis的客户端<br>  ./redis-server //redis的服务端<br>  ./redis-check-aof //用于修复出问题的AOF文件<br>  ./redis-sentinel //用于集群管理</p>
+</blockquote>
+<h2 id="redis的使用"><a href="#redis的使用" class="headerlink" title="redis的使用"></a>redis的使用</h2><p>./redis-server redis.conf 可指定配置文件并启动redis服务，默认端口号为6379。可以通过redis-cli或者可视化的客户端如redis management来远程登录操作服务器。</p>
+<h1 id="redis的五种数据类型"><a href="#redis的五种数据类型" class="headerlink" title="redis的五种数据类型"></a>redis的五种数据类型</h1><ol>
+<li>String</li>
+</ol>
+<p>字符串是redis最基本的数据类型，一个key对应一个value.String类型是二进制安全的。也就是说redis的String可以包含任何数据。比如JPG图片或者序列化的对象。String类型是redis最基本的数据类型，一个redis中字符串value最多可以是512M。</p>
+<p>基本操作包括get、set、incr、decr</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">127.0.0.1:6379&gt; set mynum &quot;2&quot;</div><div class="line">OK</div><div class="line">127.0.0.1:6379&gt; get mynum</div><div class="line">&quot;2&quot;</div><div class="line">127.0.0.1:6379&gt; incr mynum</div><div class="line">(integer) 3</div><div class="line">127.0.0.1:6379&gt; get mynum</div><div class="line">&quot;3&quot;</div></pre></td></tr></table></figure>
+<p>考虑到INCR等指令本身就具有原子操作的特性，可以利用redis的INCR，DECR等指令来实现原子计数，用这个特性来实现业务上的统计技术需求。</p>
+<ol>
+<li>Hash</li>
+</ol>
+<p>Hash是一个键值对集合,相当于一个key对应一个map，map中还有键值对。使用hash对key进行归类。</p>
+<p>基本操作包括hset、hget。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">127.0.0.1:6379&gt; HMSET user:001 username antirez password P1pp0 age 34</div><div class="line">OK</div><div class="line">127.0.0.1:6379&gt; HGETALL user:001</div><div class="line">1) &quot;username&quot;</div><div class="line">2) &quot;antirez&quot;</div><div class="line">3) &quot;password&quot;</div><div class="line">4) &quot;P1pp0&quot;</div><div class="line">5) &quot;age&quot;</div><div class="line">6) &quot;34&quot;</div><div class="line">127.0.0.1:6379&gt; HSET user:001 password 12345</div><div class="line">(integer) 0</div><div class="line">127.0.0.1:6379&gt; HGETALL user:001</div><div class="line">1) &quot;username&quot;</div><div class="line">2) &quot;antirez&quot;</div><div class="line">3) &quot;password&quot;</div><div class="line">4) &quot;12345&quot;</div><div class="line">5) &quot;age&quot;</div><div class="line">6) &quot;34&quot;</div></pre></td></tr></table></figure>
+<ol>
+<li>List</li>
+</ol>
+<p>列表在低层的实现为链表，则其插入和删除的效率非常高。其存在的缺点在于链表中元素的定位比较慢。</p>
+<p>其基本操作包括lpush,rpush,lrange等,也就是从左侧插入，右侧插入以及指定一个范围来提取元素。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">127.0.0.1:6379&gt; lpush mylist &quot;1&quot;</div><div class="line">(integer) 1</div><div class="line">127.0.0.1:6379&gt; rpush mylist &quot;2&quot;</div><div class="line">(integer) 2</div><div class="line">127.0.0.1:6379&gt; lpush mylist &quot;0&quot;</div><div class="line">(integer) 3</div><div class="line">127.0.0.1:6379&gt; lrange mylist 0 1</div><div class="line">1) &quot;0&quot;</div><div class="line">2) &quot;1&quot;</div><div class="line">127.0.0.1:6379&gt; lrange mylist 0 -1</div><div class="line">1) &quot;0&quot;</div><div class="line">2) &quot;1&quot;</div><div class="line">3) &quot;2</div></pre></td></tr></table></figure>
+<p>list的使用场景包括：</p>
+<ul>
+<li>利用lists来实现一个消息队列，可以确保消息的顺序执行。</li>
+<li>利用LRANGE实现分页功能</li>
+</ul>
+<ol>
+<li>Set</li>
+</ol>
+<p>集合和Java中的集合定义类似，无序，不重合。可以对集合进行添加，删除，取交集，取并集，取差集等。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">127.0.0.1:6379&gt; sadd myset &quot;one&quot;</div><div class="line">(integer) 1</div><div class="line">127.0.0.1:6379&gt; sadd myset &quot;two&quot;</div><div class="line">(integer) 1</div><div class="line">127.0.0.1:6379&gt; smembers myset</div><div class="line">1) &quot;one&quot;</div><div class="line">2) &quot;two&quot;</div><div class="line">127.0.0.1:6379&gt; sismember myset &quot;one&quot;</div><div class="line">(integer) 1</div><div class="line">127.0.0.1:6379&gt; sismember myset &quot;three&quot;</div><div class="line">(integer) 0</div><div class="line">127.0.0.1:6379&gt; sadd yourset &quot;1&quot;</div><div class="line">(integer) 1</div><div class="line">127.0.0.1:6379&gt; sadd yourset &quot;2&quot;</div><div class="line">(integer) 1</div><div class="line">127.0.0.1:6379&gt; smembers yourset</div><div class="line">1) &quot;1&quot;</div><div class="line">2) &quot;2&quot;</div><div class="line">127.0.0.1:6379&gt; sunion myset yourset</div><div class="line">1) &quot;1&quot;</div><div class="line">2) &quot;one&quot;</div><div class="line">3) &quot;2&quot;</div><div class="line">4) &quot;two&quot;</div></pre></td></tr></table></figure>
+<ol>
+<li>zset</li>
+</ol>
+<p>有序集合，每个元素都关联一个score，据此来进行排序。常用操作有zrange,zadd,zreevrange,zrangebyscore等等。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">127.0.0.1:6379&gt; zadd myzset 1 baidu.com</div><div class="line">(integer) 1</div><div class="line">127.0.0.1:6379&gt; zadd myzset 3 360.com</div><div class="line">(integer) 1</div><div class="line">127.0.0.1:6379&gt; zadd myzset 2 google.com</div><div class="line">(integer) 1</div><div class="line">127.0.0.1:6379&gt; zrange myzset 0 -1 with scores</div><div class="line">1) &quot;baidu.com&quot;</div><div class="line">2) &quot;1&quot;</div><div class="line">3) &quot;google.com&quot;</div><div class="line">4) &quot;2&quot;</div><div class="line">5) &quot;360.com&quot;</div><div class="line">6) &quot;3&quot;</div><div class="line">127.0.0.1:6379&gt; zrange myzset 0 -1</div><div class="line">1) &quot;baidu.com&quot;</div><div class="line">2) &quot;google.com&quot;</div><div class="line">3) &quot;360.com&quot;</div></pre></td></tr></table></figure>
+<h1 id="redis持久化"><a href="#redis持久化" class="headerlink" title="redis持久化"></a>redis持久化</h1><p>redis提供了两种持久化方案：RDB和AOF。</p>
+<h2 id="RDB-Redis-Database"><a href="#RDB-Redis-Database" class="headerlink" title="RDB-Redis Database"></a>RDB-Redis Database</h2><ul>
+<li><p>rdb是将redis某一个时刻的数据持久化到磁盘中，是一种快照式的持久化方法。redis在持久化过程中，会将数据都写入到一个临时文件中，待持久化过程都结束了，才会用这个临时文件替换上次持久化好的dump.rdb。保证快照文件试完整可用的，可以随时进行备份。</p>
+</li>
+<li><p>RDB进行持久化过程时，redis会单独fork一个子进程来进行持久化，而主进程不会进行任何的IO操作，从而保证了redis的高性能。</p>
+<ul>
+<li>fork的作用是复制一个和当前进程一样的进程。新进程的所有数据数值和原进程一致，但是是一个全新的进程，并作为原进程的子进程。</li>
+</ul>
+</li>
+<li><p>RDB快照的触发方法</p>
+<ul>
+<li>配置文件中默认的快照配置，cp后重新使用。</li>
+<li>命令save、bgsave，其中save时只保存，其他全部阻塞，bgsave会在后台进行快照操作，快照同时还可以响应客户端的请求，可以通过lastsave命令获取最后一次成功执行快照的时间。</li>
+<li>使用flushall命令，不过里面是空的，无意义。</li>
+</ul>
+</li>
+<li><p>RDB的优势和劣势</p>
+<ul>
+<li>优势：如果需要进行大规模的数据恢复，且对于数据恢复的完整性不是非常敏感，nameRDB方式要比AOF方式更加的高效。</li>
+<li>劣势：RDB的缺点在于如果对于数据完整性要求比较高，则当redis故障时，会丢失掉最后一次快照后的所有数据。而如果持久化频率太高，会增加服务器的多余压力。同时fork时，内存中的数据被复制了一份，内存膨胀需要考虑。</li>
+</ul>
+</li>
+</ul>
+<h2 id="AOF-Append-Only-File"><a href="#AOF-Append-Only-File" class="headerlink" title="AOF-Append Only File"></a>AOF-Append Only File</h2><ul>
+<li><p>AOF,只允许对文件追加。AOF采用的持久化方案是将执行过的写指令记录下来，在数据恢复时按照从前到后的顺序将指令都执行一遍。AOF的开启可以通过修改redis.conf中的appendonly yes来设置。此时，如果有写操作，都会追加到AOF文件的末尾。默认的AOF持久化策略为每秒种fsync一次，由于向磁盘中写一个指令对系统的压力很小，因此此时redis保持高效运行。而redis重启时根据日志文件顺次执行其指令来完成数据恢复。</p>
+</li>
+<li><p>redis出现故障，丢失的数据也就是这1s没有被同步的数据。同时在追加日志时，恰好遇到磁盘空间满，断电等情况导致日志写入不完整，此时redis提供了redis-check-aof工具来修复日志。</p>
+<p>  如果AOF文件出现了被写坏的情况，可以通过以下步骤来修复：</p>
+<pre><code>* 备份被写坏的AOF文件
+* 运行redis-check-aof-fix进行修复
+* 用diff -u来查看两个文件的差异，确认问题点
+* 重启redis,加载修改后的AOF文件
+</code></pre></li>
+</ul>
+<ul>
+<li><p>重写机制：bgrewriteaof</p>
+<ul>
+<li><p>追加方式会导致AOF文件越来越大，因此redis提供了AOF文件重写机制，也就是当AOF文件的大小超过所设定的阈值时，redis会启动AOF文件的内容压缩，只保留可以恢复数据的最小指令集。比如，如果我们队一个字符串的值进行了1000次INCR，AOF中应该记录1000条指令，这时候我们完全可以用一个set的值，将其设置为正确的数据。同时AOF重写过程中，仍然是采用先写临时文件，全部完成后再替换的流程，所以断电、磁盘满等问题都不会影响AOF文件的可用性。</p>
+</li>
+<li><p>重写原理：</p>
+<ul>
+<li>重写时会fork一个新进程来将文件进行重写，先写临时文件然后rename覆盖。重写过程为遍历此时内存中的数据，每条数据有一条对应的set语句。重写AOF文件的操作并不是读取旧的AOF文件，而是将整个内存中的数据库内容用命令的方式重写了一个新的AOF文件，类似于快照。</li>
+</ul>
+</li>
+<li><p>重写触发条件：</p>
+<ul>
+<li>redis会记录上次重写时的AOF大小，默认配置是当AOF文件大小是上次rewrite后的大小的一倍且文件大于64M时触发。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>AOF的优势和劣势</p>
+<ul>
+<li><p>AOF的优势：</p>
+<ul>
+<li>每秒同步，异步操作，每秒记录，如果1s以内的宕机，有数据丢失</li>
+<li>不需要同步</li>
+</ul>
+</li>
+<li><p>AOF的缺陷主要有两个方面：</p>
+<ul>
+<li>同样数据规模的情况下，AOF文件要比RDB文件的体积大。</li>
+<li>AOF方式的恢复速度也要慢于RDB方式。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="选择方案"><a href="#选择方案" class="headerlink" title="选择方案"></a>选择方案</h2><p>RDB持久化方式能够在指定时间间隔内对你的数据进行快照存储。而AOF持久化方式能记录每次对服务器写的操作，当服务器重启时重新执行这些命令来回复原始数据，AOF命令以redis协议追加保存每次写的操作到文件末尾。Redis还能对AOF文件进行后台重写，使得AOF文件不至于过大。</p>
+<ul>
+<li>两种方式都开启来提供更加可靠的持久化方案</li>
+</ul>
+<p>这种情况下，当redis重启时会优先载入AOF文件来回复原始的数据，因为在通常的情况下AOF文件保存的数据比RDB文件要更加完整。而RDB作为候选方案，对当前内存的数据进行定期的备份，来防范AOF可能存在的BUG。</p>
+<ul>
+<li>性能建议</li>
+</ul>
+<p>考虑到RDB做数据备份，建议在Slave上持久化RDB文件。</p>
+<p>如果这时候Enable AOF，好处是最坏的情况下丢失的数据也不会超过2s，启动脚本简单的load自己的AOF文件就可以看，代价是带来了持续的IO，以及rewrite过程中将产生的新数据写到新文件造成的阻塞难以避免。在磁盘允许的情况下，应该尽量减少AOF重写的频率。</p>
+<p>如果不Enable AOF，仅仅依靠主从复制来实现高可靠也是可以的。这样能节省一大笔IO操作，也减少了rewrite时带来的系统资源占用，但是如果master和slave同时坏掉，会丢失十几分钟的数据，启动脚本要比较Master、Slave中的RDB文件，载入比较新的哪一个。</p>
+<h1 id="redis的主从复制"><a href="#redis的主从复制" class="headerlink" title="redis的主从复制"></a>redis的主从复制</h1><p>redis支持主从同步的，同时支持一主多从以及多级从结构。主从结构的优点在于：</p>
+<ul>
+<li>冗余备份</li>
+<li>提升读性能。</li>
+</ul>
+<p>redis主从结构中，一般推荐关闭主服务器的数据持久化功能，只让从服务器进行数据持久化，这样可以提高主服务器的处理性能，。。</p>
+<p>主从架构中，从服务器通常设置为只读模式，这样可以避免从服务器的数据被误修改。但是从服务器仍然可以接受config等指令，不应该将从服务器直接暴露到不安全的网络环境中。如果必须如此，需要考虑给其指令进行重命名，避免误操作。</p>
+<h2 id="主从同步的配置方法"><a href="#主从同步的配置方法" class="headerlink" title="主从同步的配置方法"></a>主从同步的配置方法</h2><ol>
+<li>配置的是Slave库。</li>
+<li>从库配置：slaveof 主库ip 主库port， 每次与master断开之后，都需要进行重新连接，除非你配置进redis.conf中的info replication。</li>
+<li>修改配置文件的细节操作：<ul>
+<li>拷贝多个redis.conf文件</li>
+<li>开启daemonize yes</li>
+<li>pid文件名字</li>
+<li>指定端口</li>
+<li>log文件名称</li>
+<li>dump.rdb文件名称。</li>
+</ul>
+</li>
+</ol>
+<h2 id="一主二仆的配置"><a href="#一主二仆的配置" class="headerlink" title="一主二仆的配置"></a>一主二仆的配置</h2><ul>
+<li>初始化启动一个Master和两个Slave</li>
+<li>查看日志包括主机，备份机的日志，以及info replication</li>
+<li>上一个Slave可以是下一个Slave的Master，Slave同样可以接受其他Slave的连接和同步请求，那么该Slave作为了链条中的下一个的Master，可以有效减轻master的写压力。</li>
+<li>中途变更转向时会清除之前的数据，重新拷贝最新的slaveof ip port</li>
+<li>slaveof no one， 使得当前的数据库停止与其他数据库的同步，转成主数据库。</li>
+</ul>
+<h2 id="主从复制原理"><a href="#主从复制原理" class="headerlink" title="主从复制原理"></a>主从复制原理</h2><ol>
+<li>Slave启动成功连接到master之后会发送一个sync命令。</li>
+<li>Master接到命令后，调用bgsave指令来创建一个子进程专门进行数据持久化工作，也就是讲主服务器的数据写入RDB文件中。在数据持久化过程中，主服务器将执行的写指令都缓存在内存中。</li>
+<li>bgsave指令完成之后，主服务器会将持久化好的RDB文件发送给服务器，从服务器接到此文件后会将其存储到磁盘上，然后再将读取到内存中。这个动作完成之后，主服务器会将这段时间缓存的写指令以redis协议的格式发送给从服务器。也就是全量复制和增量复制结合使用。</li>
+</ol>
+<ul>
+<li>全量复制与增量复制<ul>
+<li>全量复制：slave服务在接收到数据库文件数据之后，将其存盘并加载到内存中。</li>
+<li>增量复制：master继续将新的收集到的修改命令依次传给slave，完成同步。</li>
+</ul>
+</li>
+<li><p>多个从服务器同时发来SYNC指令，主服务器也只会执行一个bgsave，然后把持久化好的RDB文件发送给多个下游节点。redis2.8之前，从服务器和主服务器断开连接之后，都会进行一次主从之间的全量数据同步，2.8之后，redis支持效率更高的增量同步策略。</p>
+</li>
+<li><p>主服务器会在内存中维护一个缓冲区，缓冲区中存储着将要发给从服务器的内容。从服务器在与主服务器出现网络瞬间断开之后，从服务器会尝试与主服务器连接，一旦连接成功，从服务器就会把希望同步的主服务器ID和希望请求的数据偏移量位置发送给主服务器。主服务器接收到这种同步请求之后，首先会验证主服务器ID是否和自己的ID匹配，其次会检查请求的偏移量是否存在于自己的缓冲区中，如果两者都满足的话，主服务器会向服务器发送增量内容。</p>
+</li>
+</ul>
+<h1 id="redis事务管理"><a href="#redis事务管理" class="headerlink" title="redis事务管理"></a>redis事务管理</h1><p>redis事务处理的基础为MULTI、EXEC、DISCARD、WATCH四个指令。</p>
+<p>MULTI：用来组装一个事务，标记事务的开始<br>EXEC：用来执行一个事务<br>DISCARD：用来取消一个事务<br>WATCH：用来监视一些可以，一旦这些key在事务执行前被改变，则取消事务的执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">redis&gt; MULTI</div><div class="line">OK</div><div class="line">redis&gt; INCR user_id</div><div class="line">QUEUED</div><div class="line">redis&gt; INCR user_id</div><div class="line">QUEUED</div><div class="line">redis&gt; INCR user_id</div><div class="line">QUEUED</div><div class="line">redis&gt; PING</div><div class="line">QUEUED</div><div class="line">redis&gt; EXEC</div><div class="line">1) (integer) 1</div><div class="line">2) (integer) 2</div><div class="line">3) (integer) 3</div><div class="line">4) PONG</div></pre></td></tr></table></figure>
+<ul>
+<li><p>其中QUEUED表示我们在用MULTI组装事务时，每一个命令都会进入到内存队列中缓存起来，如果出现QUEUED则表示我们这个命令成功的插入了缓存队列，将来执行EXEC时，这些被QUEUED的命令都会被组装成一个事务来执行。</p>
+</li>
+<li><p>事务执行完成之后，如果redis开启了AOF持久化的话，那么一旦事务被成功执行，事务中的命令就会通过write命令一次性写入到磁盘中，如果写入过程中出现故障则会造成部分命令AOF持久化，此时可以使用redis-check-aof工具来修复这个问题，这个问题会将AOF文件中不完整的信息溢出，确保AOF文件完整可用。</p>
+</li>
+<li><p>事务遇到的错误分为：</p>
+<ul>
+<li><p>调用EXEC之前的错误：导致某个命令无法成功写入缓冲队列，调用redis会拒绝执行这个事务。</p>
+<ul>
+<li>语法错误</li>
+<li><p>内存不足</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">127.0.0.1:6379&gt; multi</div><div class="line">OK</div><div class="line">127.0.0.1:6379&gt; haha</div><div class="line">(error) ERR unknown command &apos;haha&apos;</div><div class="line">127.0.0.1:6379&gt; ping</div><div class="line">QUEUED</div><div class="line">127.0.0.1:6379&gt; exec</div><div class="line">(error) EXECABORT Transaction discarded because of previous errors.</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>调用EXEC之后的错误：redis会忽略这些错误，而是继续向下执行事务中的其他命令。也就是某一条命令失败并不会影响其他命令的执行。</p>
+<pre><code><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">127.0.0.1:6379&gt; multi</div><div class="line">OK</div><div class="line">127.0.0.1:6379&gt; set age 23</div><div class="line">QUEUED</div><div class="line">127.0.0.1:6379&gt; sadd age 15</div><div class="line">QUEUED</div><div class="line">127.0.0.1:6379&gt; set age 29</div><div class="line">QUEUED</div><div class="line">127.0.0.1:6379&gt; exec</div><div class="line">1) OK</div><div class="line">2) (error) WRONGTYPE Operation against a key holding the wrong kind of value</div><div class="line">3) OK</div><div class="line">127.0.0.1:6379&gt; get age</div><div class="line">&quot;29&quot;</div></pre></td></tr></table></figure>
+</code></pre></li>
+<li><p>WATCH指令可以使用类似于乐观锁的效果也就是CAS，WATCH本身作用是监视某些key是否被改动过，只要还没有真正的触发事务，WATCH都会监视指定的key，一旦发现某个key被修改了，在执行EXEC时就会返回nil，表示事务无法触发。</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">  127.0.0.1:6379&gt; set age 23</div><div class="line">OK</div><div class="line">127.0.0.1:6379&gt; watch age</div><div class="line">OK</div><div class="line">127.0.0.1:6379&gt; set age 24</div><div class="line">OK</div><div class="line">127.0.0.1:6379&gt; multi</div><div class="line">OK</div><div class="line">127.0.0.1:6379&gt; set age 25</div><div class="line">QUEUED</div><div class="line">127.0.0.1:6379&gt; get age</div><div class="line">QUEUED</div><div class="line">127.0.0.1:6379&gt; exec</div><div class="line">(nil)</div></pre></td></tr></table></figure>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/redis/" rel="tag"># redis</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/15/数据结构-两个栈实现一个队列以及两个队列实现一个栈/" rel="next" title="数据结构-两个栈实现一个队列和两个队列实现一个栈">
+                <i class="fa fa-chevron-left"></i> 数据结构-两个栈实现一个队列和两个队列实现一个栈
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#redis简介"><span class="nav-number">1.</span> <span class="nav-text">redis简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#redis的安装"><span class="nav-number">1.1.</span> <span class="nav-text">redis的安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redis的使用"><span class="nav-number">1.2.</span> <span class="nav-text">redis的使用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#redis的五种数据类型"><span class="nav-number">2.</span> <span class="nav-text">redis的五种数据类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#redis持久化"><span class="nav-number">3.</span> <span class="nav-text">redis持久化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RDB-Redis-Database"><span class="nav-number">3.1.</span> <span class="nav-text">RDB-Redis Database</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF-Append-Only-File"><span class="nav-number">3.2.</span> <span class="nav-text">AOF-Append Only File</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#选择方案"><span class="nav-number">3.3.</span> <span class="nav-text">选择方案</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#redis的主从复制"><span class="nav-number">4.</span> <span class="nav-text">redis的主从复制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#主从同步的配置方法"><span class="nav-number">4.1.</span> <span class="nav-text">主从同步的配置方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一主二仆的配置"><span class="nav-number">4.2.</span> <span class="nav-text">一主二仆的配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#主从复制原理"><span class="nav-number">4.3.</span> <span class="nav-text">主从复制原理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#redis事务管理"><span class="nav-number">5.</span> <span class="nav-text">redis事务管理</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

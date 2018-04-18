@@ -278,6 +278,215 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/18/一致性哈希算法及其Java实现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/18/一致性哈希算法及其Java实现/" itemprop="url">一致性哈希及其Java实现</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-18T20:22:17+08:00">
+                2018-04-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/Consistent-Hash/" itemprop="url" rel="index">
+                    <span itemprop="name">Consistent Hash</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="一致性哈希概念"><a href="#一致性哈希概念" class="headerlink" title="一致性哈希概念"></a>一致性哈希概念</h1><ul>
+<li>维基百科的定义</li>
+</ul>
+<p>一致哈希 是一种特殊的哈希算法。在使用一致哈希算法后，哈希表槽位数（大小）的改变平均只需要对K/n 个关键字重新映射，其中K是关键字的数量，n是槽位数量。然而在传统的哈希表中，添加或删除一个槽位的几乎需要对所有关键字进行重新映射。</p>
+<p>一致性哈希算法提出了动态变化的Cache环境中，判定哈希算法好坏的四个定义：</p>
+<ol>
+<li>平衡性：哈希的结果尽可能分布到所有的缓存中，充分利用缓存空间。</li>
+<li>单调性：举例说吧，本来有ABC三个缓存，数据1存储在B中，现在添加了D缓存进去，则数据1只会分布在B或者D中，不会分配到AC中。</li>
+<li>分散性：分散性是同一个数据被映射到不同的缓存中，需要避免</li>
+<li>负载：一个缓冲区被多个用户映射为不同的内容，需要降低缓冲的负载。</li>
+</ol>
+<h1 id="传统哈希算法"><a href="#传统哈希算法" class="headerlink" title="传统哈希算法"></a>传统哈希算法</h1><p>针对分布式场景，假定有1000W个数据项，100个存储接待你，一个数据的存储位置为该数据的Hash值对服务器数量取余，这样可以将数据尽可能的分散到各个服务器上。</p>
+<p><img src="/img/cons-Hash-1.png" alt="Alt text"></p>
+<p>这种哈希方案的优点是每个节点的的数据量是相仿的，相对均衡，但是当在集群里面增加一台服务器，或者减少一台服务器的话，几乎所有的缓存都会失效，需要重新哈希。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/18\</div><div class="line"> * 传统哈希方法</div><div class="line"> * 100000000个数据项，100个存储节点</div><div class="line"> */</div><div class="line">public class NormalHashMethod &#123;</div><div class="line">    //数据数</div><div class="line">    public static final int NUMBER_OF_DATA = 10000000;</div><div class="line">    //节点数</div><div class="line">    public static final int NUMBER_OF_NODE = 100;</div><div class="line">    //节点中存放的数据个数</div><div class="line">    private static int[] record = new int[NUMBER_OF_NODE];</div><div class="line"></div><div class="line">    //将节点放入对应的服务器中</div><div class="line">    public static void hashProcess() &#123;</div><div class="line">        for (int i = 0; i &lt; NUMBER_OF_DATA; i++) &#123;</div><div class="line">            int result = getHash(i+&quot;&quot;);</div><div class="line">            record[result%100]++;</div><div class="line">        &#125;</div><div class="line">        System.out.println(&quot;平均节点中的数据量： &quot; + NUMBER_OF_DATA/NUMBER_OF_NODE);</div><div class="line">        System.out.println(&quot;最多的一个节点的数量： &quot; + getMax(record));</div><div class="line">        System.out.println(&quot;最少的一个节点的数量： &quot; + getMin(record));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //添加一个节点或者减少一个节点时，需要移动的节点数</div><div class="line">    public static void afterAddOrDeleteOneNode() &#123;</div><div class="line">        int count = 0;</div><div class="line">        int count1 = 0;</div><div class="line">        //对所有数据进行hash，对新的服务器数量取余</div><div class="line">        for (int i = 0; i &lt; NUMBER_OF_DATA; i++) &#123;</div><div class="line">            int result = getHash(i+&quot;&quot;);</div><div class="line">            if (result % NUMBER_OF_NODE != result % (NUMBER_OF_NODE + 1))</div><div class="line">                count++;</div><div class="line">            if (result % NUMBER_OF_NODE != result % (NUMBER_OF_NODE - 1))</div><div class="line">                count1++;</div><div class="line">        &#125;</div><div class="line">        System.out.println(&quot;添加一个节点数据移动的数量： &quot; + count);</div><div class="line">        System.out.println(&quot;减少一个节点数据移动的数量： &quot; + count1);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //使用FNV1_32_HASH算法</div><div class="line">    private static int getHash(String str) &#123;</div><div class="line">        final int p = 16777619;</div><div class="line">        int hash = (int) 2166136261L;</div><div class="line">        for (int i = 0; i &lt; str.length(); i++)</div><div class="line">            hash = (hash ^ str.charAt(i)) * p;</div><div class="line">        hash += hash &lt;&lt; 13;</div><div class="line">        hash ^= hash &gt;&gt; 7;</div><div class="line">        hash += hash &lt;&lt; 3;</div><div class="line">        hash ^= hash &gt;&gt; 17;</div><div class="line">        hash += hash &lt;&lt; 5;</div><div class="line"></div><div class="line">        // 如果算出来的值为负数则取其绝对值</div><div class="line">        if (hash &lt; 0)</div><div class="line">            hash = Math.abs(hash);</div><div class="line">        return hash;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static int getMax(int[] arr) &#123;</div><div class="line">        int max = arr[0];</div><div class="line">        for (int x = 1; x &lt; arr.length; x++) &#123;</div><div class="line">            if (arr[x] &gt; max)</div><div class="line">                max = arr[x];</div><div class="line"></div><div class="line">        &#125;</div><div class="line">        return max;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static int getMin(int[] arr) &#123;</div><div class="line">        int min = arr[0];</div><div class="line">        for (int x = 1; x &lt; arr.length; x++) &#123;</div><div class="line">            if (arr[x] &lt; min)</div><div class="line">                min = arr[x];</div><div class="line"></div><div class="line">        &#125;</div><div class="line">        return min;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        hashProcess();</div><div class="line">        afterAddOrDeleteOneNode();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面的例子中是用普通哈希方法来做的，输出结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">平均节点中的数据量： 100000</div><div class="line">最多的一个节点的数量： 100653</div><div class="line">最少的一个节点的数量： 99160</div><div class="line">添加一个节点数据移动的数量： 9900492</div><div class="line">减少一个节点数据移动的数量： 9899656</div></pre></td></tr></table></figure>
+<p>可以看出，一共1000万个数据，添加或者减少一个节点，进行重新哈希，则990万个数据需要改变存储位置。也就是说990万个缓存不能命中，实际场景中这明显是不能接受的，因此提出了一致性哈希来解决这个问题。</p>
+<h1 id="一致性哈希"><a href="#一致性哈希" class="headerlink" title="一致性哈希"></a>一致性哈希</h1><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><ul>
+<li>唤醒hash空间：按照常用的hash算法来将对应的key哈希到一个具有2^32次方个桶的空间中，也就是0-2^32-1的数字空间中，将其收尾相连，形成一个环空间。</li>
+</ul>
+<p>Hash(object1) = key1；<br>Hash(object2) = key2；<br>Hash(object3) = key3；<br>Hash(object4) = key4；</p>
+<p><img src="/img/cons-Hash-2.png" alt="Alt text"></p>
+<ul>
+<li>将数据通过一定的哈希算法处理后映射到环上</li>
+</ul>
+<p><img src="/img/cons-Hash-3.png" alt="Alt text"></p>
+<ul>
+<li>将服务器通过哈希算法映射到环上,和数据的哈希算法是一样的，环上的数据，顺时针遇到的第一个服务器就是该数据的存储位置。假定有三个服务器节点。</li>
+</ul>
+<p>Hash(NODE1) = KEY1;<br>Hash(NODE2) = KEY2;<br>Hash(NODE3) = KEY3;</p>
+<p><img src="/img/cons-Hash-4.png" alt="Alt text"></p>
+<p>由于哈希环是不会变更的，因此一个数据可以快速的知道他的真正的存储位置。</p>
+<h2 id="服务器的删除与添加"><a href="#服务器的删除与添加" class="headerlink" title="服务器的删除与添加"></a>服务器的删除与添加</h2><p>不同于传统哈希求余方法，一致性哈希算法在增加或者删除服务器节点是，需要换位置的节点很少，性能很高。</p>
+<ol>
+<li>删除服务器节点,如果NODE2出现故障，则从集群里面溢出，那么object3会迁移到Node3中，其他数据的位置不变。</li>
+</ol>
+<p><img src="/img/cons-Hash-5.png" alt="Alt text"></p>
+<ol>
+<li>添加服务器节点，向集群里面添加新的 首先将其映射到环中，通过顺时针迁移的规则，object2会迁移到NODE4中，其他对象不会发生改变。数据迁移的数量很小，很适合分布式集群。</li>
+</ol>
+<p><img src="/img/cons-Hash-6.png" alt="Alt text"></p>
+<ol>
+<li>java示范</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div></pre></td><td class="code"><pre><div class="line">import java.util.Objects;</div><div class="line">import java.util.SortedMap;</div><div class="line">import java.util.TreeMap;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/18\</div><div class="line"> * 一致性哈希方法</div><div class="line"> * 100000000个数据项，100个存储节点</div><div class="line"> */</div><div class="line">public class ConsistentHashMethod &#123;</div><div class="line">    public static final int NUMBER_OF_DATA = 10000000;</div><div class="line">    public static final int NUMBER_OF_NODE = 100;</div><div class="line">    //记录服务器要添加的环上的位置，默认为均匀分布的</div><div class="line">    private static int[] servers = new int[NUMBER_OF_NODE];</div><div class="line">    //key-服务器的哈希值，value表示服务器的位置</div><div class="line">    private static SortedMap&lt;Integer, Integer&gt; sortedMap = new TreeMap&lt;&gt;();</div><div class="line">    //记录每个服务器节点放置的数据数</div><div class="line">    private static int[] record = new int[NUMBER_OF_NODE];</div><div class="line"></div><div class="line">    //初始化，将服务器放入环中</div><div class="line">    public static void init() &#123;</div><div class="line">        int div = (Integer.MAX_VALUE) / NUMBER_OF_NODE;</div><div class="line">        for (int i = 0; i &lt; 100; i++) &#123;</div><div class="line">            servers[i] = i * div;</div><div class="line">        &#125;</div><div class="line">        //将所有服务器放入SortedMap中</div><div class="line">        for (int i = 0; i &lt; servers.length; i++) &#123;</div><div class="line">            int hash = getHash(servers[i] + &quot;&quot;);</div><div class="line">            sortedMap.put(hash, servers[i]);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void hashProcess() &#123;</div><div class="line">        int div = 21474836;</div><div class="line">        for (int i = 0; i &lt; NUMBER_OF_DATA; i++) &#123;</div><div class="line">            int hash = getHash(i+&quot;&quot;);</div><div class="line">            //得到大于该Hash值的所有Map</div><div class="line">            SortedMap&lt;Integer, Integer&gt; subMap = sortedMap.tailMap(hash);</div><div class="line">            //将节点放入对应的服务器中</div><div class="line">            if (subMap.isEmpty()) &#123;</div><div class="line">                Integer index = sortedMap.firstKey();</div><div class="line">                record[sortedMap.get(index) / div]++;</div><div class="line">            &#125; else &#123;</div><div class="line">                Integer index = subMap.firstKey();</div><div class="line">                record[sortedMap.get(index)/div]++;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        System.out.println(&quot;平均节点中的数据量： &quot; + NUMBER_OF_DATA/NUMBER_OF_NODE);</div><div class="line">        System.out.println(&quot;最多的一个节点的数量： &quot; + getMax(record));</div><div class="line">        System.out.println(&quot;最少的一个节点的数量： &quot; + getMin(record));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void afterAddOneNode() &#123;</div><div class="line">        int count = 0;</div><div class="line">        int div1 = (Integer.MAX_VALUE) / NUMBER_OF_NODE;</div><div class="line">        SortedMap&lt;Integer, Integer&gt; addNode = new TreeMap&lt;&gt;(sortedMap);</div><div class="line">        addNode.put(getHash(&quot;2333&quot;), 2333);</div><div class="line">        for (int i = 0; i &lt; NUMBER_OF_DATA; i++) &#123;</div><div class="line">            int hash = getHash(i + &quot;&quot;);</div><div class="line">            SortedMap&lt;Integer, Integer&gt; sub = sortedMap.tailMap(hash);</div><div class="line">            SortedMap&lt;Integer, Integer&gt; sub1 = addNode.tailMap(hash);</div><div class="line">            if (sub.isEmpty() &amp;&amp; sub1.isEmpty() ) &#123;</div><div class="line">                count++;</div><div class="line">            &#125;</div><div class="line">            if (!sub.isEmpty() &amp;&amp; !sub1.isEmpty() &amp;&amp; !Objects.equals(sub.firstKey(), sub1.firstKey())) &#123;</div><div class="line">                count++;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        System.out.println(&quot;添加一个节点数据移动的数量： &quot; + count);</div><div class="line">    &#125;</div><div class="line">    //使用FNV1_32_HASH算法</div><div class="line">    private static int getHash(String str) &#123;</div><div class="line">        final int p = 16777619;</div><div class="line">        int hash = (int) 2166136261L;</div><div class="line">        for (int i = 0; i &lt; str.length(); i++)</div><div class="line">            hash = (hash ^ str.charAt(i)) * p;</div><div class="line">        hash += hash &lt;&lt; 13;</div><div class="line">        hash ^= hash &gt;&gt; 7;</div><div class="line">        hash += hash &lt;&lt; 3;</div><div class="line">        hash ^= hash &gt;&gt; 17;</div><div class="line">        hash += hash &lt;&lt; 5;</div><div class="line"></div><div class="line">        // 如果算出来的值为负数则取其绝对值</div><div class="line">        if (hash &lt; 0)</div><div class="line">            hash = Math.abs(hash);</div><div class="line">        return hash;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static int getMax(int[] arr) &#123;</div><div class="line">        int max = arr[0];</div><div class="line">        for (int x = 1; x &lt; arr.length; x++) &#123;</div><div class="line">            if (arr[x] &gt; max)</div><div class="line">                max = arr[x];</div><div class="line"></div><div class="line">        &#125;</div><div class="line">        return max;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static int getMin(int[] arr) &#123;</div><div class="line">        int min = arr[0];</div><div class="line">        for (int x = 1; x &lt; arr.length; x++) &#123;</div><div class="line">            if (arr[x] &lt; min)</div><div class="line">                min = arr[x];</div><div class="line"></div><div class="line">        &#125;</div><div class="line">        return min;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        init();</div><div class="line">        hashProcess();</div><div class="line">        afterAddOneNode();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>运行结果为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">平均节点中的数据量： 100000</div><div class="line">最多的一个节点的数量： 479784</div><div class="line">最少的一个节点的数量： 1367</div><div class="line">添加一个节点数据移动的数量： 138303</div></pre></td></tr></table></figure>
+<p>可以看出添加一个节点之后，要修改的数据只有十万个，效率很高。</p>
+<h2 id="虚拟节点"><a href="#虚拟节点" class="headerlink" title="虚拟节点"></a>虚拟节点</h2><p>上面可以明确看出，一致性哈希算法满足了单调性和负载均衡的特性以及一般hash算法的分散性，平衡性的体现通过虚拟节点来实现。哈希算法是不保证平衡的，如值部署了NODE1和NODE3的情况，object1存储到NODE1中，其他的都存到NODE3中，这样就非常不平衡了。因此引入了虚拟节点。</p>
+<ul>
+<li>虚拟节点：实际上是及其在哈希空间中的复制品，一个实际的节点对应了若干个虚拟节点，这样对应个数也成为复制个数，虚拟节点在哈希空间中以哈希值排列。新建两个复制节点之后可以看到节点分配变得很均衡。</li>
+</ul>
+<p><img src="/img/cons-Hash-7.png" alt="Alt text"></p>
+<p>其中涉及了哈希虚拟节点到实际节点的转换，其实只是一个简单的映射：</p>
+<p><img src="/img/cons-Hash-8.png" alt="Alt text"></p>
+<p>而在实际的场景中，可以通过对真实节点进行编号来生成相应的虚拟节点。如真实节点的IP为192.168.10.11，则虚拟节点可以设置为192.168.10.11#1,192.168.10.11#2。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/18/ActiveMQ学习总结（三）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1281,57 +1490,57 @@
 </thead>
 <tbody>
 <tr>
-<td><dubbo:service></dubbo:service></td>
+<td><code>&lt;dubbo:service/&gt;</code></td>
 <td style="text-align:center">服务配置</td>
 <td style="text-align:right">用于暴露一个服务，定义服务的元信息，一个服务可以用多个协议暴露，一个服务也可以注册到多个注册中心</td>
 </tr>
 <tr>
-<td><dubbo:reference></dubbo:reference></td>
+<td><code>&lt;dubbo:reference/&gt;</code></td>
 <td style="text-align:center">引用配置</td>
 <td style="text-align:right">用于创建一个远程服务代理，一个引用可以指向多个注册中心</td>
 </tr>
 <tr>
-<td><dubbo:protocol></dubbo:protocol></td>
+<td><code>&lt;dubbo:protocol/&gt;</code></td>
 <td style="text-align:center">协议配置</td>
 <td style="text-align:right">用于配置提供服务的协议信息，协议由提供方指定，消费方被动接受</td>
 </tr>
 <tr>
-<td><dubbo:application></dubbo:application></td>
+<td><code>&lt;dubbo:application/&gt;</code></td>
 <td style="text-align:center">应用配置</td>
 <td style="text-align:right">用于配置当前应用信息，不管该应用是提供者还是消费者</td>
 </tr>
 <tr>
-<td><dubbo:module></dubbo:module></td>
+<td><code>&lt;dubbo:module/&gt;</code></td>
 <td style="text-align:center">模块配置</td>
 <td style="text-align:right">用于配置当前模块信息，可选</td>
 </tr>
 <tr>
-<td><dubbo:registry></dubbo:registry></td>
+<td><code>&lt;dubbo:registry/&gt;</code></td>
 <td style="text-align:center">注册中心配置</td>
 <td style="text-align:right">用于配置连接注册中心相关信息</td>
 </tr>
 <tr>
-<td><dubbo:monitor></dubbo:monitor></td>
+<td><code>&lt;dubbo:monitor/&gt;</code></td>
 <td style="text-align:center">监控中心配置</td>
 <td style="text-align:right">用于配置连接监控中心相关信息，可选</td>
 </tr>
 <tr>
-<td><dubbo:provider></dubbo:provider></td>
+<td><code>&lt;dubbo:provider/&gt;</code></td>
 <td style="text-align:center">提供方配置</td>
 <td style="text-align:right">当ProtocolConfig 和 ServiceConfig 某属性没有配置时，采用此缺省值，可选</td>
 </tr>
 <tr>
-<td><dubbo:consumer></dubbo:consumer></td>
+<td><code>&lt;dubbo:consumer/&gt;</code></td>
 <td style="text-align:center">消费方配置</td>
 <td style="text-align:right">当 ReferenceConfig 某属性没有配置时，采用此缺省值，可选</td>
 </tr>
 <tr>
-<td><dubbo:method></dubbo:method></td>
+<td><code>&lt;dubbo:method/&gt;</code></td>
 <td style="text-align:center">方法配置</td>
 <td style="text-align:right">用于 ServiceConfig 和 ReferenceConfig 指定方法级的配置信息</td>
 </tr>
 <tr>
-<td><dubbo:argument></dubbo:argument></td>
+<td><code>&lt;dubbo:argument/&gt;</code></td>
 <td style="text-align:center">参数配置</td>
 <td style="text-align:right">用于指定方法参数配置</td>
 </tr>
@@ -2554,167 +2763,11 @@ assertTrue(avgElapse.getAsDouble() &gt; 1666.0);
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/15/算法之BFS/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/04/15/算法之BFS/" itemprop="url">算法-BFS</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-15T17:43:57+08:00">
-                2018-04-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/algorithms/" itemprop="url" rel="index">
-                    <span itemprop="name">algorithms</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="完美平方数"><a href="#完美平方数" class="headerlink" title="完美平方数"></a>完美平方数</h1><p>DP解法和图论解法，掌握DP的为准，参考图论解法。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line">package leetcode.BFSGraphic;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line">import java.util.LinkedList;</div><div class="line">import java.util.Queue;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class PerfectSquares_279 &#123;</div><div class="line">    public int numSquares(int n) &#123;</div><div class="line">        Queue&lt;Pair&gt; queue = new LinkedList&lt;&gt;();</div><div class="line">        queue.offer(new Pair(n, 0));</div><div class="line">        boolean[] visited = new boolean[n+1];</div><div class="line">        visited[n] = true;</div><div class="line">        while (!queue.isEmpty()) &#123;</div><div class="line">            Pair pair = queue.poll();</div><div class="line">            int num = pair.num;</div><div class="line">            int step = pair.step;</div><div class="line">            if (num == 0)</div><div class="line">                return step;</div><div class="line">            for (int i = 1; num - i * i &gt;= 0; i++) &#123;</div><div class="line">                if (!visited[num-i*i]) &#123;</div><div class="line">                    queue.offer(new Pair(num - i * i, step + 1));</div><div class="line">                    visited[num - i * i] = true;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return n;</div><div class="line">    &#125;</div><div class="line">    /**</div><div class="line">     * num:当前数</div><div class="line">     * step:n到num需要的步数</div><div class="line">     */</div><div class="line">    class Pair &#123;</div><div class="line">        int num;</div><div class="line">        int step;</div><div class="line">        public Pair(int num, int step) &#123;</div><div class="line">            this.num = num;</div><div class="line">            this.step = step;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="WordLadder"><a href="#WordLadder" class="headerlink" title="WordLadder"></a>WordLadder</h1><p>注释很清楚了。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">package leetcode.BFSGraphic;</div><div class="line"></div><div class="line">import java.util.*;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class WordLadder_127 &#123;</div><div class="line">    /*</div><div class="line">        beginSet开始存放beginword，然后将经过一次变更字母之后可以编程的wordList中的字符串</div><div class="line">        放入beginSet，直到出现变换成最终的字符串。</div><div class="line">     */</div><div class="line">    public int ladderLength(String beginWord, String endWord, List&lt;String&gt; wordList) &#123;</div><div class="line">        Set&lt;String&gt; dict = new HashSet&lt;&gt;(wordList), qs = new HashSet&lt;&gt;(), qe = new HashSet&lt;&gt;(), vis = new HashSet&lt;&gt;();</div><div class="line">        qs.add(beginWord);</div><div class="line">        if (dict.contains(endWord))</div><div class="line">            qe.add(endWord); // all transformed words must be in dict (including endWord)</div><div class="line">        for (int len = 2; !qs.isEmpty(); len++) &#123;</div><div class="line">            Set&lt;String&gt; nq = new HashSet&lt;&gt;();</div><div class="line">            for (String w : qs) &#123;</div><div class="line">                for (int j = 0; j &lt; w.length(); j++) &#123;</div><div class="line">                    char[] ch = w.toCharArray();</div><div class="line">                    for (char c = &apos;a&apos;; c &lt;= &apos;z&apos;; c++) &#123;</div><div class="line">                        if (c == w.charAt(j))</div><div class="line">                            continue; // beginWord and endWord not the same, so bypass itself</div><div class="line">                        ch[j] = c;</div><div class="line">                        String nb = String.valueOf(ch);</div><div class="line">                        if (qe.contains(nb))</div><div class="line">                            return len; // meet from two ends</div><div class="line">                        if (dict.contains(nb) &amp;&amp; vis.add(nb))</div><div class="line">                            nq.add(nb); // not meet yet, vis is safe to use</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            qs = (nq.size() &lt; qe.size()) ? nq : qe; // switch to small one to traverse from other end</div><div class="line">            qe = (qs == nq) ? qe : nq;</div><div class="line">        &#125;</div><div class="line">        return 0;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2763,7 +2816,7 @@ assertTrue(avgElapse.getAsDouble() &gt; 1666.0);
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">60</span>
+                <span class="site-state-item-count">61</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2774,7 +2827,7 @@ assertTrue(avgElapse.getAsDouble() &gt; 1666.0);
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-count">24</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -2785,7 +2838,7 @@ assertTrue(avgElapse.getAsDouble() &gt; 1666.0);
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-count">21</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

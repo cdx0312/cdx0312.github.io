@@ -106,7 +106,7 @@
 <meta property="og:image" content="http://yoursite.com/img/Dubbo-Arch.png">
 <meta property="og:image" content="http://yoursite.com/img/Dubbo-Futurearch.png">
 <meta property="og:image" content="http://yoursite.com/img/Dubbo-3.png">
-<meta property="og:updated_time" content="2018-04-17T11:09:44.225Z">
+<meta property="og:updated_time" content="2018-04-18T09:31:56.884Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Dubbo框架学习总结">
 <meta name="twitter:description" content="Dubbo的定义官方定义：Apache Dubbo是一个由阿里提供开源的基于Java的高性能的RPC框架。遵循RPC框架的设计原则，Dubbo也定义了服务的概念，可以远程根据参数和返回值来调用具体的方法。在服务侧，服务侧实现这个接口并运行一个Dubbo服务来处理客户端的请求，在客户端保存有服务端相同的方法存根。 Dubbo有三个主要特性：  基于接口的远程的调用 容错和负载均衡 服务的子自动注册和">
@@ -515,57 +515,57 @@
 </thead>
 <tbody>
 <tr>
-<td><dubbo:service></dubbo:service></td>
+<td><code>&lt;dubbo:service/&gt;</code></td>
 <td style="text-align:center">服务配置</td>
 <td style="text-align:right">用于暴露一个服务，定义服务的元信息，一个服务可以用多个协议暴露，一个服务也可以注册到多个注册中心</td>
 </tr>
 <tr>
-<td><dubbo:reference></dubbo:reference></td>
+<td><code>&lt;dubbo:reference/&gt;</code></td>
 <td style="text-align:center">引用配置</td>
 <td style="text-align:right">用于创建一个远程服务代理，一个引用可以指向多个注册中心</td>
 </tr>
 <tr>
-<td><dubbo:protocol></dubbo:protocol></td>
+<td><code>&lt;dubbo:protocol/&gt;</code></td>
 <td style="text-align:center">协议配置</td>
 <td style="text-align:right">用于配置提供服务的协议信息，协议由提供方指定，消费方被动接受</td>
 </tr>
 <tr>
-<td><dubbo:application></dubbo:application></td>
+<td><code>&lt;dubbo:application/&gt;</code></td>
 <td style="text-align:center">应用配置</td>
 <td style="text-align:right">用于配置当前应用信息，不管该应用是提供者还是消费者</td>
 </tr>
 <tr>
-<td><dubbo:module></dubbo:module></td>
+<td><code>&lt;dubbo:module/&gt;</code></td>
 <td style="text-align:center">模块配置</td>
 <td style="text-align:right">用于配置当前模块信息，可选</td>
 </tr>
 <tr>
-<td><dubbo:registry></dubbo:registry></td>
+<td><code>&lt;dubbo:registry/&gt;</code></td>
 <td style="text-align:center">注册中心配置</td>
 <td style="text-align:right">用于配置连接注册中心相关信息</td>
 </tr>
 <tr>
-<td><dubbo:monitor></dubbo:monitor></td>
+<td><code>&lt;dubbo:monitor/&gt;</code></td>
 <td style="text-align:center">监控中心配置</td>
 <td style="text-align:right">用于配置连接监控中心相关信息，可选</td>
 </tr>
 <tr>
-<td><dubbo:provider></dubbo:provider></td>
+<td><code>&lt;dubbo:provider/&gt;</code></td>
 <td style="text-align:center">提供方配置</td>
 <td style="text-align:right">当ProtocolConfig 和 ServiceConfig 某属性没有配置时，采用此缺省值，可选</td>
 </tr>
 <tr>
-<td><dubbo:consumer></dubbo:consumer></td>
+<td><code>&lt;dubbo:consumer/&gt;</code></td>
 <td style="text-align:center">消费方配置</td>
 <td style="text-align:right">当 ReferenceConfig 某属性没有配置时，采用此缺省值，可选</td>
 </tr>
 <tr>
-<td><dubbo:method></dubbo:method></td>
+<td><code>&lt;dubbo:method/&gt;</code></td>
 <td style="text-align:center">方法配置</td>
 <td style="text-align:right">用于 ServiceConfig 和 ReferenceConfig 指定方法级的配置信息</td>
 </tr>
 <tr>
-<td><dubbo:argument></dubbo:argument></td>
+<td><code>&lt;dubbo:argument/&gt;</code></td>
 <td style="text-align:center">参数配置</td>
 <td style="text-align:right">用于指定方法参数配置</td>
 </tr>
@@ -891,7 +891,7 @@ assertTrue(avgElapse.getAsDouble() &gt; 1666.0);
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">60</span>
+                <span class="site-state-item-count">61</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -902,7 +902,7 @@ assertTrue(avgElapse.getAsDouble() &gt; 1666.0);
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-count">24</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -913,7 +913,7 @@ assertTrue(avgElapse.getAsDouble() &gt; 1666.0);
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-count">21</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

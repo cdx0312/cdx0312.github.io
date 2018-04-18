@@ -278,6 +278,600 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/20/Java虚拟机_2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/20/Java虚拟机_2/" itemprop="url">垃圾收集器和内存分配策略</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-20T16:18:38+08:00">
+                2018-03-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/JVM/" itemprop="url" rel="index">
+                    <span itemprop="name">JVM</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="垃圾收集器"><a href="#垃圾收集器" class="headerlink" title="垃圾收集器"></a>垃圾收集器</h1><ul>
+<li><p>垃圾收集器的历史要远早于Java，不过我们很多人都是通过Java才了解垃圾收集器的。学习垃圾收集器可以更好进行内存泄漏，内存溢出的排查，以及高并发场景下垃圾收集成为系统性能瓶颈。</p>
+</li>
+<li><p>垃圾收集器关注的问题很简单：</p>
+<pre><code>哪些垃圾需要回收？--who
+什么时候回收？-- when
+怎么回收？--how
+</code></pre></li>
+<li><p>程序计数器，虚拟机栈，本地方法栈是线程私有的，也就是和线程的生命周期一致，栈帧随着方法的执行进行进栈和出栈操作，内存分配和回收具有确定性，不需要考虑垃圾回收问题。方法区和Java堆则需要在运行时才确定需要的内存大小，从而需要我们动态的分配内存和垃圾收集。</p>
+</li>
+</ul>
+<h2 id="那些垃圾需要回收？-who"><a href="#那些垃圾需要回收？-who" class="headerlink" title="那些垃圾需要回收？-who"></a>那些垃圾需要回收？-who</h2><p>已经“死掉”的对象需要回收，对象死掉的概念是指没有引用他的对象了。</p>
+<ol>
+<li><p>引用计数法：给对象中添加一个引用计数器，当有一个地方引用他时，计数器+1，当引用失效时，计数器-1，当计数器为0时，对象死掉。java中并没有采用这种机制。</p>
+<ul>
+<li>优点：实现简单，判定效率高</li>
+<li><p>缺点：循环引用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">public class ReferenceCountingGC &#123;</div><div class="line"></div><div class="line">	public Object instance = null;</div><div class="line"></div><div class="line">	private static final int _1MB = 1024 * 1024;</div><div class="line"></div><div class="line">	/**</div><div class="line">	 * 这个成员属性的唯一意义就是占点内存，以便在能在GC日志中看清楚是否有回收过</div><div class="line">	 */</div><div class="line">	private byte[] bigSize = new byte[2 * _1MB];</div><div class="line"></div><div class="line">	public static void testGC() &#123;</div><div class="line">		ReferenceCountingGC objA = new ReferenceCountingGC();</div><div class="line">		ReferenceCountingGC objB = new ReferenceCountingGC();</div><div class="line">		objA.instance = objB;</div><div class="line">		objB.instance = objA;</div><div class="line"></div><div class="line">		objA = null;</div><div class="line">		objB = null;</div><div class="line"></div><div class="line">		// 假设在这行发生GC，objA和objB是否能被回收？</div><div class="line">		System.gc();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">0.137: [GC (System.gc()) [PSYoungGen: 9344K-&gt;808K(76288K)] 9344K-&gt;816K(251392K), 0.0029826 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]</div><div class="line">0.140: [Full GC (System.gc()) [PSYoungGen: 808K-&gt;0K(76288K)] [ParOldGen: 8K-&gt;662K(175104K)] 816K-&gt;662K(251392K), [Metaspace: 3464K-&gt;3464K(1056768K)], 0.0046314 secs] [Times: user=0.03 sys=0.00, real=0.02 secs]</div><div class="line">Heap</div><div class="line"> PSYoungGen      total 76288K, used 655K [0x000000076b380000, 0x0000000770880000, 0x00000007c0000000)</div><div class="line">  eden space 65536K, 1% used [0x000000076b380000,0x000000076b423ee8,0x000000076f380000)</div><div class="line">  from space 10752K, 0% used [0x000000076f380000,0x000000076f380000,0x000000076fe00000)</div><div class="line">  to   space 10752K, 0% used [0x000000076fe00000,0x000000076fe00000,0x0000000770880000)</div><div class="line"> ParOldGen       total 175104K, used 662K [0x00000006c1a00000, 0x00000006cc500000, 0x000000076b380000)</div><div class="line">  object space 175104K, 0% used [0x00000006c1a00000,0x00000006c1aa5b78,0x00000006cc500000)</div><div class="line"> Metaspace       used 3470K, capacity 4496K, committed 4864K, reserved 1056768K</div><div class="line">  class space    used 381K, capacity 388K, committed 512K, reserved 1048576K</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>可达性分析算法：起始点为GC Root Set中的GC Roots对象，由GC Root向下的路径成为引用链，当一个对象和GC Roots没有引用链连接时，此对象死掉。</p>
+<p><img src="/img/jvm-3.png" alt="Alt text"></p>
+<p>Java中可以作为GC Roots的对象包括：</p>
+<ul>
+<li>虚拟机栈(栈帧中的本地变量表)中引用的对象</li>
+<li>方法区中静态属性引用的对象</li>
+<li>方法区中常亮引用的对象</li>
+<li>本地方法栈中JNI（Native方法）引用的对象</li>
+</ul>
+</li>
+<li><p>引用的类型</p>
+</li>
+</ol>
+<p>Java1.2之前，reference类型的数据中存储的数值代表的是一个内存的起始地址，则称为一个引用。对象只存在被引用和不被引用两种状态。</p>
+<ul>
+<li>强引用：程序代码中普遍存在的</li>
+<li>软引用：描述一些还有用但不是必须的对象，系统内存溢出前会对其进行二次垃圾回收</li>
+<li>弱引用：描述非必须的对象，垃圾回收时直接回收</li>
+<li>虚引用：不影响其生存，回收时可以收到一个系统通知</li>
+</ul>
+<ol>
+<li><p>对象死亡的过程</p>
+<ol>
+<li>可达性分析后，对没有和GC Roots相连接的引用链的对象会被标记一次，同时对其进行一次筛选，筛选条件为此对象是否有必要执行finalize()方法，当对象没有重写finalize()方法或者finalize()方法被虚拟机调用过，则不执行finalize()方法。</li>
+<li><p>有必要执行finalize()方法的对象会被放到F-Queue对象中，等待虚拟机的Finalizer线程去执行finalize()方法，GC会对F-Queue对象进行小范围标记，如果对象在finalize()方法中和引用链连接上，则会被移出队列，否则被真正回收。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 对象可以在被GC时自我拯救</div><div class="line"> * 这种自救机会只有一次，因为一个对象的finalize()方法最多只会被系统调用一遍</div><div class="line"> */</div><div class="line">public class FinalizeEscapeGC &#123;</div><div class="line">    public static FinalizeEscapeGC SAVE_HOOK = null;</div><div class="line"></div><div class="line">    public void isAlive() &#123;</div><div class="line">        System.out.println(&quot; I am alive !&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void finalize() throws Throwable &#123;</div><div class="line">        super.finalize();</div><div class="line">        System.out.println(&quot;finalize method executed!&quot;);</div><div class="line">        FinalizeEscapeGC.SAVE_HOOK = this;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) throws InterruptedException &#123;</div><div class="line">        SAVE_HOOK = new FinalizeEscapeGC();</div><div class="line">        //对象第一次拯救自己</div><div class="line">        SAVE_HOOK = null;</div><div class="line">        System.gc();</div><div class="line">        //finalize()优先级很低，暂停0.5s等待</div><div class="line">        Thread.sleep(500);</div><div class="line">        if (SAVE_HOOK != null)</div><div class="line">            SAVE_HOOK.isAlive();</div><div class="line">        else</div><div class="line">            System.out.println(&quot;no, I am dead!&quot;);</div><div class="line">        //第二次自救失败</div><div class="line">        SAVE_HOOK = null;</div><div class="line">        System.gc();</div><div class="line">        //finalize()优先级很低，暂停0.5s等待</div><div class="line">        Thread.sleep(500);</div><div class="line">        if (SAVE_HOOK != null)</div><div class="line">            SAVE_HOOK.isAlive();</div><div class="line">        else</div><div class="line">            System.out.println(&quot;no, I am dead!&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">finalize method executed!</div><div class="line"> I am alive !</div><div class="line">no, I am dead!</div></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><p>回收方法区</p>
+</li>
+</ol>
+<p>虽然虚拟机规范中没有要求在方法区进行垃圾回收，但是方法区存在垃圾回收，回收效率很低。回收的内容为废弃常亮和无用的类。</p>
+<ul>
+<li>回收废弃常亮：看和GC Roots之间是否存在引用链</li>
+<li>回收无用类：<ol>
+<li>该类的所有实例都已经被回收</li>
+<li>加载该类的ClassLoader已经被回收</li>
+<li>该类对应的Java.lang.Class对象没有在任何地方被引用，无法在任何地方通过反射访问该类的方法。</li>
+</ol>
+</li>
+</ul>
+<h2 id="垃圾收集算法"><a href="#垃圾收集算法" class="headerlink" title="垃圾收集算法"></a>垃圾收集算法</h2><ol>
+<li><p>标记-清除算法(Mark-Sweep):首先标记所有需要回收的对象，标记完成后统一回收被标记对象。</p>
+<ul>
+<li><p>存在两个不足：</p>
+<ol>
+<li>效率问题：标记和清除两个过程的效率都不高</li>
+<li>空间问题：标记清除之后会产生大量不连续的内存碎片，会导致存放大对象时没有足够的空间而提前出发垃圾清楚</li>
+</ol>
+<p><img src="/img/jvm-4.png" alt="Alt text"></p>
+</li>
+</ul>
+</li>
+</ol>
+<ol>
+<li><p>复制算法(Copint)：将内存分成一样的两块，每次只使用一块，当一块用完了就进行垃圾回收，并将还存活的对象复制到第二块硬盘上并整理顺序。每次回收针对的是一半内存空间，同时也没有了空间碎片的问题</p>
+<p> <img src="/img/jvm-5.png" alt="Alt text"></p>
+<ul>
+<li>存在的问题是内存空间变为一半。实际上，新生的对象98%是朝生夕死的，所以不需要1:1来划分内存空间。而是将新生代内存化为一块Eden空间和两块Survivor空间，比例为8:1:1。</li>
+<li>每次使用Eden空间和其中一块Survivor空间，回收时将Eden和Survivor空间中还存活的对象复制到另一块Survivor中，然后清除Eden和Survivor空间。</li>
+<li>如果空间不够的话，需要老年代进行分配担保</li>
+</ul>
+</li>
+<li><p>标记-整理算法(Mark-Compact)：标记过程和之前相同，整理过程将存活对象移动到一边，根据整理边界回收剩余空间内的对象，适用于老年代的垃圾收集</p>
+<p> <img src="/img/jvm-6.png" alt="Alt text"></p>
+</li>
+<li><p>分代收集算法：将Java堆对象根据存货周期划分为新生代和老年代，新生代采用复制算法，老年代给新生代做分配担保，由于老年代的对象存活率高，所以老年代采用标记-整理或者标记-清除算法。</p>
+</li>
+</ol>
+<h2 id="HotSpot的算法实现"><a href="#HotSpot的算法实现" class="headerlink" title="HotSpot的算法实现"></a>HotSpot的算法实现</h2><ol>
+<li>枚举根节点：可作为根节点的主要在全局性的引用(常亮或者静态属性)与执行上下文(栈帧中的本地变量表)，可达性分析时需要停止一切的Java程序执行，Stop the world，在Oop中保存着对象引用的地址。</li>
+<li>安全点：程序执行过程中并不是所有位置都可以停下来GC，让系统中的所有线程到安全点的方式有两种：<ul>
+<li>抢先式中断：所有线程中断，如果有线程不在安全点上，则恢复线程，让其跑到安全点上再中断</li>
+<li>主动式中断：设置一个标志，各个线程执行时去轮询这个标志，发现中断标志位真时就自己中断挂起，轮询标志的地方和安全点是重合的。</li>
+</ul>
+</li>
+<li>安全区域：<ul>
+<li>解决线程处于休眠状态无法响应JVM的中断请求的情况。</li>
+<li>安全区域指在一段代码中，引用关系不会发生变化</li>
+<li>线程执行Safe Region中的代码时，会标识自己已经进入Safe Region，可以随时进行GC，如果线程离开安全区域时，会先检查枚举根节点或者GC是否完成，未完成则需要等待。</li>
+</ul>
+</li>
+</ol>
+<h2 id="垃圾收集器-1"><a href="#垃圾收集器-1" class="headerlink" title="垃圾收集器"></a>垃圾收集器</h2><p>Java虚拟机规范中对垃圾收集器如何实现并没有规定，因此诞生了多种多样的垃圾收集器，适合各自的应用场景。HotSpot虚拟机中的垃圾收集器包括对新生代回收的Serial，ParNew，Parallel Scavenge，对老年代回收的CMS，Serial Old(MSC), Parallel Old及G1。</p>
+<ol>
+<li><p>Serial收集器</p>
+<ul>
+<li>最基本，历史最悠久的单线程收集器</li>
+<li>GC过程中必须停止整个程序的运行，Stop the World</li>
+<li>优点:简单而高效，适用Client模式下工作的虚拟机</li>
+</ul>
+<p><img src="/img/jvm-7.png" alt="Alt text"></p>
+</li>
+<li><p>ParNew收集器</p>
+<ul>
+<li>Serial收集器的多线程版本</li>
+<li>运行在Server模式的虚拟机中首选的新生代收集器—重要原因是，其是除了Serial外唯一能和CMS收集器配合工作。<br><img src="/img/jvm-8.png" alt="Alt text"></li>
+</ul>
+</li>
+<li><p>Parallel Scavenge收集器</p>
+<ul>
+<li>新生代收集器，复制算法，并行的多线程收集器</li>
+<li>收集器的关注点不是尽可能缩短垃圾收集时用户线程的停顿时间，而是尽可能达到一个可控制的吞吐量(吞吐量=运行代码时间/(运行代码时间+GC时间))</li>
+<li>吞吐量优先收集器，</li>
+<li>GC自适应调节策略<br><img src="/img/jvm-9.png" alt="Alt text"></li>
+</ul>
+</li>
+<li><p>Serial Old收集器</p>
+<ul>
+<li>单线程</li>
+<li>老年代</li>
+<li>标记-整理（Mark-Compact）算法</li>
+<li>适用Client模式的虚拟机，如果要用在Server模式下，有两个用途，一个是与Parallel Scavenge搭配适用，一个是作为CMS收集器的后备预案，在并发收集失败时使用。<br><img src="/img/jvm-7.png" alt="Alt text"></li>
+</ul>
+</li>
+</ol>
+<ol>
+<li><p>Parallel Old收集器</p>
+<ul>
+<li>Parallel Scavenge老年代版本</li>
+<li>多线程+标记-整理算法</li>
+<li>在注重吞吐量和CPU资源敏感的场合，可以优先考虑和Parallel Scavenge搭配使用。<br><img src="/img/jvm-9.png" alt="Alt text"></li>
+</ul>
+</li>
+<li><p>CMS收集器：Concurrent Mark Sweep</p>
+<ul>
+<li>以获取最短回收停顿时间为目标的收集器</li>
+<li>标记-清除算法</li>
+<li>运作过程：<ol>
+<li>初始标记(CMS initial mark)     – stop the world, 标记GC Roots能直接关联到的对象，速度很快</li>
+<li>并发标记(CMS concurrent mark)  – stop the world，进行GC Roots Tracing，</li>
+<li>重新标记(CMS remark)，修正标记期间因为用户线程运行而改变的对象的标记记录，时间长于初始标记但短于并发标记</li>
+<li>并发清除(CMS concurrent sweep)，清除标记的对象<br><img src="/img/jvm-10.png" alt="Alt text"></li>
+</ol>
+</li>
+<li>缺点：<ul>
+<li>CMS对CPU资源敏感，默认回收线程数是：（CPU数量+3）/4</li>
+<li>CMS收集器无法处理浮动垃圾（Floating Garbage，并发清除阶段产生的垃圾,当前GC无法清除，需要下次GC才可以清除），会导致Concurrent Mode Failure而引发另一次Full GC。老年代需要保留足够的空间给用户线程使用，当CMS运行期间预留的内存空间不够时会发生Concurrent Mode Failure，这时候需要临时调用Serial Old来进行Full GC，停顿时间很长。</li>
+<li>产生内存碎片问题，解决方法，CMS进行Full GC时，先进行碎片整理，或者进行若干次不整理的GC时，进行一次碎片整理的GC。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>G1收集器：Garbage First</p>
+<ul>
+<li>并行与并发</li>
+<li>分代收集</li>
+<li>空间整合：marking-compact</li>
+<li>可预测的停顿</li>
+<li>G1将整个堆划分为很多Region，新生代和老年代都是由很多Region组成，G1后台维护一个列表，列表中记录了各个Region里面的垃圾价值大小（回收获得的空间和回收需要时间），GC时，优先回收价值最大的Region，保证G1在有限的时间内获得最高的回收效率。RememberSet避免全堆扫描。</li>
+<li>运作过程：<ol>
+<li>initial marking</li>
+<li>concurrent marking</li>
+<li>final marking</li>
+<li>live data counting and evacuation<br><img src="/img/jvm-11.png" alt="Alt text"></li>
+</ol>
+</li>
+</ul>
+</li>
+</ol>
+<h1 id="内存分配与回收策略"><a href="#内存分配与回收策略" class="headerlink" title="内存分配与回收策略"></a>内存分配与回收策略</h1><ol>
+<li>对象优先在Eden区生成</li>
+<li>大对象直接进入老年代，如字符串和数组</li>
+<li>长期存活的对象将进入老年代</li>
+<li>动态对象年龄判定，如果Survivor中相同年龄所有对象大小的总和大于Survivor空间的一半，则大于或等于该年龄的对象将直接进入老年代。</li>
+<li>空间分配担保：Minor GC之前检查老年代最大可用连续空间是否大于新生代所有对象总和或者大于新生代晋升老年代的历次平均大小，进行Minor GC,否则进行Full GC</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/20/Java虚拟机_1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/20/Java虚拟机_1/" itemprop="url">Java内存区域</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-20T14:50:19+08:00">
+                2018-03-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/JVM/" itemprop="url" rel="index">
+                    <span itemprop="name">JVM</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="运行时数据区域"><a href="#运行时数据区域" class="headerlink" title="运行时数据区域"></a>运行时数据区域</h1><ul>
+<li><p>Java和C++之间有一堵由内存动态分配和垃圾收集机制所围成的墙，墙外面的人想进来，墙里面的人想出去。深入理解Java虚拟机这本书的作者在介绍自动化内存管理时写到。个人认为内存动态分配和垃圾收集机制是Java的特点，不同于C++，一个对象从创建的内存分配，到销毁的内存回收都需要程序员来掌控，Java把这部分权限从程序员手中收回，限制了程序员的权限，但同时也减少了开发中存在的内存泄漏，内存溢出的频率。Java中不是没有内存泄漏和内存溢出，但是相对来说没有c++里面那么频繁，排查起来相对简单。了解虚拟机的相关知识对一个Java程序员是必不可少的技能。</p>
+</li>
+<li><p>Java虚拟机是Java实现跨平台的基础，也就是一直宣称的一次编译，到处执行，Java文件编译后生成的文件并不是调用操作系统的native方法，而是运行在JVM上，由JVM来调用操作系统的native方法。JVM在执行Java程序时，会将自身管理的内存划分为若干个数据区域：<br>  <img src="/img/jvm-1.png" alt="Alt text"></p>
+<ol>
+<li>程序计数器：<ul>
+<li>线程私有内存，</li>
+<li>不会产生OOM(唯一)</li>
+<li>一块较小的内存空间，可以看做是当前线程所执行的字节码的行号指示器。</li>
+<li>字节码解释器工作时就是通过改变计数器的值来选取下一条执行的字节码指令。</li>
+</ul>
+</li>
+<li>Java虚拟机栈<ul>
+<li>线程私有</li>
+<li>声明周期和线程一样</li>
+<li>描述的是Java方法执行的内存模型(也就是说每个方法在执行过程中都会创建一个栈帧，栈帧中存储着局部变量表，操作数栈，动态链接，方法出口等信息，方法的执行过程对应着栈帧的入栈和出栈过程)</li>
+<li>平常说的栈指的是虚拟机栈或者说是其中局部变量表部分(局部变量表存放着编译期可知的各种基本数据类型8+reference，也就是说在编译完成之后其方法的局部变量表的大小就已经确定)</li>
+</ul>
+</li>
+<li>本地方法栈<ul>
+<li>线程私有</li>
+<li>服务Native方法</li>
+<li>hotspot虚拟机将本地方法栈和Java虚拟机栈合二为一</li>
+</ul>
+</li>
+<li>Java堆<ul>
+<li>所有线程共享</li>
+<li>原则上存放所有的对象实例(JIT和逃逸分析技术，栈上分配，标量替换优化等可能会在堆外创建实例)</li>
+<li>GC堆，垃圾收集的主要区域</li>
+<li>新生代和老年代，Eden和Survivor</li>
+<li>可以划分多个Thread Local Allocation Buffer TLAB</li>
+</ul>
+</li>
+<li>方法区<ul>
+<li>所有线程共享</li>
+<li>存储已被虚拟机加载的类信息，常量，静态变量，即时编译器变异后的代码等数据</li>
+<li>Non-Heap</li>
+<li>hotspot将其称为永久代，不过已经取消</li>
+<li>运行时常亮池是方法区的一部分，存放字面量和符号引用</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li>直接只存：Direct Memory，NIO类，可以在native函数库外直接分配堆外内存，可以通过在堆中存储的DirectByBuffer对象作为引用来操作</li>
+</ul>
+</li>
+</ul>
+<h1 id="HotSpot"><a href="#HotSpot" class="headerlink" title="HotSpot"></a>HotSpot</h1><ol>
+<li><p>对象创建流程</p>
+<p> <img src="/img/jvm-2.png" alt="Alt text"></p>
+<ul>
+<li><p>虚拟机为新生对象分配内存时，对象所需的内存大小在类加载完毕之后就已经确定。分配方式有两种</p>
+<ul>
+<li>Bump the Pointer，碰撞指针，此时内存空闲内存时连续规整的，Serial, ParNew等垃圾收集器采用</li>
+<li>Free List 空闲列表，空闲内存时分散的，找一个足够大的空间，Mark-Sweep收集器</li>
+</ul>
+</li>
+<li><p>线程安全问题，也就是同时有两个对象申请同一块内存</p>
+<ul>
+<li>对分配内存空间的动作进行同步处理，CAS+失败重试</li>
+<li>将内存分配的动作按照线程划分在不同的空间中进行，TLAB，TLAB满了并且分配新的TLAB才需要同步</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>对象的内存布局</p>
+<ol>
+<li>对象头 Header<ul>
+<li>存储对象自身运行时的数据<ul>
+<li>哈希码</li>
+<li>GC分代年龄</li>
+<li>锁状态标志</li>
+<li>线程持有的锁</li>
+<li>偏向线程ID</li>
+<li>偏向时间戳</li>
+</ul>
+</li>
+<li>类型指针：指向类元数据的指针</li>
+</ul>
+</li>
+<li>实例数据<ul>
+<li>对象真正存储的有效信息，代码中定义的字段内容</li>
+</ul>
+</li>
+<li>对齐填充<ul>
+<li>非必须，对齐实例数据，使其为8的倍数。</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><p>对象的访问定位</p>
+<ul>
+<li><p>句柄：Java堆中划分出一块内存来作为句柄池，reference中存储的是对象的句柄地址，句柄中包含了对象实例数据和类型数据各自的具体地址信息</p>
+</li>
+<li><p>直接指针：reference中存储的是对象地址，对象中存储着到对象类型指针的地址。</p>
+</li>
+</ul>
+</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/29/Springmvc总结/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -3925,527 +4519,6 @@ String(request.getParamter(&quot;userName&quot;).getBytes(&quot;ISO8859-1&quot;)
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/09/11.常用内建模块/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/09/11.常用内建模块/" itemprop="url">11. 常用内建模块</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-09T15:31:29+08:00">
-                2017-09-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="常用内建模块"><a href="#常用内建模块" class="headerlink" title="常用内建模块"></a>常用内建模块</h1><h2 id="datetime"><a href="#datetime" class="headerlink" title="datetime"></a>datetime</h2><p>datetime是Python处理日期和时间的标准库。</p>
-<p>获取当前的日期和时间：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>now=datetime.now()  <span class="comment">#获取当前的datetime</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(now)</div><div class="line"><span class="number">2016</span><span class="number">-11</span><span class="number">-01</span> <span class="number">20</span>:<span class="number">25</span>:<span class="number">50.305269</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(type(now))</div><div class="line">&lt;<span class="class"><span class="keyword">class</span> '<span class="title">datetime</span>.<span class="title">datetime</span>'&gt;</span></div></pre></td></tr></table></figure></p>
-<p>注意到<code>datetime</code>是模块，<code>datetime</code>模块还包含一个<code>datetime</code>类，通过<code>from datetime import datetime</code>导入的才是<code>datetime</code>这个类。如果仅导入<code>import datetime</code>，则必须引用全名<code>datetime.datetime</code>。<code>datetime.now()</code>返回当前日期和时间，其类型是<code>datetime</code>。</p>
-<p>获取指定日期和时间：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>dt=datetime(<span class="number">2015</span>,<span class="number">11</span>,<span class="number">11</span>,<span class="number">11</span>,<span class="number">11</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(dt)</div><div class="line"><span class="number">2015</span><span class="number">-11</span><span class="number">-11</span> <span class="number">11</span>:<span class="number">11</span>:<span class="number">00</span></div></pre></td></tr></table></figure></p>
-<p>datetime转换为timestamp，在计算机中，时间实际上是由数字表示的，我们把1970年1月1日00:00:00UTC+00:00时区的时刻称为epoch time，记为0，当前时间就是相当于epoch time的秒数，称为timestamp。</p>
-<blockquote>
-<p>timestamp=0=1970-1-1 00:00:00 UTC+0:00</p>
-</blockquote>
-<p>对应的北京时间是</p>
-<blockquote>
-<p>timestamp=0=1970-1-1 08:00:00 UTC+8:00</p>
-</blockquote>
-<p>课件timestamp的值和时区毫无关系，因为timestamp一旦确定，其UTC时间就确定了，转换到任意时区的时间也是完全确定的，这就是为什么计算机存储的当前时间是一timestamp表示的，因为世界各地的计算机在任意时刻的timestamp都是完全相同的。</p>
-<p>把一个<code>datetime</code>类型转换为timestamp只需要简单调用<code>timestamp()</code>方法：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>dt.timestamp()</div><div class="line"><span class="number">1447211460.0</span></div></pre></td></tr></table></figure></p>
-<p>注意Python的timestamp是一个浮点数。如果有小数点，小数位表示毫秒数。某些编程语言的timestamp使用整数表示毫秒数，这种情况下需要把timestamp除以1000就得到Python的浮点表示方法。</p>
-<p>timestamp转换为datetime：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>t=<span class="number">1429417200.0</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(datetime.fromtimestamp(t))</div><div class="line"><span class="number">2015</span><span class="number">-04</span><span class="number">-19</span> <span class="number">12</span>:<span class="number">20</span>:<span class="number">00</span></div></pre></td></tr></table></figure></p>
-<p>注意到timestamp是一个浮点数，它没有时区的概念，而datetime有时区的。上述转换是在timestamp和本地时间做转换。本地时间是指当前操作系统设定的时区。例如北京时区是东八区，则本地时间是2015-04-19 12:20:00，实际上就是UTC+8:00时区的时间2015-04-19 12:20:00 UTC+8:00，而此时的格林威治标准时间与北京差了八个小时，也就是UTC+0:00时区的时间：2015-04-19 04:20:00 UTC+0:00。</p>
-<p>timestamp也可以直接转换到UTC标准时区的时间：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>t=<span class="number">1429417200.0</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(datetime.fromtimestamp(t))</div><div class="line"><span class="number">2015</span><span class="number">-04</span><span class="number">-19</span> <span class="number">12</span>:<span class="number">20</span>:<span class="number">00</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(datetime.utcfromtimestamp(t))</div><div class="line"><span class="number">2015</span><span class="number">-04</span><span class="number">-19</span> <span class="number">04</span>:<span class="number">20</span>:<span class="number">00</span></div></pre></td></tr></table></figure></p>
-<p>str转换为datetime，很多时候，用户输入的日期和时间是字符串，要处理日期和时间，首先要把str转换为datetime。转换方法是通过<code>datetime.strptime()</code>实现：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>cday=datetime.strptime(<span class="string">'2015-6-1 18:19:59'</span>,<span class="string">'%Y-%m-%d %H:%M:%S'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(cday)</div><div class="line"><span class="number">2015</span><span class="number">-06</span><span class="number">-01</span> <span class="number">18</span>:<span class="number">19</span>:<span class="number">59</span></div></pre></td></tr></table></figure></p>
-<p>字符串<code>&#39;%Y-%m-%d %H:%M:%S&#39;</code>规定了日期和时间部分的格式。</p>
-<p>datetime转换为str，如果已经有了datetime对象，要把它格式化 为字符串显示给用户，就需要转换为str，转换方法是通过<code>strftime()</code>实现的，同样需要一个日期和时间的格式化字符串：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>now=datetime.now()</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(now.strftime(<span class="string">'%a,%b %d %H:%M'</span>))</div><div class="line">Tue,Nov <span class="number">01</span> <span class="number">21</span>:<span class="number">26</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(now)</div><div class="line"><span class="number">2016</span><span class="number">-11</span><span class="number">-01</span> <span class="number">21</span>:<span class="number">26</span>:<span class="number">20.187960</span></div></pre></td></tr></table></figure></p>
-<p>datetime加减，对日期和时间进行加减实际上就是把datetime往后或往前计算，得到新的datetime。加减可以直接用<code>+``-</code>运算符，需要导入<code>timedelta</code>这个类：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime,timedelta</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>now=datetime.now()</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>now</div><div class="line">datetime.datetime(<span class="number">2016</span>, <span class="number">11</span>, <span class="number">1</span>, <span class="number">21</span>, <span class="number">29</span>, <span class="number">50</span>, <span class="number">726284</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>now+timedelta(hours=<span class="number">10</span>)</div><div class="line">datetime.datetime(<span class="number">2016</span>, <span class="number">11</span>, <span class="number">2</span>, <span class="number">7</span>, <span class="number">29</span>, <span class="number">50</span>, <span class="number">726284</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>now-timedelta(days=<span class="number">2</span>)</div><div class="line">datetime.datetime(<span class="number">2016</span>, <span class="number">10</span>, <span class="number">30</span>, <span class="number">21</span>, <span class="number">29</span>, <span class="number">50</span>, <span class="number">726284</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>now+timedelta(days=<span class="number">1</span>,hours=<span class="number">10</span>)</div><div class="line">datetime.datetime(<span class="number">2016</span>, <span class="number">11</span>, <span class="number">3</span>, <span class="number">7</span>, <span class="number">29</span>, <span class="number">50</span>, <span class="number">726284</span>)</div></pre></td></tr></table></figure></p>
-<p>本地时间转换为UTC时间，一个<code>datetime</code>类型有一个时区属性<code>tzinfo</code>，但是默认为<code>None</code>，所以无法区分这个<code>datetime</code>到底是哪个市区，除非强行给<code>datetime</code>设置一个时区：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime,timedelta,timezone</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>tz_utc_8=timezone(timedelta(hours=<span class="number">8</span>))  <span class="comment">#创建时区UTC+8:00</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>now=datetime.now()</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>now</div><div class="line">datetime.datetime(<span class="number">2016</span>, <span class="number">11</span>, <span class="number">1</span>, <span class="number">21</span>, <span class="number">35</span>, <span class="number">48</span>, <span class="number">271569</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>dt=now.replace(tzinfo=tz_utc_8) <span class="comment">#强制设置为UTC+8:00</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>dt</div><div class="line">datetime.datetime(<span class="number">2016</span>, <span class="number">11</span>, <span class="number">1</span>, <span class="number">21</span>, <span class="number">35</span>, <span class="number">48</span>, <span class="number">271569</span>, tzinfo=datetime.timezone(datetime.timedelta(<span class="number">0</span>, <span class="number">28800</span>)))</div></pre></td></tr></table></figure></p>
-<p>如果系统时区恰好是UTC+8:00,那么上述代码就是正确的，否则，不能强制设置为UTC+8:00时区。</p>
-<p>时区转换，我们可以先通过<code>utcnow()</code>拿到当前的UTC时间，再转换为任意时区的时间：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>utc_dt=datetime.utcnow().replace(tzinfo=timezone.utc) <span class="comment">#拿到UTC时间，强制设置时区为UTC+0:00</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(utc_dt)</div><div class="line"><span class="number">2016</span><span class="number">-11</span><span class="number">-01</span> <span class="number">13</span>:<span class="number">39</span>:<span class="number">21.800814</span>+<span class="number">00</span>:<span class="number">00</span>  <span class="comment">#astimezone()将转化时区为北京时间</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>bj_dt=utc_dt.astimezone(timezone(timedelta(hours=<span class="number">8</span>)))</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(bj_dt)</div><div class="line"><span class="number">2016</span><span class="number">-11</span><span class="number">-01</span> <span class="number">21</span>:<span class="number">39</span>:<span class="number">21.800814</span>+<span class="number">08</span>:<span class="number">00</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>tokyo_dt=utc_dt.astimezone(timezone(timedelta(hours=<span class="number">9</span>)))</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(tokyo_dt)</div><div class="line"><span class="number">2016</span><span class="number">-11</span><span class="number">-01</span> <span class="number">22</span>:<span class="number">39</span>:<span class="number">21.800814</span>+<span class="number">09</span>:<span class="number">00</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>tokyo_dt2=bj_dt.astimezone(timezone(timedelta(hours=<span class="number">9</span>)))</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(tokyo_dt2)</div><div class="line"><span class="number">2016</span><span class="number">-11</span><span class="number">-01</span> <span class="number">22</span>:<span class="number">39</span>:<span class="number">21.800814</span>+<span class="number">09</span>:<span class="number">00</span></div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure></p>
-<p>时区转换的关键在于，拿到一个<code>datetime</code>时，要获知其正确的时区，然后强制设置时区，作为基准时间。利用带时区的<code>datetime</code>，通过<code>astimezone()</code>方法，可以转换到任意时区。</p>
-<p>datetime表示时间需要时区信息才能确定一个特定的时间，否则只能视为本地时间。如果要存储datetime，最佳方法是将其转换为timestamp再存储，因为timestamp的值与时区完全无关。</p>
-<hr>
-<h2 id="collections"><a href="#collections" class="headerlink" title="collections"></a>collections</h2><p>collections是Python内建的一个集合模块，提供了许多有用的集合类。</p>
-<h3 id="namedtuple"><a href="#namedtuple" class="headerlink" title="namedtuple"></a>namedtuple</h3><p>我们知道<code>tuple</code>可以表示不变集合，比如，一个点的二维坐标可以表示为：<br>                                    <figure class="highlight plain"><figcaption><span>p</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">但是看到(1,2)，很难看出这个`tuple`是用来表示一个坐标的。定义一个class又没有必要，这时候，`namedtuple`就可以使用了：</div><div class="line"></div><div class="line">```python</div><div class="line">&gt;&gt;&gt; from collections import namedtuple</div><div class="line">&gt;&gt;&gt; Point=namedtuple(&apos;Point&apos;,[&apos;x&apos;,&apos;y&apos;])</div><div class="line">&gt;&gt;&gt; p=Point(1,2)</div><div class="line">&gt;&gt;&gt; p.x</div><div class="line">1</div><div class="line">&gt;&gt;&gt; p.y</div><div class="line">2</div><div class="line">&gt;&gt;&gt; isinstance(p,Point)</div><div class="line">True</div><div class="line">&gt;&gt;&gt; isinstance(p,tuple)</div><div class="line">True</div></pre></td></tr></table></figure></p>
-<p><code>namedtuple</code>是一个函数，它用来创建一个自定义的<code>tuple</code>对象，并且规定了<code>tuple</code>元素的个数，并可以用属性而不是索引来引用<code>tuple</code>的某个元素。这样我们可以用<code>namedtuple</code>可以很方便的定义一种数据结构，它具备tuple的不变性，又可以根据属性来引用，十分方便。可以验证创建的<code>Point</code>对象是<code>tuple</code>的一种子类。</p>
-<p>类似的如果要用坐标和半径定义一个圆：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>Circle=namedtuple(<span class="string">'Circle'</span>,[<span class="string">'x'</span>,<span class="string">'y'</span>,<span class="string">'r'</span>])</div></pre></td></tr></table></figure></p>
-<h3 id="deque"><a href="#deque" class="headerlink" title="deque"></a>deque</h3><p>使用list村塾数据时，按索引访问元素很快，但是插入和删除元素就很慢了，因为list是线性存储，数据量大的时候，插入和删除效率很低。deque是为了高效实现插入和删除操作 的双向列表，适合用于队列和栈：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> collections <span class="keyword">import</span> deque</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>q=deque([<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>q.append(<span class="string">'x'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>q.appendleft(<span class="string">'y'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>q</div><div class="line">deque([<span class="string">'y'</span>, <span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>, <span class="string">'x'</span>])</div></pre></td></tr></table></figure></p>
-<p><code>deque</code>除了实现list的<code>append()</code>和<code>pop()</code>外，还支持<code>appendleft()</code>和<code>popleft()</code>这样可以非常高效的往头部添加或删除元素。</p>
-<h3 id="defaultdict"><a href="#defaultdict" class="headerlink" title="defaultdict"></a>defaultdict</h3><p>使用<code>dict</code>时，如果引用的key不存在，就会抛出<code>KeyError</code>。如果希望key不存在时，返回一个默认值，就可以用<code>defalultdict</code>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> collections <span class="keyword">import</span> defaultdict</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>dd=defaultdict(<span class="keyword">lambda</span>: <span class="string">'N/A'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>dd[<span class="string">'key1'</span>]=<span class="string">'abc'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>dd[<span class="string">'key1'</span>]</div><div class="line"><span class="string">'abc'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>dd[<span class="string">'key2'</span>]</div><div class="line"><span class="string">'N/A'</span></div></pre></td></tr></table></figure>
-<p>注意默认值是返回函数调用的，而函数在创建<code>defaultdict</code>对象时传入。</p>
-<h3 id="OrderedDict"><a href="#OrderedDict" class="headerlink" title="OrderedDict"></a>OrderedDict</h3><p>使用dict时，key是无序的。在对dict做迭代时，我们无法确定Key的顺序，如果要保持Key的顺序，可以用<code>OrderedDict</code>：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> collections <span class="keyword">import</span> OrderedDict</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>d=dict([(<span class="string">'a'</span>,<span class="number">1</span>),(<span class="string">'b'</span>,<span class="number">2</span>),(<span class="string">'c'</span>,<span class="number">3</span>)])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>d</div><div class="line">&#123;<span class="string">'a'</span>: <span class="number">1</span>, <span class="string">'b'</span>: <span class="number">2</span>, <span class="string">'c'</span>: <span class="number">3</span>&#125;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>od=OrderedDict([(<span class="string">'a'</span>,<span class="number">1</span>),(<span class="string">'b'</span>,<span class="number">2</span>),(<span class="string">'c'</span>,<span class="number">3</span>)])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>od</div><div class="line">OrderedDict([(<span class="string">'a'</span>, <span class="number">1</span>), (<span class="string">'b'</span>, <span class="number">2</span>), (<span class="string">'c'</span>, <span class="number">3</span>)])</div></pre></td></tr></table></figure></p>
-<p>注意，<code>OrderedDict</code>的Key会按照插入的顺序排列，不是Key本身排序：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>od=OrderedDict()</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>od[<span class="string">'z'</span>]=<span class="number">1</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>od[<span class="string">'y'</span>]=<span class="number">2</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>od[<span class="string">'a'</span>]=<span class="number">3</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>od</div><div class="line">OrderedDict([(<span class="string">'z'</span>, <span class="number">1</span>), (<span class="string">'y'</span>, <span class="number">2</span>), (<span class="string">'a'</span>, <span class="number">3</span>)])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>list(od.keys())</div><div class="line">[<span class="string">'z'</span>, <span class="string">'y'</span>, <span class="string">'a'</span>]</div></pre></td></tr></table></figure></p>
-<p><code>OrderedDict</code>可以实现一个FIFO的dict，当容量超出限制时，先删除最早添加的Key：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> collections <span class="keyword">import</span> OrderedDict</div><div class="line">&gt;&gt;&gt;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">LastUpdatedOrderedDict</span><span class="params">(OrderedDict)</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,capacity)</span>:</span></div><div class="line"><span class="meta">... </span>            super( LastUpdatedOrderedDict,self).__init__()</div><div class="line"><span class="meta">... </span>            self._capacity=capacity</div><div class="line">...</div><div class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__setitem__</span><span class="params">(self,key,value)</span>:</span></div><div class="line"><span class="meta">... </span>            containsKey=<span class="number">1</span> <span class="keyword">if</span> key <span class="keyword">in</span> self <span class="keyword">else</span> <span class="number">0</span></div><div class="line"><span class="meta">... </span>            <span class="keyword">if</span> len(self)-constainsKey&gt;=self._capacity:</div><div class="line"><span class="meta">... </span>                    last=self.popoitem(last=<span class="keyword">False</span>)</div><div class="line"><span class="meta">... </span>                    print(<span class="string">'remove:'</span>,last)</div><div class="line"><span class="meta">... </span>            <span class="keyword">if</span> constainsKey:</div><div class="line"><span class="meta">... </span>                    <span class="keyword">del</span> self[key]</div><div class="line"><span class="meta">... </span>                    print(<span class="string">'set:'</span>,(key,value))</div><div class="line"><span class="meta">... </span>            <span class="keyword">else</span>:</div><div class="line"><span class="meta">... </span>                    print(<span class="string">'add:'</span>,(key,value))</div><div class="line"><span class="meta">... </span>            OrderdeDict.__setitem__(self,key,value)</div><div class="line">...</div></pre></td></tr></table></figure></p>
-<h3 id="Counter"><a href="#Counter" class="headerlink" title="Counter"></a>Counter</h3><p><code>Counter</code>是一个简单的计数器，例如统计字符出现的个数：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> collections <span class="keyword">import</span> Counter</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>c=Counter()</div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> ch <span class="keyword">in</span> <span class="string">'programming'</span>:</div><div class="line"><span class="meta">... </span>    c[ch]=c[ch]+<span class="number">1</span></div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>c</div><div class="line">Counter(&#123;<span class="string">'m'</span>: <span class="number">2</span>, <span class="string">'g'</span>: <span class="number">2</span>, <span class="string">'r'</span>: <span class="number">2</span>, <span class="string">'o'</span>: <span class="number">1</span>, <span class="string">'p'</span>: <span class="number">1</span>, <span class="string">'n'</span>: <span class="number">1</span>, <span class="string">'i'</span>: <span class="number">1</span>, <span class="string">'a'</span>: <span class="number">1</span>&#125;)</div></pre></td></tr></table></figure></p>
-<p><code>Counter</code>实际上也是<code>dict</code>的一个子类。</p>
-<hr>
-<h2 id="base64"><a href="#base64" class="headerlink" title="base64"></a>base64</h2><p>Base64是一种用64个字符来表示任意二进制数据的方法。用记事本打开exe,jpg,pdf这些文件会看到一大堆乱码，因为二进制文件包含了很多无法显示和打印的字符，所以，如果让笔记本这样的文本处理软件能处理二进制数据，就需要一个二进制到字符串的转换方法。Base64是一种最常见的二进制编码方法。</p>
-<p>Base64的原理很简单，首先，准备一个包含64个字符的数组：</p>
-<blockquote>
-<p>[‘A’,’B’,’C’……’a’,’b’,’c’…….’0’,’1’,’2’…..’+’,’/‘]</p>
-</blockquote>
-<p>然后，对二进制数据进行处理，每三个字节一组，一共是24个bit，划为四组，每组为6bit：<br><img src="/img/1478069277975.png" alt="Alt text"></p>
-<p>这样我们得到4个数字作为索引，然后查表，获得相应的4个字符，就是编码后的字符串。</p>
-<p>所以，base64编码会把三个字节的二进制数据编码为4字节的文本数据，长度增加33%，好处是编码后的文本数据可以在邮件正文，网页等直接显示。如果要编码的二进制数据不是3的倍数，最后剩下的1个或2个字节可以用\x00字节在末尾补足后，再在编码的末尾加上一个或两个=号，表示补了多少个字节，解码的时候会自动去掉。</p>
-<p>Python内置的base64可以直接进行base64的编解码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> base64</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>base64.b64encode(<span class="string">b'binary\x00string'</span>)</div><div class="line"><span class="string">b'YmluYXJ5AHN0cmluZw=='</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>base64.b64decode(<span class="string">b'YmluYXJ5AHN0cmluZw=='</span>)</div><div class="line"><span class="string">b'binary\x00string'</span></div></pre></td></tr></table></figure></p>
-<p>由于标准的Base64编码后可能出现符号+和/，在URL中就不能直接作为参数，所以又有一种URL safe的base64编码，其实就是把+、/分别变为-和_：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>base64.b64encode(<span class="string">b'i\xb7\x1d\xfb\xef\xff'</span>)</div><div class="line"><span class="string">b'abcd++//'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>base64.urlsafe_b64encode(<span class="string">b'i\xb7\x1d\xfb\xef\xff'</span>)</div><div class="line"><span class="string">b'abcd--__'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>base64.urlsafe_b64decode(<span class="string">'abcd--__'</span>)</div><div class="line"><span class="string">b'i\xb7\x1d\xfb\xef\xff'</span></div></pre></td></tr></table></figure></p>
-<p> Base64是一种通过查表的编码方法，不能用于加密，即使使用自定义的编码表也不行。适用于小段内容的编码，比如数字证书签名，Cookie的内容等。</p>
-<p>由于=字符也可能出现在Base64编码中，但=用在URL，Cookie里面会造成歧义，很多Base64编码后会把=去掉。</p>
-<blockquote>
-<p>标准Base64:<br>‘abcd’ -&gt; ‘YWJjZA==’<br>自动去掉=:<br>‘abcd’ -&gt; ‘YWJjZA’</p>
-</blockquote>
-<p>去掉之后解码时，由于Base64是把3个字节变为4个字节的，所以Base64编码的长度永远是4的倍数，加上=后就可以正常解码了。</p>
-<hr>
-<h2 id="struct"><a href="#struct" class="headerlink" title="struct"></a>struct</h2><p>Python没有专门处理字节的数据类型，但是由于<code>b&#39;str&#39;</code>可以表示字节，所以，字节数组=二进制str。而在C语言中，我们可以很方便的使用struct、union等来处理字节，以及字节和int、float的转换。</p>
-<p>在Python中，比如要把一个32位无符号整数编程字节，也就是四个长度的bytes ，需要配合运算符：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>n=<span class="number">10240099</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>b1=(n&amp;<span class="number">0xff000000</span>)&gt;&gt;<span class="number">24</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>b2=(n&amp;<span class="number">0xff0000</span>)&gt;&gt;<span class="number">16</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>b3=(n&amp;<span class="number">0xff00</span>)&gt;&gt;<span class="number">8</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>b4=n&amp;<span class="number">0xff</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>bs=bytes([b1,b2,b3,b4])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>bs</div><div class="line"><span class="string">b'\x00\x9c@c'</span></div></pre></td></tr></table></figure></p>
-<p>很麻烦，如果换成浮点数就无能为力了。Python提供了一个<code>struct</code>模块来解决bytes和其他二进制数据类型的转换。<code>struct</code>的<code>pack</code>函数把任意数据变为<code>bytes</code>：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> struct</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>struct.pack(<span class="string">'&gt;I'</span>,<span class="number">10240099</span>)</div><div class="line"><span class="string">b'\x00\x9c@c'</span></div></pre></td></tr></table></figure></p>
-<p><code>pack</code>的第一个参数是处理指令，<code>‘&gt;I’</code>的意思是：<code>&gt;</code>表示字节顺序是big-endian，也就是网络序，<code>I</code>表示4字节无符号整数。后面的参数个数要和处理指令一致。<code>unpack</code>把<code>bytes</code>变成相应的数据类型:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>struct.unpack(<span class="string">'&gt;IH'</span>,<span class="string">b'\xf0\xf0\xf0\xf0\x80\x80'</span>)</div><div class="line">(<span class="number">4042322160</span>, <span class="number">32896</span>)</div></pre></td></tr></table></figure></p>
-<p>根据<code>&gt;IH</code>的说明，后面的<code>bytes</code>一次变为<code>I</code>：4字节无符号数和<code>H</code>：2字节无符号整数。所以，尽管Python不适合编写底层操作字节流的代码，但在对性能要求不高的地方，利用struct 很方便。</p>
-<h2 id="hashlib"><a href="#hashlib" class="headerlink" title="hashlib"></a>hashlib</h2><p>Python的hashlib提供了常见的摘要算法，如MD5、SHA1等等。</p>
-<h3 id="摘要算法"><a href="#摘要算法" class="headerlink" title="摘要算法"></a>摘要算法</h3><p>又称哈希算法、散列算法。它通过一个函数，把任意长度的数据转换为一个长度固定的数据串。摘要算法就是通过摘要函数<code>f()</code>对任意的数据data计算出固定长度的摘要digest，目的是为了发现原始数据是否被人篡改过。摘要算法之所以可以确定数据是否被篡改过是因为摘要函数是一个单向函数，计算<code>f(data)</code>很容易，但是通过digest 反推data很困难。对原始数据做一个bit的修改都会导致计算出的摘要完全不同。</p>
-<p>以MD5为例，计算一个字符串的MD5值：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> hashlib</div><div class="line">&gt;&gt;&gt;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>md5=hashlib.md5()</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>md5.update(<span class="string">'how to use md5 in python hashlib?'</span>.encode(<span class="string">'utf-8'</span>))</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(md5.hexdigest())</div><div class="line">d26a53750bc40b38b65a520292f69306</div></pre></td></tr></table></figure></p>
-<p>如果数据量很大，可以分块多次调用<code>update()</code>，最后计算的结果是一样的：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> hashlib</div><div class="line">&gt;&gt;&gt;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>md5=hashlib.md5()</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>md5.update(<span class="string">'how to use md5 in'</span>.encode(<span class="string">'utf-8'</span>))</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>md5.update(<span class="string">'python hashlib?'</span>.encode(<span class="string">'utf-8'</span>))</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(md5.hexdigest())</div><div class="line"><span class="number">047</span>b2e59ed7530a32db954459f82266b</div></pre></td></tr></table></figure></p>
-<p>MD5是最常见的摘要算法，速度很快，上观南城结果是固定的128bit字节，通常用一个32位的16进制字符串表示。</p>
-<p>另一种常见的摘要算法是SHA1：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> hashlib</div><div class="line">&gt;&gt;&gt;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>sha1=hashlib.sha1()</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>sha1.update(<span class="string">'how to use sha1 in '</span>.encode(<span class="string">'utf-8'</span>))</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>sha1.update(<span class="string">'python hashlib?'</span>.encode(<span class="string">'utf-8'</span>))</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(sha1.hexdigest())</div><div class="line"><span class="number">2</span>c76b57293ce30acef38d98f6046927161b46a44</div></pre></td></tr></table></figure></p>
-<p>SHA1的结果是160bit字节，通常用一个40位的16进制字符来表示。比SHA1更安全的算法是SHA256和SHA512，越安全的算法越慢，摘要长度也会更长。</p>
-<h3 id="摘要算法应用"><a href="#摘要算法应用" class="headerlink" title="摘要算法应用"></a>摘要算法应用</h3><p>任何允许用户登录的网站都会存储用户登录的用户名和口令，存储的方法是存储到数据库表中：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">name</th>
-<th style="text-align:right">passwd</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Michael</td>
-<td style="text-align:right">123456</td>
-</tr>
-<tr>
-<td style="text-align:left">bob</td>
-<td style="text-align:right">asd121</td>
-</tr>
-<tr>
-<td style="text-align:left">alice</td>
-<td style="text-align:right">alice123456</td>
-</tr>
-</tbody>
-</table>
-<p>如果以明文保存用户口令，如果数据库泄露，所有用户的口令都泄露。而且网站运维人员是可以访问数据库的，也就是能获取到所有用户的口令。正确保存口令的方式是不存储用户的明文口令，而是存储用户口令的摘要，比如MD5：<br>| name      |  passwd |<br>| :——– | ——–:|<br>| Michael   |   e10adc3949ba59abbe56e057f20f883e |<br>|bob        |   878ef96e86145580c38c87f0410ad153 |<br>|alice      |  99b1c2188db85afee403b1536010c2c9|</p>
-<p>当用户登录时，首先计算机用户输入的明文口令的MD5，然后和数据库的MD5对比，结果一致说明口令输入正确，如果不一致则口令错误。</p>
-<hr>
-<h2 id="itertools"><a href="#itertools" class="headerlink" title="itertools"></a>itertools</h2><p>Python的内建模块<code>itertools</code>提供了非常有用的用于操作迭代对象的函数。首先来看<code>itertools</code>提供的几个无限迭代器：</p>
-<p><code>cycle()</code>会把传入的一个序列无限重复下去。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> itertools</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>cs = itertools.cycle(<span class="string">'ABC'</span>) <span class="comment"># 注意字符串也是序列的一种</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> c <span class="keyword">in</span> cs:</div><div class="line"><span class="meta">... </span>    print(c)</div><div class="line">...</div><div class="line"><span class="string">'A'</span></div><div class="line"><span class="string">'B'</span></div><div class="line"><span class="string">'C'</span></div><div class="line"><span class="string">'A'</span></div><div class="line"><span class="string">'B'</span></div><div class="line"><span class="string">'C'</span></div><div class="line">...</div></pre></td></tr></table></figure></p>
-<p><code>repeat()</code>负责把一个元素无限重复下去，不过提供第二个参数就可以限定重复次数：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> itertools</div><div class="line">&gt;&gt;&gt;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>ns=itertools.repeat(<span class="string">'a'</span>,<span class="number">4</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> n <span class="keyword">in</span> ns:</div><div class="line">	print(n)</div><div class="line"></div><div class="line"></div><div class="line">a</div><div class="line">a</div><div class="line">a</div><div class="line">a</div></pre></td></tr></table></figure></p>
-<p>无限序列只有在<code>for</code>迭代时才会无限地迭代下去，如果只是创建了一个迭代对象，它不会事先把无限个元素生成出来，事实上也不可能在内存中创建无限多个元素。无限序列虽然可以无限迭代下去，但是通常我们会通过<code>takewhile()</code>等函数根据条件判断来截取出一个有限的序列：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>naturals=itertools.count(<span class="number">1</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>ns=itertools.takewhile(<span class="keyword">lambda</span> x:x&lt;=<span class="number">10</span>,naturals)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>list(ns)</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</div></pre></td></tr></table></figure></p>
-<p><code>itertools</code>提供的几个迭代器操作函数更加有用：</p>
-<h3 id="chain"><a href="#chain" class="headerlink" title="chain()"></a>chain()</h3><p><code>chain()</code>可以把一组迭代对象串联起来，形成一个更大的迭代器：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> c <span class="keyword">in</span> itertools.chain(<span class="string">'abc'</span>,<span class="string">'1234'</span>):</div><div class="line">	print(c)</div><div class="line"></div><div class="line"></div><div class="line">a</div><div class="line">b</div><div class="line">c</div><div class="line"><span class="number">1</span></div><div class="line"><span class="number">2</span></div><div class="line"><span class="number">3</span></div></pre></td></tr></table></figure></p>
-<h3 id="groupby"><a href="#groupby" class="headerlink" title="groupby()"></a>groupby()</h3><p><code>groupby()</code>把迭代器中相邻的重复元素挑出来放在一起：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> key,group <span class="keyword">in</span> itertools.groupby(<span class="string">'aaabbbccaaadd'</span>):</div><div class="line">	print(key,list(group))</div><div class="line"></div><div class="line"></div><div class="line">a [<span class="string">'a'</span>, <span class="string">'a'</span>, <span class="string">'a'</span>]</div><div class="line">b [<span class="string">'b'</span>, <span class="string">'b'</span>, <span class="string">'b'</span>]</div><div class="line">c [<span class="string">'c'</span>, <span class="string">'c'</span>]</div><div class="line">a [<span class="string">'a'</span>, <span class="string">'a'</span>, <span class="string">'a'</span>]</div><div class="line">d [<span class="string">'d'</span>, <span class="string">'d'</span>]</div></pre></td></tr></table></figure></p>
-<p>实际上挑选规则是通过函数完成的，只要作用于函数的两个元素返回的值相等，这两个元素就被认为是在一组的，而函数返回值作为组的key。如果我们要忽略大小写分组，可以让元素Aa都返回相同的key:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> key,group <span class="keyword">in</span> itertools.groupby(<span class="string">'AAaBbbcCCDcd'</span>,<span class="keyword">lambda</span> c:c.upper()):</div><div class="line">	print(key,list(group))</div><div class="line"></div><div class="line"></div><div class="line">A [<span class="string">'A'</span>, <span class="string">'A'</span>, <span class="string">'a'</span>]</div><div class="line">B [<span class="string">'B'</span>, <span class="string">'b'</span>, <span class="string">'b'</span>]</div><div class="line">C [<span class="string">'c'</span>, <span class="string">'C'</span>, <span class="string">'C'</span>]</div><div class="line">D [<span class="string">'D'</span>]</div><div class="line">C [<span class="string">'c'</span>]</div><div class="line">D [<span class="string">'d'</span>]</div></pre></td></tr></table></figure></p>
-<hr>
-<h2 id="XML"><a href="#XML" class="headerlink" title="XML"></a>XML</h2><h3 id="DOM-vs-SAX"><a href="#DOM-vs-SAX" class="headerlink" title="DOM vs SAX"></a>DOM vs SAX</h3><p>操作XMl有两种方法：DOM和SAX，DOM会把整个XML读入内存，解析为树，因此占用内存大，解析慢，优点是可以任意遍历树的节点。SAX是流模式，边读边解析，占用内存小，缺点是我们需要自己处理事件。正常情况下优先考虑SAX。在Python中我们关心的事件是<code>start_element</code>,<code>end_element</code>,<code>char_data</code>准备好这三个函数就可以解析xml了。如当SAX解析器读到一个节点时：</p>
-<blockquote>
-<p><a href="/">python</a></p>
-</blockquote>
-<p>会产生三个事件：</p>
-<blockquote>
-<p>1.start_element事件，在读取<a href="/">时；<br>2.char_data事件，在读取python时<br>3.end_element事件，在读取</a></p>
-</blockquote>
-<p>代码验证如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> xml.parsers.expat <span class="keyword">import</span> ParserCreate</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">DefaultSaxHandler</span><span class="params">(object)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">start_element</span><span class="params">(self, name, attrs)</span>:</span></div><div class="line">        print(<span class="string">'sax:start_element: %s, attrs: %s'</span> % (name, str(attrs)))</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">end_element</span><span class="params">(self, name)</span>:</span></div><div class="line">        print(<span class="string">'sax:end_element: %s'</span> % name)</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">char_data</span><span class="params">(self, text)</span>:</span></div><div class="line">        print(<span class="string">'sax:char_data: %s'</span> % text)</div><div class="line"></div><div class="line">xml = <span class="string">r'''&lt;?xml version="1.0"?&gt;</span></div><div class="line"><span class="string">&lt;ol&gt;</span></div><div class="line"><span class="string">    &lt;li&gt;&lt;a href="/python"&gt;Python&lt;/a&gt;&lt;/li&gt;</span></div><div class="line"><span class="string">    &lt;li&gt;&lt;a href="/ruby"&gt;Ruby&lt;/a&gt;&lt;/li&gt;</span></div><div class="line"><span class="string">&lt;/ol&gt;</span></div><div class="line"><span class="string">'''</span></div><div class="line"></div><div class="line">handler = DefaultSaxHandler()</div><div class="line">parser = ParserCreate()</div><div class="line">parser.StartElementHandler = handler.start_element</div><div class="line">parser.EndElementHandler = handler.end_element</div><div class="line">parser.CharacterDataHandler = handler.char_data</div><div class="line">parser.Parse(xml)</div></pre></td></tr></table></figure></p>
-<p>需要注意的是读取一大段字符串时，CharacterDataHandler可能被多次调用，所以需要自己保存起来，在EndElementHandler里面合并。</p>
-<hr>
-<h2 id="HTMLParser"><a href="#HTMLParser" class="headerlink" title="HTMLParser"></a>HTMLParser</h2><p>编写一个搜索引擎，第一步是用爬虫把目标网站的页面抓下来，第二步就是解析该HTML页面，看看里面的内容到底是新闻、图片还是视频。</p>
-<p>HTML本质上是XML的子集，但是HTML的语法没有XML那么严格，所以不能用标准的DOM或者SAX来解析HTML。可以用HTMLParser来解析HTML：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python3</span></div><div class="line"><span class="comment"># -*- coding: utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="keyword">from</span> html.parser <span class="keyword">import</span> HTMLParser</div><div class="line"><span class="keyword">from</span> html.entities <span class="keyword">import</span> name2codepoint</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyHTMLParser</span><span class="params">(HTMLParser)</span>:</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">handle_starttag</span><span class="params">(self,tag,attrs)</span>:</span></div><div class="line">		print(<span class="string">'&lt;/%s&gt;'</span> %tag)</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">handle_endtag</span><span class="params">(self,tag)</span>:</span></div><div class="line">		print(<span class="string">'&lt;/%s&gt;'</span> %tag)</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">handle_startendtag</span><span class="params">(self ,tag,attrs)</span>:</span></div><div class="line">		print(<span class="string">'&lt;/%s&gt;'</span> %tag)</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">handle_data</span><span class="params">(self,data)</span>:</span></div><div class="line">		print(data)</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">handle_comment</span><span class="params">(self,data)</span>:</span></div><div class="line">		print(<span class="string">'&lt;!--'</span>,data ,<span class="string">'--&gt;'</span>)</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">handle_entityref</span><span class="params">(self,name)</span>:</span></div><div class="line">		print(<span class="string">'&amp;%s:'</span> %name)</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">handle_charref</span><span class="params">(self,name)</span>:</span></div><div class="line">		print(<span class="string">'&amp;#%s:'</span> %name)</div><div class="line"></div><div class="line">parser=MyHTMLParser()</div><div class="line">parser.feed(<span class="string">'''&lt;html&gt;</span></div><div class="line"><span class="string">&lt;head&gt;&lt;/head&gt;</span></div><div class="line"><span class="string">&lt;body&gt;</span></div><div class="line"><span class="string">&lt;!-- test html parser--&gt;</span></div><div class="line"><span class="string">	&lt;p&gt;Some&lt;a href=\"#\"&gt;html&lt;/a&gt; HTML&amp;nbsp;tutorial...&lt;br&gt;END&lt;/p&gt;</span></div><div class="line"><span class="string">&lt;/body&gt;&lt;/html&gt;'''</span>)</div></pre></td></tr></table></figure></p>
-<p><code>feed()</code>方法可以多次调用，也就是不一定一次把整个HTML字符串都塞进去，可以一部分一部分塞进去。特殊字符有两种，一种是用英文表示的<code>&amp;nbsp</code>，一种是用数字表示的<code>&amp;#1234;</code>，这两种字符都可以通过Parser解析出来。</p>
-<hr>
-<h2 id="urllib"><a href="#urllib" class="headerlink" title="urllib"></a>urllib</h2><p>urllib提供了一系列用于操作URL的功能。</p>
-<h3 id="Get"><a href="#Get" class="headerlink" title="Get"></a>Get</h3><p>urllib的<code>request</code>模块可以非常方便地抓取URL内容，也就是发送一个GET请求到指定的页面，然后返回HTTP的相应：</p>
-<p>例如，对豆瓣的一个URL<code>https://api.douban.com/v2/book/2129650</code>进行抓取并返回相应：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> urllib <span class="keyword">import</span> request</div><div class="line">&gt;&gt;&gt;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">with</span> request.urlopen(<span class="string">'https://api.douban.com/v2/book/2129650'</span>) <span class="keyword">as</span> f:</div><div class="line"><span class="meta">... </span>    dada=f.read()</div><div class="line"><span class="meta">... </span>    print(<span class="string">'Status:'</span>,f.status,f.reason)</div><div class="line"><span class="meta">... </span>    <span class="keyword">for</span> k,v <span class="keyword">in</span> f.getheaders():</div><div class="line"><span class="meta">... </span>            print(<span class="string">'%s:%s'</span> %(k,v))</div><div class="line"><span class="meta">... </span>    print(<span class="string">'Data:'</span>,data.decode(<span class="string">'utf-8'</span>))</div><div class="line">...</div><div class="line">Status: <span class="number">200</span> OK</div><div class="line">Date:Sun, <span class="number">06</span> Nov <span class="number">2016</span> <span class="number">08</span>:<span class="number">44</span>:<span class="number">01</span> GMT</div><div class="line">Content-Type:application/json; charset=utf<span class="number">-8</span></div><div class="line">Content-Length:<span class="number">2055</span></div><div class="line">Connection:close</div><div class="line">Vary:Accept-Encoding</div><div class="line">X-Ratelimit-Remaining2:<span class="number">96</span></div><div class="line">X-Ratelimit-Limit2:<span class="number">100</span></div><div class="line">Expires:Sun, <span class="number">1</span> Jan <span class="number">2006</span> <span class="number">01</span>:<span class="number">00</span>:<span class="number">00</span> GMT</div><div class="line">Pragma:no-cache</div><div class="line">Cache-Control:must-revalidate, no-cache, private</div><div class="line">Set-Cookie:bid=L9LbgN0KHkE; Expires=Mon, <span class="number">06</span>-Nov<span class="number">-17</span> <span class="number">08</span>:<span class="number">44</span>:<span class="number">01</span> GMT; Domain=.douban.com; Path=/</div><div class="line">X-DOUBAN-NEWBID:L9LbgN0KHkE</div><div class="line">X-DAE-Node:dis16</div><div class="line">X-DAE-App:book</div><div class="line">Server:dae</div><div class="line">Data: &#123;<span class="string">"rating"</span>:&#123;<span class="string">"max"</span>:<span class="number">10</span>,<span class="string">"numRaters"</span>:<span class="number">16</span>,<span class="string">"average"</span>:<span class="string">"7.4"</span>,<span class="string">"min"</span>:<span class="number">0</span>&#125;,<span class="string">"subtitle"</span>:<span class="string">""</span>,<span class="string">"author"</span>:[<span class="string">"廖雪峰编著"</span>],<span class="string">"pubdate"</span>:<span class="string">"2007-6"</span>,<span class="string">"tags"</span>:[&#123;<span class="string">"count"</span>:<span class="number">20</span>,<span class="string">"name"</span>:<span class="string">"spring"</span>,<span class="string">"title"</span>:<span class="string">"spring"</span>&#125;,&#123;<span class="string">"count"</span>:<span class="number">11</span>,<span class="string">"name"</span>:<span class="string">"Java"</span>,<span class="string">"title"</span>:<span class="string">"Java"</span>&#125;,&#123;<span class="string">"count"</span>:<span class="number">6</span>,<span class="string">"name"</span>:<span class="string">"javaee"</span>,<span class="string">"title"</span>:<span class="string">"javaee"</span>&#125;,&#123;<span class="string">"count"</span>:<span class="number">4</span>,<span class="string">"name"</span>:<span class="string">"j2ee"</span>,<span class="string">"title"</span>:<span class="string">"j2ee"</span>&#125;,&#123;<span class="string">"count"</span>:<span class="number">3</span>,<span class="string">"name"</span>:<span class="string">"POJO"</span>,<span class="string">"title"</span>:<span class="string">"POJO"</span>&#125;,&#123;<span class="string">"count"</span>:<span class="number">3</span>,<span class="string">"name"</span>:<span class="string">"计算机"</span>,<span class="string">"title"</span>:<span class="string">"计算机"</span>&#125;,&#123;<span class="string">"count"</span>:<span class="number">3</span>,<span class="string">"name"</span>:<span class="string">"藏书"</span>,<span class="string">"title"</span>:<span class="string">"藏书"</span>&#125;,&#123;<span class="string">"count"</span>:<span class="number">3</span>,<span class="string">"name"</span>:<span class="string">"编程"</span>,<span class="string">"title"</span>:<span class="string">"编程"</span>&#125;],<span class="string">"origin_title"</span>:<span class="string">""</span>,<span class="string">"image"</span>:<span class="string">"https://img3.doubanio.com\/mpic\/s2648230.jpg"</span>,<span class="string">"binding"</span>:<span class="string">""</span>,<span class="string">"translator"</span>:[],<span class="string">"catalog"</span>:<span class="string">""</span>,<span class="string">"pages"</span>:<span class="string">"509"</span>,<span class="string">"images"</span>:&#123;<span class="string">"small"</span>:<span class="string">"https://img3.doubanio.com\/spic\/s2648230.jpg"</span>,<span class="string">"large"</span>:<span class="string">"https://img3.doubanio.com\/lpic\/s2648230.jpg"</span>,<span class="string">"medium"</span>:<span class="string">"https://img3.doubanio.com\/mpic\/s2648230.jpg"</span>&#125;,<span class="string">"alt"</span>:<span class="string">"https:\/\/book.douban.com\/subject\/2129650\/"</span>,<span class="string">"id"</span>:<span class="string">"2129650"</span>,<span class="string">"publisher"</span>:<span class="string">"电子工业"</span>,<span class="string">"isbn10"</span>:<span class="string">"7121042622"</span>,<span class="string">"isbn13"</span>:<span class="string">"9787121042621"</span>,<span class="string">"title"</span>:<span class="string">"Spring 2.0核心技术与最佳实践"</span>,<span class="string">"url"</span>:<span class="string">"https:\/\/api.douban.com\/v2\/book\/2129650"</span>,<span class="string">"alt_title"</span>:<span class="string">""</span>,<span class="string">"author_intro"</span>:<span class="string">""</span>,<span class="string">"summary"</span>:<span class="string">"本书注重实践而又深入 理论，由浅入深且详细介绍了Spring 2.0框架的几乎全部的内容，并重点突出2.0版本的新特性。本书将为读者展示如何应用Spring 2.0框架创建灵活高效的JavaEE应用，并提供了一个真正 可直接部署的完整的Web应用程序——Live在线书店(http:\/\/www.livebookstore.net)。\n在介绍Spring框架的同时，本书还介绍了与Spring相关的大量第三方框架，涉及领域全面，实用 性强。本书另一大特色是实用性强，易于上手，以实际项目为出发点，介绍项目开发中应遵循 的最佳开发模式。\n本书还介绍了大量实践性极强的例子，并给出了完整的配置步骤，几乎覆 盖了Spring 2.0版本的新特性。\n本书适合有一定Java基础的读者，对JavaEE开发人员特别有 帮助。本书既可以作为Spring 2.0的学习指南，也可以作为实际项目开发的参考手册。"</span>,<span class="string">"price"</span>:<span class="string">"59.80元"</span>&#125;</div></pre></td></tr></table></figure></p>
-<p>可以看到HTTP相应的头和JSON数据，如果我们要模拟浏览器发送GET请求，就需要使用Request对象，通过往Request对象添加HTTP头，我们就可以把请求伪装成浏览器。例如，模拟iPhone6区请求豆瓣首页：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> urllib <span class="keyword">import</span> request</div><div class="line">&gt;&gt;&gt;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>req=request.Request(<span class="string">'http://www.douban.com/'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>req.add_header(<span class="string">'User-Agent'</span>, <span class="string">'Mozilla/6.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/8.0 Mobile/10A5376e Safari/8536.25'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">with</span> request.urlopen(req) <span class="keyword">as</span> f:</div><div class="line"><span class="meta">... </span>    print(<span class="string">'Status:'</span>,f.status, f.reason)</div><div class="line"><span class="meta">... </span>    <span class="keyword">for</span> k,v <span class="keyword">in</span> f.getheaders():</div><div class="line"><span class="meta">... </span>            print(<span class="string">'%s:%s'</span> %(k,v))</div><div class="line"><span class="meta">... </span>    print(<span class="string">'Data:'</span>,f.read().decode(<span class="string">'utf-8'</span>))</div><div class="line">...</div></pre></td></tr></table></figure></p>
-<p>这样豆瓣就会返回适合iPhone的移动版网页。</p>
-<h3 id="Post"><a href="#Post" class="headerlink" title="Post"></a>Post</h3><p>如果要以POST发送一个请求，只需要把参数data以bytes形式传入。</p>
-<p>我们模拟一个微博登录，先读取登录的邮箱和口令，然后按照weibo.cn的登录页的格式以<code>username=xxx&amp;password=xxx</code>的编码传入：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> urllib <span class="keyword">import</span> request, parse</div><div class="line"></div><div class="line">print(<span class="string">'Login to weibo.cn...'</span>)</div><div class="line">email = input(<span class="string">'Email: '</span>)</div><div class="line">passwd = input(<span class="string">'Password: '</span>)</div><div class="line">login_data = parse.urlencode([</div><div class="line">    (<span class="string">'username'</span>, email),</div><div class="line">    (<span class="string">'password'</span>, passwd),</div><div class="line">    (<span class="string">'entry'</span>, <span class="string">'mweibo'</span>),</div><div class="line">    (<span class="string">'client_id'</span>, <span class="string">''</span>),</div><div class="line">    (<span class="string">'savestate'</span>, <span class="string">'1'</span>),</div><div class="line">    (<span class="string">'ec'</span>, <span class="string">''</span>),</div><div class="line">    (<span class="string">'pagerefer'</span>, <span class="string">'https://passport.weibo.cn/signin/welcome?entry=mweibo&amp;r=http%3A%2F%2Fm.weibo.cn%2F'</span>)</div><div class="line">])</div><div class="line"></div><div class="line">req = request.Request(<span class="string">'https://passport.weibo.cn/sso/login'</span>)</div><div class="line">req.add_header(<span class="string">'Origin'</span>, <span class="string">'https://passport.weibo.cn'</span>)</div><div class="line">req.add_header(<span class="string">'User-Agent'</span>, <span class="string">'Mozilla/6.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/8.0 Mobile/10A5376e Safari/8536.25'</span>)</div><div class="line">req.add_header(<span class="string">'Referer'</span>, <span class="string">'https://passport.weibo.cn/signin/login?entry=mweibo&amp;res=wel&amp;wm=3349&amp;r=http%3A%2F%2Fm.weibo.cn%2F'</span>)</div><div class="line"></div><div class="line"><span class="keyword">with</span> request.urlopen(req, data=login_data.encode(<span class="string">'utf-8'</span>)) <span class="keyword">as</span> f:</div><div class="line">    print(<span class="string">'Status:'</span>, f.status, f.reason)</div><div class="line">    <span class="keyword">for</span> k, v <span class="keyword">in</span> f.getheaders():</div><div class="line">        print(<span class="string">'%s: %s'</span> % (k, v))</div><div class="line">    print(<span class="string">'Data:'</span>, f.read().decode(<span class="string">'utf-8'</span>))</div></pre></td></tr></table></figure></p>
-<h3 id="Handler"><a href="#Handler" class="headerlink" title="Handler"></a>Handler</h3><p>如果还需要更复杂的控制，比如通过一个Proxy去访问网站，我们需要利用ProxyHandler来处理，实例如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">proxy_handler = urllib.request.ProxyHandler(&#123;<span class="string">'http'</span>: <span class="string">'http://www.example.com:3128/'</span>&#125;)</div><div class="line">proxy_auth_handler = urllib.request.ProxyBasicAuthHandler()</div><div class="line">proxy_auth_handler.add_password(<span class="string">'realm'</span>, <span class="string">'host'</span>, <span class="string">'username'</span>, <span class="string">'password'</span>)</div><div class="line">opener = urllib.request.build_opener(proxy_handler, proxy_auth_handler)</div><div class="line"><span class="keyword">with</span> opener.open(<span class="string">'http://www.example.com/login.html'</span>) <span class="keyword">as</span> f:</div><div class="line">    <span class="keyword">pass</span></div></pre></td></tr></table></figure></p>
-<p>urllib提供的功能就是利用程序去执行各种HTTP请求。如果要模拟浏览器完成特定功能，需要把请求伪装成浏览器。伪装的方法是先监控浏览器发出的请求，再根据浏览器的请求头来伪装，<code>User-Agent</code>头就是用来标示浏览器的。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/09/8.IO编程/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/09/8.IO编程/" itemprop="url">8. IO编程</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-09T15:30:53+08:00">
-                2017-09-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="IO编程"><a href="#IO编程" class="headerlink" title="IO编程"></a>IO编程</h1><p>IO在计算机中指Input/Output，也就是输入和输出。由于程序和运行时数据是在内存中驻留，由CPU这个超快的计算机核心来执行，设计到数据交换的地方，通常是磁盘、网络等，就需要IO接口。</p>
-<p>比如你打开浏览器，访问新浪首页，浏览器这个程序就需要通过网络IO获取新浪的网页。浏览器首先会发送数据给新浪服务器，告诉它我想要首页的HTML，这个动作是往外发数据，叫Output，随后新浪服务器把网页发过来，这个动作是从外面接收数据，叫Input。所以，通常，程序完成IO操作会有Input和Output两个数据流。当然也有只用一个的情况，比如，从磁盘读取文件到内存，就只有Input操作，反过来，把数据写到磁盘文件里，就只是一个Output操作。</p>
-<p>IO编程中，Stream（流）是一个很重要的概念，可以把流想象成一个水管，数据就是水管里的水，但是只能单向流动。Input Stream就是数据从外面（磁盘、网络）流进内存，Output Stream就是数据从内存流到外面去。对于浏览网页来说，浏览器和新浪服务器之间至少需要建立两根水管，才可以既能发数据，又能收数据。</p>
-<p>由于CPU和内存的速度远远高于外设的速度，所以，在IO编程中，就存在速度严重不匹配的问题。举个例子来说，比如要把100M的数据写入磁盘，CPU输出100M的数据只需要0.01秒，可是磁盘要接收这100M数据可能需要10秒，怎么办呢？有两种办法：</p>
-<p>第一种是CPU等着，也就是程序暂停执行后续代码，等100M的数据在10秒后写入磁盘，再接着往下执行，这种模式称为同步IO；</p>
-<p>另一种方法是CPU不等待，只是告诉磁盘，“您老慢慢写，不着急，我接着干别的事去了”，于是，后续代码可以立刻接着执行，这种模式称为异步IO。</p>
-<p>同步和异步的区别就在于是否等待IO执行的结果。好比你去麦当劳点餐，你说“来个汉堡”，服务员告诉你，对不起，汉堡要现做，需要等5分钟，于是你站在收银台前面等了5分钟，拿到汉堡再去逛商场，这是同步IO。</p>
-<p>你说“来个汉堡”，服务员告诉你，汉堡需要等5分钟，你可以先去逛商场，等做好了，我们再通知你，这样你可以立刻去干别的事情（逛商场），这是异步IO。</p>
-<p>很明显，使用异步IO来编写程序性能会远远高于同步IO，但是异步IO的缺点是编程模型复杂。想想看，你得知道什么时候通知你“汉堡做好了”，而通知你的方法也各不相同。如果是服务员跑过来找到你，这是回调模式，如果服务员发短信通知你，你就得不停地检查手机，这是轮询模式。总之，异步IO的复杂度远远高于同步IO。</p>
-<p>操作IO的能力都是由操作系统提供的，每一种编程语言都会把操作系统提供的低级C接口封装起来方便使用，Python也不例外。我们后面会详细讨论Python的IO编程接口。</p>
-<p>注意，本章的IO编程都是同步模式，异步IO由于复杂度太高，后续涉及到服务器端程序开发时我们再讨论。</p>
-<h2 id="文件读写"><a href="#文件读写" class="headerlink" title="文件读写"></a>文件读写</h2><p>读写文件是最常见的IO操作。python内置了读写文件的函数，用法和C是兼容的。</p>
-<p>读写文件前，我们必须了解在磁盘读写文件的功能都是由操作系统提供的，现代操作系统不允许普通的程序直接操作磁盘，所以，读写文件就是请求操作系统打开一个文件对象，然后，通过操作系统提供的接口从这个文件对象中读取数据，或者把数据写入这个文件对象。</p>
-<h3 id="读文件"><a href="#读文件" class="headerlink" title="读文件"></a>读文件</h3><p>要以读文件的模式打开一个文件对象，使用Python内置的<code>open()</code>函数 ，传入文件名和标示符：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=open(<span class="string">'C:/Users/cdxu0/Desktop/open.txt'</span>,<span class="string">'r'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.read()</div><div class="line"><span class="string">'python open read '</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.close</div><div class="line">&lt;built-<span class="keyword">in</span> method close of _io.TextIOWrapper object at <span class="number">0x000001A97E9DEB40</span>&gt;</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure></p>
-<p>标示符<code>r</code>标示读，这样，我们成功打开了一个文件。如果文件不存在，<code>open()</code>函数就会抛出一个<code>IOError</code>的错误，并且给出错误码和详细的信息高速你文件不存在。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=open(<span class="string">'C:/Users/cdxu0/Desktop/open.py'</span>,<span class="string">'r'</span>)</div><div class="line">Traceback (most recent call last):</div><div class="line">  File <span class="string">"&lt;stdin&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</div><div class="line">FileNotFoundError: [Errno <span class="number">2</span>] No such file <span class="keyword">or</span> directory: <span class="string">'C:/Users/cdxu0/Desktop/open.py'</span></div></pre></td></tr></table></figure></p>
-<p>由于文件读写时都有可能产生<code>IOError</code>，一旦出错，后面的<code>f.close()</code>就不会调用。所以为了保证无论是否出错都能正确的关闭文件，我们可以使用<code>try...finally</code>来实现：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">try</span>:</div><div class="line"><span class="meta">... </span>    f=open(<span class="string">'C:/Users/cdxu0/Desktop/test.txt'</span>,<span class="string">'r'</span>)</div><div class="line"><span class="meta">... </span>    print(f.read())</div><div class="line"><span class="meta">... </span><span class="keyword">finally</span>:</div><div class="line"><span class="meta">... </span>    <span class="keyword">if</span> f:</div><div class="line"><span class="meta">... </span>            f.close()</div><div class="line">...</div><div class="line">python open read</div></pre></td></tr></table></figure></p>
-<p>但是每次都这么写比较繁琐，Python引入了<code>with</code>语句来自动帮助我们调用<code>close()</code>方法。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">with</span> open(<span class="string">'C:/Users/cdxu0/Desktop/test.txt'</span>,<span class="string">'r'</span>) <span class="keyword">as</span> f:</div><div class="line"><span class="meta">... </span>    print(f.read())</div><div class="line">...</div><div class="line">python open read</div></pre></td></tr></table></figure></p>
-<p>这和前面的<code>try...finally</code>是一样的，但是代码更为简洁，并且不用调用<code>f.close()</code>方法。</p>
-<p>调用<code>read()</code>会一次性读取文件的全部内容，如果文件有10G，内存就爆了，保险起见，要反复调用<code>read(size)</code>方法，每次最多读取size个字节的内容。另外，调用<code>readline()</code>可以每次读取一行的内容，调用<code>readlines()</code>一次读取所有内容并按行返回list。因此，要根据需要决定怎么调用。</p>
-<p>如果文件很小，<code>read()</code>一次性读取最方便；如果不能确定文件的大小，反复调用<code>read(size)</code>比较保险；如果是配置文件，调用<code>readlines()</code>最方便。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> line <span class="keyword">in</span> f.readlines():</div><div class="line"><span class="meta">... </span>    print(line.strip())</div><div class="line">...</div><div class="line">python open read</div></pre></td></tr></table></figure></p>
-<h3 id="file-like-Object"><a href="#file-like-Object" class="headerlink" title="file-like Object"></a>file-like Object</h3><p>像<code>open()</code>函数返回的这种有个<code>read()</code>方法的对象，在Python中统称为file-like Object。除了file外，还可以是内存的字节流，网络流，自定义流等等。file-like Object不要求从特定类继承，只要写个<code>read()</code>方法就行。</p>
-<p><code>StringIO</code>就是在内存中创建的file-like Object，常用作临时缓冲。</p>
-<h3 id="二进制文件"><a href="#二进制文件" class="headerlink" title="二进制文件"></a>二进制文件</h3><p>前面讲的默认都是读取文本文件的，并且是UTF-8编码的文本文件。尧都区二进制文件，比如图片、时频等，用<code>rb</code>模式打开文件即可：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=open(<span class="string">'C:/Users/cdxu0/Desktop/临时文件/1.png'</span>,<span class="string">'rb'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.read()</div><div class="line"><span class="string">b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\rIDAT\x08\x99c```\xf8\x0f\x00\x01\x04\x01\x00&#125;\xb2\xc8\xdf\x00\x00\x00\x00I</span></div></pre></td></tr></table></figure></p>
-<h3 id="字符编码"><a href="#字符编码" class="headerlink" title="字符编码"></a>字符编码</h3><p>要读取非UTF-8编码的文本文件，需要给<code>open()</code>函数传入<code>encoding</code>参数，例如，读取GBK编码的文件：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=open(<span class="string">'C:/Users/cdxu0/Desktop/临时文件/test.txt'</span>,<span class="string">'r'</span>,encoding=<span class="string">'gbk'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.read()</div><div class="line"><span class="string">'python open read '</span></div></pre></td></tr></table></figure></p>
-<p>遇到有些编码不规范的文件，你可能会遇到<code>UnicodeDecodeError</code>，因为在文本文件中可能夹杂了一些非法编码的字符。遇到这种情况，<code>open()</code>函数还接收一个errors参数，便是如果遇到编码错误后如何处理。最简单的方式是直接忽略。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; f=open(&apos;C:/Users/cdxu0/Desktop/临时文件/test.txt&apos;,&apos;r&apos;,encoding=&apos;gbk&apos;,errors=&apos;ignore&apos;)</div></pre></td></tr></table></figure></p>
-<h3 id="写文件"><a href="#写文件" class="headerlink" title="写文件"></a>写文件</h3><p>写文件和读文件一样 的，唯一的区别在于在调用<code>open()</code>函数时，传入标示符<code>w</code>或<code>wb</code>表示写文本文件或写二进制文件：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=open(<span class="string">'C:/Users/cdxu0/Desktop/临时文件/open.txt'</span>,<span class="string">'w'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.write(<span class="string">'hehheheh'</span>)</div><div class="line"><span class="number">8</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.close</div><div class="line">&lt;built-<span class="keyword">in</span> method close of _io.TextIOWrapper object at <span class="number">0x000002846BDBEB40</span>&gt;</div></pre></td></tr></table></figure></p>
-<p>你可以反复调用<code>write()</code>来写入文件，但是务必要调用<code>f.close()</code>来关闭文件。当我们写文件时，操作系统往往不会立刻把文件写入磁盘，而是放到缓存里面，空闲时候再慢慢写入。只有调用<code>close()</code>方法时，操作系统才保证把没有写入的数据全部写入磁盘。忘记调<code>close()</code>的后果是可能导致数据只写了一部分。还是用with比较保险：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">with</span> open(<span class="string">'C:/Users/cdxu0/Desktop/临时文件/test.txt'</span>,<span class="string">'w'</span>) <span class="keyword">as</span> f:</div><div class="line"><span class="meta">... </span>    f.write(<span class="string">'hello,python!'</span>)</div><div class="line">...</div><div class="line"><span class="number">13</span></div></pre></td></tr></table></figure></p>
-<p>要写入特定编码的文本文件，请给<code>open()</code>函数传入<code>encoding</code>参数，将字符串自动转换成指定编码。</p>
-<hr>
-<h2 id="StringIO和BytesIO"><a href="#StringIO和BytesIO" class="headerlink" title="StringIO和BytesIO"></a>StringIO和BytesIO</h2><h3 id="StringIO"><a href="#StringIO" class="headerlink" title="StringIO"></a>StringIO</h3><p>很多时候，数据读写不一定是文件，也可以在内存中读写。StringIO顾名思义就是在内存中读写str。要把str写入StringIO，我们需要先创建一个StringIO，然后像文件一样写入就可以了：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> io <span class="keyword">import</span> StringIO</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=StringIO()</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.write(<span class="string">'hello'</span>)</div><div class="line"><span class="number">5</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.write(<span class="string">' '</span>)</div><div class="line"><span class="number">1</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.write(<span class="string">'worls! '</span>)</div><div class="line"><span class="number">7</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(f.getvalue())</div><div class="line">hello worls!</div></pre></td></tr></table></figure></p>
-<p><code>getvalue()</code>方法用于获得写入后的str。</p>
-<p>要读取StringIO，可以用一个str初始化StringIO，然后像问价一样读取：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> io <span class="keyword">import</span> StringIO</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=StringIO(<span class="string">'hello\nhi\nbye!'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line"><span class="meta">... </span>    s=f.readline()</div><div class="line"><span class="meta">... </span>    <span class="keyword">if</span> s==<span class="string">''</span>:</div><div class="line"><span class="meta">... </span>            <span class="keyword">break</span></div><div class="line"><span class="meta">... </span>    print(s.strip())</div><div class="line">...</div><div class="line">hello</div><div class="line">hi</div><div class="line">bye!</div></pre></td></tr></table></figure></p>
-<h3 id="BytesIO"><a href="#BytesIO" class="headerlink" title="BytesIO"></a>BytesIO</h3><p>StringIO操作的只能是str，如果要操作二进制数据，就需要使用BytesIO。BytesIO实现了在内存中读写bytes，我们创建一个BytesIO，然后写入一些bytes:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> io <span class="keyword">import</span> BytesIO</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=BytesIO()</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.write(<span class="string">'中文'</span>.encode(<span class="string">'utf-8'</span>))</div><div class="line"><span class="number">6</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(f.getvalue())</div><div class="line"><span class="string">b'\xe4\xb8\xad\xe6\x96\x87'</span></div></pre></td></tr></table></figure></p>
-<p>请注意，写入的不是str，而是经过UTF-8编码的bytes。和StringIO类似，可以用一个bytes 初始化BytesIO，然后像读文件一样读取：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> io <span class="keyword">import</span> BytesIO</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=BytesIO(<span class="string">b'\xe4\xb8\xad\xe6\x96\x87'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.read()</div><div class="line"><span class="string">b'\xe4\xb8\xad\xe6\x96\x87'</span></div></pre></td></tr></table></figure></p>
-<hr>
-<h2 id="操作文件和目录"><a href="#操作文件和目录" class="headerlink" title="操作文件和目录"></a>操作文件和目录</h2><p>如果我们要操作文件、目录，可以在命令行下面输入操作系统提供的各种命令来完成，比如<code>dir</code>、<code>cp</code>等命令。</p>
-<p>如果要在python程序中执行这些目录和文件操作怎么办？其实操作系统提供的命令只是简单的调用了操作系统提供的接口函数，Python内置的<code>os</code>模块也可以直接调用操作系统提供的接口函数。</p>
-<p>打开python交互式命令行，我们来看看如何使用<code>os</code>模块的基本功能：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> os</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>os.name</div><div class="line"><span class="string">'nt'</span></div></pre></td></tr></table></figure></p>
-<p>如果是<code>nt</code>说明是Windows系统，如果是<code>posix</code>，说明是<code>Linux</code>、<code>Unix</code>、<code>Mac OS X</code>系统。要获取详细的系统信息，可以调用<code>uname()</code>函数，不过在Windows上不提供。</p>
-<h3 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h3><p>在操作系统中定义环境变量，全部保存在<code>os.environ</code>这个变量中，可以直接查看：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>os.environ</div><div class="line">environ(&#123;<span class="string">'PATH'</span>: <span class="string">'C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Users\\cdxu0\\AppData\\Local\\Programs\\Python\\Python35\\Scripts\\;C:\\Users\\cdxu0\\AppData\\Local\\Programs\\Python\\Python35\\'</span>, <span class="string">'PROGRAMFILES(X86)'</span>: <span class="string">'C:\\Program Files (x86)'</span>, <span class="string">'APPDATA'</span>: <span class="string">'C:\\Users\\cdxu0\\AppData\\Roaming'</span>, <span class="string">'FPS_BROWSER_USER_PROFILE_STRING'</span>: <span class="string">'Default'</span>, <span class="string">'COMMONPROGRAMFILES'</span>: <span class="string">'C:\\Program Files\\Common Files'</span>, <span class="string">'ALLUSERSPROFILE'</span>: <span class="string">'C:\\ProgramData'</span>, <span class="string">'COMSPEC'</span>: <span class="string">'C:\\Windows\\system32\\cmd.exe'</span>, <span class="string">'SESSIONNAME'</span>: <span class="string">'Console'</span>, <span class="string">'COMPUTERNAME'</span>: <span class="string">'DESKTOP-F92KHJR'</span>, <span class="string">'USERDOMAIN_ROAMINGPROFILE'</span>: <span class="string">'DESKTOP-F92KHJR'</span>, <span class="string">'SYSTEMDRIVE'</span>: <span class="string">'C:'</span>, <span class="string">'PROCESSOR_LEVEL'</span>: <span class="string">'6'</span>, <span class="string">'COMMONPROGRAMFILES(X86)'</span>: <span class="string">'C:\\Program Files (x86)\\Common Files'</span>, <span class="string">'LOGONSERVER'</span>: <span class="string">'\\\\MicrosoftAccount'</span>, <span class="string">'PROMPT'</span>: <span class="string">'$P$G'</span>, <span class="string">'PROCESSOR_REVISION'</span>: <span class="string">'4501'</span>, <span class="string">'PROCESSOR_IDENTIFIER'</span>: <span class="string">'Intel64 Family 6 Model 69 Stepping 1, GenuineIntel'</span>, <span class="string">'PROGRAMFILES'</span>: <span class="string">'C:\\Program Files'</span>, <span class="string">'USERNAME'</span>: <span class="string">'cdxu0'</span>, <span class="string">'PATHEXT'</span>: <span class="string">'.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC'</span>, <span class="string">'WINDIR'</span>: <span class="string">'C:\\Windows'</span>, <span class="string">'USERPROFILE'</span>: <span class="string">'C:\\Users\\cdxu0'</span>, <span class="string">'MOZ_PLUGIN_PATH'</span>: <span class="string">'C:\\PROGRAM FILES (X86)\\FOXIT SOFTWARE\\FOXIT READER PLUS\\plugins\\'</span>, <span class="string">'PROCESSOR_ARCHITECTURE'</span>: <span class="string">'AMD64'</span>, <span class="string">'LOCALAPPDATA'</span>: <span class="string">'C:\\Users\\cdxu0\\AppData\\Local'</span>, <span class="string">'PROGRAMDATA'</span>: <span class="string">'C:\\ProgramData'</span>, <span class="string">'HOMEPATH'</span>: <span class="string">'\\Users\\cdxu0'</span>, <span class="string">'PSMODULEPATH'</span>: <span class="string">'C:\\Program Files\\WindowsPowerShell\\Modules;C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\Modules'</span>, <span class="string">'TMP'</span>: <span class="string">'C:\\Users\\cdxu0\\AppData\\Local\\Temp'</span>, <span class="string">'FPS_BROWSER_APP_PROFILE_STRING'</span>: <span class="string">'Internet Explorer'</span>, <span class="string">'OS'</span>: <span class="string">'Windows_NT'</span>, <span class="string">'NUMBER_OF_PROCESSORS'</span>: <span class="string">'4'</span>, <span class="string">'PROGRAMW6432'</span>: <span class="string">'C:\\Program Files'</span>, <span class="string">'SYSTEMROOT'</span>: <span class="string">'C:\\Windows'</span>, <span class="string">'COMMONPROGRAMW6432'</span>: <span class="string">'C:\\Program Files\\Common Files'</span>, <span class="string">'ASL.LOG'</span>: <span class="string">'Destination=file'</span>, <span class="string">'PUBLIC'</span>: <span class="string">'C:\\Users\\Public'</span>, <span class="string">'TEMP'</span>: <span class="string">'C:\\Users\\cdxu0\\AppData\\Local\\Temp'</span>, <span class="string">'USERDOMAIN'</span>: <span class="string">'DESKTOP-F92KHJR'</span>, <span class="string">'HOMEDRIVE'</span>: <span class="string">'C:'</span>&#125;)</div></pre></td></tr></table></figure></p>
-<p>要获取某个环境变量的值，可以调用<code>os.environ.get(&#39;key&#39;)</code>：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>os.environ.get(<span class="string">'PATH'</span>)</div><div class="line"><span class="string">'C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Users\\cdxu0\\AppData\\Local\\Programs\\Python\\Python35\\Scripts\\;C:\\Users\\cdxu0\\AppData\\Local\\Programs\\Python\\Python35\\'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>os.environ.get(<span class="string">'OS'</span>,<span class="string">'default'</span>)</div><div class="line"><span class="string">'Windows_NT'</span></div></pre></td></tr></table></figure></p>
-<h3 id="操作文件和目录-1"><a href="#操作文件和目录-1" class="headerlink" title="操作文件和目录"></a>操作文件和目录</h3><p>操作文件和目录的函数一部分放在<code>os</code>模块中，一部分放在<code>`os.path</code>模块中，查看、创建、删除目录的调用如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>os.path.abspath(<span class="string">'.'</span>)</div><div class="line"><span class="string">'C:\\Users\\cdxu0'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>os.path.join(<span class="string">'C://Users//cdxu0'</span>,<span class="string">'testdir'</span>)</div><div class="line"><span class="string">'C://Users//cdxu0\\testdir'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>os.mkdir(<span class="string">'C://Users/cdxu0/testdir'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>os.rmdir(<span class="string">'C://Users/cdxu0/testdir'</span>)</div></pre></td></tr></table></figure></p>
-<p>把两个路径合成一个时，不要直接拼字符串，而要通过<code>os.path,join()</code>函数，这样可以正确处理不同操作系统的路径分隔符。同样拆分路径时，也不要哦去拆字符串，而要通过<code>os.path.split()</code>函数，这样可以把一个路径拆为两部分，后一部分总是最后级别的目录或文件名：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; os.path.split(&apos;C://Users/cdxu0/testdir&apos;)</div><div class="line">(&apos;C://Users/cdxu0&apos;, &apos;testdir&apos;)</div></pre></td></tr></table></figure></p>
-<p><code>os.pathsplitext()</code>可以直接让你得到文件扩展名：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; os.path.splitext(&apos;C://Users/cdxu0/testdir&apos;)</div><div class="line">(&apos;C://Users/cdxu0/testdir&apos;, &apos;&apos;)</div></pre></td></tr></table></figure></p>
-<p>这些合并、拆分路径的函数并不要求目录和文件要真实存在，他们只对字符串进行操作。</p>
-<p>文件操作使用下面的函数。假定当前目录下有一个<code>test.txt</code>文件：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>os.mkdir(<span class="string">'test.txt'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>os.rename(<span class="string">'test.txt'</span>,<span class="string">'test.py'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>os.remove(<span class="string">'test.py'</span>)</div></pre></td></tr></table></figure></p>
-<p>但是复制文件的函数不在<code>os</code>模块中，原因是复制文件并非是由操作系统提供的系统调用。<code>shutil</code>模块提供了<code>copyfile()</code>的函数，你可以在该模块中找到很多使用函数作为os模块的补充。</p>
-<p>最后来看看如何利用python的特性来过滤文件。比如我们要列出当前目录下的所有目录：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; [x for x in os.listdir(&apos;.&apos;) if os.path.isdir(x)]</div><div class="line">[&apos;.android&apos;, &apos;.idlerc&apos;, &apos;3D Objects&apos;, &apos;AppData&apos;, &apos;Application Data&apos;, &apos;Contacts&apos;, &apos;Cookies&apos;, &apos;Desktop&apos;, &apos;Documents&apos;, &apos;Downloads&apos;, &apos;Evernote&apos;, &apos;Favorites&apos;, &apos;IntelGraphicsProfiles&apos;, &apos;Links&apos;, &apos;Local Settings&apos;, &apos;Music&apos;, &apos;My Documents&apos;, &apos;NetHood&apos;, &apos;OneDrive&apos;, &apos;Pictures&apos;, &apos;PrintHood&apos;, &apos;Recent&apos;, &apos;Saved Games&apos;, &apos;Searches&apos;, &apos;SendTo&apos;, &apos;Templates&apos;, &apos;test.py&apos;, &apos;testdir&apos;, &apos;Videos&apos;, &apos;「开始」菜单&apos;]</div></pre></td></tr></table></figure></p>
-<p>要列出所有的，.py文件：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">for</span> x <span class="keyword">in</span> os.listdir(<span class="string">'.'</span>) <span class="keyword">if</span> os.path.isfile(x) <span class="keyword">and</span> os.path.splitext(x)[<span class="number">1</span>]==<span class="string">'.py'</span>]</div><div class="line">[<span class="string">'wenzi.py'</span>]</div></pre></td></tr></table></figure>
-<hr>
-<h2 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h2><p>在程序运行过程中，所有的变量都是在内存中，比如，定义一个dict:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">d=dict(name=<span class="string">'Bob'</span>,age=<span class="number">20</span>,score=<span class="number">99</span>)</div></pre></td></tr></table></figure></p>
-<p>可以随时修改变量，比如把<code>name</code>改为<code>bill</code>，但是一旦程序结束，变量所占用的内存就会被系统全部回收。如果没有把修改后的<code>bill</code>存储到磁盘上，下次重新运行程序，变量又被初始化为<code>Bob</code>。</p>
-<p>我们把变量从内存中变为可存储或传输的过程称之为序列化，在Python中叫picking，在其他语言中也被称为serialization，marshalling，flattening等。</p>
-<p>序列化之后，就可以把序列化后的内容写入磁盘，或者通过网络传输到别的机器上。反过来吧变量内容从序列化的对象重新读到内存里称之为反序列化，即unpicking。</p>
-<p>Python提供了<code>pickle</code>模块来实现序列化。</p>
-<p>首先，我们尝试把一个对象序列化并写入文件：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> pickle</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>d=dict(name=<span class="string">'Bob'</span>,age=<span class="number">20</span>,score=<span class="number">99</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>pickle.dumps(d)</div><div class="line"><span class="string">b'\x80\x03&#125;q\x00(X\x04\x00\x00\x00nameq\x01X\x03\x00\x00\x00Bobq\x02X\x03\x00\x00\x00ageq\x03K\x14X\x05\x00\x00\x00scoreq\x04Kcu.'</span></div></pre></td></tr></table></figure></p>
-<p><code>pickle.dumps()</code>方法把任意对象序列化成一个bytes，然后，就可以把这个bytes写入文件。或者用另一个方法<code>pickle.dump()</code>直接把对象序列化后写入一个file-like Object：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=open(<span class="string">'dump.txt'</span>,<span class="string">'wb'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>pickle.dump(d,f)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.close()</div></pre></td></tr></table></figure></p>
-<p>看看写入的<code>dump.txt</code>文件，内容很乱，这些都是python保存的对象内部信息。当我们要把对象从磁盘读到内存时，可以先把内容读到一个bytes，然后用<code>pickle.loads()</code>方法反序列化出对象，也可以直接用<code>pickle.load()</code>方法从一个file-like Object中直接反序列化出对象。我们打开另一个Python命令行来反序列化刚才保存的对象：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=open(<span class="string">'dump.txt'</span>,<span class="string">'rb'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>d=pickle.load(f)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.close</div><div class="line">&lt;built-<span class="keyword">in</span> method close of _io.BufferedReader object at <span class="number">0x0000028B1BA07938</span>&gt;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>d</div><div class="line">&#123;<span class="string">'name'</span>: <span class="string">'BOB'</span>, <span class="string">'age'</span>: <span class="number">20</span>, <span class="string">'score'</span>: <span class="number">99</span>&#125;</div></pre></td></tr></table></figure></p>
-<p>这个变量和原来的变量是完全不相干的对象，只是内容相同而已。</p>
-<h3 id="JSON"><a href="#JSON" class="headerlink" title="JSON"></a>JSON</h3><p>如果我们要在不同的编程语言之间传递对象，就必须把对象序列化为标准格式，比如XMl，但更好的方法是序列化为JSON，因为后者表示出来就是一个字符串，可以被所有语言读取，也可以方便的存储到磁盘或者通过网络传输。JSON不仅是标准格式，并且比XML更快，而且可以直接在WEB页面中读取，非常方便。</p>
-<p>JSON表示的对象就是标准的JavaScript语言的对象，JSON和Python内置的数据类型对应如下：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">JSON</th>
-<th style="text-align:right">Pythonv</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">{}</td>
-<td style="text-align:right">dict</td>
-</tr>
-<tr>
-<td style="text-align:left">[]</td>
-<td style="text-align:right">list</td>
-</tr>
-<tr>
-<td style="text-align:left">“string”</td>
-<td style="text-align:right">str</td>
-</tr>
-<tr>
-<td style="text-align:left">1234.56</td>
-<td style="text-align:right">int或float</td>
-</tr>
-<tr>
-<td style="text-align:left">true/false</td>
-<td style="text-align:right">True/False</td>
-</tr>
-<tr>
-<td style="text-align:left">null</td>
-<td style="text-align:right">None</td>
-</tr>
-</tbody>
-</table>
-<p>Python内置的json模块提供了非常完善的Python对象到JSON格式的转化。把python对象变为一个JSON：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> json</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>d=dict(name=<span class="string">'bob'</span>,age=<span class="number">34</span>,score=<span class="number">99</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>json.dumps(d)</div><div class="line"><span class="string">'&#123;"score": 99, "name": "bob", "age": 34&#125;'</span></div></pre></td></tr></table></figure></p>
-<p><code>dumps()</code>方法返回一个<code>str</code>内容就是标准的JSON。类似的，<code>dump()</code>方法可以直接把JSON写入一个<code>file-like Object</code>。</p>
-<p>要把JSON反序列化为Python对象，用<code>loads()</code>或者对应的<code>load()</code>方法可以直接把JSON的字符串反序列化，后者在<code>file-like Object</code>中读取字符串并反序列化：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>json_str=<span class="string">'&#123;"score": 99, "name": "bob", "age": 34&#125;'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>json.loads(json_str)</div><div class="line">&#123;<span class="string">'score'</span>: <span class="number">99</span>, <span class="string">'name'</span>: <span class="string">'bob'</span>, <span class="string">'age'</span>: <span class="number">34</span>&#125;</div></pre></td></tr></table></figure></p>
-<p>由于JSON标准规定JSON编码是UTF-8，所有我们总是能正确的在python的str和JSON的字符串之间切换。</p>
-<h3 id="JSON进阶"><a href="#JSON进阶" class="headerlink" title="JSON进阶"></a>JSON进阶</h3><p>Python的<code>dict</code>对象可以直接序列化为JSON的<code>{}</code>，不过我们更喜欢用class表示对象，比如定义Student类，然后序列化：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Student</span><span class="params">(object)</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,name,age,score)</span>:</span></div><div class="line"><span class="meta">... </span>            self.name=name</div><div class="line"><span class="meta">... </span>            self.age=age</div><div class="line"><span class="meta">... </span>            self.score=score</div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>s=Student(<span class="string">'Bob'</span>,<span class="number">20</span>,<span class="number">90</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(json.dumps(s))</div></pre></td></tr></table></figure></p>
-<p>运行结果是TypeError，原因是Student对象不是一个可以序列化为JSON的对象。查看<code>dumps()</code>方法的参数列表，发现除了第一个必须的<code>obj</code>参数外，<code>dumps()</code>方法还提供了很多可选参数：<br><a href="https://docs.python.org/3/library/json.html#json.dumps" target="_blank" rel="external">https://docs.python.org/3/library/json.html#json.dumps</a><br>这些可选参数就是让我们来定制JSON序列化。前面Student类实例无法序列化为JSON的原因是在默认情况下，<code>dumps()</code>方法不知道如何将Student实例变为一个JSON的{}对象。</p>
-<p>可选参数<code>default</code>就是把任意一个对象变成一个可序列化为JSON的对象，我们只需要为Student专门写一个转换函数，再把函数传进去即可：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">student2dict</span><span class="params">(std)</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">return</span> &#123;<span class="string">'name'</span>:std.name, <span class="string">'age'</span>:std.age, <span class="string">'score'</span>:std.score&#125;</div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(json.dumps(s,default=student2dict))</div><div class="line">&#123;<span class="string">"score"</span>: <span class="number">90</span>, <span class="string">"name"</span>: <span class="string">"Bob"</span>, <span class="string">"age"</span>: <span class="number">20</span>&#125;</div></pre></td></tr></table></figure></p>
-<p>这样，Student实例首先被<code>student2dict()</code>函数转换成dict，然后再顺利的被序列化为JSON，但是如果改变类，则仍然无法序列化为JSON。我们可以把任意class的实例变为dict：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(json.dumps(s,default=<span class="keyword">lambda</span> obj:obj.__dict__))</div><div class="line">&#123;<span class="string">"age"</span>: <span class="number">20</span>, <span class="string">"score"</span>: <span class="number">90</span>, <span class="string">"name"</span>: <span class="string">"Bob"</span>&#125;</div></pre></td></tr></table></figure></p>
-<p>因为通常class的实例都有一个<code>__dict__</code>属性，它就是一个dict，用来存储实例变量，也有少量例外，如定义了<strong>slots</strong>的class。</p>
-<p>同样，如果我们要把JSON反序列化为一个Student 对象实例，<code>loads()</code>方法首先转换出一个dict对象，然后我们传入<code>object_hook</code>函数负责把一个dict转换为Studnet实例。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">dict2student</span><span class="params">(d)</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">return</span> Student(d[<span class="string">'name'</span>],d[<span class="string">'age'</span>],d[<span class="string">'score'</span>])</div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>json_str=<span class="string">'&#123;"age":20, "score":88, "name":"Eason"&#125;'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(json.loads(json_str, object_hook=dict2student))</div><div class="line">&lt;__main__.Student object at <span class="number">0x00000262C641C6A0</span>&gt;</div></pre></td></tr></table></figure></p>
-<p>Python语言特定的序列化模块是<code>pickle</code>，但是如果要把序列化搞的更通用、更符合Web标准，就可以使用json模块。</p>
-<p>json模块的<code>dumps()</code>和<code>loads()</code>函数是定义的很好的接口的典范。当我们使用时，只需要传入一个必须的参数，但是当默认的序列化或者反序列化机制不满足我们的要求时，我们又可以传入更多参数来定制序列化或者反序列化，即做到了接口简单易用，又做到了充分的扩展性和灵活性。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -4499,7 +4572,7 @@ String(request.getParamter(&quot;userName&quot;).getBytes(&quot;ISO8859-1&quot;)
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">58</span>
+                <span class="site-state-item-count">60</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

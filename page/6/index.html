@@ -278,6 +278,354 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/09/15.电子邮件/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/09/09/15.电子邮件/" itemprop="url">15. 电子邮件</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-09T15:10:22+08:00">
+                2017-09-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="电子邮件"><a href="#电子邮件" class="headerlink" title="电子邮件"></a>电子邮件</h1><p>电子邮件软件成为MUA：Mail User Agent—-邮件用户代理。E-mail从MUA发出去，不是直接到达对方电脑而是发到MTA(Mail Transfer Agent—邮件传输代理)，就是Email服务提供商，比如网易，新浪等。MTA会把email投递到MDA(Mail Delivery Agent—邮件投递代理)，存储在某个文件或特殊的数据库里也就是邮箱。要想获取邮件，必须通过MUA从MDA上获取到自己电脑上。</p>
+<blockquote>
+<p>发件人—&gt;MUA—&gt;MTA—&gt;MTA—&gt;若干个MTA—&gt;MDA&lt;—MUA&lt;—收件人</p>
+</blockquote>
+<p>要编写程序来发送和接收邮件，本质上就是：</p>
+<blockquote>
+<p>1、编写MUA把邮件发到MTA<br>2、编写MUA从MDA上收邮件</p>
+</blockquote>
+<p>发邮件时MUA和MTA使用的协议是SMTP：Simple Mail Transfer Protocol。<br>收邮件时，MUA和MDA使用的协议有两种：POP：Post Office Protocol，目前版本是3，俗称POP3；IMAP：Internet Message Access Protocol，目前版本是4，优点是不但能取邮件，还可以直接操作MDA上存储的邮件，比如从收件箱移到垃圾箱。</p>
+<p>邮件客户端在发邮件时，会让你先配置SMTP服务器，也就是你要发到哪个MTA上。比如你在用163邮箱，就不能直接发送到新浪的MTA上，你要填163提供的SMTP服务器地址：<code>smtp.163.com</code>，还需要输入邮箱地址和邮箱口令来证明你是163用户，这样MUA才能正常地把Email通过SMTP协议发送到MTA。</p>
+<p>从MDA收取邮件时，MDA服务器会要求验证邮箱口令，这样MUA才能顺利地通过POP或IMAP协议从MDA获取邮件。</p>
+<h2 id="SMTP发送邮件"><a href="#SMTP发送邮件" class="headerlink" title="SMTP发送邮件"></a>SMTP发送邮件</h2><p>SMTP是发送邮件的协议，Python内置对SMTP的支持，可以发送纯文本邮件，HTML邮件及其附件。</p>
+<p>Python对SMTP支持有<code>smtplib</code>和<code>email</code>两个模块，<code>email</code>负责构造邮件，<code>stmplib</code>负责发送邮件。首先，我们来构造一个最简单的纯文本邮件：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> email.mime.text <span class="keyword">import</span> MIMEText</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>msg=MIMEText(<span class="string">'Hello, send by Python...'</span>,<span class="string">'plain'</span>,<span class="string">'utf-8'</span>)</div></pre></td></tr></table></figure></p>
+<p>注意到构造<code>MIMEText</code>对象时，第一个参数就是邮件正文，第二个参数是MIME的subtype，传入<code>plain</code>表示纯文本，最终的MIME就是<code>text/plain</code>，最后一定要用<code>utf-8</code>编码保证多语言兼容性。然后通过SMTP发送出去：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">from_addr=input(<span class="string">'From:'</span>)</div><div class="line">password=input(<span class="string">'Password:'</span>)</div><div class="line"></div><div class="line">to_addr=input(<span class="string">'To:'</span>)</div><div class="line"></div><div class="line">smtp_server=input(<span class="string">'SMTP server: '</span>)</div><div class="line"></div><div class="line"><span class="keyword">import</span> smtplib</div><div class="line">server=smtplib.SMTP(smtp_server, <span class="number">25</span>)<span class="comment">#smtp默认的端口是25</span></div><div class="line">server.set_debuglevel(<span class="number">1</span>)</div><div class="line">server.login(from_addr, password)</div><div class="line">server.sendmail(from_addr,[to_addr],msg.as_string())</div><div class="line">server.quit()</div></pre></td></tr></table></figure></p>
+<p>我们用<code>set_debuglevel(1)</code>就可以打印出和SMTP服务器交互的所有信息。SMTP协议就是简单的文本命令和相应。<code>login()</code>方法用来登录SMTP服务器，<code>sendmail()</code>方法就是发邮件，由于可以一次发给对个人，所以传入一个<code>list</code>，邮件正文是一个<code>str</code>，<code>as_string()</code>把MIMEText对象编程<code>str</code>。收到的邮件的问题是没有主题收件人没有显示为友好的名字，且收到了邮件却提示你不在收件人中。这是因为邮件主题、如何显示发件人、收件人的信息并不是通过SMTP协议发给MTA，而是包含在发给MTA的文本中的，所以，我们必须把From、To、Subject添加到MIMEText中才是一封完整的邮件：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> smtplib</div><div class="line"><span class="keyword">from</span> email <span class="keyword">import</span> encoders</div><div class="line"><span class="keyword">from</span> email.mime.text <span class="keyword">import</span> MIMEText</div><div class="line"><span class="keyword">from</span> email.header <span class="keyword">import</span> Header</div><div class="line"><span class="keyword">from</span> email.utils <span class="keyword">import</span> parseaddr, formataddr</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">_format_addr</span><span class="params">(s)</span>:</span></div><div class="line">    name, addr = parseaddr(s)</div><div class="line">    <span class="keyword">return</span> formataddr((Header(name, <span class="string">'utf-8'</span>).encode(), addr))</div><div class="line"></div><div class="line">from_addr=input(<span class="string">'From:'</span>)</div><div class="line">password=input(<span class="string">'Password:'</span>)</div><div class="line">to_addr=input(<span class="string">'To:'</span>)</div><div class="line">smtp_server=input(<span class="string">'SMTP server: '</span>)</div><div class="line"></div><div class="line">msg=MIMEText(<span class="string">'hello, send by python...'</span>, <span class="string">'plain'</span> ,<span class="string">'utf-8'</span>)</div><div class="line">msg[<span class="string">'From'</span>] = _format_addr(<span class="string">'Python爱好者 &lt;%s&gt;'</span> % from_addr)</div><div class="line">msg[<span class="string">'To'</span>] = _format_addr(<span class="string">'管理员 &lt;%s&gt;'</span> % to_addr)</div><div class="line">msg[<span class="string">'Subject'</span>] = Header(<span class="string">'来自SMTP的问候……'</span>, <span class="string">'utf-8'</span>).encode()</div><div class="line"></div><div class="line">server = smtplib.SMTP(smtp_server, <span class="number">25</span>) <span class="comment"># SMTP协议默认端口是25</span></div><div class="line">server.set_debuglevel(<span class="number">1</span>)</div><div class="line">server.login(from_addr, password)</div><div class="line">server.sendmail(from_addr, [to_addr], msg.as_string())</div><div class="line">server.quit()</div></pre></td></tr></table></figure></p>
+<p>我们编写了一个函数<code>_format_addr()</code>来格式化一个邮件地址。注意不能简单地传入<code>name &lt;addr@example.com&gt;</code>,因为如果包含中文，需要通过<code>Header</code>对象编码。</p>
+<p><code>msg[&#39;To&#39;]</code>发送的是字符串而不是list，如果有多个地址邮件，用，分隔即可。发送邮箱显示：<br><img src="/img/1478864121047.png" alt="Alt text"></p>
+<p>你看到的收件人的名字可能不是我们传入的管理员，因为很多邮件服务商在显示邮件时会把收件人名字自动替换为用户注册的名字。我们插卡Email原始内容如下：</p>
+<blockquote>
+<p>From: =?utf-8?b?UHl0aG9u54ix5aW96ICF?= <a href="&#x6d;&#x61;&#105;&#108;&#x74;&#111;&#x3a;&#x78;&#120;&#120;&#x78;&#x78;&#x78;&#64;&#x31;&#x36;&#51;&#x2e;&#99;&#x6f;&#109;">&#x78;&#120;&#120;&#x78;&#x78;&#x78;&#64;&#x31;&#x36;&#51;&#x2e;&#99;&#x6f;&#109;</a><br>To: =?utf-8?b?566h55CG5ZGY?= <a href="&#x6d;&#97;&#x69;&#x6c;&#116;&#x6f;&#58;&#x78;&#x78;&#120;&#x78;&#x78;&#x78;&#x40;&#113;&#113;&#x2e;&#99;&#111;&#x6d;">&#x78;&#x78;&#120;&#x78;&#x78;&#x78;&#x40;&#113;&#113;&#x2e;&#99;&#111;&#x6d;</a><br>Subject: =?utf-8?b?5p2l6IeqU01UUOeahOmXruWAmeKApuKApg==?=</p>
+</blockquote>
+<h3 id="发送HTML邮件"><a href="#发送HTML邮件" class="headerlink" title="发送HTML邮件"></a>发送HTML邮件</h3><p>如果我们要发送HTML邮件而不是普通的纯文本文件怎么办，就在构造<code>MIMEText</code>对象时，把HTML字符串传进去，再把第二个参数由plain改为plain就可以了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">msg=MIMEText(&apos;&lt;html&gt;&lt;body&gt;&lt;h1&gt;Hello&lt;/h1&gt;&apos; + &apos;&lt;p&gt;send by &lt;a href=&quot;http://www.python.org&quot;&gt;Python&lt;/a&gt;...&lt;/p&gt;&apos;+&apos;&lt;/body&gt;&lt;/html&gt;&apos;, &apos;html&apos;, &apos;utf-8&apos;)</div></pre></td></tr></table></figure></p>
+<p>再发送一遍邮件：<br><img src="/img/1478864651325.png" alt="Alt text"></p>
+<h3 id="发送附件"><a href="#发送附件" class="headerlink" title="发送附件"></a>发送附件</h3><p>如果Email中要加上附件，可以把带附件的邮件看做包含若干部分的邮件：文本和各个附件本身，所以可以构造一个<code>MIMEMultipart</code>对象代表邮件本身，然后往里面加上一个<code>MIMEText</code>作为邮件正文，再继续往里面加上表示附件的<code>MIMEBase</code>对象即可：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 邮件对象:</span></div><div class="line">msg = MIMEMultipart()</div><div class="line">msg[<span class="string">'From'</span>] = _format_addr(<span class="string">'Python爱好者 &lt;%s&gt;'</span> % from_addr)</div><div class="line">msg[<span class="string">'To'</span>] = _format_addr(<span class="string">'管理员 &lt;%s&gt;'</span> % to_addr)</div><div class="line">msg[<span class="string">'Subject'</span>] = Header(<span class="string">'来自SMTP的问候……'</span>, <span class="string">'utf-8'</span>).encode()</div><div class="line"></div><div class="line"><span class="comment"># 邮件正文是MIMEText:</span></div><div class="line">msg.attach(MIMEText(<span class="string">'send with file...'</span>, <span class="string">'plain'</span>, <span class="string">'utf-8'</span>))</div><div class="line"></div><div class="line"><span class="comment"># 添加附件就是加上一个MIMEBase，从本地读取一个图片:</span></div><div class="line"><span class="keyword">with</span> open(<span class="string">'/Users/michael/Downloads/test.png'</span>, <span class="string">'rb'</span>) <span class="keyword">as</span> f:</div><div class="line">    <span class="comment"># 设置附件的MIME和文件名，这里是png类型:</span></div><div class="line">    mime = MIMEBase(<span class="string">'image'</span>, <span class="string">'png'</span>, filename=<span class="string">'test.png'</span>)</div><div class="line">    <span class="comment"># 加上必要的头信息:</span></div><div class="line">    mime.add_header(<span class="string">'Content-Disposition'</span>, <span class="string">'attachment'</span>, filename=<span class="string">'test.png'</span>)</div><div class="line">    mime.add_header(<span class="string">'Content-ID'</span>, <span class="string">'&lt;0&gt;'</span>)</div><div class="line">    mime.add_header(<span class="string">'X-Attachment-Id'</span>, <span class="string">'0'</span>)</div><div class="line">    <span class="comment"># 把附件的内容读进来:</span></div><div class="line">    mime.set_payload(f.read())</div><div class="line">    <span class="comment"># 用Base64编码:</span></div><div class="line">    encoders.encode_base64(mime)</div><div class="line">    <span class="comment"># 添加到MIMEMultipart:</span></div><div class="line">    msg.attach(mime)</div></pre></td></tr></table></figure></p>
+<p> 发送结果：<br> <img src="/img/1478944551315.png" alt="Alt text"></p>
+<h3 id="发送图片"><a href="#发送图片" class="headerlink" title="发送图片"></a>发送图片</h3><p>如果要把一个图片嵌入到邮件正文中，直接在HTML邮件中连接图片地址是不行的，我们需要按照发送附件的方法，把邮件作为附件添加进去，然后在HTML中通过引用<code>src=&quot;cid:0&quot;</code>就可以把附件作为图片嵌入。如果有多个图片，可以依次编号，然后引用不同的<code>cid:x</code>就可以。</p>
+<p>把上面代码中加入<code>MIMEMultipart</code>的<code>MIMEText</code>从<code>plain</code>改为<code>html</code>，然后在适当的位置引用图片：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">msg.attach(MIMEText(<span class="string">'&lt;html&gt;&lt;body&gt;&lt;h1&gt;Hello&lt;/h1&gt;'</span> +</div><div class="line">    <span class="string">'&lt;p&gt;&lt;img src="cid:0"&gt;&lt;/p&gt;'</span> +</div><div class="line">    <span class="string">'&lt;/body&gt;&lt;/html&gt;'</span>, <span class="string">'html'</span>, <span class="string">'utf-8'</span>))</div></pre></td></tr></table></figure></p>
+<p>发送结果：<br><img src="/img/1478945851210.png" alt="Alt text"></p>
+<h3 id="同时支持HTML和Plain格式"><a href="#同时支持HTML和Plain格式" class="headerlink" title="同时支持HTML和Plain格式"></a>同时支持HTML和Plain格式</h3><p>如果我们发送HTML邮件，收件人通过浏览器或者Outlook之类的软件是可以正常浏览邮件内容的，但是如果收件人的设备无法查看HTML邮件时，我们可以在发送HTML的同时再附加一个纯文本，如果收件人无法查看HTML格式的邮件，就可以自动降级查看纯文本邮件。</p>
+<p>利用<code>MIMEMultipart</code>可以组合一个HTML和Plain，要注意指定subtype是<code>alternative</code>:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">msg = MIMEMultipart(<span class="string">'alternative'</span>)</div><div class="line">msg[<span class="string">'From'</span>] = ...</div><div class="line">msg[<span class="string">'To'</span>] = ...</div><div class="line">msg[<span class="string">'Subject'</span>] = ...</div><div class="line"></div><div class="line">msg.attach(MIMEText(<span class="string">'hello'</span>, <span class="string">'plain'</span>, <span class="string">'utf-8'</span>))</div><div class="line">msg.attach(MIMEText(<span class="string">'&lt;html&gt;&lt;body&gt;&lt;h1&gt;Hello&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;'</span>, <span class="string">'html'</span>, <span class="string">'utf-8'</span>))</div><div class="line"><span class="comment"># 正常发送msg对象...</span></div></pre></td></tr></table></figure></p>
+<h3 id="加密SMTP"><a href="#加密SMTP" class="headerlink" title="加密SMTP"></a>加密SMTP</h3><p>使用标准的25端口连接SMTP服务器时，使用的是明文传输，发送邮件的整个过程可能会被窃听。要更安全地发送邮件，可以加密SMTP会话，实际上就是先创建SSL安全连接，然后再使用SMTP协议发送邮件。</p>
+<p>Gmail提供的SMTP服务必须要加密传输。首先知道Gmail的SMTP端口是587，修改代码如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">smtp_server = <span class="string">'smtp.gmail.com'</span></div><div class="line">smtp_port = <span class="number">587</span></div><div class="line">server = smtplib.SMTP(smtp_server, smtp_port)</div><div class="line">server.starttls()</div><div class="line">...</div></pre></td></tr></table></figure></p>
+<p>只需要在创建SMTP对象后，立刻调用<code>starttls()</code>方法，就创建了安全链接。后面的代码和前面的发送邮件代码完全一样。</p>
+<p>使用Python的smtplib发送邮件很简单，只要掌握了各种邮件类型的构造方法，正确设置好邮件头就可以顺利发出。构造一个邮件对象就是一个<code>Message</code>对象，如果构建一个<code>MIMEText</code>对象，就表示一个作为附件的图片，要把多个对象组合起来，就用<code>MIMEMultipart</code>，<code>MIMEBase</code>可以表示任何对象，继承关系如下：<br><img src="/img/1478946592016.png" alt="Alt text"></p>
+<hr>
+<h2 id="POP3收取邮件"><a href="#POP3收取邮件" class="headerlink" title="POP3收取邮件"></a>POP3收取邮件</h2><p>收邮件就是编写一个MUA作为客户端，从MDA把邮件获取到用户的电脑或者手机上。收取邮件最常用的协议是POP协议。Python内置了一个<code>poplib</code>模块，实现了POP3协议。</p>
+<p>POP3收取的不是一个已经可以阅读的邮件本身，而是邮件的原始文本，这和SMTP一样，SMTP发送的也是经过编码后的一大段文本。要把POP3收取的文本变为可以阅读的邮件，还需要用<code>email</code>模块提供的各种类来解析原始文本，变成可阅读的邮件对象。收取邮件分为两部分：</p>
+<blockquote>
+<p>1、用<code>poplib</code>把邮件的原始文本下载到本地；<br>2、用<code>email</code>解析原始文本，还原为邮件对象。</p>
+</blockquote>
+<h3 id="通过POP3下载邮件"><a href="#通过POP3下载邮件" class="headerlink" title="通过POP3下载邮件"></a>通过POP3下载邮件</h3><p>POP3的协议本身很简单，以下面的代码为例，我们来获取最新的一封邮件内容：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> email.parser <span class="keyword">import</span> Parser</div><div class="line"><span class="keyword">import</span> poplib</div><div class="line"></div><div class="line"><span class="comment">#输入邮箱地址，口令和POP3服务器地址：</span></div><div class="line">email = input(<span class="string">'Email:'</span>)</div><div class="line">password =input(<span class="string">'Password:'</span>)</div><div class="line">pop3_server = input(<span class="string">'POP3 server:'</span>)</div><div class="line"></div><div class="line"><span class="comment">#连接到POP3服务器</span></div><div class="line">server = poplib.POP3(pop3_server)</div><div class="line"><span class="comment">#可以打开或关闭调试信息</span></div><div class="line">server.set_debuglevel(<span class="number">1</span>)</div><div class="line">print(server.getwelcome().decode(<span class="string">'utf-8'</span>))</div><div class="line"></div><div class="line"><span class="comment">#身份认证</span></div><div class="line">server.user(email)</div><div class="line">server.pass_(password)</div><div class="line"></div><div class="line"><span class="comment">#start()返回邮件数量和占用空间</span></div><div class="line">print(<span class="string">'Messages: %s, Size: %s'</span> %server.stat())</div><div class="line"><span class="comment">#list()返回所有邮件的编号</span></div><div class="line">resp, mails, octets = server.list()</div><div class="line"></div><div class="line">print(mails)</div><div class="line"></div><div class="line"><span class="comment">#获取最新一封邮件，索引号从1开始</span></div><div class="line">index = len(mails)</div><div class="line">resp, lines, octets = server.retr(index)</div><div class="line">msg_content = <span class="string">b'\r\n'</span>.join(lines).decode(<span class="string">'utf-8'</span>)</div><div class="line"></div><div class="line">msg = Parser().parsestr(msg_content)</div><div class="line"></div><div class="line">server.quit()</div></pre></td></tr></table></figure></p>
+<p>用POP3协议很简单，要获取所有邮件，只需要循环使用<code>retr()</code>把每一封邮件内容拿到即可。</p>
+<h3 id="解析邮件"><a href="#解析邮件" class="headerlink" title="解析邮件"></a>解析邮件</h3><p>解析邮件的过程和上一节构造邮件刚好相反，必须导入必要的模块：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> email.parser <span class="keyword">import</span> Parser</div><div class="line"><span class="keyword">from</span> email.header <span class="keyword">import</span> decode_header</div><div class="line"><span class="keyword">from</span> email.utils <span class="keyword">import</span> parseaddr</div><div class="line"></div><div class="line"><span class="keyword">import</span> poplib</div></pre></td></tr></table></figure></p>
+<p>一行代码可以把邮件内容解析为Message对象：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">msg = Parser().parsestr(msg_content)</div></pre></td></tr></table></figure></p>
+<p>这个<code>Message</code>对象本身可能是一个<code>MIMEMultipart</code>对象，即包含嵌套的其他<code>MIMEBase</code>对象，嵌套可能还不止一层。所以我们要递归地打印出Message对象的层次结构：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># indent用于缩进显示:</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">print_info</span><span class="params">(msg, indent=<span class="number">0</span>)</span>:</span></div><div class="line">    <span class="keyword">if</span> indent == <span class="number">0</span>:</div><div class="line">        <span class="keyword">for</span> header <span class="keyword">in</span> [<span class="string">'From'</span>, <span class="string">'To'</span>, <span class="string">'Subject'</span>]:</div><div class="line">            value = msg.get(header, <span class="string">''</span>)</div><div class="line">            <span class="keyword">if</span> value:</div><div class="line">                <span class="keyword">if</span> header==<span class="string">'Subject'</span>:</div><div class="line">                    value = decode_str(value)</div><div class="line">                <span class="keyword">else</span>:</div><div class="line">                    hdr, addr = parseaddr(value)</div><div class="line">                    name = decode_str(hdr)</div><div class="line">                    value = <span class="string">u'%s &lt;%s&gt;'</span> % (name, addr)</div><div class="line">            print(<span class="string">'%s%s: %s'</span> % (<span class="string">'  '</span> * indent, header, value))</div><div class="line">    <span class="keyword">if</span> (msg.is_multipart()):</div><div class="line">        parts = msg.get_payload()</div><div class="line">        <span class="keyword">for</span> n, part <span class="keyword">in</span> enumerate(parts):</div><div class="line">            print(<span class="string">'%spart %s'</span> % (<span class="string">'  '</span> * indent, n))</div><div class="line">            print(<span class="string">'%s--------------------'</span> % (<span class="string">'  '</span> * indent))</div><div class="line">            print_info(part, indent + <span class="number">1</span>)</div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        content_type = msg.get_content_type()</div><div class="line">        <span class="keyword">if</span> content_type==<span class="string">'text/plain'</span> <span class="keyword">or</span> content_type==<span class="string">'text/html'</span>:</div><div class="line">            content = msg.get_payload(decode=<span class="keyword">True</span>)</div><div class="line">            charset = guess_charset(msg)</div><div class="line">            <span class="keyword">if</span> charset:</div><div class="line">                content = content.decode(charset)</div><div class="line">            print(<span class="string">'%sText: %s'</span> % (<span class="string">'  '</span> * indent, content + <span class="string">'...'</span>))</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            print(<span class="string">'%sAttachment: %s'</span> % (<span class="string">'  '</span> * indent, content_type))</div></pre></td></tr></table></figure></p>
+<p>邮件的Subject或者Email中包含的名字都是经过编码后的str，要正常显示，就必须decode：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">decode_Str</span><span class="params">(s)</span>:</span></div><div class="line">	value, charset = decode_header(s)[<span class="number">0</span>]</div><div class="line">	<span class="keyword">if</span> charset:</div><div class="line">		value = value.decode(charset)</div><div class="line">	<span class="keyword">return</span> value</div></pre></td></tr></table></figure></p>
+<p><code>decode_header()</code>返回一个list，因为像<code>Cc``Bcc</code>这样的字段可能包含多个邮件地址，所以解析出来的会有多个元素。上面的代码我们只取了第一个元素。文本邮件的内容也是str，还需要检测编码，否则非UTF-8编码的邮件都无法正常显示：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">gusee_charset</span><span class="params">(msg)</span>:</span></div><div class="line">	charset = msg.get_charset()</div><div class="line">	<span class="keyword">if</span> charset <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">		content_type = msg.get(<span class="string">'Content-Type'</span>, <span class="string">''</span>).lower()</div><div class="line">		pos = content_type.find(<span class="string">'charset='</span>)</div><div class="line">		<span class="keyword">if</span> pos &gt;= <span class="number">0</span>:</div><div class="line">			charset = content_type[pos + <span class="number">8</span>:].strip()</div><div class="line">	<span class="keyword">return</span> charset</div></pre></td></tr></table></figure></p>
+<p>把上面的代码整理好，我们就可以来试试获取一封邮件。先往自己的邮箱发送一封邮件，然后用Python程序把它收到本地：<br><img src="/img/1478954102163.png" alt="Alt text"></p>
+<p>源码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python3</span></div><div class="line"><span class="comment"># -*- coding: utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="keyword">from</span> email.parser <span class="keyword">import</span> Parser</div><div class="line"><span class="keyword">from</span> email.header <span class="keyword">import</span> decode_header</div><div class="line"><span class="keyword">from</span> email.utils <span class="keyword">import</span> parseaddr</div><div class="line"></div><div class="line"><span class="keyword">import</span> poplib</div><div class="line"></div><div class="line"><span class="comment"># 输入邮件地址, 口令和POP3服务器地址:</span></div><div class="line">email = input(<span class="string">'Email: '</span>)</div><div class="line">password = input(<span class="string">'Password: '</span>)</div><div class="line">pop3_server = input(<span class="string">'POP3 server: '</span>)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">guess_charset</span><span class="params">(msg)</span>:</span></div><div class="line">    charset = msg.get_charset()</div><div class="line">    <span class="keyword">if</span> charset <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">        content_type = msg.get(<span class="string">'Content-Type'</span>, <span class="string">''</span>).lower()</div><div class="line">        pos = content_type.find(<span class="string">'charset='</span>)</div><div class="line">        <span class="keyword">if</span> pos &gt;= <span class="number">0</span>:</div><div class="line">            charset = content_type[pos + <span class="number">8</span>:].strip()</div><div class="line">    <span class="keyword">return</span> charset</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">decode_str</span><span class="params">(s)</span>:</span></div><div class="line">    value, charset = decode_header(s)[<span class="number">0</span>]</div><div class="line">    <span class="keyword">if</span> charset:</div><div class="line">        value = value.decode(charset)</div><div class="line">    <span class="keyword">return</span> value</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">print_info</span><span class="params">(msg, indent=<span class="number">0</span>)</span>:</span></div><div class="line">    <span class="keyword">if</span> indent == <span class="number">0</span>:</div><div class="line">        <span class="keyword">for</span> header <span class="keyword">in</span> [<span class="string">'From'</span>, <span class="string">'To'</span>, <span class="string">'Subject'</span>]:</div><div class="line">            value = msg.get(header, <span class="string">''</span>)</div><div class="line">            <span class="keyword">if</span> value:</div><div class="line">                <span class="keyword">if</span> header==<span class="string">'Subject'</span>:</div><div class="line">                    value = decode_str(value)</div><div class="line">                <span class="keyword">else</span>:</div><div class="line">                    hdr, addr = parseaddr(value)</div><div class="line">                    name = decode_str(hdr)</div><div class="line">                    value = <span class="string">u'%s &lt;%s&gt;'</span> % (name, addr)</div><div class="line">            print(<span class="string">'%s%s: %s'</span> % (<span class="string">'  '</span> * indent, header, value))</div><div class="line">    <span class="keyword">if</span> (msg.is_multipart()):</div><div class="line">        parts = msg.get_payload()</div><div class="line">        <span class="keyword">for</span> n, part <span class="keyword">in</span> enumerate(parts):</div><div class="line">            print(<span class="string">'%spart %s'</span> % (<span class="string">'  '</span> * indent, n))</div><div class="line">            print(<span class="string">'%s--------------------'</span> % (<span class="string">'  '</span> * indent))</div><div class="line">            print_info(part, indent + <span class="number">1</span>)</div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        content_type = msg.get_content_type()</div><div class="line">        <span class="keyword">if</span> content_type==<span class="string">'text/plain'</span> <span class="keyword">or</span> content_type==<span class="string">'text/html'</span>:</div><div class="line">            content = msg.get_payload(decode=<span class="keyword">True</span>)</div><div class="line">            charset = guess_charset(msg)</div><div class="line">            <span class="keyword">if</span> charset:</div><div class="line">                content = content.decode(charset)</div><div class="line">            print(<span class="string">'%sText: %s'</span> % (<span class="string">'  '</span> * indent, content + <span class="string">'...'</span>))</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            print(<span class="string">'%sAttachment: %s'</span> % (<span class="string">'  '</span> * indent, content_type))</div><div class="line"></div><div class="line"><span class="comment"># 连接到POP3服务器:</span></div><div class="line">server = poplib.POP3(pop3_server)</div><div class="line"><span class="comment"># 可以打开或关闭调试信息:</span></div><div class="line">server.set_debuglevel(<span class="number">1</span>)</div><div class="line"><span class="comment"># 可选:打印POP3服务器的欢迎文字:</span></div><div class="line">print(server.getwelcome().decode(<span class="string">'utf-8'</span>))</div><div class="line"><span class="comment"># 身份认证:</span></div><div class="line">server.user(email)</div><div class="line">server.pass_(password)</div><div class="line"><span class="comment"># stat()返回邮件数量和占用空间:</span></div><div class="line">print(<span class="string">'Messages: %s. Size: %s'</span> % server.stat())</div><div class="line"><span class="comment"># list()返回所有邮件的编号:</span></div><div class="line">resp, mails, octets = server.list()</div><div class="line"><span class="comment"># 可以查看返回的列表类似[b'1 82923', b'2 2184', ...]</span></div><div class="line">print(mails)</div><div class="line"><span class="comment"># 获取最新一封邮件, 注意索引号从1开始:</span></div><div class="line">index = len(mails)</div><div class="line">resp, lines, octets = server.retr(index)</div><div class="line"><span class="comment"># lines存储了邮件的原始文本的每一行,</span></div><div class="line"><span class="comment"># 可以获得整个邮件的原始文本:</span></div><div class="line">msg_content = <span class="string">b'\r\n'</span>.join(lines).decode(<span class="string">'utf-8'</span>)</div><div class="line"><span class="comment"># 稍后解析出邮件:</span></div><div class="line">msg = Parser().parsestr(msg_content)</div><div class="line">print_info(msg)</div><div class="line"><span class="comment"># 可以根据邮件索引号直接从服务器删除邮件:</span></div><div class="line"><span class="comment"># server.dele(index)</span></div><div class="line"><span class="comment"># 关闭连接:</span></div><div class="line">server.quit()</div></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/09/13.virtualenv&图形界面/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/09/09/13.virtualenv&图形界面/" itemprop="url">13. virtualenv&图形界面</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-09T15:08:02+08:00">
+                2017-09-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="virtualenv-amp-图形界面"><a href="#virtualenv-amp-图形界面" class="headerlink" title="virtualenv&amp;图形界面"></a>virtualenv&amp;图形界面</h1><h2 id="virtualenv"><a href="#virtualenv" class="headerlink" title="virtualenv"></a>virtualenv</h2><p>在开发Python应用程序的时候，系统安装的Python只有一个3.5版本。所有的第三方包都会被安装到Python3的<code>site-packages</code>目录下。</p>
+<p>如果要同时开发多个应用程序，那么这些应用程序共用一个Python3.5，如果应用A需要jinja2.7，应用B需要jinja2.6，这时候需要用virtualenv来为一个应用创建一套隔离的Python运行环境。</p>
+<p>第一步，创建项目文件夹myproject，在该文件夹中安装虚拟环境env：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++&gt;mkdir myproject</div><div class="line">D:\笔记\Python\Notepad++&gt;cd myproject</div><div class="line">D:\笔记\Python\Notepad++\myproject&gt;dir</div><div class="line"> 驱动器 D 中的卷是 文件</div><div class="line"> 卷的序列号是 <span class="number">0</span>BE3<span class="number">-0E5</span>C</div><div class="line"></div><div class="line"> D:\笔记\Python\Notepad++\myproject 的目录</div><div class="line"></div><div class="line"><span class="number">2016</span>/<span class="number">11</span>/<span class="number">06</span>  <span class="number">20</span>:<span class="number">01</span>    &lt;DIR&gt;          .</div><div class="line"><span class="number">2016</span>/<span class="number">11</span>/<span class="number">06</span>  <span class="number">20</span>:<span class="number">01</span>    &lt;DIR&gt;          ..</div><div class="line">               <span class="number">0</span> 个文件              <span class="number">0</span> 字节</div><div class="line">               <span class="number">2</span> 个目录 <span class="number">104</span>,<span class="number">178</span>,<span class="number">057</span>,<span class="number">216</span> 可用字节</div><div class="line"></div><div class="line">D:\笔记\Python\Notepad++\myproject&gt;virtualenv env</div><div class="line">Using base prefix <span class="string">'c:\\users\\cdxu0\\appdata\\local\\programs\\python\\python35'</span></div><div class="line">New python executable <span class="keyword">in</span> D:\笔记\Python\Notepad++\myproject\env\Scripts\python.exe</div><div class="line">Installing setuptools, pip, wheel...done.</div></pre></td></tr></table></figure></p>
+<p>第二步，启动虚拟环境，安装所需库类。在windows中虚拟环境的启动使用命令：your_env_dir\Scripts\activate，默认情况下，virtualenv已经安装好了pip。在启动虚拟环境后直接使用pip install命令就可以为该虚拟环境安装库类。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++\myproject&gt;cd env\Scripts</div><div class="line"></div><div class="line">D:\笔记\Python\Notepad++\myproject\env\Scripts&gt;activate</div><div class="line"></div><div class="line">(env) D:\笔记\Python\Notepad++\myproject\env\Scripts&gt;pip install flask==<span class="number">0.9</span></div></pre></td></tr></table></figure></p>
+<p>第三步，在虚拟环境中可以运行脚本等操作，离开虚拟环境，使用deactivate命令。</p>
+<hr>
+<h2 id="图形界面"><a href="#图形界面" class="headerlink" title="图形界面"></a>图形界面</h2><p>Python支持多种图形界面的第三方库，比如：Tk，wxWidgets ，Qt，GTK等。但是Python自带的库是支持Tk的TKinter，使用Tkinter，无需安装任何包就可以直接使用。</p>
+<p>使用TKinter十分简单，第一步导入TKinter包的所有内容：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> tkinter <span class="keyword">import</span> *</div></pre></td></tr></table></figure></p>
+<p>第二步从<code>Frame</code>派生一个<code>Application</code>类，这是所有Widget的父容器：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Application</span><span class="params">(Frame)</span>:</span></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,master=None)</span>:</span></div><div class="line">		Frame.__init__(self,master)</div><div class="line">		self.pack()</div><div class="line">		self.createWidgets()</div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">createWidgets</span><span class="params">(self)</span>:</span></div><div class="line">		self.helloLabel=Label(self, text=<span class="string">'Hello, world!'</span>)</div><div class="line">		self.helloLabel.pack()</div><div class="line">		self.quitButton=Button(self, text=<span class="string">'Quit'</span>, command=self.quit)</div><div class="line">		self.quitButton.pack()</div></pre></td></tr></table></figure></p>
+<p>在GUI中，每个Button、Label、输入框等，都是一个Widget。Frame则是可以容纳其他Widget的Widget，所有的Widget组合起来就是一棵树。</p>
+<p><code>pack()</code>方法把Widget加入到父容器中，并实现布局。<code>pack()</code>是最简单的布局，<code>grid()</code>可以实现更复杂的布局。</p>
+<p>在<code>createWidgets()</code>方法中，我们创建一个<code>Label</code>和一个<code>Button</code>，当Button被点击时，触发<code>self.quit()</code>使得程序退出。</p>
+<p>第三步，实例化<code>Application</code>，并启动消息循环：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>app=Application()</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>app.master.title(<span class="string">'Hello world!'</span>)</div><div class="line"><span class="string">''</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>app.mainloop()</div></pre></td></tr></table></figure></p>
+<p>GUI程序的主线负责监听来自操作系统的消息，并依次处理每一条消息。因此，如果消息处理非常耗时，就需要新线程中处理。运行这个GUI程序：<br><img src="/img/1478439318915.png" alt="Alt text"></p>
+<p>点击Quit按钮或者窗口的x结束程序。</p>
+<h3 id="输入文本"><a href="#输入文本" class="headerlink" title="输入文本"></a>输入文本</h3><p>我们再对这个GUI程序改进一下，加入一个文本框，让用户可以输入文本，然后点按钮后，弹出消息对话框。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python3</span></div><div class="line"><span class="comment">#-*- coding: utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="keyword">from</span> tkinter <span class="keyword">import</span> *</div><div class="line"><span class="keyword">import</span> tkinter.messagebox <span class="keyword">as</span> messagebox</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Application</span><span class="params">(Frame)</span>:</span></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,master=None)</span>:</span></div><div class="line">		Frame.__init__(self,master)</div><div class="line">		self.pack()</div><div class="line">		self.createWidgets()</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">createWidgets</span><span class="params">(self)</span>:</span></div><div class="line">		self.nameInput=Entry(self)</div><div class="line">		self.nameInput.pack()</div><div class="line">		self.alterButton=Button(self, text=<span class="string">'Hello'</span>, command=self.hello)</div><div class="line">		self.alterButton.pack()</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">hello</span><span class="params">(self)</span>:</span></div><div class="line">		name=self.nameInput.get() <span class="keyword">or</span> <span class="string">'world'</span></div><div class="line">		messagebox.showinfo(<span class="string">'Message'</span>,<span class="string">'Hello, %s'</span> %name)</div><div class="line"></div><div class="line">app=Application()</div><div class="line">app.master.title(<span class="string">'Hello World'</span>)</div><div class="line">app.mainloop()</div></pre></td></tr></table></figure></p>
+<p>当用户点击按钮时，出发<code>hello()</code>,通过<code>self.nameInput.get()</code>获得用户输入的文本后，使用<code>tkMessageBox.showinfo()</code>可以弹出消息对话框：<br><img src="/img/1478440468867.png" alt="Alt text"><br><img src="/img/1478440493401.png" alt="Alt text"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/08/17.异步IO/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2052,7 +2400,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">58</span>
+                <span class="site-state-item-count">60</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

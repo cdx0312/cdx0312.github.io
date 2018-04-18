@@ -278,6 +278,526 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/14/算法之二叉树/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/14/算法之二叉树/" itemprop="url">算法-二叉树</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-14T21:39:09+08:00">
+                2018-04-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/algorithms/" itemprop="url" rel="index">
+                    <span itemprop="name">algorithms</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>算法中关于二叉树的有很多，将最近做的关于二叉树相关的算法整理下，以备查看。</p>
+<h1 id="Path-Sum问题"><a href="#Path-Sum问题" class="headerlink" title="Path Sum问题"></a>Path Sum问题</h1><h2 id="Path-Sum-112"><a href="#Path-Sum-112" class="headerlink" title="Path Sum 112"></a>Path Sum 112</h2><p>给定一个二叉树和一个sum值，返回true如果存在一个从根节点到叶子节点的路径，否则返回false。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public class PathSum_112 &#123;</div><div class="line">    public boolean hasPathSum(TreeNode root, int sum) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return false;</div><div class="line">        if (root.left == null &amp;&amp; root.right == null)</div><div class="line">            return sum == root.val;</div><div class="line">        return hasPathSum(root.left, sum - root.val) || hasPathSum(root.right, sum - root.val);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="Path-SumII-113"><a href="#Path-SumII-113" class="headerlink" title="Path SumII 113"></a>Path SumII 113</h2><p>给定一个二叉树和一个sum值，找到所有的从根节点到叶子节点的路径和为sum的路径并返回。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.linkedList.ListNode;</div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">import java.util.ArrayList;</div><div class="line">import java.util.List;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/9</div><div class="line"> */</div><div class="line">public class PathSumII_113 &#123;</div><div class="line">    public List&lt;List&lt;Integer&gt;&gt; pathSum(TreeNode root, int sum) &#123;</div><div class="line">        List&lt;List&lt;Integer&gt;&gt; res = new ArrayList&lt;&gt;();</div><div class="line">        List&lt;Integer&gt; list = new ArrayList&lt;&gt;();</div><div class="line">        getPathSum(root, sum, res,list);</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     *</div><div class="line">     * @param root 跟节点</div><div class="line">     * @param sum 和</div><div class="line">     * @param res 返回的二维数组</div><div class="line">     * @param list 单个路径</div><div class="line">     */</div><div class="line">    private void getPathSum(TreeNode root, int sum, List&lt;List&lt;Integer&gt;&gt; res, List&lt;Integer&gt; list) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return;</div><div class="line">        list.add(root.val);</div><div class="line">        //递归到叶子节点进行判断，决定是否将当前list添加到列表中，不是叶子节点则继续递归左子树和右子树。</div><div class="line">        if (root.left == null &amp;&amp; root.right == null &amp;&amp; sum == root.val) &#123;</div><div class="line">            res.add(new ArrayList&lt;&gt;(list));</div><div class="line">            list.remove(list.size() - 1);</div><div class="line">            return;</div><div class="line">        &#125; else &#123;</div><div class="line">            getPathSum(root.left, sum - root.val, res, list);</div><div class="line">            getPathSum(root.right, sum - root.val, res, list);</div><div class="line">        &#125;</div><div class="line">        //添加完记得删除，回溯上一个状态。</div><div class="line">        list.remove(list.size() - 1);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="Path-SumIII-437"><a href="#Path-SumIII-437" class="headerlink" title="Path SumIII 437"></a>Path SumIII 437</h2><p>给定一个二叉树，节点值可以为负数，找到路径和等于sum的路径的个数，其中路径不需要从根节点开始，也不需要从叶子节点终止。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/10</div><div class="line"> */</div><div class="line">public class PathSumIII_437 &#123;</div><div class="line">    public int pathSum(TreeNode root, int sum) &#123;</div><div class="line">        int res = 0;</div><div class="line">        if (root == null)</div><div class="line">            return res;</div><div class="line">        res = findPath(root, sum);</div><div class="line">        res += pathSum(root.left, sum);</div><div class="line">        res += pathSum(root.right ,sum);</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private int findPath(TreeNode root, int sum) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return 0;</div><div class="line">        int res = 0;</div><div class="line">        if (root.val == sum)</div><div class="line">            res++;</div><div class="line">        return res + findPath(root.left, sum - root.val) + findPath(root.right, sum - root.val);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="树的深度问题"><a href="#树的深度问题" class="headerlink" title="树的深度问题"></a>树的深度问题</h1><h2 id="树的最大深度问题"><a href="#树的最大深度问题" class="headerlink" title="树的最大深度问题"></a>树的最大深度问题</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/9</div><div class="line"> */</div><div class="line">public class MaximunDepthOfBinaryTree_104 &#123;</div><div class="line">    public int maxDepth(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return 0;</div><div class="line">        int leftMaxDepth = maxDepth(root.left);</div><div class="line">        int rightMaxDepth = maxDepth(root.right);</div><div class="line">        return Math.max(leftMaxDepth, rightMaxDepth) + 1;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="树的最小深度"><a href="#树的最小深度" class="headerlink" title="树的最小深度"></a>树的最小深度</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/9</div><div class="line"> */</div><div class="line">public class MinimumDepthOfBinaryTree_111 &#123;</div><div class="line">    public int minDepth(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return 0;</div><div class="line">        if (root.left == null)</div><div class="line">            return 1 + minDepth(root.right);</div><div class="line">        if (root.right == null)</div><div class="line">            return 1 + minDepth(root.left);</div><div class="line">        return Math.min(minDepth(root.left), minDepth(root.right)) + 1;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="二叉树的最早祖先节点"><a href="#二叉树的最早祖先节点" class="headerlink" title="二叉树的最早祖先节点"></a>二叉树的最早祖先节点</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) &#123;</div><div class="line">    if (root == null || root == p || root == q)</div><div class="line">        return root;</div><div class="line">    TreeNode left = lowestCommonAncestor(root.left, p, q);</div><div class="line">    TreeNode right = lowestCommonAncestor(root.right, p, q);</div><div class="line">    if (left != null &amp;&amp; right != null)</div><div class="line">        return root;</div><div class="line">    return left != null ? left : right;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="二叉搜索树的最早祖先节点"><a href="#二叉搜索树的最早祖先节点" class="headerlink" title="二叉搜索树的最早祖先节点"></a>二叉搜索树的最早祖先节点</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/10</div><div class="line"> */</div><div class="line">public class LowestCommonAncestorOfABinarySearchTree_235 &#123;</div><div class="line">    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return null;</div><div class="line">        if (p.val &lt; root.val &amp;&amp; q.val &lt; root.val)</div><div class="line">            return lowestCommonAncestor(root.left, p, q);</div><div class="line">        else if (p.val &gt; root.val &amp;&amp; q.val &gt; root.val)</div><div class="line">            return lowestCommonAncestor(root.right, p, q);</div><div class="line">        return root;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="二叉搜索树"><a href="#二叉搜索树" class="headerlink" title="二叉搜索树"></a>二叉搜索树</h1><h2 id="二叉搜索树第k小的节点"><a href="#二叉搜索树第k小的节点" class="headerlink" title="二叉搜索树第k小的节点"></a>二叉搜索树第k小的节点</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/10</div><div class="line"> */</div><div class="line">public class KthSmallestElementInaBST_230 &#123;</div><div class="line">    //堆栈方法</div><div class="line">    public int kthSmallest(TreeNode root, int k) &#123;</div><div class="line">        Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();</div><div class="line">        while (root != null) &#123;</div><div class="line">            stack .push(root);</div><div class="line">            root = root.left;</div><div class="line">        &#125;</div><div class="line">        while (k != 0) &#123;</div><div class="line">            TreeNode node = stack.pop();</div><div class="line">            k--;</div><div class="line">            if (k == 0)</div><div class="line">                return node.val;</div><div class="line">            TreeNode right = node.right;</div><div class="line">            while (right != null) &#123;</div><div class="line">                stack.push(right);</div><div class="line">                right = right.left;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return -1;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //递归方法</div><div class="line">    public int kthSmallest1(TreeNode root, int k) &#123;</div><div class="line">        int count = countNodes(root.left);</div><div class="line">        if (k &lt;= count)</div><div class="line">            return kthSmallest(root.left, k);</div><div class="line">        else if (k &gt; count + 1)</div><div class="line">            return kthSmallest(root.right, k - 1 -count);</div><div class="line">        return root.val;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private int countNodes(TreeNode left) &#123;</div><div class="line">        if (left == null)</div><div class="line">            return 0;</div><div class="line">        return 1 + countNodes(left.left) + countNodes(left.right);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="检验一棵树是否为二叉搜索树"><a href="#检验一棵树是否为二叉搜索树" class="headerlink" title="检验一棵树是否为二叉搜索树"></a>检验一棵树是否为二叉搜索树</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/10</div><div class="line"> */</div><div class="line">public class ValidateBST_98 &#123;</div><div class="line">    public boolean isValidBST(TreeNode root) &#123;</div><div class="line">        return isValidBST(root, Long.MIN_VALUE, Long.MAX_VALUE);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private boolean isValidBST(TreeNode root, long minValue, long maxValue) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return true;</div><div class="line">        if (root.val &gt;= maxValue || root.val &lt;= minValue)</div><div class="line">            return false;</div><div class="line">        return isValidBST(root.left,minValue, root.val) &amp;&amp; isValidBST(root.right, root.val, maxValue);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="从二叉搜索树里面删除一个节点"><a href="#从二叉搜索树里面删除一个节点" class="headerlink" title="从二叉搜索树里面删除一个节点"></a>从二叉搜索树里面删除一个节点</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/10</div><div class="line"> */</div><div class="line">public class DeleteNodeInABST_450 &#123;</div><div class="line">    public TreeNode deleteNode(TreeNode root, int key) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return null;</div><div class="line">        if (key &lt; root.val)</div><div class="line">            root.left = deleteNode(root.left, key);</div><div class="line">        else if (key &gt; root.val)</div><div class="line">            root.right = deleteNode(root.right, key);</div><div class="line">        else &#123;</div><div class="line">            if (root.left == null) &#123;</div><div class="line">                return root.right;</div><div class="line">            &#125;else if (root.right == null) &#123;</div><div class="line">                return root.left;</div><div class="line">            &#125;</div><div class="line">            TreeNode min = find(root.right);</div><div class="line">            root.val = min.val;</div><div class="line">            root.right = deleteNode(root.right, root.val);</div><div class="line">        &#125;</div><div class="line">        return root;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private TreeNode find(TreeNode root) &#123;</div><div class="line">        while (root.left != null)</div><div class="line">            root = root.left;</div><div class="line">        return root;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="判断一颗树是否为平衡二叉树"><a href="#判断一颗树是否为平衡二叉树" class="headerlink" title="判断一颗树是否为平衡二叉树"></a>判断一颗树是否为平衡二叉树</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/9</div><div class="line"> */</div><div class="line">public class BalancedBinaryTree_110 &#123;</div><div class="line">    public boolean isBalanced(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return true;</div><div class="line">        int left = getHeight(root.left);</div><div class="line">        int right = getHeight(root.right);</div><div class="line">        return Math.abs(right - left) &lt; 2 &amp;&amp; isBalanced(root.left) &amp;&amp; isBalanced(root.right);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private int getHeight(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return 0;</div><div class="line">        return 1 + Math.max(getHeight(root.left), getHeight(root.right));</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="将一个有序队列转换成平衡二叉树"><a href="#将一个有序队列转换成平衡二叉树" class="headerlink" title="将一个有序队列转换成平衡二叉树"></a>将一个有序队列转换成平衡二叉树</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/10</div><div class="line"> */</div><div class="line">public class ConvertSortedArrayToBST_108 &#123;</div><div class="line">    public TreeNode sortedArrayToBST(int[] nums) &#123;</div><div class="line">        if (nums == null || nums.length == 0)</div><div class="line">            return null;</div><div class="line">        return help(nums, 0, nums.length-1);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private TreeNode help(int[] nums, int low, int high) &#123;</div><div class="line">        if (low &gt; high)</div><div class="line">            return null;</div><div class="line">        int mid = (low + high) / 2;</div><div class="line">        TreeNode root = new TreeNode(nums[mid]);</div><div class="line">        root.left = help(nums, low, mid - 1);</div><div class="line">        root.right = help(nums, mid + 1, high);</div><div class="line">        return root;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="计算一个完全二叉树的节点数"><a href="#计算一个完全二叉树的节点数" class="headerlink" title="计算一个完全二叉树的节点数"></a>计算一个完全二叉树的节点数</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">import java.util.LinkedList;</div><div class="line">import java.util.Queue;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/9</div><div class="line"> */</div><div class="line">public class CountCompleteTreeNode_222 &#123;</div><div class="line">    public int countNodes(TreeNode root) &#123;</div><div class="line">        int h = getHeight(root);</div><div class="line">        int nodes = 0;</div><div class="line">        while (root != null) &#123;</div><div class="line">            if (getHeight(root.right) == h - 1)&#123;</div><div class="line">                nodes += 1 &lt;&lt; h;</div><div class="line">                root = root.right;</div><div class="line">            &#125; else &#123;</div><div class="line">                nodes += 1 &lt;&lt; h - 1;</div><div class="line">                root = root.left;</div><div class="line">            &#125;</div><div class="line">            h--;</div><div class="line">        &#125;</div><div class="line">        return nodes;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private int getHeight(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return -1;</div><div class="line">        return 1 + getHeight(root.left);</div><div class="line">    &#125;</div><div class="line">    //队列</div><div class="line">    public int countNodes1(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return 0;</div><div class="line">        Queue&lt;TreeNode&gt; queue = new LinkedList&lt;&gt;();</div><div class="line">        queue.add(root);</div><div class="line">        int count = 1;</div><div class="line">        while (!queue.isEmpty()) &#123;</div><div class="line">            TreeNode tmp = queue.poll();</div><div class="line">            if (tmp.val != -1) &#123;</div><div class="line">                tmp.val = -1;</div><div class="line">                if (tmp.left != null) &#123;</div><div class="line">                    queue.offer(tmp.left);</div><div class="line">                    count++;</div><div class="line">                &#125;</div><div class="line">                if (tmp.right != null) &#123;</div><div class="line">                    queue.offer(tmp.right);</div><div class="line">                    count++;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return count;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="反转二叉树"><a href="#反转二叉树" class="headerlink" title="反转二叉树"></a>反转二叉树</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/9</div><div class="line"> */</div><div class="line">public class InverseBinaryTree_226 &#123;</div><div class="line">    public TreeNode invertTree(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return null;</div><div class="line">        invertTree(root.left);</div><div class="line">        invertTree(root.right);</div><div class="line">        TreeNode tmp = root.left;</div><div class="line">        root.left = root.right;</div><div class="line">        root.right = tmp;</div><div class="line">        return root;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="相等的树"><a href="#相等的树" class="headerlink" title="相等的树"></a>相等的树</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/9</div><div class="line"> */</div><div class="line">public class SameTree_100 &#123;</div><div class="line">    public boolean isSameTree(TreeNode p, TreeNode q) &#123;</div><div class="line">        if (p == null &amp;&amp; q == null)</div><div class="line">            return true;</div><div class="line">        if (p == null || q == null)</div><div class="line">            return false;</div><div class="line">        if (p.val == q.val)</div><div class="line">            return isSameTree(p.left,q.left) &amp;&amp; isSameTree(p.right, q.right);</div><div class="line">        else</div><div class="line">            return false;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="左叶子节点的和"><a href="#左叶子节点的和" class="headerlink" title="左叶子节点的和"></a>左叶子节点的和</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/9</div><div class="line"> */</div><div class="line">public class SumOfLeftLeaves_404 &#123;</div><div class="line">    public int sumOfLeftLeaves(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return 0;</div><div class="line">        if (root.left != null &amp;&amp; root.left.left == null &amp;&amp; root.left.right == null)</div><div class="line">            return root.left.val + sumOfLeftLeaves(root.right);</div><div class="line">        return sumOfLeftLeaves(root.left) + sumOfLeftLeaves(root.right);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="根节点到所有节点的和"><a href="#根节点到所有节点的和" class="headerlink" title="根节点到所有节点的和"></a>根节点到所有节点的和</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.linkedList.ListNode;</div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">import java.util.ArrayList;</div><div class="line">import java.util.List;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/9</div><div class="line"> */</div><div class="line">public class SumRootToLeafNumbers_129 &#123;</div><div class="line">    public int sumNumbers(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return 0;</div><div class="line">        List&lt;List&lt;Integer&gt;&gt; res = new ArrayList&lt;&gt;();</div><div class="line">        List&lt;Integer&gt; list = new ArrayList&lt;&gt;();</div><div class="line">        getPathSum(root, res, list);</div><div class="line">        int result = 0;</div><div class="line">        for (List&lt;Integer&gt; list1 : res) &#123;</div><div class="line">            int tmp = 0;</div><div class="line">            for (Integer i : list1) &#123;</div><div class="line">                tmp = tmp * 10 + i;</div><div class="line">            &#125;</div><div class="line">            result += tmp;</div><div class="line">        &#125;</div><div class="line">        return result;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    private void getPathSum(TreeNode root,List&lt;List&lt;Integer&gt;&gt; res, List&lt;Integer&gt; list) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return;</div><div class="line">        list.add(root.val);</div><div class="line">        if (root.left == null &amp;&amp; root.right == null) &#123;</div><div class="line">            res.add(new ArrayList&lt;&gt;(list));</div><div class="line">            list.remove(list.size() - 1);</div><div class="line">            return;</div><div class="line">        &#125; else &#123;</div><div class="line">            getPathSum(root.left, res, list);</div><div class="line">            getPathSum(root.right, res, list);</div><div class="line">        &#125;</div><div class="line">        list.remove(list.size() - 1);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public int sumNumbers1(TreeNode root) &#123;</div><div class="line">        return sumNumbers(root, 0);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public int sumNumbers(TreeNode root, int sum) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return 0;</div><div class="line">        sum = sum * 10 + root.val;</div><div class="line">        if (root.left == null &amp;&amp; root.right == null) &#123;</div><div class="line">            return sum;</div><div class="line">        &#125;</div><div class="line">        return sumNumbers(root.left, sum) + sumNumbers(root.right, sum);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="镜像树问题"><a href="#镜像树问题" class="headerlink" title="镜像树问题"></a>镜像树问题</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/9</div><div class="line"> */</div><div class="line">public class SymmetricTree_101 &#123;</div><div class="line">    public boolean isSymmetric(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return true;</div><div class="line">        return isSymmetricHelp(root.left, root.right);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private boolean isSymmetricHelp(TreeNode left, TreeNode right) &#123;</div><div class="line">        if (left == null &amp;&amp; right == null)</div><div class="line">            return true;</div><div class="line">        if (left == null || right == null)</div><div class="line">            return false;</div><div class="line">        if (left.val == right.val)</div><div class="line">            return isSymmetricHelp(left.left, right.right) &amp;&amp; isSymmetricHelp(left.right,right.left);</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/13/算法之堆栈相关/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/13/算法之堆栈相关/" itemprop="url">算法-堆栈</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-13T21:53:09+08:00">
+                2018-04-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/algorithms/" itemprop="url" rel="index">
+                    <span itemprop="name">algorithms</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="二叉树遍历"><a href="#二叉树遍历" class="headerlink" title="二叉树遍历"></a>二叉树遍历</h1><p>模拟操作系统中堆栈，创建一个Command类，封装了一个string和treenode，string指定command执行的操作，treenode保存数据，则前中后遍历只需要调整很少的顺序就可以了。</p>
+<p>中序遍历：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line">package leetcode.stack;</div><div class="line"></div><div class="line">import java.awt.event.ComponentAdapter;</div><div class="line">import java.util.ArrayList;</div><div class="line">import java.util.Collections;</div><div class="line">import java.util.List;</div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class BinaryTreeInOrderTraversal_94 &#123;</div><div class="line">    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    //递归方法</div><div class="line">    public List&lt;Integer&gt; inorderTraversal(TreeNode root) &#123;</div><div class="line">        if (root != null) &#123;</div><div class="line">            inorderTraversal(root.left);</div><div class="line">            res.add(root.val);</div><div class="line">            inorderTraversal(root.right);</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line">    //非递归方法</div><div class="line">    public List&lt;Integer&gt; inorderTraversal1(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return res;</div><div class="line">        Stack&lt;Command&gt; stack = new Stack&lt;&gt;();</div><div class="line">        stack.push(new Command(&quot;go&quot;, root));</div><div class="line">        while (!stack.isEmpty()) &#123;</div><div class="line">            Command command = stack.pop();</div><div class="line">            if (command.s.equals(&quot;print&quot;))</div><div class="line">                res.add(command.node.val);</div><div class="line">            else &#123;</div><div class="line">                if (command.node.right != null)</div><div class="line">                    stack.push(new Command(&quot;go&quot;, command.node.right));</div><div class="line">                stack.push(new Command(&quot;print&quot;, command.node));</div><div class="line">                if (command.node.left != null)</div><div class="line">                    stack.push(new Command(&quot;go&quot;, command.node.left));</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    class Command&#123;</div><div class="line">        String s;  //print,go</div><div class="line">        TreeNode node;</div><div class="line">        public Command(String s, TreeNode node) &#123;</div><div class="line">            this.s = s;</div><div class="line">            this.node = node;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>前序–这个没有改，用的经典算法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">package leetcode.stack;</div><div class="line"></div><div class="line">import java.util.ArrayList;</div><div class="line">import java.util.List;</div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class BinaryTreePrecoderTraversal_144 &#123;</div><div class="line">    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    //递归方法</div><div class="line">    public List&lt;Integer&gt; preorderTraversal(TreeNode root) &#123;</div><div class="line">        if (root != null) &#123;</div><div class="line">            res.add(root.val);</div><div class="line">            preorderTraversal(root.left);</div><div class="line">            preorderTraversal(root.right);</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line">    //非递归方法</div><div class="line">    public List&lt;Integer&gt; preorderTraversal1(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return res;</div><div class="line">        Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();</div><div class="line">        stack.push(root);</div><div class="line">        while (!stack.isEmpty()) &#123;</div><div class="line">            TreeNode node = stack.pop();</div><div class="line">            res.add(node.val);</div><div class="line">            if (node.right != null)</div><div class="line">                stack.push(node.right);</div><div class="line">            if (node.left != null)</div><div class="line">                stack.push(node.left);</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>后序：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">package leetcode.stack;</div><div class="line"></div><div class="line">import java.util.ArrayList;</div><div class="line">import java.util.List;</div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class BinaryTreePostorderTraversal_145 &#123;</div><div class="line">    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();</div><div class="line">    public List&lt;Integer&gt; postorderTraversal(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return res;</div><div class="line">        Stack&lt;Command&gt; stack = new Stack&lt;&gt;();</div><div class="line">        stack.push(new Command(&quot;go&quot;, root));</div><div class="line">        while (!stack.isEmpty()) &#123;</div><div class="line">            Command command = stack.pop();</div><div class="line">            if (command.s.equals(&quot;print&quot;))</div><div class="line">                res.add(command.node.val);</div><div class="line">            else &#123;</div><div class="line">                stack.push(new Command(&quot;print&quot;, command.node));</div><div class="line">                if (command.node.right != null)</div><div class="line">                    stack.push(new Command(&quot;go&quot;, command.node.right));</div><div class="line">                if (command.node.left != null)</div><div class="line">                    stack.push(new Command(&quot;go&quot;, command.node.left));</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    class Command &#123;</div><div class="line">        String s;//print, go</div><div class="line">        TreeNode node;</div><div class="line">        public Command(String s, TreeNode node) &#123;</div><div class="line">            this.s = s;</div><div class="line">            this.node = node;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="逆波兰表达式计算"><a href="#逆波兰表达式计算" class="headerlink" title="逆波兰表达式计算"></a>逆波兰表达式计算</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">package leetcode.stack;</div><div class="line"></div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class EvaluateReversePolishNotation_150 &#123;</div><div class="line">    public int evalRPN(String[] tokens) &#123;</div><div class="line">        Stack&lt;Integer&gt; number = new Stack&lt;&gt;();</div><div class="line">        Stack&lt;Character&gt; operators = new Stack&lt;&gt;();</div><div class="line">        for (String s : tokens) &#123;</div><div class="line">            switch (s) &#123;</div><div class="line">                case &quot;*&quot;:</div><div class="line">                    number.push(number.pop() * number.pop());</div><div class="line">                    break;</div><div class="line">                case &quot;+&quot;:</div><div class="line">                    number.push(number.pop() + number.pop());</div><div class="line">                    break;</div><div class="line">                case &quot;-&quot;:</div><div class="line">                    number.push(-(number.pop() - number.pop()));</div><div class="line">                    break;</div><div class="line">                case &quot;/&quot;:</div><div class="line">                    int tmp1 = number.pop();</div><div class="line">                    int tmp2 = number.pop();</div><div class="line">                    number.push(tmp2 / tmp1);</div><div class="line">                    break;</div><div class="line">                default:</div><div class="line">                    number.push(Integer.valueOf(s));</div><div class="line">                    break;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return number.pop();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="地址简化"><a href="#地址简化" class="headerlink" title="地址简化"></a>地址简化</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line">package leetcode.stack;</div><div class="line"></div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class SimplifyPath_71 &#123;</div><div class="line">    public String simplifyPath(String path) &#123;</div><div class="line">        Stack&lt;String&gt; stack = new Stack&lt;&gt;();</div><div class="line">        String[] strings = path.split(&quot;/&quot;);</div><div class="line">        for (String s : strings) &#123;</div><div class="line">            switch (s) &#123;</div><div class="line">                case &quot;.&quot; :</div><div class="line">                    break;</div><div class="line">                case &quot;..&quot;:</div><div class="line">                    if (!stack.isEmpty())</div><div class="line">                        stack.pop();</div><div class="line">                    break;</div><div class="line">                default:</div><div class="line">                    if (!s.equals(&quot;&quot;))</div><div class="line">                        stack.push(s);</div><div class="line">                    break;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        StringBuilder sb = new StringBuilder();</div><div class="line"></div><div class="line">        if (stack.isEmpty())</div><div class="line">            return &quot;/&quot;;</div><div class="line">        while (!stack.isEmpty()) &#123;</div><div class="line">            sb.insert(0,  &quot;/&quot; + stack.pop());</div><div class="line">        &#125;</div><div class="line">        return sb.toString();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        SimplifyPath_71 simplifyPath_71 = new SimplifyPath_71();</div><div class="line">        String s = &quot;/...&quot;;</div><div class="line">        System.out.println(simplifyPath_71.simplifyPath(s));</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="FlattenNestedListIterator-341"><a href="#FlattenNestedListIterator-341" class="headerlink" title="FlattenNestedListIterator_341"></a>FlattenNestedListIterator_341</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">package leetcode.stack;</div><div class="line"></div><div class="line">import java.util.Iterator;</div><div class="line">import java.util.List;</div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class FlattenNestedListIterator_341 implements Iterator&lt;Integer&gt;&#123;</div><div class="line">    Stack&lt;NestedInteger&gt; stack = new Stack&lt;&gt;();</div><div class="line">    Stack&lt;Integer&gt; integers = new Stack&lt;&gt;();</div><div class="line">    public FlattenNestedListIterator_341(List&lt;NestedInteger&gt; nestedList) &#123;</div><div class="line">        for (NestedInteger i : nestedList) &#123;</div><div class="line">            stack.push(i);</div><div class="line">        &#125;</div><div class="line">        while (!stack.isEmpty()) &#123;</div><div class="line">            NestedInteger nestedInteger = stack.pop();</div><div class="line">            if (nestedInteger.isInteger()) &#123;</div><div class="line">                integers.push(nestedInteger.getInteger());</div><div class="line">            &#125; else &#123;</div><div class="line">                for (NestedInteger j : nestedInteger.getList())&#123;</div><div class="line">                    stack.push(j);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public boolean hasNext() &#123;</div><div class="line">        return !integers.isEmpty();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Integer next() &#123;</div><div class="line">        return integers.pop();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="符号匹配"><a href="#符号匹配" class="headerlink" title="符号匹配"></a>符号匹配</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">package leetcode.stack;</div><div class="line"></div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/7</div><div class="line"> */</div><div class="line">public class ValidParentheses_20 &#123;</div><div class="line">    public boolean isValid(String s) &#123;</div><div class="line">        Stack&lt;Character&gt; stack = new Stack&lt;&gt;();</div><div class="line">        for (int i = 0; i &lt; s.length(); i++) &#123;</div><div class="line">            char ch = s.charAt(i);</div><div class="line">            if (ch == &apos;(&apos; || ch ==&apos;&#123;&apos; || ch == &apos;[&apos;)</div><div class="line">                stack.push(ch);</div><div class="line">            else &#123;</div><div class="line">                if (stack.isEmpty())</div><div class="line">                    return false;</div><div class="line">                char cha = stack.pop();</div><div class="line">                char match;</div><div class="line">                switch (ch) &#123;</div><div class="line">                    case &apos;(&apos; :</div><div class="line">                        match = &apos;)&apos;;</div><div class="line">                        break;</div><div class="line">                    case &apos;[&apos;:</div><div class="line">                        match=&apos;]&apos;;</div><div class="line">                        break;</div><div class="line">                    default:</div><div class="line">                        match=&apos;&#125;&apos;;</div><div class="line">                        break;</div><div class="line">                &#125;</div><div class="line">                if (cha != match)</div><div class="line">                    return false;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return stack.isEmpty();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/13/算法之动态规划问题/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/13/算法之动态规划问题/" itemprop="url">算法-动态规划</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-13T20:39:36+08:00">
+                2018-04-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/algorithms/" itemprop="url" rel="index">
+                    <span itemprop="name">algorithms</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="动态规划简介"><a href="#动态规划简介" class="headerlink" title="动态规划简介"></a>动态规划简介</h1><p>动态规划（英语：Dynamic programming，DP）是一种在数学、计算机科学和经济学中使用的，通过把原问题分解为相对简单的子问题的方式求解复杂问题的方法。 动态规划常常适用于有<code>重叠子问题</code>和<code>最优子结构性质</code>的问题，动态规划方法所耗时间往往远少于朴素解法。</p>
+<p>动态规划问题，需要将给定问题分成若干个子问题，再合并子问题的解而得到原问题的解。通常许多子问题很相似，不同于递归方法，动态规划仅仅解决子问题一次，从而减少计算量：一旦某个子问题的解已经算出，则将其记忆化存储，以方便下一次需要同一个子问题解时直接返回。</p>
+<p>动态规划需要满足的三个性质：</p>
+<ol>
+<li><p>最优子结构性质：问题的最优解所包含的子问题的解也是最优的，就称该问题具有最优子结构性质。</p>
+</li>
+<li><p>子问题重叠问题：递归算法自顶向下对问题进行求解过程中，每次产生的子问题并不总是新问题，有些子问题会重复计算多次。</p>
+</li>
+<li><p>无后效性：各个阶段按照一定顺序排列好之后，对于某个给定的状态，它以前各阶段的状态无法直接影响它未来的决策，而只能通过当前的状态。</p>
+</li>
+</ol>
+<h1 id="斐波那契问题"><a href="#斐波那契问题" class="headerlink" title="斐波那契问题"></a>斐波那契问题</h1><p>递归算法的复杂度为2^n，而DP算法的时间复杂度为O(N)，原因在于递归算法过程中存在着大量的重叠子问题，随着N增大，问题规模呈指数增长。也可以采用记忆化搜索，每次求子问题的解之前先取数组中查看该子问题是否已经解决，如果解决了直接返回，没有解决将结果添加到数组中。记忆化搜索是自顶向下的思考问题，而DP则是自底向上的思考问题。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">public class Fib &#123;</div><div class="line">    //O(2^N)</div><div class="line">    public int fib(int n) &#123;</div><div class="line">        if (n == 0)</div><div class="line">            return 0;</div><div class="line">        if (n == 1)</div><div class="line">            return 1;</div><div class="line">        return fib(n-1) + fib(n-2);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //O(N)</div><div class="line">    public int fib2(int n) &#123;</div><div class="line">        int[] res = new int[n + 1];</div><div class="line">         res[0] = 0;</div><div class="line">        res[1] = 1;</div><div class="line">        for (int i = 2; i &lt; n+1; i++)&#123;</div><div class="line">            res[i] = res[i-1] + res[i-2];</div><div class="line">        &#125;</div><div class="line">        return res[n];</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Fib fib = new Fib();</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        int n = 42;</div><div class="line">        System.out.println(&quot;fib(&quot; + n + &quot;) = &quot; + fib.fib(n));</div><div class="line">        System.out.println(&quot;time : &quot; + (System.currentTimeMillis() - startTime));</div><div class="line"></div><div class="line">        long startTime1 = System.currentTimeMillis();</div><div class="line">        System.out.println(&quot;fib(&quot; + n + &quot;) = &quot; + fib.fib2(n));</div><div class="line">        System.out.println(&quot;time : &quot; + (System.currentTimeMillis() - startTime1));</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="LeetCode相关题目"><a href="#LeetCode相关题目" class="headerlink" title="LeetCode相关题目"></a>LeetCode相关题目</h1><p>将自己做的LeetCode相关题目整理了一下，以方便以后复习查看。</p>
+<h2 id="ClimbingStairs-70"><a href="#ClimbingStairs-70" class="headerlink" title="ClimbingStairs_70"></a>ClimbingStairs_70</h2><p>爬楼梯问题：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">package leetcode.dp;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/11</div><div class="line"> */</div><div class="line">public class ClimbingStairs_70 &#123;</div><div class="line">    //dp</div><div class="line">    public int climbStairs(int n) &#123;</div><div class="line">        int[] res = new int[n + 1];</div><div class="line">        res[1] = 1;</div><div class="line">        res[2] = 2;</div><div class="line">        for (int i = 3; i &lt;= n; i++) &#123;</div><div class="line">            res[i] = res[i-1] + res[i - 2];</div><div class="line">        &#125;</div><div class="line">        return res[n];</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //递归</div><div class="line">    public int climbStairs1(int n) &#123;</div><div class="line">        if (n == 1)</div><div class="line">            return 1;</div><div class="line">        if (n == 2)</div><div class="line">            return 2;</div><div class="line">        return climbStairs1(n-1) + climbStairs1(n-2);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="CoinChange-322"><a href="#CoinChange-322" class="headerlink" title="CoinChange_322"></a>CoinChange_322</h2><p>无限数量的硬币，凑成给定的值，选取所需硬币个数最少的。</p>
+<p>递归方法为组合问题，将所有可能的找出来，选出其中最少的。复杂度O(2^n * n)</p>
+<p>DP方法，维护一个数组，长度为amount+1, 初始值设置为amount+1,状态转移方程为<code>dp[i] = min(dp[i], dp[i- coins[j] + 1])</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line">package leetcode.dp;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/12</div><div class="line"> */</div><div class="line">public class CoinChange_322 &#123;</div><div class="line">    public int coinChange(int[] coins, int amount) &#123;</div><div class="line">        if (amount == 0)</div><div class="line">            return 0;</div><div class="line">        int n = amount + 1;</div><div class="line">        for (int coin : coins) &#123;</div><div class="line">            int curr = 0;</div><div class="line">            if (amount &gt;= coin) &#123;</div><div class="line">                int next = coinChange(coins, amount - coin);</div><div class="line">                if (next &gt;= 0)</div><div class="line">                    curr = 1 + next;</div><div class="line">            &#125;</div><div class="line">            if (curr &gt; 0)</div><div class="line">                n = Math.min(n, curr);</div><div class="line">        &#125;</div><div class="line">        return n == amount + 1 ? -1 : n;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public int coinChange1(int[] coins, int amount) &#123;</div><div class="line">        int[] dp = new int[amount + 1];</div><div class="line">        for (int i = 0; i &lt; dp.length; i++)</div><div class="line">            dp[i] = amount + 1;</div><div class="line">        dp[0] = 0;</div><div class="line">        for (int i = 1; i &lt;= amount; i++) &#123;</div><div class="line">            for (int j = 0; j &lt; coins.length; j++) &#123;</div><div class="line">                if (coins[j] &lt;= i)</div><div class="line">                    dp[i] = Math.min(dp[i], dp[i - coins[j]] + 1);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return dp[amount] &gt; amount ? -1 : dp[amount];</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        System.out.println(new CoinChange_322().coinChange1(new int[]&#123;2&#125;, 3));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="BestTimeToBuyAndSellStockWithCoolDown-309"><a href="#BestTimeToBuyAndSellStockWithCoolDown-309" class="headerlink" title="BestTimeToBuyAndSellStockWithCoolDown_309"></a>BestTimeToBuyAndSellStockWithCoolDown_309</h2><p>题目是股票问题的变种，数组prices表示股票第i天的价格，可以多次买卖，限制只有手里没有股票时可以买，同时当你卖了股票，第二天不可以购买。股票问题其实比较简单，如果不限制第二天不可以买的话，就是一个简单的数组最大连续子数组和问题，添加之后需要，有三种状态，买，卖，休息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">public int maxProfit(int[] prices) &#123;</div><div class="line">    if (prices.length &lt;= 1)</div><div class="line">        return 0;</div><div class="line">    int[] s0 = new int[prices.length];</div><div class="line">    int[] s1 = new int[prices.length];</div><div class="line">    int[] s2 = new int[prices.length];</div><div class="line">    s1[0] = -prices[0];</div><div class="line">    s2[0] = Integer.MIN_VALUE;</div><div class="line">    for (int i = 1; i &lt; prices.length; i++) &#123;</div><div class="line">        s0[i] = Math.max(s0[i-1], s2[i-1]);</div><div class="line">        s1[i] = Math.max(s1[i-1], s0[i-1] - prices[i]);</div><div class="line">        s2[i] = s1[i-1] + prices[i];</div><div class="line">    &#125;</div><div class="line">    return Math.max(s0[prices.length - 1], s2[prices.length - 1]);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="CombinationSumIV-377"><a href="#CombinationSumIV-377" class="headerlink" title="CombinationSumIV_377"></a>CombinationSumIV_377</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">Given an integer array with all positive numbers and no duplicates, find the number of possible combinations that add up to a positive integer target.</div><div class="line"></div><div class="line">Example:</div><div class="line"></div><div class="line">nums = [1, 2, 3]</div><div class="line">target = 4</div><div class="line"></div><div class="line">The possible combination ways are:</div><div class="line">(1, 1, 1, 1)</div><div class="line">(1, 1, 2)</div><div class="line">(1, 2, 1)</div><div class="line">(1, 3)</div><div class="line">(2, 1, 1)</div><div class="line">(2, 2)</div><div class="line">(3, 1)</div><div class="line"></div><div class="line">Note that different sequences are counted as different combinations.</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">package leetcode.dp;</div><div class="line"></div><div class="line">import java.util.Arrays;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/12</div><div class="line"> */</div><div class="line">public class CombinationSumIV_377 &#123;</div><div class="line">    public int combinationSum4(int[] nums, int target) &#123;</div><div class="line">        if (target == 0)</div><div class="line">            return 1;</div><div class="line">        int res = 0;</div><div class="line">        for (int i = 0; i &lt; nums.length; i++) &#123;</div><div class="line">            if (target &gt;= nums[i])</div><div class="line">                res += combinationSum4(nums, target - nums[i]);</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public int combinationSum41(int[] nums, int target) &#123;</div><div class="line">        int[] dp = new int[target + 1];</div><div class="line">        dp[0] = 1;</div><div class="line">        for (int i = 1; i &lt; dp.length; i++) &#123;</div><div class="line">            for (int j = 0; j &lt;nums.length; j++) &#123;</div><div class="line">                if (i - nums[j] &gt;= 0)</div><div class="line">                    dp[i] += dp[i - nums[j]];</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return dp[target];</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="最长公共子序列问题"><a href="#最长公共子序列问题" class="headerlink" title="最长公共子序列问题"></a>最长公共子序列问题</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line">package leetcode.dp;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/12</div><div class="line"> * 最长公共子序列</div><div class="line"> */</div><div class="line">public class LongestCommonSequence &#123;</div><div class="line"></div><div class="line">    //递归</div><div class="line">    public int longest(String s1, String s2) &#123;</div><div class="line">        if (s1.length() == 0 || s2.length() == 0)</div><div class="line">            return 0;</div><div class="line">        return longest(s1, s2, s1.length()-1, s2.length()-1);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private int longest(String s1, String s2, int m, int n) &#123;</div><div class="line"></div><div class="line">        if (m &lt; 0 || n &lt; 0)</div><div class="line">            return 0;</div><div class="line">        if (s1.charAt(m) == s2.charAt(n))</div><div class="line">            return 1 + longest(s1,s2,m-1,n-1);</div><div class="line">        else</div><div class="line">            return Math.max(longest(s1,s2,m-1, n), longest(s1,s2,m,n-1));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        LongestCommonSequence LCS = new LongestCommonSequence();</div><div class="line">        String s1 = &quot;abcd&quot;;</div><div class="line">        String s2 = &quot;abcdefg&quot;;</div><div class="line">        System.out.println(LCS.longest(s1,s2));</div><div class="line">        System.out.println(LCS.longest2(s1,s2));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //DP</div><div class="line">    public int longest2(String s1, String s2) &#123;</div><div class="line">        if (s1.length() == 0 || s2.length() == 0)</div><div class="line">            return 0;</div><div class="line">        int len1 = s1.length();</div><div class="line">        int len2 = s2.length();</div><div class="line">        int[][] dp = new int[len1+1][len2+1];</div><div class="line">        for (int i = 0; i &lt;= len1; i++)</div><div class="line">            dp[i][0] = 0;</div><div class="line">        for (int i = 0; i &lt;= len2; i++)</div><div class="line">            dp[0][i] = 0;</div><div class="line">        for (int i = 1; i &lt;= len1; i++) &#123;</div><div class="line">            for (int j = 1; j &lt;= len2; j++) &#123;</div><div class="line">                if (s1.charAt(i-1) == s2.charAt(j-1))&#123;</div><div class="line">                    dp[i][j] = dp[i-1][j-1] + 1;</div><div class="line">                &#125; else &#123;</div><div class="line">                    dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return dp[len1][len2];</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="最长上升子序列问题"><a href="#最长上升子序列问题" class="headerlink" title="最长上升子序列问题"></a>最长上升子序列问题</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">package leetcode.dp;</div><div class="line"></div><div class="line">import java.util.Arrays;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/12</div><div class="line"> * 最长上升子序列问题</div><div class="line"> */</div><div class="line">public class LongestIncreasingSubsequence_300 &#123;</div><div class="line">    //O(N^2)</div><div class="line">    public int lengthOfLIS(int[] nums) &#123;</div><div class="line">        if (nums.length == 0)</div><div class="line">            return 0;</div><div class="line">        int[] dp = new int[nums.length];</div><div class="line">        for (int i = 0; i &lt; dp.length; i++) &#123;</div><div class="line">            dp[i] = 1;</div><div class="line">        &#125;</div><div class="line">        for (int i = 1; i &lt; nums.length; i++) &#123;</div><div class="line">            for (int j = 0; j &lt; i; j++) &#123;</div><div class="line">                if (nums[i] &gt; nums[j]) &#123;</div><div class="line">                    dp[i] = Math.max(dp[i], dp[j] + 1);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        System.out.println(Arrays.toString(dp));</div><div class="line">        int max = dp[0];</div><div class="line">        for (int i = 1; i &lt; dp.length; i++) &#123;</div><div class="line">            max = Math.max(dp[i], max);</div><div class="line">        &#125;</div><div class="line">        return max;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        int[] arr = &#123;1,3,6,7,9,4,10,5,6&#125;;</div><div class="line">        System.out.println(new LongestIncreasingSubsequence_300().lengthOfLIS(arr));</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="0-1背包问题"><a href="#0-1背包问题" class="headerlink" title="0-1背包问题"></a>0-1背包问题</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div></pre></td><td class="code"><pre><div class="line">package leetcode.dp;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/12</div><div class="line"> * 0-1背包问题</div><div class="line"> */</div><div class="line">public class Knapsack01 &#123;</div><div class="line">    int[][] dp;</div><div class="line">    //递归</div><div class="line">    public int knapscak01(int[] w, int[] v, int C) &#123;</div><div class="line">        dp = new int[w.length][C + 1];</div><div class="line">        return bestValue(w,v, w.length-1,C);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private int bestValue(int[] weight, int[] value, int index, int capacity) &#123;</div><div class="line">        if (index &lt; 0 || capacity &lt;= 0)</div><div class="line">            return 0;</div><div class="line">        int res = bestValue(weight, value, index - 1, capacity);</div><div class="line">        if (capacity &gt; weight[index])</div><div class="line">            res = Math.max(value[index] + bestValue(weight, value, index - 1, capacity - weight[index]), res);</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //dp O(N*C) O(N*C)</div><div class="line">    public int knapscak01_2(int[] w, int[] v, int C) &#123;</div><div class="line">        int n = w.length;</div><div class="line">        if (n == 0)</div><div class="line">            return 0;</div><div class="line">        int[][] dp = new int[n][C + 1];</div><div class="line">        for (int j = 0; j &lt;= C; j++)</div><div class="line">            dp[0][j] = (j &gt;= w[0] ? v[0] : 0);</div><div class="line">        for (int i = 1; i &lt; n; i++) &#123;</div><div class="line">            for (int j = 0; j &lt;= C; j++) &#123;</div><div class="line">                dp[i][j] = dp[i-1][j];</div><div class="line">                if (j &gt;= w[i])</div><div class="line">                    dp[i][j] = Math.max(dp[i][j], v[i] + dp[i-1][j-w[i]]);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return dp[n-1][C];</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //dp O(C) O(N*C)</div><div class="line">    public int knapscak01_3(int[] w, int[] v, int C) &#123;</div><div class="line">        int n = w.length;</div><div class="line">        if (n == 0)</div><div class="line">            return 0;</div><div class="line">        int[][] dp = new int[2][C + 1];</div><div class="line">        for (int j = 0; j &lt;= C; j++)</div><div class="line">            dp[0][j] = (j &gt;= w[0] ? v[0] : 0);</div><div class="line">        for (int i = 1; i &lt; n; i++) &#123;</div><div class="line">            for (int j = 0; j &lt;= C; j++) &#123;</div><div class="line">                dp[i%2][j] = dp[(i-1)%2][j];</div><div class="line">                if (j &gt;= w[i])</div><div class="line">                    dp[i%2][j] = Math.max(dp[i%2][j], v[i] + dp[(i-1)%2][j-w[i]]);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return dp[(n-1)%2][C];</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //dp O(C) O(N*C)</div><div class="line">    public int knapscak01_4(int[] w, int[] v, int C) &#123;</div><div class="line">        int n = w.length;</div><div class="line">        if (n == 0)</div><div class="line">            return 0;</div><div class="line">        int[] dp = new int[C + 1];</div><div class="line">        for (int j = 0; j &lt;= C; j++)</div><div class="line">            dp[j] = (j &gt;= w[j] ? v[0] : 0);</div><div class="line">        for (int i = 1; i &lt; n; i++) &#123;</div><div class="line">            for (int j = C; j &gt;= w[i]; j--) &#123;</div><div class="line">                dp[j] = Math.max(dp[j], v[i] + dp[j-w[i]]);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return dp[C];</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="完美平方数"><a href="#完美平方数" class="headerlink" title="完美平方数"></a>完美平方数</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">package leetcode.dp;</div><div class="line"></div><div class="line">import java.util.Arrays;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/11</div><div class="line"> */</div><div class="line">public class PerfectSquares_279 &#123;</div><div class="line">    public int numSquares(int n) &#123;</div><div class="line">        int[] dp = new int[n+1];</div><div class="line">        for (int i = 0; i &lt;= n; i++)</div><div class="line">            dp[i] = Integer.MAX_VALUE;</div><div class="line">        dp[0] = 0;</div><div class="line">        dp[1] = 1;</div><div class="line">        for (int i = 2; i &lt;= n; i++) &#123;</div><div class="line">            for (int j = 1; j &lt;= (int)Math.sqrt(i); j++) &#123;</div><div class="line">                dp[i] = Math.min(dp[i], dp[i-j*j] + 1);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        System.out.println(Arrays.toString(dp));</div><div class="line">        return dp[n];</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        System.out.println(new PerfectSquares_279().numSquares(13));</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="机器人走路问题"><a href="#机器人走路问题" class="headerlink" title="机器人走路问题"></a>机器人走路问题</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">package leetcode.dp;</div><div class="line"></div><div class="line">import java.util.Arrays;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/11</div><div class="line"> */</div><div class="line">public class UniquePaths_62 &#123;</div><div class="line">    public int uniquePaths(int m, int n) &#123;</div><div class="line">        int[][] dp = new int[m+1][n+1];</div><div class="line">        for (int i = 0; i &lt; m; i++)</div><div class="line">            dp[i][0] = 0;</div><div class="line">        for (int j = 0; j &lt; n; j++)</div><div class="line">            dp[0][j] = 0;</div><div class="line">        for (int i = 1; i &lt;= m; i++) &#123;</div><div class="line">            for (int j = 1; j &lt;= n; j++) &#123;</div><div class="line">                if (i == 1 &amp;&amp; j == 1)</div><div class="line">                    dp[i][j] = 1;</div><div class="line">                else</div><div class="line">                    dp[i][j] = dp[i-1][j] + dp[i][j-1];</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        for (int i = 0; i &lt;= m; i++)</div><div class="line">            System.out.println(Arrays.toString(dp[i]));</div><div class="line">        return dp[m][n];</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        System.out.println(new UniquePaths_62().uniquePaths(3,7));</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="间隔打劫问题"><a href="#间隔打劫问题" class="headerlink" title="间隔打劫问题"></a>间隔打劫问题</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">package leetcode.dp;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/11</div><div class="line"> */</div><div class="line">public class HouseRobber_198 &#123;</div><div class="line">    //dp[i]表示考虑抢劫nums[i...n]所获得的最大收益</div><div class="line">    int[] dp;</div><div class="line">    public int rob(int[] nums) &#123;</div><div class="line">        dp = new int[nums.length];</div><div class="line">        for (int i = 0; i &lt; dp.length; i++) &#123;</div><div class="line">            dp[i] = -1;</div><div class="line">        &#125;</div><div class="line">        return tryRob(nums, 0);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //考虑抢劫nums[index..nums.length]这个范围内的所有房子</div><div class="line">    private int tryRob(int[] nums, int index) &#123;</div><div class="line">        if (index &gt;= nums.length)</div><div class="line">            return 0;</div><div class="line">        if (dp[index] != -1)</div><div class="line">            return dp[index];</div><div class="line">        int res = 0;</div><div class="line">        for (int i = index; i &lt; nums.length; i++) &#123;</div><div class="line">            res = Math.max(res,nums[i] + tryRob(nums, i + 2));</div><div class="line">        &#125;</div><div class="line">        dp[index] = res;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //dp方法</div><div class="line">    public int rob1(int[] nums) &#123;</div><div class="line">        int n = nums.length;</div><div class="line">        if (n == 0)</div><div class="line">            return 0;</div><div class="line">        int[] dps = new int[n];</div><div class="line">        for (int i = 0; i &lt; n; i++)</div><div class="line">            dps[i] = -1;</div><div class="line">        dps[n-1] = nums[n-1];</div><div class="line">        for (int i = n -2; i &gt;= 0; i--) &#123;</div><div class="line">            for (int j = i; j &lt; n; j++) &#123;</div><div class="line">                dps[i] = Math.max(dps[i], nums[j] + (j+2 &lt; n ? dps [j+2] : 0));</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return dps[0];</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="间隔打劫问题2–收尾相连"><a href="#间隔打劫问题2–收尾相连" class="headerlink" title="间隔打劫问题2–收尾相连"></a>间隔打劫问题2–收尾相连</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">package leetcode.dp;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/11</div><div class="line"> */</div><div class="line">public class HouseRobberII_213 &#123;</div><div class="line">    public int rob(int[] nums) &#123;</div><div class="line">        if (nums.length == 1)</div><div class="line">            return nums[0];</div><div class="line">        return Math.max(rob(nums, 0, nums.length - 2), rob(nums, 1, nums.length - 1));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private int rob(int[] nums, int lo, int hi) &#123;</div><div class="line">        int include = 0, exclude = 0;</div><div class="line">        for (int j = lo; j &lt;= hi; j++) &#123;</div><div class="line">            int i = include, e = exclude;</div><div class="line">            include = e + nums[i];</div><div class="line">            exclude = Math.max(e, i);</div><div class="line">        &#125;</div><div class="line">        return Math.max(include, exclude);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/04/LinkedHashMap源码剖析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2005,618 +2525,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/26/设计模式之Spring中的应用/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/03/26/设计模式之Spring中的应用/" itemprop="url">设计模式之Spring中的应用</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-26T10:02:26+08:00">
-                2018-03-26
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/design-patterns/" itemprop="url" rel="index">
-                    <span itemprop="name">design patterns</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/design-patterns/Spring/" itemprop="url" rel="index">
-                    <span itemprop="name">Spring</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="Spring中使用的设计模式"><a href="#Spring中使用的设计模式" class="headerlink" title="Spring中使用的设计模式"></a>Spring中使用的设计模式</h1><ol>
-<li><p>简单工厂</p>
-<ul>
-<li>又称为静态工厂，简单工厂模式的实质是由一个工厂类根据传入的参数，动态决定创建哪一个产品类。</li>
-<li>Spring中BeanFactory通过传入一个唯一标示来获取bean对象</li>
-</ul>
-</li>
-<li><p>工厂方法</p>
-<ul>
-<li>程序将对象的创建及初始化职责交给工厂对象，工厂父类负责定义创建产品对象的公共接口，工厂子类负责生成具体的产品对象。将产品类的实例化操作延迟到工厂子类中完成。</li>
-<li>Spring中的FactoryBean就是一个典型的工厂方法模式。</li>
-</ul>
-</li>
-<li><p>单例</p>
-<ul>
-<li>保证一个类仅有一个实例，并提供一个访问他的全局访问点。</li>
-<li>Spring下默认的bean均为singleton，通过singleton或者scope属性指定</li>
-</ul>
-</li>
-<li><p>适配器</p>
-<ul>
-<li>将一个接口转换成客户希望的另一个接口，使得接口不兼容的类可以一起工作，其别名为Wrapper。</li>
-<li>Spring中AOP的处理利用了Adapter模式</li>
-</ul>
-</li>
-<li><p>装饰器</p>
-<ul>
-<li>动态的给一个对象添加一些额外的职责。就增加对象功能来说，装饰模式比生成子类实现更为灵活，别名与适配器相同。</li>
-<li>Spring中类名中含有Wrapper或者Decorator中应用了装饰器</li>
-</ul>
-</li>
-<li><p>代理</p>
-<ul>
-<li>为其他对象提供一种代理以控制对这个对象的访问。</li>
-<li>Spring中AOP就是利用JDK动态代理来增强类的切面管理。</li>
-</ul>
-</li>
-<li><p>观察者</p>
-<ul>
-<li>定义对象间的一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于他的对象都被通知并被自动更新</li>
-<li>spring中listener利用了观察者模式</li>
-</ul>
-</li>
-<li><p>策略</p>
-<ul>
-<li>定义一系列的算法，将他们封装起来，并且使他们可互相替换，策略模式让算法独立于使用它的客户而变化，也称为政策模式。</li>
-<li>Spring在实例化对象的时候使用到策略模式。</li>
-</ul>
-</li>
-<li><p>模板方法</p>
-<ul>
-<li>定义一个操作中的算法的骨架，而将一些步骤延迟到子类中，使得子类可以不改变一个算法的结构即可重新定义该算法的某些特定步骤。</li>
-<li>Spring中jdbcTemplate就使用了模板方法。 </li>
-</ul>
-</li>
-</ol>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/25/设计模式之代理模式/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/03/25/设计模式之代理模式/" itemprop="url">设计模式之代理模式</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-25T19:59:03+08:00">
-                2018-03-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/design-patterns/" itemprop="url" rel="index">
-                    <span itemprop="name">design patterns</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>为其他对象提供一种代理，以控制对这个对象的访问。代理对象起到中介作用，可以去掉功能服务或者增加额外的功能服务。</p>
-<h1 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h1><p>代理和被代理对象在代理之前是确定的。他们都是事先相同的接口或者继承相同的抽象类。</p>
-<p><img src="/img/dp-staticProxy.png" alt="Alt text"></p>
-<p>创建一个接口Moveable，Car继承Moveable接口，要求用代理类来记录Car的运行时间。</p>
-<p>Car继承Moveable接口:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public interface Moveable &#123;</div><div class="line">    void move();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>Car:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public class Car implements Moveable&#123;</div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        try &#123;</div><div class="line">            Thread.sleep(new Random().nextInt(1000));</div><div class="line">        &#125; catch (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="继承实现静态代理"><a href="#继承实现静态代理" class="headerlink" title="继承实现静态代理"></a>继承实现静态代理</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">public class Car2 extends Car&#123;</div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        System.out.println(startTime);</div><div class="line">        super.move();</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime);</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="聚合实现静态代理"><a href="#聚合实现静态代理" class="headerlink" title="聚合实现静态代理"></a>聚合实现静态代理</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">public class Car3 implements Moveable&#123;</div><div class="line"></div><div class="line">    private Car car;</div><div class="line"></div><div class="line">    public Car3(Car car) &#123;</div><div class="line">        this.car = car;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        System.out.println(startTime);</div><div class="line">        car.move();</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime);</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>考虑到继承方式扩展代理功能的不方便，推荐使用聚合实现静态代理。也就是代理类和实际类实现共同的接口，代理类中包含所实现接口的引用。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">public class CarLogProxy implements Moveable&#123;</div><div class="line"></div><div class="line">    private Moveable moveable;</div><div class="line"></div><div class="line">    public CarLogProxy(Moveable moveable) &#123;</div><div class="line">        this.moveable = moveable;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        System.out.println(&quot;log start&quot;);</div><div class="line">        moveable.move();</div><div class="line">        System.out.println(&quot;log end&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">public class CarTimeProxy implements Moveable&#123;</div><div class="line"></div><div class="line">    private Moveable moveable;</div><div class="line"></div><div class="line">    public CarTimeProxy(Moveable moveable) &#123;</div><div class="line">        this.moveable = moveable;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        System.out.println(startTime);</div><div class="line">        moveable.move();</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime);</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Moveable car = new Car();</div><div class="line">        CarTimeProxy carTimeProxy = new CarTimeProxy(car);</div><div class="line">        CarLogProxy carLogProxy = new CarLogProxy(carTimeProxy);</div><div class="line">        carLogProxy.move();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h1><p>前面实现了Car类的静态代理，为其添加了运行时间记录和日志记录的功能。如果需要为火车或者自行车添加类似的功能，需要重新定义相同的类，类十分臃肿，同时代码重用性不高，因此引入了动态代理，也就是在程序</p>
-<h2 id="jdk动态代理"><a href="#jdk动态代理" class="headerlink" title="jdk动态代理"></a>jdk动态代理</h2><p><img src="/img/dp-dynamicProxy.png" alt="Alt text"></p>
-<ul>
-<li>InvocationHandler接口，接口中定义了一个invoke方法，invoke方法中第一个参数表示代理类，第二个参数指被代理的方法，args指该方法的参数数组。这个抽象方法会在代理类中动态实现。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">public interface InvocationHandler &#123;</div><div class="line">    public Object invoke(Object proxy, Method method, Object[] args)</div><div class="line">        throws Throwable;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>Proxy：该类为动态代理类，其中的newProxyInstance方法返回一个代理类实例，返回后的代理类可以被当做代理类使用，可使用被代理类的在接口中声明过的方法。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">public static Object newProxyInstance(ClassLoader loader,</div><div class="line">                                          Class&lt;?&gt;[] interfaces,</div><div class="line">                                          InvocationHandler h)</div><div class="line">        throws IllegalArgumentException</div><div class="line">    &#123;</div><div class="line">        Objects.requireNonNull(h);</div><div class="line"></div><div class="line">        final Class&lt;?&gt;[] intfs = interfaces.clone();</div><div class="line">        final SecurityManager sm = System.getSecurityManager();</div><div class="line">        if (sm != null) &#123;</div><div class="line">            checkProxyAccess(Reflection.getCallerClass(), loader, intfs);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        /*</div><div class="line">         * Look up or generate the designated proxy class.</div><div class="line">         */</div><div class="line">        Class&lt;?&gt; cl = getProxyClass0(loader, intfs);</div><div class="line"></div><div class="line">        /*</div><div class="line">         * Invoke its constructor with the designated invocation handler.</div><div class="line">         */</div><div class="line">        try &#123;</div><div class="line">            if (sm != null) &#123;</div><div class="line">                checkNewProxyPermission(Reflection.getCallerClass(), cl);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            final Constructor&lt;?&gt; cons = cl.getConstructor(constructorParams);</div><div class="line">            final InvocationHandler ih = h;</div><div class="line">            if (!Modifier.isPublic(cl.getModifiers())) &#123;</div><div class="line">                AccessController.doPrivileged(new PrivilegedAction&lt;Void&gt;() &#123;</div><div class="line">                    public Void run() &#123;</div><div class="line">                        cons.setAccessible(true);</div><div class="line">                        return null;</div><div class="line">                    &#125;</div><div class="line">                &#125;);</div><div class="line">            &#125;</div><div class="line">            return cons.newInstance(new Object[]&#123;h&#125;);</div><div class="line">        &#125; catch (IllegalAccessException|InstantiationException e) &#123;</div><div class="line">            throw new InternalError(e.toString(), e);</div><div class="line">        &#125; catch (InvocationTargetException e) &#123;</div><div class="line">            Throwable t = e.getCause();</div><div class="line">            if (t instanceof RuntimeException) &#123;</div><div class="line">                throw (RuntimeException) t;</div><div class="line">            &#125; else &#123;</div><div class="line">                throw new InternalError(t.toString(), t);</div><div class="line">            &#125;</div><div class="line">        &#125; catch (NoSuchMethodException e) &#123;</div><div class="line">            throw new InternalError(e.toString(), e);</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<h2 id="动态代理实现步骤"><a href="#动态代理实现步骤" class="headerlink" title="动态代理实现步骤"></a>动态代理实现步骤</h2><ol>
-<li>创建一个实现接口InvocationHandler的类，实现invoke方法</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">public class TimeHandler implements InvocationHandler&#123;</div><div class="line"></div><div class="line">    private Object target;</div><div class="line"></div><div class="line">    public TimeHandler(Object target) &#123;</div><div class="line">        this.target = target;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     *</div><div class="line">     * @param proxy 被代理的对象</div><div class="line">     * @param method 被代理对象的方法</div><div class="line">     * @param args 被代理对象的方法的参数</div><div class="line">     * @return Object对象，方法的返回值</div><div class="line">     * @throws Throwable</div><div class="line">     */</div><div class="line">    @Override</div><div class="line">    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;</div><div class="line">        System.out.println(&quot;time begin&quot;);</div><div class="line">        method.invoke(target);</div><div class="line">        System.out.println(&quot;time end&quot;);</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ol>
-<li>创建被代理的类以及接口(Car以及Moveable)</li>
-<li>调用Proxy的静态方法，创建一个代理类</li>
-<li>通过代理调用方法</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Car car = new Car();</div><div class="line"></div><div class="line">        InvocationHandler h = new TimeHandler(car);</div><div class="line">        Class&lt;?&gt; cls = car.getClass();</div><div class="line"></div><div class="line">        /**</div><div class="line">         * loader：类加载器</div><div class="line">         * interfaces：实现接口</div><div class="line">         * h ：invocationHandler</div><div class="line">         */</div><div class="line">        Moveable m = (Moveable) Proxy.newProxyInstance(cls.getClassLoader(), cls.getInterfaces(), h);</div><div class="line"></div><div class="line">        m.move();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="JDK动态代理与CGLIB动态代理的区别"><a href="#JDK动态代理与CGLIB动态代理的区别" class="headerlink" title="JDK动态代理与CGLIB动态代理的区别"></a>JDK动态代理与CGLIB动态代理的区别</h2><table>
-<thead>
-<tr>
-<th>jdk动态代理</th>
-<th>CGLIB动态代理</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>只能代理实现了接口的类</td>
-<td>针对类来实现代理</td>
-</tr>
-<tr>
-<td>没有实现接口的类不能实现JDK动态代理</td>
-<td>对指定目标类产生一个子类，通过方法拦截技术拦截所有父类方法调用</td>
-</tr>
-<tr>
-<td>JDK动态代理利用反射机制生成一个实现代理接口的匿名类，在调用具体方法前调用InvocationHandler来处理</td>
-<td>cglib是利用asm开源包，对代理对象的class文件加载进来，通过修改其字节码生成子类来处理</td>
-</tr>
-</tbody>
-</table>
-<h2 id="模拟JDK动态代理的实现"><a href="#模拟JDK动态代理的实现" class="headerlink" title="模拟JDK动态代理的实现"></a>模拟JDK动态代理的实现</h2><p>实现功能，通过Proxy的newproxyInstance返回代理对象<br>1、声明一段源码，动态产生代理<br>2、编译源码，产生新的类<br>3、将这个类load到内存中，产生一个新的对象<br>4、return代理对象</p>
-<p>handler:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">package proxy;</div><div class="line"></div><div class="line">import java.lang.reflect.Method;</div><div class="line"></div><div class="line">public interface InvocationHandler &#123;</div><div class="line">    public void invoke(Object o, Method m);</div><div class="line">&#125;</div><div class="line"></div><div class="line">package proxy;</div><div class="line"></div><div class="line">import java.lang.reflect.InvocationTargetException;</div><div class="line">import java.lang.reflect.Method;</div><div class="line"></div><div class="line">public class TimeHandler implements InvocationHandler&#123;</div><div class="line"></div><div class="line">    private Object target;</div><div class="line"></div><div class="line">    public TimeHandler(Object target) &#123;</div><div class="line">        this.target = target;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void invoke(Object o, Method m) &#123;</div><div class="line">        try &#123;</div><div class="line">            long starttime = System.currentTimeMillis();</div><div class="line">            System.out.println(&quot;汽车开始行驶....&quot;);</div><div class="line">            m.invoke(target);</div><div class="line">            long endtime = System.currentTimeMillis();</div><div class="line">            System.out.println(&quot;汽车结束行驶....  汽车行驶时间：&quot;+ (endtime - starttime) + &quot;毫秒！&quot;);</div><div class="line">        &#125; catch (IllegalAccessException | InvocationTargetException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>proxy:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">public class Proxy &#123;</div><div class="line"></div><div class="line">    public static Object newProxyInstance(Class infce, InvocationHandler h) throws IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException &#123;</div><div class="line">        //创建源码</div><div class="line">        String rt = &quot;\r\n&quot;;</div><div class="line">        String methodStr = &quot;&quot;;</div><div class="line">        for(Method m : infce.getMethods())&#123;</div><div class="line">            methodStr += &quot;	@Override&quot; + rt +</div><div class="line">                    &quot;	public void &quot; + m.getName() + &quot;() &#123;&quot; + rt +</div><div class="line">                    &quot;  try&#123;&quot; + rt +</div><div class="line">                    &quot;  Method md = &quot; + infce.getName() + &quot;.class.getMethod(\&quot;&quot;</div><div class="line">                    + m.getName() + &quot;\&quot;);&quot; + rt +</div><div class="line">                    &quot;  h.invoke(this,md);&quot; +rt+</div><div class="line">                    &quot;  &#125;catch(Exception e)&#123; e.printStackTrace();&#125;&quot; + rt +</div><div class="line">                    &quot;	&#125;&quot; ;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        String str =</div><div class="line">                &quot;package proxy;&quot; + rt +</div><div class="line">                        &quot;import java.lang.reflect.Method;&quot; + rt +</div><div class="line">                        &quot;import proxy.InvocationHandler;&quot; +  rt+</div><div class="line">                        &quot;public class $Proxy0 implements &quot; + infce.getName() + &quot; &#123;&quot; + rt +</div><div class="line">                        &quot;	public $Proxy0(InvocationHandler h) &#123;&quot; + rt +</div><div class="line">                        &quot;		this.h = h;&quot; + rt +</div><div class="line">                        &quot;	&#125;&quot; + rt +</div><div class="line">                        &quot;  private InvocationHandler h;&quot; + rt+</div><div class="line">                        methodStr + rt +</div><div class="line">                        &quot;&#125;&quot; ;</div><div class="line">        String fileName = System.getProperty(&quot;user.dir&quot;) + &quot;/out/production/Design_Patterns_new/proxy/$Proxy0.java&quot;;</div><div class="line">        File file = new File(fileName);</div><div class="line">        FileUtils.writeStringToFile(file, str);</div><div class="line"></div><div class="line">        //编译源码</div><div class="line">        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();</div><div class="line">        StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);</div><div class="line">        Iterable units = fileManager.getJavaFileObjects(fileName);</div><div class="line">        //编译任务</div><div class="line">        JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, null, null, null, units);</div><div class="line">        //执行任务</div><div class="line">        task.call();</div><div class="line">        fileManager.close();</div><div class="line"></div><div class="line">        //load到内存</div><div class="line">        ClassLoader loader = ClassLoader.getSystemClassLoader();</div><div class="line">        Class&lt;?&gt; c = loader.loadClass(&quot;proxy.$Proxy0&quot;);</div><div class="line"></div><div class="line">        Constructor constructor = c.getConstructor(InvocationHandler.class);</div><div class="line">        return constructor.newInstance(h);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/25/算法之全排列和全组合/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/03/25/算法之全排列和全组合/" itemprop="url">算法-全排列和全组合</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-25T16:55:40+08:00">
-                2018-03-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/algorithms/" itemprop="url" rel="index">
-                    <span itemprop="name">algorithms</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="全排列"><a href="#全排列" class="headerlink" title="全排列"></a>全排列</h1><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><ul>
-<li><p>输入一个字符串，求字符串包含元素（含重复，比如aab的情况）的所有排列可能。</p>
-</li>
-<li><p>例如：输入abc,所有排列组合包括: abc, acb, bac, bca, cab, cba。</p>
-</li>
-</ul>
-<h2 id="递归解法"><a href="#递归解法" class="headerlink" title="递归解法"></a>递归解法</h2><ul>
-<li><p>思路：如果输入为abcdef，则首先确定排列的第一个字母，有6中可能，如果选定a,则其后接bcdef的全排列，明显适用于递归结题。结题思路为第一个字母分别选定所有可能的情况，然后对剩下的字母进行递归。递归终止条件为选定的字母的下标为字符串长度-1。</p>
-</li>
-<li><p>实现</p>
-</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">public class AllSort &#123;</div><div class="line">    private static ArrayList&lt;String&gt; list = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    public static void main(String[] args) throws IOException &#123;</div><div class="line">        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));</div><div class="line">        String str = br.readLine();</div><div class="line">        Permutation(str.toCharArray(), str.length(), 0);</div><div class="line">        System.out.println(list.toString());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void Permutation(char[] chars, int strLen, int curIndex) &#123;</div><div class="line">        //如果到最后一个数，将排好的加入到list中</div><div class="line">        if (curIndex == strLen - 1) &#123;</div><div class="line">            list.add(new String(chars));</div><div class="line">        &#125; else &#123;</div><div class="line">            for (int i = curIndex; i &lt;= strLen - 1; i++) &#123;</div><div class="line">                //去重，避免相同数字的交换造成最终结果存在重复</div><div class="line">                if (i == curIndex || chars[i] != chars[curIndex]) &#123;</div><div class="line">                    //依次交换开头字母与后面的进行递归</div><div class="line">                    Swap(chars, i, curIndex);</div><div class="line">                    Permutation(chars, strLen, curIndex + 1);</div><div class="line">                    Swap(chars, i, curIndex);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void Swap(char[] chars, int i, int curIndex) &#123;</div><div class="line">        char tmp = chars[i];</div><div class="line">        chars[i] = chars[curIndex];</div><div class="line">        chars[curIndex] = tmp;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="字典序法"><a href="#字典序法" class="headerlink" title="字典序法"></a>字典序法</h2><ul>
-<li>思想：将输入排序，如输入为1234，则其最小值为1234，然后下一次加入的值为除了1234以外，1,2,3,4组成的最小的值。获取方法为从末尾找第一个从右向左不递增的数a，然后找到从末尾开始从右向左第一个大于a的数，并将这两个数交换次序。然后将原来a的位置之后的字符串反序。也就是说1234，的下一个为1243，在下一个为1324..直到字符串从右向左递增为止。</li>
-</ul>
-<p>实现：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line">public class AllSort &#123;</div><div class="line">    private static ArrayList&lt;String&gt; list = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    public static void main(String[] args) throws IOException &#123;</div><div class="line">        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));</div><div class="line">        String str = br.readLine();</div><div class="line">        PermutationWithDictionary(str.toCharArray(), str.length());</div><div class="line">        System.out.println(list.toString());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void Swap(char[] chars, int i, int curIndex) &#123;</div><div class="line">        char tmp = chars[i];</div><div class="line">        chars[i] = chars[curIndex];</div><div class="line">        chars[curIndex] = tmp;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void PermutationWithDictionary(char[] chars, int strLen) &#123;</div><div class="line">        //对字符数组进行排序</div><div class="line">        Arrays.sort(chars);</div><div class="line"></div><div class="line">        while (true) &#123;</div><div class="line">            int j;</div><div class="line">            int index = 0;</div><div class="line">            //找到从右向左第一个不是非递增元素</div><div class="line">            for (j = strLen - 2; j &gt;= 0; j--) &#123;</div><div class="line">                if (chars[j] &lt; chars[j+1])&#123;</div><div class="line">                    index = j;</div><div class="line">                    break;</div><div class="line">                &#125; else if (j == 0)&#123;</div><div class="line">                    return;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            //与从右向左第一个大于这个元素的元素交换</div><div class="line">            for (j = strLen - 1; j &gt;= 0; j--) &#123;</div><div class="line">                if (chars[j] &gt; chars[index]) &#123;</div><div class="line">                    break;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            //交换这两个值</div><div class="line">            Swap(chars, index, j);</div><div class="line">            //对非递增元素位置后面的数组进行逆序排序</div><div class="line">            Reverse(chars, index+1);</div><div class="line">            list.add(new String(chars));</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void Reverse(char[] chars, int index) &#123;</div><div class="line">        int k = index, j = chars.length-1;</div><div class="line">        while (k &lt; j) &#123;</div><div class="line">            Swap(chars,k,j);</div><div class="line">            k++;</div><div class="line">            j--;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="全组合"><a href="#全组合" class="headerlink" title="全组合"></a>全组合</h1><ul>
-<li>题目描述：输入一个字符串，求字符的所有组合。如abc,则输出可能为a,b,c,ab,ac,bc,abc。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line">public class AllCombine &#123;</div><div class="line">    static ArrayList&lt;String&gt; list = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    public static void main(String[] args) throws IOException &#123;</div><div class="line">        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));</div><div class="line">        String str = br.readLine();</div><div class="line">        combinetion(str.toCharArray(), str.length());</div><div class="line">        System.out.println(list.toString());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void combinetion(char[] chars, int length) &#123;</div><div class="line">       if (chars == null || length == 0)</div><div class="line">           return;</div><div class="line">        List&lt;Character&gt; array = new ArrayList&lt;&gt;();</div><div class="line">        //n中情况分别考虑</div><div class="line">        for (int i = 1; i &lt;= length; i++) &#123;</div><div class="line">            combine(chars, 0, i, array);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 从字符数组中index以后挑选number个数加入list</div><div class="line">     * @param chars 输入的字符数组</div><div class="line">     * @param index 开始字符下标</div><div class="line">     * @param number</div><div class="line">     * @param array</div><div class="line">     */</div><div class="line">    private static void combine(char[] chars, int index, int number, List&lt;Character&gt; array) &#123;</div><div class="line">        if (number == 0) &#123;</div><div class="line">            //递归终止条件，判断是为了去重</div><div class="line">            if (!list.contains(array.toString())) &#123;</div><div class="line">                list.add(array.toString());</div><div class="line">            &#125;</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line">        if (index == chars.length) &#123;</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line">        //取当前元素，并考察递归选取n-1个元素的情况</div><div class="line">        array.add(chars[index]);</div><div class="line">        combine(chars, index+1, number - 1, array);</div><div class="line">        array.remove((Character) chars[index]);</div><div class="line">        //不取当前元素，考察后面选取n个元素</div><div class="line">        combine(chars, index+1, number, array);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>基于位图：假定元素有n个，则最终结果组合为2^n-1个，我们使用位操作方法：假设元素原本为123，则1表示取该元素，0表示不取该元素。000是没有意义是，则选取的对应如下：<br>001,010,100,011,101,110,111-&gt;a,b,c,bc,ac,ab,abc。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">public class AllCombine1 &#123;</div><div class="line">    static ArrayList&lt;String&gt; list = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    public static void main(String[] args) throws IOException &#123;</div><div class="line">        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));</div><div class="line">        String str = br.readLine();</div><div class="line">        combinetion(str.toCharArray());</div><div class="line">        System.out.println(list.toString());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void combinetion(char[] chars) &#123;</div><div class="line">        if (chars == null || chars.length == 0)</div><div class="line">            return;</div><div class="line">        int len = chars.length;</div><div class="line">        //n=2^len</div><div class="line">        int n = 1&lt;&lt;len;</div><div class="line">        for (int i = 1; i &lt; n; i++) &#123;</div><div class="line">            StringBuilder sb = new StringBuilder();</div><div class="line">            for (int j = 0; j &lt; len; j++) &#123;</div><div class="line">                int temp = i;</div><div class="line">                if ((temp &amp; (1&lt;&lt;j)) != 0)</div><div class="line">                    sb.append(chars[j]);</div><div class="line">            &#125;</div><div class="line">            list.add(sb.toString());</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2670,7 +2578,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-count">58</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2681,7 +2589,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-count">23</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -2692,7 +2600,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-count">20</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

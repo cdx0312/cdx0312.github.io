@@ -278,7 +278,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/22/HashMap和ConcurrentHashMap/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/23/设计模式之单例模式与工厂方法/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="cdx">
@@ -297,7 +297,282 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/03/22/HashMap和ConcurrentHashMap/" itemprop="url">HashMap和ConcurrentHashMap理解</a></h1>
+                <a class="post-title-link" href="/2018/03/23/设计模式之单例模式与工厂方法/" itemprop="url">设计模式之单例模式与工厂方法</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-23T20:43:38+08:00">
+                2018-03-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/design-patterns/" itemprop="url" rel="index">
+                    <span itemprop="name">design patterns</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h1><p>  设计模式是一套被反复使用的，多数人知晓的，经过分类编目的，代码设计经验的总结。使用设计模式是为了可重用代码。</p>
+<h1 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h1><ol>
+<li><p>定义：单例模式确保只有一个实例，而且自行实例化并向整个系统提供这个实例。</p>
+</li>
+<li><p>类型：创建类模式</p>
+</li>
+<li><p>组成：私有构造方法则不能通过构造方法来创建类，静态属性在类加载时就创建了一个对象，公有静态方法保证外部类可以直接调用。</p>
+<ul>
+<li>私有的构造方法</li>
+<li>指向自己实例的私有静态引用</li>
+<li>以自己实例为返回值的静态的公有方法</li>
+</ul>
+</li>
+<li><p>实现：</p>
+<ol>
+<li><p>饿汉式单例：单例类被加载时候，就实例化一个对象交个自己引用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public class Singleton &#123;</div><div class="line">    private Singleton() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static Singleton singleton = new Singleton();</div><div class="line"></div><div class="line">    public static Singleton getInstance() &#123;</div><div class="line">        return singleton;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>懒汉式实例：调用取得方法实例时才会实例化对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">public class Singleton1 &#123;</div><div class="line">    private Singleton1()&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static Singleton1 singleton1;</div><div class="line"></div><div class="line">    public static synchronized Singleton1 getInstacne()&#123;</div><div class="line">        if (singleton1 == null)</div><div class="line">            singleton1 = new Singleton1();</div><div class="line">        return singleton1;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><p>优点:</p>
+<ul>
+<li>内存中只有一个对象，节省内存空间</li>
+<li>避免频繁的创建和销毁对象，可以提高性能</li>
+<li>避免对共享资源的多重占用</li>
+<li>可以全局访问</li>
+</ul>
+</li>
+<li><p>应用场景：</p>
+<ul>
+<li>需要频繁实例化然后销毁的对象</li>
+<li>创建对象耗时过多或者消耗资源过多，但又经常用到的对象。</li>
+<li>有状态的工具类对象</li>
+<li>频繁访问数据库或文件的对象</li>
+</ul>
+</li>
+<li><p>注意事项：</p>
+<ul>
+<li>只能使用单例类提供的方法获得单例对象，不要使用反射，否则会实例化一个新对象。</li>
+<li>不要做断开单例类对象与类中静态引用的操作。</li>
+<li>多线程使用单例共享资源时，注意线程安全的问题。</li>
+</ul>
+</li>
+<li><p>相关问题：</p>
+<ul>
+<li><p>单例模式的对象长时间不用会被jvm回收吗？<br>  不会，Hotspot中只要对象和GC Roots之间有可达引用链，也就是单例对象和单例中的引用没有被断开就不会被回收。</p>
+</li>
+<li><p>一个jvm中会出现多个单例吗？<br>  不使用反射的话，在一个jvm中不会出现多个单例。</p>
+</li>
+<li><p>单例模式只有饿汉和懒汉两种吗？<br>  所有可以实现一个实例的类，都是单例模式。</p>
+</li>
+<li><p>单例模式可以被继承吗？<br>  饿汉和懒汉，private方法不可以被继承。</p>
+</li>
+</ul>
+</li>
+</ol>
+<h1 id="工厂方法模式"><a href="#工厂方法模式" class="headerlink" title="工厂方法模式"></a>工厂方法模式</h1><ol>
+<li><p>定义：定义一个用于创建对象的接口，让子类决定实例化哪一个类，工厂方法使一个类的实例化延迟到其子类。</p>
+</li>
+<li><p>类型：创建类模式</p>
+</li>
+<li><p>实现：</p>
+<p>工厂模式根据抽象程度的不同分为三种：</p>
+<ul>
+<li><p>简单工厂模式（静态工厂模式）：创建一个工厂来创建新的对象。</p>
+<p>   <img src="/img/dp-factory-simpleFactory.png" alt="Alt text"></p>
+<p>   工厂类</p>
+   <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public class Factory &#123;</div><div class="line">    public Product createFactory(int type) &#123;</div><div class="line">        if (type == 1)</div><div class="line">            return new Product1();</div><div class="line">        else</div><div class="line">            return new Product2();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>   产品抽象类和具体产品</p>
+   <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public abstract class Product &#123;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Product1 extends Product&#123;</div><div class="line">    public Product1() &#123;</div><div class="line">        System.out.println(&quot;product1&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Product2 extends Product&#123;</div><div class="line">    public Product2() &#123;</div><div class="line">        System.out.println(&quot;product2&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>   消费者</p>
+   <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public class Customer &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Factory factory = new Factory();</div><div class="line">        Product product1 = factory.createFactory(1);</div><div class="line">        Product product2 = factory.createFactory(2);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><p>组成：</p>
+<ul>
+<li>工厂类：用于创建商品</li>
+<li>抽象产品：具体产品继承的父类或者实现的接口</li>
+<li>具体产品：工厂类创建的对象</li>
+</ul>
+</li>
+<li><p>此时当我们想要添加一种产品时，需要修改工厂类的业务员逻辑，实际中对应很多产品，对于工厂类来说负担太大，因此引入工厂方法模式，也就是讲工厂类定义成接口，增加一个商品，就增加该商品对应的工厂类的实现。</p>
+</li>
+</ul>
+</li>
+<li><p>工厂方法模式</p>
+<p> <img src="/img/dp-factory-factoryMethod.png" alt="Alt text"></p>
+<p> 产品类：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public interface IProduct &#123;</div><div class="line">    public void productMethod();</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Product implements IProduct&#123;</div><div class="line">    @Override</div><div class="line">    public void productMethod() &#123;</div><div class="line">        System.out.println(&quot;产品&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Product1 implements IProduct&#123;</div><div class="line">    @Override</div><div class="line">    public void productMethod() &#123;</div><div class="line">        System.out.println(&quot;产品1&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p> 工厂类</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public interface IFactory &#123;</div><div class="line">    public IProduct createProduct();</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Factory implements IFactory&#123;</div><div class="line">    @Override</div><div class="line">    public IProduct createProduct() &#123;</div><div class="line">        return new Product();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Factory1 implements IFactory&#123;</div><div class="line">    @Override</div><div class="line">    public IProduct createProduct() &#123;</div><div class="line">        return new Product1();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p> 客户类</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">public class Client &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        IFactory factory = new Factory();</div><div class="line">        IProduct product = factory.createProduct();</div><div class="line">        product.productMethod();</div><div class="line"></div><div class="line">        IFactory factory1 = new Factory1();</div><div class="line">        IProduct product1 = factory1.createProduct();</div><div class="line">        product1.productMethod();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p> 工厂方法模式去掉了简单工厂模式中工厂方法的静态属性，使得它可以被子类继承。这样在简单工厂模式中集中在工厂方法中的压力就转到不同的工厂子类这种去了。</p>
+<ul>
+<li><p>组成：</p>
+<ul>
+<li>抽象工厂：具体工厂必须实现的接口或父类</li>
+<li>具体工厂：含有和具体业务逻辑有关的代码。</li>
+<li>抽象产品：具体产品继承的接口或父类。</li>
+<li>具体产品：创建产品的类。</li>
+</ul>
+</li>
+<li><p>工厂方法模式对对象的创建进行了包装，使得客户程序中仅仅处理抽象产品角色提供的接口。这样的缺点是使得对象的数量成倍增加。</p>
+</li>
+</ul>
+</li>
+<li><p>抽象工厂模式</p>
+<p>产品类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">public interface IProductA &#123;</div><div class="line">    public void productMethod();</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class ProductA implements IProductA &#123;</div><div class="line">    @Override</div><div class="line">    public void productMethod() &#123;</div><div class="line">        System.out.println(&quot;A产品&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class ProductA1 implements IProductA &#123;</div><div class="line">    @Override</div><div class="line">    public void productMethod() &#123;</div><div class="line">        System.out.println(&quot;A产品1&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public interface IProductB &#123;</div><div class="line">    public void productMethod();</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class ProductB implements IProductB &#123;</div><div class="line">    @Override</div><div class="line">    public void productMethod() &#123;</div><div class="line">        System.out.println(&quot;B产品&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class ProductB1 implements IProductB &#123;</div><div class="line">    @Override</div><div class="line">    public void productMethod() &#123;</div><div class="line">        System.out.println(&quot;B产品1&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>工厂类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">public interface AbstratFactory &#123;</div><div class="line">    public IProductA createProductA();</div><div class="line"></div><div class="line">    public IProductB createProductB();</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Factory implements AbstratFactory&#123;</div><div class="line">    @Override</div><div class="line">    public IProductA createProductA() &#123;</div><div class="line">        return new ProductA();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public IProductB createProductB() &#123;</div><div class="line">        return new ProductB();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Factory1 implements AbstratFactory&#123;</div><div class="line">    @Override</div><div class="line">    public IProductA createProductA() &#123;</div><div class="line">        return new ProductA1();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public IProductB createProductB() &#123;</div><div class="line">        return new ProductB1();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>客户端</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public class Client &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        //生产产品</div><div class="line">        AbstratFactory factory = new Factory();</div><div class="line">        IProductA productA = factory.createProductA();</div><div class="line">        productA.productMethod();</div><div class="line">        IProductB productB = factory.createProductB();</div><div class="line">        productB.productMethod();</div><div class="line">        //生产产品1</div><div class="line"></div><div class="line">        AbstratFactory factory1 = new Factory1();</div><div class="line">        IProductA productA1 = factory1.createProductA();</div><div class="line">        IProductB productB1 = factory1.createProductB();</div><div class="line">        productA1.productMethod();</div><div class="line">        productB1.productMethod();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>无论是简单工厂模式，工厂方法模式，还是抽象工厂模式，他们都属于工厂模式，在形式和特点上也是极为相似的，他们的最终目的都是为了解耦。在使用时，我们不必去在意这个模式到底工厂方法模式还是抽象工厂模式，因为他们之间的演变常常是令人琢磨不透的。经常你会发现，明明使用的工厂方法模式，当新需求来临，稍加修改，加入了一个新方法后，由于类中的产品构成了不同等级结构中的产品族，它就变成抽象工厂模式了；而对于抽象工厂模式，当减少一个方法使的提供的产品不再构成产品族之后，它就演变成了工厂方法模式。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/22/JDK源码之HashMap和ConcurrentHashMap/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/22/JDK源码之HashMap和ConcurrentHashMap/" itemprop="url">JDK源码之HashMap和ConcurrentHashMap理解</a></h1>
         
 
         <div class="post-meta">
@@ -4426,190 +4701,6 @@ String(request.getParamter(&quot;userName&quot;).getBytes(&quot;ISO8859-1&quot;)
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/09/10.正则表达式/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/09/10.正则表达式/" itemprop="url">10. 正则表达式</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-09T15:31:29+08:00">
-                2017-09-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h1><p>字符串是编程时涉及到最多的一种数据结构，对于字符串进行操作的需求几乎无处不在。比如判断一个字符串是否是合法的Email地址，虽然可以编程提取@前后的子串，再分别判断是否是单词和域名，但这样做不但麻烦，而且代码难以复用。</p>
-<p>正则表达式是一种用来匹配字符串的强有力的武器。它设计的思想是用一种描述性的语言来给字符串定义了一个规则，凡是符合规则 对字符串，我们就认为它匹配了，否则，该字符串就是不合法的。</p>
-<p>所以我们判断一个字符串是否是合法的Email的方法是：<br>1、创建一个匹配Email的正则表达式<br>2、用该正则表达式去匹配用户的输入来判断是否合法。</p>
-<p>因为正则表达式也是用字符串表示的，首先需要了解如何用字符来描述字符。</p>
-<p>在正则表达式中，如果直接给出字符，就是精确匹配。用<code>\d</code>可以匹配一个数字，<code>\w</code>可以匹配一个字母或数字，所以：</p>
-<blockquote>
-<p><code>00\d</code>可以匹配<code>007</code>，但是无法匹配<code>00A</code><br><code>\d\d\d</code>可以匹配<code>010</code><br><code>\w\w\d</code>可以匹配<code>py3</code><br><code>.</code>可以匹配任意字符，<code>py.</code>可以匹配<code>pyc``py0``py!</code>等。</p>
-</blockquote>
-<p>要匹配变长的字符，在正则表达式中，用<code>*</code>表示任意个字符，用<code>+</code>表示至少一个字符，用<code>?</code>表示0个或1个字符，用<code>{n}</code>表示n个字符，用<code>{n,m}</code>表示n-m个字符：</p>
-<p><code>\d{3}\s+\d{3,8}</code><br>1、<code>\d{3}</code>表示匹配三个数字<br>2、<code>\s</code>表示可以匹配一个空格（包括Tab等空白符），<code>\s+</code>表示至少有一个空白符，<br>3、<code>\d{3.8}</code>表示3-8个数字。<br>综合起来，上面的正则表达式可以匹配任意个空格隔开的带区号的电话号码。如果要匹配<code>010-12345</code>这样的号码时，由于<code>-</code>是特殊字符，在正则表达式中要用<code>\</code>转义，所以上面的正则为：<code>\d{3}\-\d{3,8}</code>，但是仍然无法匹配<code>010 - 12345</code>这样的电话号码。</p>
-<h2 id="进阶"><a href="#进阶" class="headerlink" title="进阶"></a>进阶</h2><p>要做更精确的匹配，可以用<code>[]</code>表示范围：</p>
-<blockquote>
-<p><code>[0-9a-zA-Z\_]</code>可以匹配一个数字、字母或者下划线<br><code>[0-9a-zA-Z\_]+</code>可以匹配至少由一个数字、字母或者下划线组成的祖字符串，比如<code>a100</code>，<code>0_z</code>，<code>Py300</code>等<br><code>[a-zA-z\_][0-9a-zA-Z\_]*</code>可以匹配由字母或下划线开头，后接任意个由一个数字、字母或者下划线组成的字符串。<br><code>[a-zA-z\_][0-9a-zA-Z\_]{0,19}</code>更精确地限制了变量的长度是1-20个字符</p>
-</blockquote>
-<p><code>A|B</code>可以匹配A或B，所以<code>(P|p)ython</code>可以匹配<code>python</code>或者<code>Python</code>。</p>
-<p><code>^</code>表示行的开头，<code>^\d</code>表示必须以数字开头。</p>
-<p><code>$</code>表示行的结束，<code>\d$</code>表示必须以数字结束。</p>
-<h2 id="re模块"><a href="#re模块" class="headerlink" title="re模块"></a>re模块</h2><p>Python提供<code>re</code>模块，包含所有正则表达式的功能。又有Python的字符串本身也用<code>\</code>转义，要特别注意：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>s=<span class="string">'ABC\\-001'</span></div><div class="line"><span class="comment">#python的字符串，对应的正则表达式'ABC\-001'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>s=<span class="string">r'ABC\-001'</span></div><div class="line"><span class="comment">#加r就不再考虑转义的问题</span></div></pre></td></tr></table></figure></p>
-<p>如何判断正则表达式是否匹配：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> re</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>re.match(<span class="string">r'^\d&#123;3&#125;\-\d&#123;3,8&#125;$'</span>, <span class="string">'010-12345'</span>)</div><div class="line">&lt;_sre.SRE_Match object; span=(<span class="number">0</span>, <span class="number">9</span>), match=<span class="string">'010-12345'</span>&gt;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>re.match(<span class="string">r'^\d&#123;3&#125;\-\d&#123;3,8&#125;$'</span>, <span class="string">'010 12345'</span>)</div></pre></td></tr></table></figure></p>
-<p><code>match()</code>方法判断是否匹配，如果匹配成功，返回一个Match对象，否则返回None。常见的判断方法是：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">test=<span class="string">'用户输入的字符串'</span></div><div class="line"><span class="keyword">if</span> re.match(<span class="string">r'正则表达式'</span>,est):</div><div class="line">	print(<span class="string">'ok'</span>)</div><div class="line"><span class="keyword">else</span>:</div><div class="line">	print(<span class="string">'failed'</span>)</div></pre></td></tr></table></figure></p>
-<h2 id="切分字符串"><a href="#切分字符串" class="headerlink" title="切分字符串"></a>切分字符串</h2><p>用正则表达式切分字符串比用固定的字符更灵活，正常的切分代码为：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">'a b    c'</span>.split()</div><div class="line">[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>]</div></pre></td></tr></table></figure></p>
-<p>无法识别连续的空格，用正则表达式：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>re.split(<span class="string">r'\s+'</span>,<span class="string">'a b   c'</span>)</div><div class="line">[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>]</div></pre></td></tr></table></figure></p>
-<p>无论多少个空格都可以正常分割。加入<code>,</code>：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>re.split(<span class="string">r'[\s\.]+'</span>,<span class="string">'a, b, c d'</span>)</div><div class="line">[<span class="string">'a,'</span>, <span class="string">'b,'</span>, <span class="string">'c'</span>, <span class="string">'d'</span>]</div></pre></td></tr></table></figure></p>
-<p>加入<code>;</code>：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>re.split(<span class="string">r'[\s\.\;]+'</span>,<span class="string">'a,b;; c d'</span>)</div><div class="line">[<span class="string">'a,b'</span>, <span class="string">'c'</span>, <span class="string">'d'</span>]</div></pre></td></tr></table></figure></p>
-<h2 id="分组"><a href="#分组" class="headerlink" title="分组"></a>分组</h2><p>除了简单地判断是否匹配之外，正则表达式还有提取子串的强大功能。用<code>()</code>表示的就是要提取的分组。比如：</p>
-<p><code>^(\d{3}-(\d{3,8}))$</code>分别定义了两个组，可以直接从匹配的字符串中提取出区号和本地号码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>m=re.match(<span class="string">r'^(\d&#123;3&#125;)-(\d&#123;3,8&#125;)$'</span>, <span class="string">'010-12345'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>m</div><div class="line">&lt;_sre.SRE_Match object; span=(<span class="number">0</span>, <span class="number">9</span>), match=<span class="string">'010-12345'</span>&gt;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>m.group(<span class="number">0</span>)</div><div class="line"><span class="string">'010-12345'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>m.group(<span class="number">1</span>)</div><div class="line"><span class="string">'010'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>m.group(<span class="number">2</span>)</div><div class="line"><span class="string">'12345'</span></div></pre></td></tr></table></figure></p>
-<p>如果正则表达式中定义了组，就可以在<code>Match</code>对象上用<code>group()</code>方法提取出子串来。</p>
-<p><code>group(0)</code>永远是原始字符串，<code>group(1)</code>、<code>group(2)</code>……表示第一个、第二个子串。</p>
-<p>提取子串很有用：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>t=<span class="string">'19:13:12'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>m = re.match(<span class="string">r'^(0[0-9]|1[0-9]|2[0-3]|[0-9])\:(0[0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9]|[0-9])\:(0[0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9]|[0-9])$'</span>, t)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>m.groups()</div><div class="line">(<span class="string">'19'</span>, <span class="string">'13'</span>, <span class="string">'12'</span>)</div></pre></td></tr></table></figure></p>
-<p>这个正则表达式可以直接识别合法的时间。但是有些时候，用正则表达式也无法做到完全验证，比如识别日期：</p>
-<blockquote>
-<p>‘^(0[1-9]|1[0-2]|[0-9])-(0[0-9]|1[0-9]|2[0-9]|3[0-1]|[0-9])$’</p>
-</blockquote>
-<p>对于<code>2-30</code>，<code>4-31</code>这样的非法日期，用正则还是识别不了。</p>
-<h2 id="贪婪匹配"><a href="#贪婪匹配" class="headerlink" title="贪婪匹配"></a>贪婪匹配</h2><p>正则匹配默认是贪婪匹配，也就是匹配尽可能多的字符。如匹配出数字后面的0：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>re.match(<span class="string">r'^(\d+)(0*)$'</span>,<span class="string">'102300'</span>).groups()</div><div class="line">(<span class="string">'102300'</span>, <span class="string">''</span>)</div></pre></td></tr></table></figure></p>
-<p>由于<code>\d+</code>采用贪婪匹配，直接把后面的0全匹配了，结果<code>0*</code>只能匹配空字符串了。</p>
-<p>必须让<code>\d+</code>采用非贪婪匹配，才能把后面的0匹配出来，加个<code>？</code>就可以了：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>re.match(<span class="string">r'^(\d+?)(0*)$'</span>,<span class="string">'102300'</span>).groups()</div><div class="line">(<span class="string">'1023'</span>, <span class="string">'00'</span>)</div></pre></td></tr></table></figure></p>
-<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>当我们在Python中使用正则表达式时，re模块会做两件事情：</p>
-<blockquote>
-<p>1、编译正则表达式，如果正则表达式的字符串本身不合法会报错。<br>2、用编译后的正则表达式去匹配字符串</p>
-</blockquote>
-<p>如果一个正则表达式要重复机器那次，出于效率的考虑，我们可以预编译该正则表达式，接下来重复使用时就不需要编译这个步骤了，直接匹配：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> re</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>re_telephone=re.compile(<span class="string">r'^(\d&#123;3&#125;)-(\d&#123;3,8&#125;)$'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>re_telephone.match(<span class="string">'010-12345'</span>).groups()</div><div class="line">(<span class="string">'010'</span>, <span class="string">'12345'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>re_telephone.match(<span class="string">'010-8989'</span>).groups()</div><div class="line">(<span class="string">'010'</span>, <span class="string">'8989'</span>)</div></pre></td></tr></table></figure></p>
-<p>编译后生成Regular Expression对象，由于该对象自己包含了正则表达式，所以调用对应的方法时不用给出正则字符串。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -4663,7 +4754,7 @@ String(request.getParamter(&quot;userName&quot;).getBytes(&quot;ISO8859-1&quot;)
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-count">62</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

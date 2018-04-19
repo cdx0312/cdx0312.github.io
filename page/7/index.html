@@ -278,6 +278,191 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/07/struts2总结 三--Struts Tags/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/09/07/struts2总结 三--Struts Tags/" itemprop="url">struts2总结（三）--Struts Tags</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-07T10:28:13+08:00">
+                2017-09-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/Struts2/" itemprop="url" rel="index">
+                    <span itemprop="name">Struts2</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="5-Struts-Tags"><a href="#5-Struts-Tags" class="headerlink" title="5 Struts Tags"></a>5 Struts Tags</h2><p>要在jsp中使用Struts2的标签，需要先引入<code>&lt;%@ taglib prefix=&quot;s&quot; uri=&quot;/struts-tags&quot; %&gt;</code></p>
+<h3 id="5-1-通用标签"><a href="#5-1-通用标签" class="headerlink" title="5.1 通用标签"></a>5.1 通用标签</h3><ul>
+<li><p>property</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;li&gt;property: &lt;s:property value=&quot;username&quot;/&gt; &lt;/li&gt;</div><div class="line">&lt;li&gt;property 取值为字符串: &lt;s:property value=&quot;&apos;username&apos;&quot;/&gt; &lt;/li&gt;</div><div class="line">&lt;li&gt;property 设定默认值: &lt;s:property value=&quot;admin&quot; default=&quot;管理员&quot;/&gt; &lt;/li&gt;</div><div class="line">&lt;li&gt;property 设定HTML: &lt;s:property value=&quot;&apos;&lt;hr/&gt;&apos;&quot; escape=&quot;false&quot;/&gt; &lt;/li&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>set 将某个值放入指定范围内</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&lt;li&gt;set 设定adminName值（默认为request 和 ActionContext）: &lt;s:set var=&quot;adminName&quot; value=&quot;username&quot; /&gt;&lt;/li&gt;</div><div class="line"></div><div class="line">&lt;li&gt;set 从request取值: &lt;s:property value=&quot;#request.adminName&quot; /&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;set 从ActionContext取值: &lt;s:property value=&quot;#adminName&quot; /&gt;&lt;/li&gt;</div><div class="line"></div><div class="line">&lt;%--&lt;li&gt;set 设定范围: &lt;s:set name=&quot;adminPassword&quot; value=&quot;password&quot; scope=&quot;page&quot;/&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;set 从相应范围取值: &lt;%=pageContext.getAttribute(&quot;adminPassword&quot;) %&gt;&lt;/li&gt;</div><div class="line">--%&gt;</div><div class="line">&lt;li&gt;set 设定var，范围为ActionContext: &lt;s:set var=&quot;adminPassword&quot; value=&quot;password&quot; scope=&quot;session&quot;/&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;set 使用#取值: &lt;s:property value=&quot;#adminPassword&quot;/&gt; &lt;/li&gt;</div><div class="line">&lt;li&gt;set 从相应范围取值: &lt;s:property value=&quot;#session.adminPassword&quot;/&gt; &lt;/li&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>bean 实例化一个JavaBean</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">&lt;li&gt;bean 定义bean,并使用param来设定新的属性值:</div><div class="line">        &lt;s:bean name=&quot;com.struts2.tags.Dog&quot; &gt;</div><div class="line">            &lt;s:param name=&quot;name&quot; value=&quot;&apos;pp&apos;&quot;&gt;&lt;/s:param&gt;</div><div class="line">            &lt;s:property value=&quot;name&quot;/&gt;</div><div class="line"></div><div class="line">        &lt;/s:bean&gt;</div><div class="line">&lt;/li&gt;</div><div class="line">&lt;li&gt;bean 查看debug情况:</div><div class="line">        &lt;s:bean name=&quot;com.struts2.tags.Dog&quot; var=&quot;myDog&quot;&gt;</div><div class="line">            &lt;s:param name=&quot;name&quot; value=&quot;&apos;oudy&apos;&quot;&gt;&lt;/s:param&gt;</div><div class="line">        &lt;/s:bean&gt;</div><div class="line">        拿出值：</div><div class="line">        &lt;s:property value=&quot;#myDog.name&quot;/&gt;</div><div class="line">&lt;/li&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>include 将一JSP或者Servlet包含到当前页面</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">&lt;li&gt;include _include1.html 包含静态英文文件</div><div class="line">       &lt;s:include value=&quot;/_include1.html&quot;&gt;&lt;/s:include&gt;</div><div class="line">   &lt;/li&gt;</div><div class="line"></div><div class="line">   &lt;li&gt;include _include2.html 包含静态中文文件</div><div class="line">       &lt;s:include value=&quot;/_include2.html&quot;&gt;&lt;/s:include&gt;</div><div class="line">   &lt;/li&gt;</div><div class="line"></div><div class="line">   &lt;li&gt;include _include1.html 包含静态英文文件，说明%用法</div><div class="line">       &lt;s:set var=&quot;incPage&quot; value=&quot;%&#123;&apos;/_include1.html&apos;&#125;&quot; /&gt;</div><div class="line">       &lt;s:include value=&quot;%&#123;#incPage&#125;&quot;&gt;&lt;/s:include&gt;</div><div class="line">   &lt;/li&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>param 为其他标签提供参数</p>
+</li>
+<li>debug 辅助调试，查看值栈等信息<h3 id="5-2-控制标签"><a href="#5-2-控制标签" class="headerlink" title="5.2 控制标签"></a>5.2 控制标签</h3></li>
+<li><p>if elseif else 用来控制选择输出的标签</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;li&gt;if elseif else:</div><div class="line">    age = &lt;s:property value=&quot;#parameters.age[0]&quot; /&gt; &lt;br /&gt;</div><div class="line">    &lt;s:set var=&quot;age&quot; value=&quot;#parameters.age[0]&quot; /&gt;</div><div class="line">    &lt;s:if test=&quot;#age &lt; 0&quot;&gt;wrong age!&lt;/s:if&gt;</div><div class="line">    &lt;s:elseif test=&quot;#parameters.age[0] &lt; 20&quot;&gt;too young!&lt;/s:elseif&gt;</div><div class="line">    &lt;s:else&gt;yeah!&lt;/s:else&gt;&lt;br /&gt;</div><div class="line"></div><div class="line">    &lt;s:if test=&quot;#parameters.aaa == null&quot;&gt;null&lt;/s:if&gt;</div><div class="line">&lt;/li&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>iterator 迭代器，用于将集合迭代输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">&lt;li&gt;遍历集合：&lt;br /&gt;</div><div class="line">    &lt;s:iterator value=&quot;&#123;1, 2, 3&#125;&quot; &gt;</div><div class="line">        &lt;s:property/&gt; |</div><div class="line">    &lt;/s:iterator&gt;</div><div class="line">&lt;/li&gt;</div><div class="line">&lt;li&gt;自定义变量：&lt;br /&gt;</div><div class="line">    &lt;s:iterator value=&quot;&#123;&apos;aaa&apos;, &apos;bbb&apos;, &apos;ccc&apos;&#125;&quot; var=&quot;x&quot;&gt;</div><div class="line">        &lt;s:property value=&quot;#x.toUpperCase()&quot;/&gt; |</div><div class="line">    &lt;/s:iterator&gt;</div><div class="line">&lt;/li&gt;</div><div class="line">&lt;li&gt;使用status:&lt;br /&gt;</div><div class="line">    &lt;s:iterator value=&quot;&#123;&apos;aaa&apos;, &apos;bbb&apos;, &apos;ccc&apos;&#125;&quot; status=&quot;status&quot;&gt;</div><div class="line">        &lt;s:property/&gt; |</div><div class="line">        遍历过的元素总数：&lt;s:property value=&quot;#status.count&quot;/&gt; |</div><div class="line">        遍历过的元素索引：&lt;s:property value=&quot;#status.index&quot;/&gt; |</div><div class="line">        当前是偶数？：&lt;s:property value=&quot;#status.even&quot;/&gt; |</div><div class="line">        当前是奇数？：&lt;s:property value=&quot;#status.odd&quot;/&gt; |</div><div class="line">        是第一个元素吗？：&lt;s:property value=&quot;#status.first&quot;/&gt; |</div><div class="line">        是最后一个元素吗？：&lt;s:property value=&quot;#status.last&quot;/&gt;</div><div class="line">        &lt;br /&gt;</div><div class="line">    &lt;/s:iterator&gt;</div><div class="line"></div><div class="line">&lt;/li&gt;</div><div class="line"></div><div class="line">&lt;li&gt;</div><div class="line">    &lt;s:iterator value=&quot;#&#123;1:&apos;a&apos;, 2:&apos;b&apos;, 3:&apos;c&apos;&#125;&quot; &gt;</div><div class="line">        &lt;s:property value=&quot;key&quot;/&gt; | &lt;s:property value=&quot;value&quot;/&gt; &lt;br /&gt;</div><div class="line">    &lt;/s:iterator&gt;</div><div class="line">&lt;/li&gt;</div><div class="line"></div><div class="line">&lt;li&gt;</div><div class="line">    &lt;s:iterator value=&quot;#&#123;1:&apos;a&apos;, 2:&apos;b&apos;, 3:&apos;c&apos;&#125;&quot; var=&quot;x&quot;&gt;</div><div class="line">        &lt;s:property value=&quot;#x.key&quot;/&gt; | &lt;s:property value=&quot;#x.value&quot;/&gt; &lt;br /&gt;</div><div class="line">    &lt;/s:iterator&gt;</div><div class="line">&lt;/li&gt;</div><div class="line"></div><div class="line">&lt;li&gt;</div><div class="line"></div><div class="line">    &lt;s:fielderror fieldName=&quot;fielderror.test&quot; theme=&quot;simple&quot;&gt;&lt;/s:fielderror&gt;</div><div class="line"></div><div class="line">&lt;/li&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>subset 用于截取集合的部分元素，形成新的子集合</p>
+<h3 id="5-3-UI标签"><a href="#5-3-UI标签" class="headerlink" title="5.3 UI标签"></a>5.3 UI标签</h3><p>Struts2中一共定义了4个主题，simple， XHTML（默认）， css_xhtml, ajax.</p>
+<h3 id="5-4-AJAX标签"><a href="#5-4-AJAX标签" class="headerlink" title="5.4 AJAX标签"></a>5.4 AJAX标签</h3><p>后续可以查</p>
+<h3 id="5-5-的区别"><a href="#5-5-的区别" class="headerlink" title="5.5 $ # % 的区别"></a>5.5 $ # % 的区别</h3></li>
+<li><p>$用于i18n和struts配置文件</p>
+</li>
+<li>#取得ActionContext的值</li>
+<li>%将原本的文本属性解析为OGNL，对本来是OGNL的属性不起作用</li>
+</ul>
+<h3 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h3><p>这部分用的不多，所以存了几个相关的比较全的博客地址，方便需要的时候去学习:<br><a href="http://blog.csdn.net/liujiahan629629/article/details/39274997" target="_blank" rel="external">Struts2标签小结</a><br><a href="http://www.cnblogs.com/lihuiyy/archive/2012/04/09/2439509.html" target="_blank" rel="external">UI标签</a><br><a href="http://blog.csdn.net/zklxuankai/article/details/8468815" target="_blank" rel="external">AJAX标签</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/06/struts2总结 一--简介和Action/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -609,7 +794,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-count">62</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

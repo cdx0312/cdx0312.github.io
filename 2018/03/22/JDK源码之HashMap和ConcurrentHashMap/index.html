@@ -98,14 +98,14 @@
 <meta name="description" content="HashMap hashhMap本质是数组+链表。根据key取得hash值，然后计算出数组下标，如果多个key对应到同一个下标，就用链表连接起来，最新插入的数据在链表头。  HashMap继承AbstractHashMap，实现了Map，Cloneable，Serializable接口  HashMap设计线程不安全的。  对键值对的描述，Node：   1234567891011121314st">
 <meta name="keywords" content="Java">
 <meta property="og:type" content="article">
-<meta property="og:title" content="HashMap和ConcurrentHashMap理解">
-<meta property="og:url" content="http://yoursite.com/2018/03/22/HashMap和ConcurrentHashMap/index.html">
+<meta property="og:title" content="JDK源码之HashMap和ConcurrentHashMap理解">
+<meta property="og:url" content="http://yoursite.com/2018/03/22/JDK源码之HashMap和ConcurrentHashMap/index.html">
 <meta property="og:site_name" content="小黄">
 <meta property="og:description" content="HashMap hashhMap本质是数组+链表。根据key取得hash值，然后计算出数组下标，如果多个key对应到同一个下标，就用链表连接起来，最新插入的数据在链表头。  HashMap继承AbstractHashMap，实现了Map，Cloneable，Serializable接口  HashMap设计线程不安全的。  对键值对的描述，Node：   1234567891011121314st">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-03-23T02:45:53.701Z">
+<meta property="og:updated_time" content="2018-04-19T02:06:27.510Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="HashMap和ConcurrentHashMap理解">
+<meta name="twitter:title" content="JDK源码之HashMap和ConcurrentHashMap理解">
 <meta name="twitter:description" content="HashMap hashhMap本质是数组+链表。根据key取得hash值，然后计算出数组下标，如果多个key对应到同一个下标，就用链表连接起来，最新插入的数据在链表头。  HashMap继承AbstractHashMap，实现了Map，Cloneable，Serializable接口  HashMap设计线程不安全的。  对键值对的描述，Node：   1234567891011121314st">
 
 
@@ -136,13 +136,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/03/22/HashMap和ConcurrentHashMap/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/03/22/JDK源码之HashMap和ConcurrentHashMap/"/>
 
 
 
 
 
-  <title>HashMap和ConcurrentHashMap理解 | 小黄</title>
+  <title>JDK源码之HashMap和ConcurrentHashMap理解 | 小黄</title>
   
 
 
@@ -279,7 +279,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/22/HashMap和ConcurrentHashMap/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/22/JDK源码之HashMap和ConcurrentHashMap/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="cdx">
@@ -296,7 +296,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">HashMap和ConcurrentHashMap理解</h1>
+          <h1 class="post-title" itemprop="name headline">JDK源码之HashMap和ConcurrentHashMap理解</h1>
         
 
         <div class="post-meta">
@@ -622,7 +622,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-count">62</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

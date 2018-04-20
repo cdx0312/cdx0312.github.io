@@ -278,6 +278,766 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/04/JDK源码之LinkedHashMap源码剖析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/04/JDK源码之LinkedHashMap源码剖析/" itemprop="url">JDK源码之LinkedHashMap源码剖析</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-04T11:59:10+08:00">
+                2018-04-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>LinkedHashMap继承了HashMap类并实现了Map接口，其内部维护了一个双向链表，在每次插入数据或者修改访问数据，在双链表中会存在相应的增删高的操作，从而实现将无序的HashMap通过双链表将其管理为有序状态的map类型。</p>
+<h1 id="内部节点"><a href="#内部节点" class="headerlink" title="内部节点"></a>内部节点</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">static class Entry&lt;K,V&gt; extends HashMap.Node&lt;K,V&gt; &#123;</div><div class="line">    Entry&lt;K,V&gt; before, after;</div><div class="line">    Entry(int hash, K key, V value, Node&lt;K,V&gt; next) &#123;</div><div class="line">        super(hash, key, value, next);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>LinkedHashMap中的节点Entry继承了HashMap中内部类Node，为其添加两个链表以实现节点之间的有序存储。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">//Hashmap中的节点</div><div class="line">static class Node&lt;K,V&gt; implements Map.Entry&lt;K,V&gt; &#123;</div><div class="line">        final int hash;</div><div class="line">        final K key;</div><div class="line">        V value;</div><div class="line">        Node&lt;K,V&gt; next;</div><div class="line"></div><div class="line">        Node(int hash, K key, V value, Node&lt;K,V&gt; next) &#123;</div><div class="line">            this.hash = hash;</div><div class="line">            this.key = key;</div><div class="line">            this.value = value;</div><div class="line">            this.next = next;</div><div class="line">        &#125;</div><div class="line">        //omit</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>同时存在两个成员变量，head和tail指向双链表的首尾两端，以及一个accessOrder，accessOrder指定双链表的迭代顺序，如果其为true，则采用访问顺序，如果为false，则采用插入顺序。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * The head (eldest) of the doubly linked list.</div><div class="line"> */</div><div class="line">transient LinkedHashMap.Entry&lt;K,V&gt; head;</div><div class="line"></div><div class="line">/**</div><div class="line"> * The tail (youngest) of the doubly linked list.</div><div class="line"> */</div><div class="line">transient LinkedHashMap.Entry&lt;K,V&gt; tail;</div><div class="line">/**</div><div class="line"> * The iteration ordering method for this linked hash map: &lt;tt&gt;true&lt;/tt&gt;</div><div class="line"> * for access-order, &lt;tt&gt;false&lt;/tt&gt; for insertion-order.</div><div class="line"> *</div><div class="line"> * @serial</div><div class="line"> */</div><div class="line">final boolean accessOrder;</div></pre></td></tr></table></figure>
+<h1 id="构造方法"><a href="#构造方法" class="headerlink" title="构造方法"></a>构造方法</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 构造一个按照插入顺序迭代的Hashmap对象，并指定初始容量和扩展因子</div><div class="line"> * @param  initialCapacity the initial capacity</div><div class="line"> * @param  loadFactor      the load factor</div><div class="line"> * @throws IllegalArgumentException if the initial capacity is negative</div><div class="line"> *         or the load factor is nonpositive</div><div class="line"> */</div><div class="line">public LinkedHashMap(int initialCapacity, float loadFactor) &#123;</div><div class="line">    super(initialCapacity, loadFactor);</div><div class="line">    accessOrder = false;</div><div class="line">&#125;</div><div class="line"></div><div class="line">/**</div><div class="line"> * 构造一个按照插入顺序迭代的Hashmap对象，并指定初始容量，使用默认的扩展因子0.75</div><div class="line"> * @param  initialCapacity the initial capacity</div><div class="line"> * @throws IllegalArgumentException if the initial capacity is negative</div><div class="line"> */</div><div class="line">public LinkedHashMap(int initialCapacity) &#123;</div><div class="line">    super(initialCapacity);</div><div class="line">    accessOrder = false;</div><div class="line">&#125;</div><div class="line"></div><div class="line">/**</div><div class="line"> * 构造一个按照插入顺序迭代的Hashmap对象，使用默认的初始容量16和扩展因子0.75</div><div class="line"> */</div><div class="line">public LinkedHashMap() &#123;</div><div class="line">    super();</div><div class="line">    accessOrder = false;</div><div class="line">&#125;</div><div class="line"></div><div class="line">/**</div><div class="line"> * 通过一个map构造一个按照插入顺序迭代的Hashmap对象，</div><div class="line"> * 初始容量为大于map的值,扩展因子0.75</div><div class="line"> *</div><div class="line"> * @param  m the map whose mappings are to be placed in this map</div><div class="line"> * @throws NullPointerException if the specified map is null</div><div class="line"> */</div><div class="line">public LinkedHashMap(Map&lt;? extends K, ? extends V&gt; m) &#123;</div><div class="line">    super();</div><div class="line">    accessOrder = false;</div><div class="line">    //批量插入一个map到本集合中</div><div class="line">    putMapEntries(m, false);</div><div class="line">&#125;</div><div class="line"></div><div class="line">/**</div><div class="line"> * 构造一个按照插入顺序迭代的Hashmap对象，并指定初始容量和扩展因子，和迭代顺序</div><div class="line"> *</div><div class="line"> * @param  initialCapacity the initial capacity</div><div class="line"> * @param  loadFactor      the load factor</div><div class="line"> * @param  accessOrder     the ordering mode - &lt;tt&gt;true&lt;/tt&gt; for</div><div class="line"> *         access-order, &lt;tt&gt;false&lt;/tt&gt; for insertion-order</div><div class="line"> * @throws IllegalArgumentException if the initial capacity is negative</div><div class="line"> *         or the load factor is nonpositive</div><div class="line"> */</div><div class="line">public LinkedHashMap(int initialCapacity,</div><div class="line">                     float loadFactor,</div><div class="line">                     boolean accessOrder) &#123;</div><div class="line">    super(initialCapacity, loadFactor);</div><div class="line">    this.accessOrder = accessOrder;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="新增节点"><a href="#新增节点" class="headerlink" title="新增节点"></a>新增节点</h1><ul>
+<li>LinkedHashMap添加节点采用的是HashMap中的put方法。在putVal方法中调用了newNode()方法。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">final V putVal(int hash, K key, V value, boolean onlyIfAbsent,</div><div class="line">                   boolean evict) &#123;</div><div class="line">        Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; int n, i;</div><div class="line">        if ((tab = table) == null || (n = tab.length) == 0)</div><div class="line">            n = (tab = resize()).length;</div><div class="line">        if ((p = tab[i = (n - 1) &amp; hash]) == null)</div><div class="line">            tab[i] = newNode(hash, key, value, null);</div><div class="line">        else &#123;</div><div class="line">          //omit...</div><div class="line">        &#125;</div><div class="line">        ++modCount;</div><div class="line">        if (++size &gt; threshold)</div><div class="line">            resize();</div><div class="line">        afterNodeInsertion(evict);</div><div class="line">        return null;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>LinkedHashMap重写了构建节点newNode()方法。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Node&lt;K,V&gt; newNode(int hash, K key, V value, Node&lt;K,V&gt; e) &#123;</div><div class="line">    LinkedHashMap.Entry&lt;K,V&gt; p =</div><div class="line">        new LinkedHashMap.Entry&lt;K,V&gt;(hash, key, value, e);</div><div class="line">    linkNodeLast(p);</div><div class="line">    return p;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>每次构建新节点时，通过linkNodeLast(p)将新节点链接在内部双向链表的尾部。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">// link at the end of list</div><div class="line">private void linkNodeLast(LinkedHashMap.Entry&lt;K,V&gt; p) &#123;</div><div class="line">    LinkedHashMap.Entry&lt;K,V&gt; last = tail;</div><div class="line">    tail = p;</div><div class="line">    if (last == null)</div><div class="line">        head = p;</div><div class="line">    else &#123;</div><div class="line">        p.before = last;</div><div class="line">        last.after = p;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>putVal方法中最后调用了afterNodeInsertion(evict),很容易发现，在HashMap中这个方法是空的，而LinkedHashMap中重写了这些方法，用于对相应操作之后对双链表的修改。如果是按照</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">// hashMao中的预留函数</div><div class="line">// Callbacks to allow LinkedHashMap post-actions</div><div class="line">void afterNodeAccess(Node&lt;K,V&gt; p) &#123; &#125;</div><div class="line">void afterNodeInsertion(boolean evict) &#123; &#125;</div><div class="line">void afterNodeRemoval(Node&lt;K,V&gt; p) &#123; &#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">void afterNodeInsertion(boolean evict) &#123; // possibly remove eldest</div><div class="line">    LinkedHashMap.Entry&lt;K,V&gt; first;</div><div class="line">    //判断是否需要移除最老的值</div><div class="line">    if (evict &amp;&amp; (first = head) != null &amp;&amp; removeEldestEntry(first)) &#123;</div><div class="line">        K key = first.key;</div><div class="line">        removeNode(hash(key), key, null, false, true);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">//默认是不移除的，但是如果要实现缓存，需要删除最老的值。实现LRUCache需要重写该方法</div><div class="line">protected boolean removeEldestEntry(Map.Entry&lt;K,V&gt; eldest) &#123;</div><div class="line">    return false;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Demo展示：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public class LinkedHashMapDemo &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Map&lt;Integer,String&gt; map = new LinkedHashMap&lt;&gt;();</div><div class="line">        for (int i = 1; i &lt; 7; i++) &#123;</div><div class="line">            map.put(i, &quot;&quot; + i);</div><div class="line">            System.out.println(map.toString());</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&#123;1=1&#125;</div><div class="line">&#123;1=1, 2=2&#125;</div><div class="line">&#123;1=1, 2=2, 3=3&#125;</div><div class="line">&#123;1=1, 2=2, 3=3, 4=4&#125;</div><div class="line">&#123;1=1, 2=2, 3=3, 4=4, 5=5&#125;</div><div class="line">&#123;1=1, 2=2, 3=3, 4=4, 5=5, 6=6&#125;</div></pre></td></tr></table></figure>
+<h1 id="删除节点"><a href="#删除节点" class="headerlink" title="删除节点"></a>删除节点</h1><ul>
+<li>LinkedHashMap没有重写删除节点，调用HashMap中的删除方法。删除之后通过调用重写之后的afterNodeRemoveal()这个回调方法来对双链表进行调整。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">//删除节点e时，需要相应调整双链表</div><div class="line">void afterNodeRemoval(Node&lt;K,V&gt; e) &#123; // unlink</div><div class="line">   LinkedHashMap.Entry&lt;K,V&gt; p =</div><div class="line">       (LinkedHashMap.Entry&lt;K,V&gt;)e, b = p.before, a = p.after;</div><div class="line">   //链表节点中只有e一个节点</div><div class="line">   p.before = p.after = null;</div><div class="line">   //e为头节点</div><div class="line">   if (b == null)</div><div class="line">       head = a;</div><div class="line">   else</div><div class="line">       b.after = a;</div><div class="line">   //e为尾节点</div><div class="line">   if (a == null)</div><div class="line">       tail = b;</div><div class="line">   else</div><div class="line">       a.before = b;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Demo展示</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public class LinkedHashMapDemo &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Map&lt;Integer,String&gt; map = new LinkedHashMap&lt;&gt;();</div><div class="line">        for (int i = 1; i &lt; 7; i++) &#123;</div><div class="line">            map.put(i, &quot;&quot; + i);</div><div class="line">            System.out.println(map.toString());</div><div class="line">        &#125;</div><div class="line">        map.remove(6);</div><div class="line">        System.out.println(map.toString());</div><div class="line">        map.remove(3);</div><div class="line">        System.out.println(map.toString());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&#123;1=1, 2=2&#125;</div><div class="line">&#123;1=1, 2=2, 3=3&#125;</div><div class="line">&#123;1=1, 2=2, 3=3, 4=4&#125;</div><div class="line">&#123;1=1, 2=2, 3=3, 4=4, 5=5&#125;</div><div class="line">&#123;1=1, 2=2, 3=3, 4=4, 5=5, 6=6&#125;</div><div class="line">&#123;1=1, 2=2, 3=3, 4=4, 5=5&#125;</div><div class="line">&#123;1=1, 2=2, 4=4, 5=5&#125;</div></pre></td></tr></table></figure>
+<h1 id="查找节点"><a href="#查找节点" class="headerlink" title="查找节点"></a>查找节点</h1><ul>
+<li>没错，LinkedHashMap重写了get方法及getOrDefaul方法,比较简单，就是查找，查找完之后，如果迭代顺序采用是访问顺序，则需要调用函数afterNodeAccess来调整双向链表。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public V get(Object key) &#123;</div><div class="line">    Node&lt;K,V&gt; e;</div><div class="line">    if ((e = getNode(hash(key), key)) == null)</div><div class="line">        return null;</div><div class="line">    if (accessOrder)</div><div class="line">        afterNodeAccess(e);</div><div class="line">    return e.value;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public V getOrDefault(Object key, V defaultValue) &#123;</div><div class="line">   Node&lt;K,V&gt; e;</div><div class="line">   if ((e = getNode(hash(key), key)) == null)</div><div class="line">       return defaultValue;</div><div class="line">   if (accessOrder)</div><div class="line">       afterNodeAccess(e);</div><div class="line">   return e.value;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">//将访问过的节点移动至内部的双向链表的尾部。</div><div class="line">void afterNodeAccess(Node&lt;K,V&gt; e) &#123; // move node to last</div><div class="line">    LinkedHashMap.Entry&lt;K,V&gt; last;</div><div class="line">    if (accessOrder &amp;&amp; (last = tail) != e) &#123;</div><div class="line">        LinkedHashMap.Entry&lt;K,V&gt; p =</div><div class="line">            (LinkedHashMap.Entry&lt;K,V&gt;)e, b = p.before, a = p.after;</div><div class="line">        p.after = null;</div><div class="line">        if (b == null)</div><div class="line">            head = a;</div><div class="line">        else</div><div class="line">            b.after = a;</div><div class="line">        if (a != null)</div><div class="line">            a.before = b;</div><div class="line">        else</div><div class="line">            last = b;</div><div class="line">        if (last == null)</div><div class="line">            head = p;</div><div class="line">        else &#123;</div><div class="line">            p.before = last;</div><div class="line">            last.after = p;</div><div class="line">        &#125;</div><div class="line">        tail = p;</div><div class="line">        ++modCount;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><p>Demo展示</p>
+<ul>
+<li><p>按照插入顺序输出</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">public class LinkedHashMapDemo &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Map&lt;Integer,String&gt; map = new LinkedHashMap&lt;&gt;();</div><div class="line">        for (int i = 1; i &lt; 7; i++) &#123;</div><div class="line">            map.put(i, &quot;&quot; + i);</div><div class="line">        &#125;</div><div class="line">        System.out.println(map.toString());</div><div class="line">        map.get(3);</div><div class="line">        map.get(6);</div><div class="line">        System.out.println(map);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&#123;1=1, 2=2, 3=3, 4=4, 5=5, 6=6&#125;</div><div class="line">&#123;1=1, 2=2, 3=3, 4=4, 5=5, 6=6&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>按照访问顺序输出，accessOrder=true</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public class LinkedHashMapDemo &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Map&lt;Integer,String&gt; orderMap = new LinkedHashMap&lt;Integer, String &gt;(16,0.75f, true);</div><div class="line">        for (int i = 1; i &lt; 7; i++) &#123;</div><div class="line">            orderMap.put(i, &quot;&quot; + i);</div><div class="line">        &#125;</div><div class="line">        System.out.println(orderMap.toString());</div><div class="line">        orderMap.get(3);</div><div class="line">        System.out.println(orderMap);</div><div class="line">        orderMap.get(1);</div><div class="line">        System.out.println(orderMap);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&#123;1=1, 2=2, 3=3, 4=4, 5=5, 6=6&#125;</div><div class="line">&#123;1=1, 2=2, 4=4, 5=5, 6=6, 3=3&#125;</div><div class="line">&#123;2=2, 4=4, 5=5, 6=6, 3=3, 1=1&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="containsValue方法"><a href="#containsValue方法" class="headerlink" title="containsValue方法"></a>containsValue方法</h2><p>HashMap中的containsValue方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public boolean containsValue(Object value) &#123;</div><div class="line">    Node&lt;K,V&gt;[] tab; V v;</div><div class="line">    if ((tab = table) != null &amp;&amp; size &gt; 0) &#123;</div><div class="line">        for (int i = 0; i &lt; tab.length; ++i) &#123;</div><div class="line">            for (Node&lt;K,V&gt; e = tab[i]; e != null; e = e.next) &#123;</div><div class="line">                if ((v = e.value) == value ||</div><div class="line">                    (value != null &amp;&amp; value.equals(v)))</div><div class="line">                    return true;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    return false;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>LinkedHashMap中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public boolean containsValue(Object value) &#123;</div><div class="line">    for (LinkedHashMap.Entry&lt;K,V&gt; e = head; e != null; e = e.after) &#123;</div><div class="line">        V v = e.value;</div><div class="line">        if (v == value || (value != null &amp;&amp; value.equals(v)))</div><div class="line">            return true;</div><div class="line">    &#125;</div><div class="line">    return false;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>显然，后者的实现更加的高效。</p>
+<h1 id="遍历"><a href="#遍历" class="headerlink" title="遍历"></a>遍历</h1><p>LinkedHashMap中重写了entrySet()方法:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line">public Set&lt;Map.Entry&lt;K,V&gt;&gt; entrySet() &#123;</div><div class="line">    Set&lt;Map.Entry&lt;K,V&gt;&gt; es;</div><div class="line">    return (es = entrySet) == null ? (entrySet = new LinkedEntrySet()) : es;</div><div class="line">&#125;</div><div class="line"></div><div class="line">final class LinkedEntrySet extends AbstractSet&lt;Map.Entry&lt;K,V&gt;&gt; &#123;</div><div class="line">    public final int size()                 &#123; return size; &#125;</div><div class="line">    public final void clear()               &#123; LinkedHashMap.this.clear(); &#125;</div><div class="line">    public final Iterator&lt;Map.Entry&lt;K,V&gt;&gt; iterator() &#123;</div><div class="line">        return new LinkedEntryIterator();</div><div class="line">    &#125;</div><div class="line">    public final boolean contains(Object o) &#123;</div><div class="line">        if (!(o instanceof Map.Entry))</div><div class="line">            return false;</div><div class="line">        Map.Entry&lt;?,?&gt; e = (Map.Entry&lt;?,?&gt;) o;</div><div class="line">        Object key = e.getKey();</div><div class="line">        Node&lt;K,V&gt; candidate = getNode(hash(key), key);</div><div class="line">        return candidate != null &amp;&amp; candidate.equals(e);</div><div class="line">    &#125;</div><div class="line">    public final boolean remove(Object o) &#123;</div><div class="line">        if (o instanceof Map.Entry) &#123;</div><div class="line">            Map.Entry&lt;?,?&gt; e = (Map.Entry&lt;?,?&gt;) o;</div><div class="line">            Object key = e.getKey();</div><div class="line">            Object value = e.getValue();</div><div class="line">            return removeNode(hash(key), key, value, true, true) != null;</div><div class="line">        &#125;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line">    public final Spliterator&lt;Map.Entry&lt;K,V&gt;&gt; spliterator() &#123;</div><div class="line">        return Spliterators.spliterator(this, Spliterator.SIZED |</div><div class="line">                                        Spliterator.ORDERED |</div><div class="line">                                        Spliterator.DISTINCT);</div><div class="line">    &#125;</div><div class="line">    public final void forEach(Consumer&lt;? super Map.Entry&lt;K,V&gt;&gt; action) &#123;</div><div class="line">        if (action == null)</div><div class="line">            throw new NullPointerException();</div><div class="line">        int mc = modCount;</div><div class="line">        for (LinkedHashMap.Entry&lt;K,V&gt; e = head; e != null; e = e.after)</div><div class="line">            action.accept(e);</div><div class="line">        if (modCount != mc)</div><div class="line">            throw new ConcurrentModificationException();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>重写之后迭代LinkedHashMap就是从内部维护的双链表的表头开始循环输出。</li>
+</ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ul>
+<li>LinkedHashMap继承HashMap，只需要重写几个方法，来改变其迭代遍历的顺序。同时在插入数据，访问数据，修改数据，会增加双链表上的节点或者调整顺序，来决定迭代时的输出顺序。</li>
+<li>相应操作的回调函数，HashMap中有相应的空方法，也就意味着LinkedHashMap只需要重写这几个回调函数，而不用重写插入和删除方法。</li>
+<li>LinkedhashMap重写了get方法。</li>
+<li>LinkedHashMap优化了containsValue方法，提高其遍历性能。</li>
+</ul>
+<p>测试代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">import java.util.LinkedHashMap;</div><div class="line">import java.util.Map;</div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class LinkedHashMapDemo &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Map&lt;Integer,String&gt; map = new LinkedHashMap&lt;&gt;();</div><div class="line">        for (int i = 1; i &lt; 7; i++) &#123;</div><div class="line">            map.put(i, &quot;&quot; + i);</div><div class="line">//            System.out.println(map.toString());</div><div class="line">        &#125;</div><div class="line">        System.out.println(map.toString());</div><div class="line">//        map.remove(6);</div><div class="line">//        System.out.println(map.toString());</div><div class="line">//        map.remove(3);</div><div class="line">//        System.out.println(map.toString());</div><div class="line">        map.get(3);</div><div class="line">        map.get(6);</div><div class="line">        System.out.println(map);</div><div class="line"></div><div class="line">        Map&lt;Integer,String&gt; orderMap = new LinkedHashMap&lt;Integer, String &gt;(16,0.75f, true);</div><div class="line">        for (int i = 1; i &lt; 7; i++) &#123;</div><div class="line">            orderMap.put(i, &quot;&quot; + i);</div><div class="line">        &#125;</div><div class="line">        System.out.println(orderMap.toString());</div><div class="line">        orderMap.get(3);</div><div class="line">        System.out.println(orderMap);</div><div class="line">        orderMap.get(1);</div><div class="line">        System.out.println(orderMap);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/03/LRUCache实现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/03/LRUCache实现/" itemprop="url">LRUCache的Java实现</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-03T21:49:56+08:00">
+                2018-04-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="LRUCache简介"><a href="#LRUCache简介" class="headerlink" title="LRUCache简介"></a>LRUCache简介</h1><p>  没错，面试的时候让我写LRUCache，当时只知道需要一个HashMap和一个链表，但是考虑的问题不全名，也没有考虑到多线程的问题。回来以后学习了下LRUCache的一些Java实现，其实可以套用LinkedHashMap，很多方法都给实现好了，当然也可以使用HashMap+链表，但是后者写起来更加复杂，当时面试的情况，感觉是让我利用LinkedHashMap数据结构。</p>
+<ul>
+<li>首先缓存的大小是固定的，给缓存分配一个固定的大小。</li>
+<li>每次读取缓存都会改变缓存的使用时间，将缓存的存在时间重新刷新。</li>
+<li><p>需要在缓存满了后，将最近最久未使用的缓存删除，再添加最新的缓存。</p>
+<p>熟悉LinkedHashMap的话可以继承LinkedHashMap来实现LRU缓存。因此需要去查看LinkedHashMap的源码。顺手写了一篇LinkedHashMap源码剖析，写的不是很深刻，不过可以了解其大概的实现方案。</p>
+</li>
+</ul>
+<h1 id="LinkedHashMap实现LRUCache"><a href="#LinkedHashMap实现LRUCache" class="headerlink" title="LinkedHashMap实现LRUCache"></a>LinkedHashMap实现LRUCache</h1><p>LinkedHashMap自身实现了顺序存储，通过其初始化参数accessOrder可以指定其顺序方式，accessOrder为false时，采用默认的存储顺序，按照插入顺序存储，也就是一个FIFO缓冲实现，因为最老的总在最前面。而accessOrder为true时，采用的是访问顺序存储，也就是最近读取的数据放在最前面，最早读取的数据放在最后面。同时还有一个判断是否删除最老数据的方法，默认返回false，而我们需要当前缓存的长度小于链表长度时删除链表头的元素。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line">import java.util.LinkedHashMap;</div><div class="line">import java.util.Map;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/3</div><div class="line"> * 继承LinkedHashMap实现</div><div class="line"> */</div><div class="line">public class LRUCache1&lt;K, V&gt; extends LinkedHashMap&lt;K, V&gt; &#123;</div><div class="line">    //缓存的大小</div><div class="line">    private int cacheSize;</div><div class="line"></div><div class="line">    //初始化时保证LinkedHashMap的初始大小要大于CacheSize+1，否则会发生扩容</div><div class="line">    public LRUCache1(int cacheSize) &#123;</div><div class="line">        super(16, 0.75f, true);</div><div class="line">        this.cacheSize = cacheSize;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 重写该方法，当连表的size大于CacheSize时删除最老元素</div><div class="line">     * @param eldest</div><div class="line">     * @return</div><div class="line">     */</div><div class="line">    @Override</div><div class="line">    protected boolean removeEldestEntry(Map.Entry&lt;K, V&gt; eldest) &#123;</div><div class="line">        return size() &gt; cacheSize;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public String toString() &#123;</div><div class="line">        StringBuilder sb = new StringBuilder();</div><div class="line">        for (Map.Entry&lt;K, V&gt; entry : entrySet()) &#123;</div><div class="line">            sb.append(String.format(&quot;%s:%s &quot;, entry.getKey(), entry.getValue()));</div><div class="line">        &#125;</div><div class="line">        return sb.toString();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        LRUCache1&lt;String, String&gt; lruCache1 = new LRUCache1&lt;&gt;(6);</div><div class="line">        for (int i = 0; i &lt; 6; i++) &#123;</div><div class="line">            lruCache1.put(i+&quot;&quot;, i * i + &quot;&quot;);</div><div class="line">        &#125;</div><div class="line">        System.out.println(lruCache1.toString());</div><div class="line">        lruCache1.put(&quot;s&quot;, &quot;s&quot;);</div><div class="line">        System.out.println(lruCache1.toString());</div><div class="line">        lruCache1.put(&quot;2&quot;, &quot;2222&quot;);</div><div class="line">        System.out.println(lruCache1.toString());</div><div class="line">        lruCache1.get(1+&quot;&quot;);</div><div class="line">        System.out.println(lruCache1.toString());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">0:0 1:1 2:4 3:9 4:16 5:25</div><div class="line">1:1 2:4 3:9 4:16 5:25 s:s</div><div class="line">1:1 3:9 4:16 5:25 s:s 2:2222</div><div class="line">3:9 4:16 5:25 s:s 2:2222 1:1</div></pre></td></tr></table></figure>
+<ul>
+<li>继承实现方式，由于继承了Map接口，在多线程环境中使用时可以使用Collections.synchronizedMap()方法来实现线程安全操作。</li>
+</ul>
+<h1 id="LinkedHashMap的委托实现"><a href="#LinkedHashMap的委托实现" class="headerlink" title="LinkedHashMap的委托实现"></a>LinkedHashMap的委托实现</h1><p>不采用继承，而是采用委托的机制，需要自己进行线程同步来适应多线程场景。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div></pre></td><td class="code"><pre><div class="line">import java.util.LinkedHashMap;</div><div class="line">import java.util.Map;</div><div class="line">import java.util.Set;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/3</div><div class="line"> * LinkedHashMap的委托方法</div><div class="line"> */</div><div class="line">public class LRUCache2&lt;K, V&gt; &#123;</div><div class="line">    //缓存大小</div><div class="line">    private final int CACHE_SIZE;</div><div class="line">    //默认加载因子</div><div class="line">    private final float DEFAULT_LOAD_FACTOR = 0.75f;</div><div class="line">    //缓存容器</div><div class="line">    private LinkedHashMap&lt;K, V&gt; map;</div><div class="line"></div><div class="line">    //初始化过程中,传入缓存的大小，根据缓存大小和默认factor来计算</div><div class="line">    // LinkedHashMap的初始容量，确保其不会产生扩容操作。</div><div class="line">    // 从而完成了map容器的初始化内容。</div><div class="line">    public LRUCache2(int cacheSize) &#123;</div><div class="line">        this.CACHE_SIZE = cacheSize;</div><div class="line">        int capacity = (int)Math.ceil(CACHE_SIZE / DEFAULT_LOAD_FACTOR) + 1;</div><div class="line">        map = new LinkedHashMap&lt;K,V&gt;(capacity, DEFAULT_LOAD_FACTOR, true) &#123;</div><div class="line">            @Override</div><div class="line">            protected boolean removeEldestEntry(Map.Entry eldest) &#123;</div><div class="line">                return size() &gt; CACHE_SIZE;</div><div class="line">            &#125;</div><div class="line">        &#125;;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 多线程put方法，需要加锁</div><div class="line">     * @param key</div><div class="line">     * @param value</div><div class="line">     */</div><div class="line">    public synchronized void put (K key, V value) &#123;</div><div class="line">        map.put(key, value);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 多线程get方法，需要加锁</div><div class="line">     * @param key</div><div class="line">     * @return</div><div class="line">     */</div><div class="line">    public synchronized V get(K key) &#123;</div><div class="line">        return map.get(key);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 多线程remove方法，需要加锁</div><div class="line">     * @param key</div><div class="line">     */</div><div class="line">    public synchronized void remove(K key) &#123;</div><div class="line">        map.remove(key);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 多线程getAll方法，需要加锁</div><div class="line">     * @return</div><div class="line">     */</div><div class="line">    public synchronized Set&lt;Map.Entry&lt;K, V&gt;&gt; getAll() &#123;</div><div class="line">        return map.entrySet();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 多线程size方法，需要加锁</div><div class="line">     * @return</div><div class="line">     */</div><div class="line">    public synchronized int size() &#123;</div><div class="line">        return map.size();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 多线程clear方法，需要加锁</div><div class="line">     */</div><div class="line">    public synchronized void clear() &#123;</div><div class="line">        map.clear();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public String toString() &#123;</div><div class="line">        StringBuilder sb = new StringBuilder();</div><div class="line">        for (Map.Entry entry : map.entrySet()) &#123;</div><div class="line">            sb.append(String.format(&quot; %s:%s &quot;, entry.getKey(), entry.getValue()));</div><div class="line">        &#125;</div><div class="line">        return sb.toString();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        LRUCache2&lt;Integer, String&gt; lruCache2 = new LRUCache2&lt;&gt;(5);</div><div class="line">        for (int i = 0; i &lt; 5; i++) &#123;</div><div class="line">            lruCache2.put(i,&quot;&quot; + i);</div><div class="line">        &#125;</div><div class="line">        System.out.println(lruCache2.toString());</div><div class="line">        lruCache2.put(5,&quot;5&quot;);</div><div class="line">        System.out.println(lruCache2.toString());</div><div class="line">        lruCache2.get(2);</div><div class="line">        System.out.println(lruCache2.toString());</div><div class="line">        lruCache2.put(6,&quot;6&quot;);</div><div class="line">        System.out.println(lruCache2.toString());</div><div class="line">        lruCache2.remove(4);</div><div class="line">        System.out.println(lruCache2.toString());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>运行结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">1:1  2:2  3:3  4:4  5:5</div><div class="line">1:1  3:3  4:4  5:5  2:2</div><div class="line">3:3  4:4  5:5  2:2  6:6</div><div class="line">3:3  5:5  2:2  6:6</div></pre></td></tr></table></figure>
+<h1 id="LRU-Cache的链表-HashMap实现"><a href="#LRU-Cache的链表-HashMap实现" class="headerlink" title="LRU Cache的链表+HashMap实现"></a>LRU Cache的链表+HashMap实现</h1><p>该方法可以理解为手动实现一个LinkedHashMap，同时需要自己处理所线程的问题。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div></pre></td><td class="code"><pre><div class="line">import java.util.HashMap;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/3</div><div class="line"> * 链表+HashMap实现</div><div class="line"> */</div><div class="line">public class LRUCache3&lt;K, V&gt; &#123;</div><div class="line">    //缓存容量</div><div class="line">    private final int CACHE_SIZE;</div><div class="line">    //链表头</div><div class="line">    private Entry head;</div><div class="line">    //链表尾</div><div class="line">    private Entry tail;</div><div class="line">    //HashMap容器</div><div class="line">    private HashMap&lt;K, Entry&lt;K, V&gt;&gt; hashMap;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 初始化HashMap容器和cacheSize</div><div class="line">     * @param cacheSize 容量</div><div class="line">     */</div><div class="line">    public LRUCache3(int cacheSize) &#123;</div><div class="line">        this.CACHE_SIZE = cacheSize;</div><div class="line">        hashMap = new HashMap&lt;&gt;();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * put方法，加锁</div><div class="line">     * @param key</div><div class="line">     * @param value</div><div class="line">     */</div><div class="line">    public synchronized void put (K key, V value) &#123;</div><div class="line">        Entry entry = getEntry(key);</div><div class="line">        //hashmap中不存在key对应的entry时，新增</div><div class="line">        if (entry == null) &#123;</div><div class="line">            //判断是否需要删除最老的节点</div><div class="line">            if (hashMap.size() &gt;= CACHE_SIZE) &#123;</div><div class="line">                hashMap.remove(tail.key);</div><div class="line">                removeLast();</div><div class="line">            &#125;</div><div class="line">            entry = new Entry();</div><div class="line">            entry.key = key;</div><div class="line">        &#125;</div><div class="line">        //修改</div><div class="line">        entry.value = value;</div><div class="line">        moveToFirst(entry);</div><div class="line">        hashMap.put(key, entry);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * get方法，多线程加锁</div><div class="line">     * @param key</div><div class="line">     * @return</div><div class="line">     */</div><div class="line">    public synchronized V get(K key) &#123;</div><div class="line">        Entry&lt;K, V&gt; entry = hashMap.get(key);</div><div class="line">        if (entry == null)</div><div class="line">            return null;</div><div class="line">        moveToFirst(entry);</div><div class="line">        return entry.value;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 删除</div><div class="line">     * @param key</div><div class="line">     */</div><div class="line">    public synchronized void remove(K key) &#123;</div><div class="line">        Entry entry = getEntry(key);</div><div class="line">        //从链表中删除</div><div class="line">        if (entry != null) &#123;</div><div class="line">            if (entry.pre != null)</div><div class="line">                entry.pre.next = entry.next;</div><div class="line">            if (entry.next != null)</div><div class="line">                entry.next.pre = entry.pre;</div><div class="line">            if (entry == head)</div><div class="line">                head = entry.next;</div><div class="line">            if (entry == tail)</div><div class="line">                tail = entry.pre;</div><div class="line">        &#125;</div><div class="line">        //从HashMap中删除</div><div class="line">        hashMap.remove(key);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //调整entry到链表头</div><div class="line">    private void moveToFirst(Entry entry) &#123;</div><div class="line">        if (entry == head)</div><div class="line">            return;</div><div class="line">        if (entry.pre!= null)</div><div class="line">            entry.pre.next = entry.next;</div><div class="line">        if (entry.next != null)</div><div class="line">            entry.next.pre = entry.pre;</div><div class="line">        if (head == null || tail == null) &#123;</div><div class="line">            head = tail = entry;</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line">        entry.next = head;</div><div class="line">        head.pre = entry;</div><div class="line">        head = entry;</div><div class="line">        entry.pre = null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //移除链表尾的元素</div><div class="line">    private void removeLast() &#123;</div><div class="line">        if (tail != null) &#123;</div><div class="line">            tail = tail.pre;</div><div class="line">            if (tail == null)</div><div class="line">                head = null;</div><div class="line">            else</div><div class="line">                tail.next = null;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //从hashmap中获取key对应的Entry</div><div class="line">    private Entry&lt;K, V&gt; getEntry(K key) &#123;</div><div class="line">        return hashMap.get(key);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public String toString() &#123;</div><div class="line">        StringBuilder sb = new StringBuilder();</div><div class="line">        Entry entry = head;</div><div class="line">        while (entry != null) &#123;</div><div class="line">            sb.append(&quot;&quot;).append(entry.key).append(&quot;:&quot;).append(entry.value).append(&quot;  &quot;);</div><div class="line">            entry = entry.next;</div><div class="line">        &#125;</div><div class="line">        return sb.toString();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * Entry内部类，双链表实现</div><div class="line">     * @param &lt;K&gt;</div><div class="line">     * @param &lt;V&gt;</div><div class="line">     */</div><div class="line">    class Entry&lt;K,V&gt; &#123;</div><div class="line">        public Entry pre;</div><div class="line">        public Entry next;</div><div class="line">        public K key;</div><div class="line">        public V value;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        LRUCache3&lt;Integer, String&gt; lruCache3 = new LRUCache3&lt;&gt;(5);</div><div class="line">        for (int i = 0; i &lt; 5; i++) &#123;</div><div class="line">            lruCache3.put(i,&quot;&quot; + i);</div><div class="line">        &#125;</div><div class="line">        System.out.println(lruCache3.toString());</div><div class="line">        lruCache3.put(5,&quot;5&quot;);</div><div class="line">        System.out.println(lruCache3.toString());</div><div class="line">        lruCache3.get(2);</div><div class="line">        System.out.println(lruCache3.toString());</div><div class="line">        lruCache3.put(6,&quot;6&quot;);</div><div class="line">        System.out.println(lruCache3.toString());</div><div class="line">        lruCache3.remove(4);</div><div class="line">        System.out.println(lruCache3.toString());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">4:4  3:3  2:2  1:1  0:0  </div><div class="line">5:5  4:4  3:3  2:2  1:1  </div><div class="line">2:2  5:5  4:4  3:3  1:1  </div><div class="line">6:6  2:2  5:5  4:4  3:3  </div><div class="line">6:6  2:2  5:5  3:3</div></pre></td></tr></table></figure>
+<h1 id="继承LinkedHashMap实现FIFO缓存"><a href="#继承LinkedHashMap实现FIFO缓存" class="headerlink" title="继承LinkedHashMap实现FIFO缓存"></a>继承LinkedHashMap实现FIFO缓存</h1><p>FIFO缓存只需要继承LinkedHashMap采用其默认的输出顺序就可以。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line">import java.util.LinkedHashMap;</div><div class="line">import java.util.Map;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/3</div><div class="line"> * 继承实现FIFO缓存</div><div class="line"> */</div><div class="line">public class FIFOCache&lt;K, V&gt; extends LinkedHashMap&lt;K, V&gt;&#123;</div><div class="line"></div><div class="line">    //缓存的大小</div><div class="line">    private int cacheSize;</div><div class="line"></div><div class="line">    //初始化时保证LinkedHashMap的初始大小要大于CacheSize+1，否则会发生扩容</div><div class="line">    public FIFOCache(int cacheSize) &#123;</div><div class="line">        super(16, 0.75f);</div><div class="line">        this.cacheSize = cacheSize;</div><div class="line">    &#125;</div><div class="line">    /**</div><div class="line">     * 重写该方法，当连表的size大于CacheSize时删除最新插入的元素</div><div class="line">     * @param eldest</div><div class="line">     * @return</div><div class="line">     */</div><div class="line">    @Override</div><div class="line">    protected boolean removeEldestEntry(Map.Entry&lt;K, V&gt; eldest) &#123;</div><div class="line">        return size() &gt; cacheSize;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public String toString() &#123;</div><div class="line">        StringBuilder sb = new StringBuilder();</div><div class="line">        for (Map.Entry&lt;K, V&gt; entry : entrySet()) &#123;</div><div class="line">            sb.append(String.format(&quot;%s:%s &quot;, entry.getKey(), entry.getValue()));</div><div class="line">        &#125;</div><div class="line">        return sb.toString();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        FIFOCache&lt;String, String&gt; f = new FIFOCache&lt;&gt;(6);</div><div class="line">        for (int i = 0; i &lt; 6; i++) &#123;</div><div class="line">            f.put(i+&quot;&quot;, i * i + &quot;&quot;);</div><div class="line">        &#125;</div><div class="line">        System.out.println(f.toString());</div><div class="line">        f.put(&quot;s&quot;, &quot;s&quot;);</div><div class="line">        System.out.println(f.toString());</div><div class="line">        f.put(&quot;5&quot;, &quot;2222&quot;);</div><div class="line">        System.out.println(f.toString());</div><div class="line">        f.get(1 + &quot;&quot;);</div><div class="line">        System.out.println(f.toString());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">0:0 1:1 2:4 3:9 4:16 5:25</div><div class="line">1:1 2:4 3:9 4:16 5:25 s:s</div><div class="line">1:1 2:4 3:9 4:16 5:2222 s:s</div><div class="line">1:1 2:4 3:9 4:16 5:2222 s:s</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/02/数据库整理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/02/数据库整理/" itemprop="url">数据库整理</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-02T21:14:40+08:00">
+                2018-04-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/database/" itemprop="url" rel="index">
+                    <span itemprop="name">database</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="什么是存储过程？有什么优缺点？"><a href="#什么是存储过程？有什么优缺点？" class="headerlink" title="什么是存储过程？有什么优缺点？"></a>什么是存储过程？有什么优缺点？</h1><p>存储过程是一些预编译的SQL语句。也就是说存储过程是一个记录集，它是由一些T-SQL语句组成的代码块，这些T-SQL语句代码像一个方法一样实现一些功能（比如对单表的CRUD），然后再给这个代码块取一个名字，在用到这个功能的时候调用就可以。</p>
+<ul>
+<li>存储过程是一个预编译的代码块，执行效率比较高</li>
+<li>一个存储过程替代大量T-SQL语句，可以降低网络通信量，提高通信速率。</li>
+<li>可以一定程度上确保数据安全。</li>
+</ul>
+<h1 id="索引是什么？有什么作用及优缺点？"><a href="#索引是什么？有什么作用及优缺点？" class="headerlink" title="索引是什么？有什么作用及优缺点？"></a>索引是什么？有什么作用及优缺点？</h1><ul>
+<li><p>索引是对数据库表中一列或多列的值进行排序的结构，是帮助MySQL高效获取数据的数据结构。</p>
+</li>
+<li><p>索引就是加快检索表中数据的方法。数据库的索引类似于书籍的索引。在书籍中，索引允许用户不必翻阅整个书就能迅速地找到所需要的信息。在数据库中，索引也允许数据库程序迅速地找到表中的数据，而不必扫描整个数据库。</p>
+</li>
+<li><p>MySQL数据库几个基本的索引类型：</p>
+<ul>
+<li><p>普通索引：没有任何限制，最基本的索引，创建方式有以下几种</p>
+<ul>
+<li><p>直接创建索引：<code>CREATE INDEX index_name ON table(column(length))</code></p>
+</li>
+<li><p>修改表结构的方式添加索引：<code>ALTER TABLE table_name ADD INDEX index_name ON (column(length))</code></p>
+</li>
+<li><p>创建表的时候创建索引：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">CREATE TABLE `table` (</div><div class="line">  `id` int(11) NOT NULL AUTO_INCREMENT ,</div><div class="line">  `title` char(255) CHARACTER NOT NULL ,</div><div class="line">  `content` text CHARACTER NULL ,</div><div class="line">  `time` int(10) NULL DEFAULT NULL ,</div><div class="line">  PRIMARY KEY (`id`),</div><div class="line">  INDEX index_name (title(length))</div><div class="line">  )</div></pre></td></tr></table></figure>
+</li>
+<li><p>删除索引：<code>DROP INDEX index_name ON table</code></p>
+</li>
+</ul>
+</li>
+<li><p>主键索引：一种特殊的唯一索引，一个表只能有一个主键，不允许有空值。一般在建表的同时创建主键索引：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">CREATE TABLE `table` (</div><div class="line">    `id` int(11) NOT NULL AUTO_INCREMENT ,</div><div class="line">    `title` char(255) NOT NULL ,</div><div class="line">    PRIMARY KEY (`id`)</div><div class="line">);</div></pre></td></tr></table></figure>
+</li>
+<li><p>唯一索引：索引列的值必须是唯一的，允许有控制。如果是组合索引，则列的组合必须唯一，创建方式：</p>
+<ul>
+<li><p>创建唯一索引：<code>CREATE UNIQUE INDEX indexName ON table(column(length))</code></p>
+</li>
+<li><p>修改表结构的时候指定唯一索引：<code>ALTER TABLE table_name ADD UNIQUE indexName ON (column(length))</code>  </p>
+</li>
+<li><p>创建表的时候直接指定：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">CREATE TABLE `table` (</div><div class="line">    `id` int(11) NOT NULL AUTO_INCREMENT ,</div><div class="line">    `title` char(255) CHARACTER NOT NULL ,</div><div class="line">    `content` text CHARACTER NULL ,</div><div class="line">    `time` int(10) NULL DEFAULT NULL ,</div><div class="line">    UNIQUE indexName (title(length))</div><div class="line">);</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>组合索引：多个字段上创建的索引，只有在查询条件中使用了创建索引时的第一个字段，索引才会被使用，使用组合索引时遵循最左前缀集合：<code>ALTER TABLE</code>table<code>ADD INDEX name_city_age (name,city,age);</code></p>
+</li>
+<li><p>全文索引:主要用来查找文本中的关键字，而不是直接参与索引中的值的比较。fulltext索引和其他索引不太一样，更像一个搜索引擎，而不是一个简单的where语句的参数匹配。fulltext索引配合match against操作使用，而不是一般的where语句加like。全文索引可以在建表，修改表，创建索引中使用，不过目前只有cahr,varchar,text列上可以创建全文索引。而当数据量较大时，将现有数据放入一个没有全局索引的表中，然后再create index创建全文索引，要比先为一张表创建全文索引然后再将数据写入速度快很多。</p>
+<ul>
+<li><p>创建表时添加全文索引:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">CREATE TABLE `table` (</div><div class="line">    `id` int(11) NOT NULL AUTO_INCREMENT ,</div><div class="line">    `title` char(255) CHARACTER NOT NULL ,</div><div class="line">    `content` text CHARACTER NULL ,</div><div class="line">    `time` int(10) NULL DEFAULT NULL ,</div><div class="line">    PRIMARY KEY (`id`),</div><div class="line">    FULLTEXT (content)</div><div class="line">);</div></pre></td></tr></table></figure>
+</li>
+<li><p>修改表结构添加全文索引：<code>ALTER TABLE article ADD FULLTEXT index_content(content)</code></p>
+</li>
+<li><p>直接创建索引：<code>CREATE FULLTEXT INDEX index_content ON article(content)</code></p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>优缺点：</p>
+<ul>
+<li>索引加快数据库的检索速度</li>
+<li>索引降低了插入，删除，修改等维护任务的速度</li>
+<li>唯一索引可以确保每一行数据的唯一性</li>
+<li>通过使用索引，可以在查询的过程中使用优化隐藏器，提高系统的性能。</li>
+<li>索引需要占物理和数据空间</li>
+</ul>
+</li>
+</ul>
+<h1 id="什么是事务？"><a href="#什么是事务？" class="headerlink" title="什么是事务？"></a>什么是事务？</h1><ul>
+<li>事务是并发控制的基本单位。所谓的事务，它指的是一个操作序列，这些操作要么都执行，要么都不执行。它是一个不可分割的工作单位。事务是数据库维护数据一致性的单位，在每个事务结束时，都能保持数据的一致性。</li>
+</ul>
+<h1 id="数据库的乐观锁AND悲观锁是什么？"><a href="#数据库的乐观锁AND悲观锁是什么？" class="headerlink" title="数据库的乐观锁AND悲观锁是什么？"></a>数据库的乐观锁AND悲观锁是什么？</h1><ul>
+<li>数据库管理系统DBMS中并发控制的任务是确保在多个事务同时存取数据库中同一数据时不破坏事务的隔离性和统一性以及数据库的统一性。</li>
+<li>乐观锁和悲观锁是并发控制主要采用的技术手段：<ul>
+<li>乐观锁：假定不会发生并发冲突，只在提交操作时检查是否违反数据完整性。</li>
+<li>悲观锁：假定会发生并发冲突，屏蔽一切可能违反数据完整性的操作。</li>
+</ul>
+</li>
+</ul>
+<h1 id="使用索引查询一定能提高查询的性能吗？为什么？"><a href="#使用索引查询一定能提高查询的性能吗？为什么？" class="headerlink" title="使用索引查询一定能提高查询的性能吗？为什么？"></a>使用索引查询一定能提高查询的性能吗？为什么？</h1><ul>
+<li>通常来说，通过索引查询数据比全表扫描要快。</li>
+<li>但是索引需要空间来存储，也需要定期维护。每当有记录在表中增减或者索引列被修改时，索引本身也会被修改。意味着每条记录的insert，delete，update方法将会为此多付出4,5次的磁盘IO。</li>
+<li>因为索引需要额外的存储空间和处理，那些不必要的索引反而会使查询反应时间变慢。使用索引不一定能提高查询性能。</li>
+<li><p>索引范围性查找适用于两种情况：</p>
+<ul>
+<li>基于一个范围的检索，一般返回结果集小于表中记录的30%。</li>
+<li>基于唯一性索引的检索。</li>
+</ul>
+</li>
+</ul>
+<h1 id="MySQL数据库索引失效的原因："><a href="#MySQL数据库索引失效的原因：" class="headerlink" title="MySQL数据库索引失效的原因："></a>MySQL数据库索引失效的原因：</h1><ul>
+<li>对单字段建立了索引，where条件多字段</li>
+<li>建立了联合索引，where条件单字段</li>
+<li>对索引列运算，运算包括（+、-、*、/、！、&lt;&gt;、%、like’%_‘、or、in、exist）导致索引失效</li>
+<li>类型错误，如字段类型为varchar，where条件用number</li>
+<li>对应索引内部函数，这种情况下应该建立基于函数的索引</li>
+<li>查询表的效率要比查询索引快的情况</li>
+<li>is null索引失效，is not null betree索引生效。</li>
+</ul>
+<h1 id="说一下drop、delete、truncate的区别："><a href="#说一下drop、delete、truncate的区别：" class="headerlink" title="说一下drop、delete、truncate的区别："></a>说一下drop、delete、truncate的区别：</h1><ul>
+<li>delete和truncate只删除表的数据不删除表的结构</li>
+<li>速度来说：drop&gt;truncate&gt;delete</li>
+<li>delete语句是dml，这个操作会放到rollback segment中，事务提交之后才生效。如果有相应的trigger，执行的时候将被出发。truncate和drop是ddl，操作立即生效，原数据不放到rollback segment中，不能回滚也不能触发trigger。</li>
+</ul>
+<h1 id="drop、delete、truncate的使用场景？"><a href="#drop、delete、truncate的使用场景？" class="headerlink" title="drop、delete、truncate的使用场景？"></a>drop、delete、truncate的使用场景？</h1><ul>
+<li>drop，不再需要一张表时</li>
+<li>delete，向删除部分数据行时，并带上where子句</li>
+<li>truncate，保留表结构而删除所有数据的时候</li>
+</ul>
+<h1 id="超键，候选键，主键，外键分别是什么"><a href="#超键，候选键，主键，外键分别是什么" class="headerlink" title="超键，候选键，主键，外键分别是什么"></a>超键，候选键，主键，外键分别是什么</h1><table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align:center">GET</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>超键</td>
+<td style="text-align:center">在关系中能唯一标识元组的属性集成为关系模式的超键。一个属性可以作为一个超键，多个属性组合在一起也可以作为一个超键。超键包含候选键和主键</td>
+</tr>
+<tr>
+<td>候选键</td>
+<td style="text-align:center">是最小的超键，即没有冗余元素的超键</td>
+</tr>
+<tr>
+<td>主键</td>
+<td style="text-align:center">数据库表中对存储数据对象给予唯一和完整标识的数据列或者属性的集合。一个数据列只能有一个主键，且主键的取值不能缺少，即不能为空值（null）</td>
+</tr>
+<tr>
+<td>外键</td>
+<td style="text-align:center">在一个表中存在另一个表的主键称为此表的外键</td>
+</tr>
+</tbody>
+</table>
+<h1 id="什么是视图？以及视图的使用场景？"><a href="#什么是视图？以及视图的使用场景？" class="headerlink" title="什么是视图？以及视图的使用场景？"></a>什么是视图？以及视图的使用场景？</h1><ul>
+<li><p>视图是一张虚拟的表，具有和物理表相同的功能。可以对视图进行CRUD，视图通常是由一个表或者多个表的行或列的子集。对视图的修改不影响基本表。它使得我们获取数据更容易，相比多表查询。</p>
+</li>
+<li><p>只暴露部分字段给访问者，所以就建一个虚表，也就是一个视图。</p>
+</li>
+<li>查询的数据来源于不同的表，而查询者希望以统一的方式查询，这样可以建立一个视图，把多个表查询结果联合起来，查询者只需要直接从视图中获取数据，不必考虑数据来源于不同表中的差异。</li>
+</ul>
+<h1 id="数据库三范式"><a href="#数据库三范式" class="headerlink" title="数据库三范式"></a>数据库三范式</h1><ul>
+<li><p>1NF：数据库表中的字段都是单一属性，不可再分。这个单一属性由基本类型构成，包括整形，实数，字符型，逻辑型，日期型等。</p>
+</li>
+<li><p>2NF：数据库表中不存在非关键字段对任意候选关键字段的部分依赖（部分依赖指的是存在组合关键字中的某些字段决定非关键字段的情况），也即所有非关键字段都完全依赖于任意一组候选关键字。</p>
+</li>
+<li><p>3NF：数据表中不存在非关键字段对任一候选关键字段的传递依赖。传递依赖指的数据库中不存在如下依赖关系：关键字段-&gt;非关键字段X-&gt;非关键字段Y</p>
+</li>
+</ul>
+<h1 id="SQL语句总结"><a href="#SQL语句总结" class="headerlink" title="SQL语句总结"></a>SQL语句总结</h1><ol>
+<li><p>SELECT：将数据从数据库中的表中取出，<code>SELECT &quot;列名&quot; FROM &quot;表名&quot;</code>。</p>
+</li>
+<li><p>DISTINCT：去重，在上述 SELECT 关键词后加上一个 DISTINCT 就可以去除选择出来的重复，从而完成求得这个表格中该字段有哪些不同的值的功能。语法为<code>SELECT DISTINCT &quot;列名&quot; FROM &quot;表名&quot;</code>。</p>
+</li>
+<li><p>WHERE：这个关键词可以帮助我们选择性地获取数据，而不是全取出来。语法为<code>SELECT &quot;列名&quot; FROM &quot;表名&quot; WHERE &quot;条件&quot;</code></p>
+</li>
+<li><p>AND OR：上例中的 WHERE 指令可以被用来由表格中有条件地选取资料。这个条件可能是简单的，也可能是复杂的。复杂条件是由二或多个简单条件透过 AND 或是 OR 的连接而成。语法为：<code>SELECT &quot;列名&quot;  FROM &quot;表名&quot;  WHERE &quot;简单条件&quot;  {[AND|OR] &quot;简单条件&quot;}+</code></p>
+</li>
+<li><p>IN：在SQL中，与 WHERE一起使用，我们事先已知道至少一个我们需要的值，而我们将这些知道的值都放入 IN  这个子句。语法为：<code>SELECT &quot;列名&quot;  FROM &quot;表名&quot;  WHERE &quot;列名&quot; IN (&#39;值一&#39;, &#39;值二&#39;, ...)</code>  </p>
+</li>
+<li><p>BETWEEN：IN 这个指令可以让我们依照一或数个不连续 (discrete)的值的限制之内获取数据，而 BETWEEN 则是让我们可以运用一个范围 (range)获取数据，语法为：<br><code>SELECT &quot;列名&quot;  FROM &quot;表名&quot; WHERE &quot;列名&quot; BETWEEN &#39;值一&#39; AND &#39;值二&#39;</code></p>
+</li>
+<li><p>LIKE：LIKE 是另一个在 WHERE子句中会用到的指令。LIKE依据一个模式(pattern)来找出我们要的数据。语法为：<br><code>SELECT &quot;列名&quot;  FROM &quot;表名&quot;  WHERE &quot;列名&quot; LIKE {模式}</code></p>
+</li>
+<li><p>ORDER BY：排序指令。语法为：<code>SELECT &quot;列名&quot;  FROM &quot;表名 [WHERE &quot;条件&quot;] ORDER BY &quot;列名&quot; [ASC, DESC]</code></p>
+</li>
+<li><p>函数: 函数允许我们能够对这些数字的型态存在的行或者列做运算，包括 AVG (平均)、COUNT (计数)、MAX (最大值)、MIN (最小值)、SUM (总合)。语法为：<code>SELECT &quot;函数名&quot;(&quot;列名&quot;) FROM &quot;表名&quot;</code></p>
+</li>
+<li><p>COUNT：这个关键词能够帮我我们统计有多少个数据被选出来，语法为：<code>SELECT COUNT(&quot;列名&quot;) FROM &quot;表名&quot;</code></p>
+</li>
+<li><p>GROUP BY：GROUP BY 语句用于结合合计函数，根据一个或多个列对结果集进行分组。语法为：<code>SELECT &quot;列1&quot;, SUM(&quot;列2&quot;)  FROM &quot;表名&quot;  GROUP BY &quot;列1&quot;</code></p>
+</li>
+<li><p>HAVING：该关键词可以帮助我们对函数产生的值来设定条件。语法为：<code>SELECT &quot;；列1&quot;, SUM(&quot;列2&quot;)  FROM &quot;表格名&quot;  GROUP BY &quot;列1&quot;  HAVING (函数条件)</code></p>
+</li>
+<li><p>ALIAS：我们可以通过ALIAS为列名称和表名称指定别名，语法为：<code>SELECT &quot;表格别名&quot;.&quot;列1&quot; &quot;；列1别名&quot;  FROM &quot;表格名&quot; &quot;表格别名&quot;</code></p>
+</li>
+</ol>
+<ul>
+<li>实战，数据库结构如下</li>
+</ul>
+<p>Student(S#,Sname,Sage,Ssex) 学生表<br>Course(C#,Cname,T#) 课程表<br>SC(S#,C#,score) 成绩表<br>Teacher(T#,Tname) 教师表</p>
+<pre><code>1. 查询“001”课程比“002”课程成绩高的所有学生的学号：
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">SELECT a.S# from (select s#,score from SC where C#=&apos;001&apos;) a,</div><div class="line">(select s#,score from SC where C#=&apos;002&apos;) b</div><div class="line">WHERE a.score &gt; b.score and a.S#=b.S#;</div></pre></td></tr></table></figure>
+
+2. 查询平均成绩大于60分的同学的学号和平均成绩：
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">SELECT S#, AVG(score)</div><div class="line">FROM SC</div><div class="line">GROUP by S# HAVING AVG(score) &gt; 60;</div></pre></td></tr></table></figure>
+
+3. 查询所有同学的学号、姓名、选课数、总成绩:
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">select Student.S#, Student.Sname, COUNT(SC.C#), SUM(score)</div><div class="line">from Student left Outer join SC on Student.S#=SC.S#</div><div class="line">GROUP by Student.S#, Sname;</div></pre></td></tr></table></figure>
+
+4. 查询姓“李”的老师的个数:
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">select COUNT(distinct(Tname))</div><div class="line">from Teacher</div><div class="line">WHERE Tname LIKE &apos;李%&apos;；</div></pre></td></tr></table></figure>
+
+5. 查询没学过“叶平”老师课的同学的学号、姓名；
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">select Student.S#,Student.Sname</div><div class="line">from Student</div><div class="line">where S# not in (select distinct( SC.S#) from SC,Course,Teacher where SC.C#=Course.C# and Teacher.T#=Course.T# and Teacher.Tname=’叶平’);</div></pre></td></tr></table></figure>
+
+6. 查询学过“001”并且也学过编号“002”课程的同学的学号、姓名:
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">select Student.S#,Student.Sname</div><div class="line">from Student,SC</div><div class="line">where Student.S#=SC.S# and SC.C#=’001′and exists( Select * from SC as SC_2 where SC_2.S#=SC.S# and SC_2.C#=’002′);</div></pre></td></tr></table></figure>
+
+7. 查询学过“叶平”老师所教的所有课的同学的学号、姓名:
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">select S#,Sname</div><div class="line">from Student</div><div class="line">where S# in</div><div class="line">(select S#</div><div class="line">from SC ,Course ,Teacher</div><div class="line">where SC.C#=Course.C# and Teacher.T#=Course.T# and Teacher.Tname=’叶平’ group by S# having count(SC.C#)=(select count(C#) from Course,Teacher where Teacher.T#=Course.T# and Tname=’叶平’));</div></pre></td></tr></table></figure>
+
+8. 查询所有课程成绩小于60分的同学的学号、姓名:
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">select S#,Sname</div><div class="line">from Student</div><div class="line">where S# not in (select Student.S# from Student,SC where S.S#=SC.S# and score&gt;60);</div></pre></td></tr></table></figure>
+
+9. 查询没有学全所有课的同学的学号、姓名:
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">select Student.S#,Student.Sname</div><div class="line">from Student,SC</div><div class="line">where Student.S#=SC.S#</div><div class="line">group by Student.S#,Student.Sname having count(C#) &lt;(select count(C#) from Course);</div></pre></td></tr></table></figure>
+
+10. 查询至少有一门课与学号为“1001”的同学所学相同的同学的学号和姓名:
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">select S#,Sname</div><div class="line">from Student,SC</div><div class="line">where Student.S#=SC.S# and C# in （select C# from SC where S#=&apos;1001&apos;）;</div></pre></td></tr></table></figure>
+
+11. 删除学习“叶平”老师课的SC表记录:
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Delect SC</div><div class="line">from course ,Teacher</div><div class="line">where Course.C#=SC.C# and Course.T#= Teacher.T# and Tname=&apos;叶平&apos;;</div></pre></td></tr></table></figure>
+
+12. 查询各科成绩最高和最低的分：以如下形式显示：课程ID，最高分，最低分
+
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">SELECT L.C# 课程ID,L.score 最高分,R.score 最低分</div><div class="line">FROM SC L ,SC R</div><div class="line">WHERE L.C# = R.C#</div><div class="line">and</div><div class="line">L.score = (SELECT MAX(IL.score)</div><div class="line">FROM SC IL,Student IM</div><div class="line">WHERE IL.C# = L.C# and IM.S#=IL.S#</div><div class="line">GROUP BY IL.C#)</div><div class="line">and</div><div class="line">R.Score = (SELECT MIN(IR.score)</div><div class="line">FROM SC IR</div><div class="line">WHERE IR.C# = R.C#</div><div class="line">GROUP BY IR.C# );</div></pre></td></tr></table></figure>
+
+  13. 查询学生平均成绩及其名次:
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">SELECT 1+(SELECT COUNT( distinct 平均成绩)</div><div class="line">FROM (SELECT S#,AVG(score) 平均成绩</div><div class="line">FROM SC</div><div class="line">GROUP BY S# ) T1</div><div class="line">WHERE 平均成绩 &gt; T2.平均成绩) 名次, S# 学生学号,平均成绩</div><div class="line">FROM (SELECT S#,AVG(score) 平均成绩 FROM SC GROUP BY S# ) T2</div><div class="line">ORDER BY 平均成绩 desc;</div></pre></td></tr></table></figure>
+
+  14. 查询各科成绩前三名的记录:(不考虑成绩并列情况)
+
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">SELECT t1.S# as 学生ID,t1.C# as 课程ID,Score as 分数</div><div class="line">FROM SC t1</div><div class="line">WHERE score IN (SELECT TOP 3 score</div><div class="line">FROM SC</div><div class="line">WHERE t1.C#= C#</div><div class="line">ORDER BY score DESC)</div><div class="line">ORDER BY t1.C#;</div></pre></td></tr></table></figure>
+
+  15. 查询每门功成绩最好的前两名
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">SELECT t1.S# as 学生ID,t1.C# as 课程ID,Score as 分数</div><div class="line">FROM SC t1</div><div class="line">WHERE score IN (SELECT TOP 2 score</div><div class="line">FROM SC</div><div class="line">WHERE t1.C#= C#</div><div class="line">ORDER BY score DESC )</div><div class="line">ORDER BY t1.C#;</div></pre></td></tr></table></figure>
+</code></pre>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/01/HTTP协议小结/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1857,580 +2617,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/25/设计模式之原型模式/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/03/25/设计模式之原型模式/" itemprop="url">设计模式之原型模式</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-25T13:20:19+08:00">
-                2018-03-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/design-patterns/" itemprop="url" rel="index">
-                    <span itemprop="name">design patterns</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>用原型实例指定创建对象的种类，并通过拷贝这些原型创建新的对象。</p>
-<h1 id="模式使用场景"><a href="#模式使用场景" class="headerlink" title="模式使用场景"></a>模式使用场景</h1><ol>
-<li>类初始化需要消耗非常多的资源，这个资源包括数据，硬件资源等，通过原型拷贝避免这些消耗。</li>
-<li>通过new产生一个对象需要非常繁琐的数据准备或访问权限，则可以使用原型模式。</li>
-<li>一个对象需要提供给其他对象访问，而且各个调用者可能都需要修改其值时，可以考虑使用原型模式拷贝多个对象供调用者使用。</li>
-</ol>
-<h1 id="UML图"><a href="#UML图" class="headerlink" title="UML图"></a>UML图</h1><p><img src="/img/dp-factory-prototype.png" alt="Alt text"></p>
-<h2 id="角色描述"><a href="#角色描述" class="headerlink" title="角色描述"></a>角色描述</h2><pre><code>* Client: 客户端用户
-* Prototype：抽象类或接口，声明具备clone能力
-* ConcretePrototype：具体的原型类
-</code></pre><h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>文档拷贝为例。</p>
-<p>Prototype抽象类为java.lang.clone,ConcretePrototype通过重写该方法完成对象的拷贝功能。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div></pre></td><td class="code"><pre><div class="line">package prototype;</div><div class="line"></div><div class="line">import java.util.ArrayList;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/25</div><div class="line"> */</div><div class="line">public class ConcretePrototype implements Cloneable&#123;</div><div class="line">    private String mText;</div><div class="line">    private ArrayList&lt;String&gt; mImages = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    public ConcretePrototype() &#123;</div><div class="line">        System.out.println(&quot;concretePrototype构造函数&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected Object clone() throws CloneNotSupportedException &#123;</div><div class="line">        try &#123;</div><div class="line">            ConcretePrototype concretePrototype = (ConcretePrototype) super.clone();</div><div class="line">            concretePrototype.mText = this.mText;</div><div class="line">            concretePrototype.mImages = this.mImages;</div><div class="line">            return concretePrototype;</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String getmText() &#123;</div><div class="line">        return mText;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setmText(String mText) &#123;</div><div class="line">        this.mText = mText;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public ArrayList&lt;String&gt; getmImages() &#123;</div><div class="line">        return mImages;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setmImages(ArrayList&lt;String&gt; mImages) &#123;</div><div class="line">        this.mImages = mImages;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void addImage(String img) &#123;</div><div class="line">        this.mImages.add(img);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void showContent() &#123;</div><div class="line">        System.out.println(&quot;==========start===========&quot;);</div><div class="line">        System.out.println(&quot;Text:  &quot; + mText);</div><div class="line">        System.out.println(&quot;Images List: &quot;);</div><div class="line">        for (String string : mImages) &#123;</div><div class="line">            System.out.println(&quot;image name : &quot; + string);</div><div class="line">        &#125;</div><div class="line">        System.out.println(&quot;============end==========&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>Client:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">package prototype;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/25</div><div class="line"> */</div><div class="line">public class Client &#123;</div><div class="line">    public static void main(String[] args) throws CloneNotSupportedException &#123;</div><div class="line">        //创建对象</div><div class="line">        ConcretePrototype original = new ConcretePrototype();</div><div class="line">        original.setmText(&quot;first&quot;);</div><div class="line">        original.addImage(&quot;pic 1&quot;);</div><div class="line">        original.addImage(&quot;pic 2&quot;);</div><div class="line">        original.addImage(&quot;pic 3&quot;);</div><div class="line">        original.addImage(&quot;pic 4&quot;);</div><div class="line">        original.showContent();</div><div class="line">        //复制对象</div><div class="line">        ConcretePrototype clone = (ConcretePrototype) original.clone();</div><div class="line">        clone.showContent();</div><div class="line">        //修改并展示复制的对象</div><div class="line">        clone.setmText(&quot;clone&quot;);</div><div class="line">        clone.showContent();</div><div class="line">        //展示原型对象</div><div class="line">        original.showContent();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>结果：修改clone之后的对象的值不会印象到原来的值。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">concretePrototype构造函数</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  clone</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div></pre></td></tr></table></figure>
-<p>深浅拷贝的区别：引用类型拷贝过程中，只拷贝了其引用，并没有将对象进行复制：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">package prototype;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/25</div><div class="line"> */</div><div class="line">public class Client1 &#123;</div><div class="line">    public static void main(String[] args) throws CloneNotSupportedException &#123;</div><div class="line">        //创建对象</div><div class="line">        ConcretePrototype original = new ConcretePrototype();</div><div class="line">        original.setmText(&quot;first&quot;);</div><div class="line">        original.addImage(&quot;pic 1&quot;);</div><div class="line">        original.addImage(&quot;pic 2&quot;);</div><div class="line">        original.addImage(&quot;pic 3&quot;);</div><div class="line">        original.addImage(&quot;pic 4&quot;);</div><div class="line">        original.showContent();</div><div class="line"></div><div class="line">        ConcretePrototype clone = (ConcretePrototype) original.clone();</div><div class="line">        clone.showContent();</div><div class="line"></div><div class="line">        clone.setmText(&quot;clone1&quot;);</div><div class="line">        clone.addImage(&quot;new pic 5&quot;);</div><div class="line">        clone.showContent();</div><div class="line"></div><div class="line">        original.showContent();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">concretePrototype构造函数</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  clone1</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">image name : new pic 5</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">image name : new pic 5</div><div class="line">============end==========</div></pre></td></tr></table></figure>
-<p>深拷贝过程中需要将引用类型的字段也要进行拷贝，而不是单纯的拷贝引用：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 深拷贝</div><div class="line"> * @return</div><div class="line"> * @throws CloneNotSupportedException</div><div class="line"> */</div><div class="line">@Override</div><div class="line">protected Object clone() throws CloneNotSupportedException &#123;</div><div class="line">    try &#123;</div><div class="line">        ConcretePrototype concretePrototype = (ConcretePrototype) super.clone();</div><div class="line">        concretePrototype.mText = this.mText;</div><div class="line">        concretePrototype.mImages = (ArrayList&lt;String&gt;) this.mImages.clone();</div><div class="line">        return concretePrototype;</div><div class="line">    &#125; catch (Exception e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    return null;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="优点和缺点"><a href="#优点和缺点" class="headerlink" title="优点和缺点"></a>优点和缺点</h2><ul>
-<li><p>优点：原型模式是在内存二进制流的拷贝，要比直接new一个对象性能好很多，特别是需要在一个循环体中产生大量对象时。</p>
-</li>
-<li><p>缺点：直接在内存中拷贝，构造方法不会执行，减少了约束，需要注意。</p>
-</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/24/设计模式之Builder模式/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/03/24/设计模式之Builder模式/" itemprop="url">设计模式之Builder模式</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-24T17:18:12+08:00">
-                2018-03-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/design-patterns/" itemprop="url" rel="index">
-                    <span itemprop="name">design patterns</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>将一个复杂对象的构建与他的表示分离，使得同样的构建过程可以创建不同的表示。</p>
-<h1 id="模式使用场景"><a href="#模式使用场景" class="headerlink" title="模式使用场景"></a>模式使用场景</h1><ol>
-<li>相同的方法，不同的执行顺序，产生不同的时间结果时。</li>
-<li>多个部件或零件，都可以装配到一个对象中，但是产生的结果又不相同时。</li>
-<li>产品类非常复杂，或者产品类中的调用顺序不同产生了不同的效能时。</li>
-</ol>
-<h1 id="UML图"><a href="#UML图" class="headerlink" title="UML图"></a>UML图</h1><p><img src="/img/dp-factory-builder.png" alt="Alt text"></p>
-<h2 id="角色描述"><a href="#角色描述" class="headerlink" title="角色描述"></a>角色描述</h2><pre><code>* Product产品类：产品的抽象类
-* Builder：抽象类，规范产品的组件，一般由子类实现具体的组装过程。
-* ConcreteBuilder：具体的构造器
-* Director：统一组装过程
-</code></pre><h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>电脑组装过程比较复杂，步骤很多，但是顺序却不确定。适用于Builder模式</p>
-<p>Computer抽象类：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">public abstract class Computer &#123;</div><div class="line">    protected int mCpuCore = 1;</div><div class="line">    protected int mRanSize = 0;</div><div class="line">    protected String mOs = &quot;Dos&quot;;</div><div class="line"></div><div class="line">    public Computer() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public abstract void setmCpuCore(int mCpuCore);</div><div class="line"></div><div class="line">    public abstract void setmRanSize(int mRanSize);</div><div class="line"></div><div class="line">    public abstract void setmOs(String mOs);</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public String toString() &#123;</div><div class="line">        return &quot;Computer&#123;&quot; +</div><div class="line">                &quot;mCpuCore=&quot; + mCpuCore +</div><div class="line">                &quot;, mRanSize=&quot; + mRanSize +</div><div class="line">                &quot;, mOs=&apos;&quot; + mOs + &apos;\&apos;&apos; +</div><div class="line">                &apos;&#125;&apos;;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>AppleComputer实现类：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">public class AppleComputer extends Computer&#123;</div><div class="line">    protected AppleComputer()&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void setmCpuCore(int mCpuCore) &#123;</div><div class="line">        super.mCpuCore = mCpuCore;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void setmRanSize(int mRanSize) &#123;</div><div class="line">        super.mRanSize = mRanSize;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void setmOs(String mOs) &#123;</div><div class="line">        super.mOs = mOs;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>Builder抽象类</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public abstract class Builder &#123;</div><div class="line">    public abstract void buildCPU(int core);</div><div class="line"></div><div class="line">    public abstract void buildRAM(int gb);</div><div class="line"></div><div class="line">    public abstract void buildOs(String os);</div><div class="line"></div><div class="line">    public abstract Computer create();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>AppleBuilder实现类</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">public class AppleBuilder extends Builder&#123;</div><div class="line"></div><div class="line">    private Computer mApplePC = new AppleComputer();</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void buildCPU(int core) &#123;</div><div class="line">        mApplePC.setmCpuCore(core);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void buildRAM(int gb) &#123;</div><div class="line">        mApplePC.setmRanSize(gb);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void buildOs(String os) &#123;</div><div class="line">        mApplePC.setmOs(os);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Computer create() &#123;</div><div class="line">        return mApplePC;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public class Director &#123;</div><div class="line">    Builder builder = null;</div><div class="line"></div><div class="line">    public Director(Builder builder) &#123;</div><div class="line">        this.builder = builder;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void construct(int cpu, int ram, String os) &#123;</div><div class="line">        builder.buildCPU(cpu);</div><div class="line">        builder.buildRAM(ram);</div><div class="line">        builder.buildOs(os);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>Test</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Builder builder = new AppleBuilder();</div><div class="line">        Director director = new Director(builder);</div><div class="line">        director.construct(4,2,&quot;Max OS X 10.0.3&quot;);</div><div class="line">        System.out.println(builder.create().toString());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="优点和缺点"><a href="#优点和缺点" class="headerlink" title="优点和缺点"></a>优点和缺点</h2><ul>
-<li><p>优点：</p>
-<ul>
-<li>良好的封装性，使用Builder模式可以使客户端不必知道产品内部组成的细节。</li>
-<li>建造者独立，容易扩展</li>
-<li>在对象创建过程中会使用到系统中的其他对象，这些对象在产品的创建过程中不易得到。</li>
-</ul>
-</li>
-<li><p>缺点：</p>
-<ul>
-<li>会产生多余的Builder对象和Director对象，消耗内存</li>
-<li>对象的构建过程暴露。</li>
-</ul>
-</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/24/设计模式简介/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/03/24/设计模式简介/" itemprop="url">设计模式简介</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-24T16:52:11+08:00">
-                2018-03-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/design-patterns/" itemprop="url" rel="index">
-                    <span itemprop="name">design patterns</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h1><ul>
-<li>创建型模式：工厂方法模式，抽象工厂模式，单例模式，建造者模式，原型模式</li>
-<li>结构型模式：适配器模式，装饰器模式，代理模式，外观模式，桥接模式，组合模式，享元模式</li>
-<li>行为型模式：策略模式，模板方法模式，观察者模式，迭代子模式，责任链模式，命令模式，备忘录模式，状态模式，访问者模式，中介者模式，解释器模式。</li>
-</ul>
-<h1 id="设计模式六大原则"><a href="#设计模式六大原则" class="headerlink" title="设计模式六大原则"></a>设计模式六大原则</h1><ol>
-<li>总原则-开闭原则</li>
-</ol>
-<p>对扩展开放，对修改封闭。</p>
-<p>在需要对程序进行扩展时，不去修改原来的代码，而是要扩展原有代码，类似热插拔。需要使用接口或者抽象类。</p>
-<ol>
-<li>单一职能原则</li>
-</ol>
-<ul>
-<li>不要存在多余一个类变更的原因，也就是每个类应该实现单一的职责，否则需要将类进行拆分。</li>
-</ul>
-<ol>
-<li>里氏替换原则</li>
-</ol>
-<ul>
-<li><p>任何基类可以出现的地方，子类一定可以出现。里氏替换原则是继承复用的基石，只有当衍生类可以替换基类，软件单位的功能不受影响时，基类才能真正被复用，而衍生类也能够在基类的基础上增加新的行为。</p>
-</li>
-<li><p>里氏替换原则是对实现抽象化的具体步骤的规范。其中子类对父类的方法尽量不要重写和重载。因为父类代表着定义好的结构，通过这个规范的接口与外界交互，子类不应该破坏。</p>
-</li>
-</ul>
-<ol>
-<li>依赖倒转原则</li>
-</ol>
-<ul>
-<li>面向接口编程，依赖于抽象而不依赖于具体。写代码时用到具体类时，不与具体类交互，而是与具体类的上层接口交互。</li>
-</ul>
-<ol>
-<li>接口隔离原则</li>
-</ol>
-<ul>
-<li>每个接口中不存在子类用不到却必须实现的方法，否则就拆分接口。使用多个隔离的接口，比使用单个接口要好。</li>
-</ul>
-<ol>
-<li>迪米特法则</li>
-</ol>
-<ul>
-<li><p>一个类对自己依赖的类知道的越少越好。无论被依赖的类多么复杂，都应该讲逻辑封装到方法的内部，通过public方法提供给外部。这样当被依赖的类变化时，才能最小的影响该类。</p>
-</li>
-<li><p>最少知道原则：只与直接的朋友通信，类之间要是有耦合关系，就称为朋友关系。耦合分为依赖，关联，聚合，组合灯，我们成出现为成员变量，方法参数，方法返回值中的类为直接朋友。局部变量，临时变量则不是直接朋友。我们要求陌生的类不要作为局部变量出现在类中。</p>
-</li>
-</ul>
-<ol>
-<li>合成复用原则</li>
-</ol>
-<ul>
-<li>尽量首先使用合成、聚合方式，而不是使用继承。</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2484,7 +2670,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">62</span>
+                <span class="site-state-item-count">65</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

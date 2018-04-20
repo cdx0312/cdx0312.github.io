@@ -278,6 +278,708 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/20/JDK1.8新特性/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/20/JDK1.8新特性/" itemprop="url">JDK1.8 新特性</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-20T13:44:42+08:00">
+                2018-04-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><img src="/img/jdk1.8.png" alt="Alt text"></p>
+<h1 id="接口的默认方法"><a href="#接口的默认方法" class="headerlink" title="接口的默认方法"></a>接口的默认方法</h1><p>Java8允许我们给接口添加一个非抽象的方法实现，只需要使用default关键字即可，这个特征被称作扩展方法。</p>
+<p>首先我们定义一个接口，该接口有一个抽象方法print和一个具体方法defaultPrint();</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public interface InterfaceEnhancement &#123;</div><div class="line">    void print();</div><div class="line">    default void defaultPrint(String string) &#123;</div><div class="line">        System.out.println( string + &quot;接口可以添加default修饰的非抽象方法了&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>实现了该接口一个类如下，并对其进行调用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">class InterfaceEnhancementDemo implements InterfaceEnhancement &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void print() &#123;</div><div class="line">        System.out.println(&quot;实现类实现了InterfaceEnhancement中的print方法&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        InterfaceEnhancementDemo IED = new InterfaceEnhancementDemo();</div><div class="line">        IED.print();</div><div class="line">        IED.defaultPrint(&quot;传给接口中的方法的字符串&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>运行结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">实现类实现了InterfaceEnhancement中的print方法</div><div class="line">传给接口中的方法的字符串接口可以添加default修饰的非抽象方法了</div></pre></td></tr></table></figure>
+<p>考虑到Java中只有单继承，如果需要给一个类赋予新特性，通常是使用接口来实现。允许接口中写具体的实现方法，实现对接口功能的扩展，避免了单继承的弊端。</p>
+<h1 id="Lambda表达式"><a href="#Lambda表达式" class="headerlink" title="Lambda表达式"></a>Lambda表达式</h1><p>Java中对字符串进行排序，可以通过传入一个List对象和一个比较器来制定顺序排列。如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public class LambdaDemo &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        List&lt;String&gt; strings = Arrays.asList(&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;11&quot;,&quot;12&quot;,&quot;5&quot;);</div><div class="line">        System.out.println(strings.toString());</div><div class="line">        Collections.sort(strings, new Comparator&lt;String&gt;() &#123;</div><div class="line">            @Override</div><div class="line">            public int compare(String o1, String o2) &#123;</div><div class="line">                return o1.compareTo(o2);</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">        System.out.println(strings.toString());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Lambda表达式提供了更加简洁的写法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Collections.sort(strings, (o1, o2) -&gt; o1.compareTo(o2));</div><div class="line">//或者</div><div class="line">Collections.sort(strings, String::compareTo);</div></pre></td></tr></table></figure>
+<h1 id="函数式接口"><a href="#函数式接口" class="headerlink" title="函数式接口"></a>函数式接口</h1><p>每一个Lambda表达式对应着一个类型，通常是接口类型。函数式接口指的是仅仅只包含一个抽象方法的接口，每一个该类型的lambda表达式都会被匹配到这个抽象方法中，该接口也可以添加默认方法。</p>
+<p>因此实际上，我们可以把Lambda当成任意只包含一个抽象方法的接口类型，确保你的接口一定达到这个要求，只需要给接口添加@FunctionalInterface注解，编译时会检查接口中是否只存在一个抽象方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">@FunctionalInterface</div><div class="line">public interface FunctionalInterfaceDemo&lt;K,V&gt; &#123;</div><div class="line">    V get(K key);</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class FITest &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        FunctionalInterfaceDemo&lt;String, String&gt; functionalInterfaceDemo = key -&gt; key + &quot;12&quot;;</div><div class="line">        String result = functionalInterfaceDemo.get(&quot;functionInterface&quot;);</div><div class="line">        System.out.println(result);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>实际上不添加注解，程序也是可以正确执行的。而将Lambda表达式映射到一个但方法的接口上，在其他语言中已经有实现了。单一方法的接口使得Lambda表达式更加的简洁。</p>
+<h1 id="方法与构造函数引用"><a href="#方法与构造函数引用" class="headerlink" title="方法与构造函数引用"></a>方法与构造函数引用</h1><p>Java中允许你使用<code>::</code>关键字来传递方法或者构造函数的引用，下面有一个实例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">public class Person &#123;</div><div class="line">    String name;</div><div class="line">    int age;</div><div class="line"></div><div class="line">    Person()&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public Person(String name, int age) &#123;</div><div class="line">        this.name = name;</div><div class="line">        this.age = age;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public interface PersonFactory&lt;P extends Person&gt; &#123;</div><div class="line">    P create(String name, int age);</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class PersonTest &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        PersonFactory&lt;Person&gt; personPersonFactory = Person::new;</div><div class="line">        Person person = personPersonFactory.create(&quot;Peter&quot;, 18);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看出Person::new获取Person类的构造函数的引用，Java编译器会根据create方法的签名来选取合适的构造方法。</p>
+<h1 id="Lambda作用域"><a href="#Lambda作用域" class="headerlink" title="Lambda作用域"></a>Lambda作用域</h1><p>Lambda表达式中访问外层作用域和匿名方法中的方式类似，可以直接访问final修饰的外层局部变量，实例的字段及静态变量。</p>
+<h2 id="访问局部变量"><a href="#访问局部变量" class="headerlink" title="访问局部变量"></a>访问局部变量</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public class LocalDemo &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        final int num = 123;</div><div class="line">        FunctionalInterfaceDemo&lt;String, String&gt; functionalInterfaceDemo = key -&gt; key + num;</div><div class="line">        System.out.println(functionalInterfaceDemo.get(&quot;123&quot;));</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>final不强制要求添加</li>
+<li>不添加final，num也不能被后面的程序修改，隐式的final。</li>
+</ul>
+<h2 id="访问字段和静态变量"><a href="#访问字段和静态变量" class="headerlink" title="访问字段和静态变量"></a>访问字段和静态变量</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">public class FieldAndStaticFieldDemo &#123;</div><div class="line">    static int staticNum;</div><div class="line">    int normalNum;</div><div class="line"></div><div class="line">    void testScope() &#123;</div><div class="line">        FunctionalInterfaceDemo&lt;Integer, Integer&gt; f = (key) -&gt; &#123;</div><div class="line">            normalNum = 513;</div><div class="line">            return key +12;</div><div class="line">        &#125;;</div><div class="line"></div><div class="line">        FunctionalInterfaceDemo&lt;Integer, Integer&gt; f1 = (key) -&gt; &#123;</div><div class="line">            staticNum = 1234455;</div><div class="line">            return key + 12;</div><div class="line">        &#125;;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="访问接口的默认方法"><a href="#访问接口的默认方法" class="headerlink" title="访问接口的默认方法"></a>访问接口的默认方法</h1><p>JDK1.8中包含了很多内建的函数式接口，如之前常用的Comparator或者Runnable接口，这些接口都增加了@FunctionInterface注解以便可以使用Lambda表达式。同样提供了很多全新的Lambda接口。</p>
+<ul>
+<li>Predicate接口</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@FunctionalInterface</div><div class="line">public interface Predicate&lt;T&gt; &#123;</div><div class="line">    boolean test(T t);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>该接口只有一个参数，返回boolean类型的值。改接口包含多种默认方式来将Predicate组合成其他复杂的逻辑：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Predicate&lt;String&gt; predicate = s -&gt; s.length() &gt; 0;</div><div class="line">System.out.println(predicate.test(&quot;foo&quot;));</div><div class="line">System.out.println(predicate.negate().test(&quot;foo&quot;));</div><div class="line"></div><div class="line">Predicate&lt;Boolean&gt; nonNull = Objects::nonNull;</div><div class="line">Predicate&lt;Boolean&gt; isNull = Objects::isNull;</div></pre></td></tr></table></figure>
+<ul>
+<li>Function接口</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@FunctionalInterface</div><div class="line">public interface Function&lt;T, R&gt; &#123;</div><div class="line">    R apply(T t);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>只有一个参数并且返回一个结果，附带了一些组合方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Function&lt;String, Integer&gt; function = Integer::valueOf;</div><div class="line">Function&lt;String, String&gt; function1 = s -&gt; s + 11;</div></pre></td></tr></table></figure>
+<ul>
+<li>Supplier接口</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@FunctionalInterface</div><div class="line">public interface Supplier&lt;T&gt; &#123;</div><div class="line">    T get();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>返回一个任意范式的值。</p>
+<ul>
+<li>Consumer接口</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@FunctionalInterface</div><div class="line">public interface Consumer&lt;T&gt; &#123;</div><div class="line">    void accept(T t);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Comparator接口</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@FunctionalInterface</div><div class="line">public interface Comparator&lt;T&gt; &#123;</div><div class="line">    int compare(T o1, T o2);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Optional接口</li>
+</ul>
+<p>不是函数式接口，是用来放置空指针异常的辅助类型。</p>
+<ul>
+<li>Stream接口</li>
+</ul>
+<p>表示能应用中哎一组元素上一次执行的操作序列。Stream操作分为中间操作或者最终操作两种，最终操作返回以特定类型的计算结果，而中间操作返回Stream本身。可以将多个操作穿起来。Stream创建过程中需要指定一个数据源。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">public class StreamFuture &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        List&lt;String&gt; stringCollection = new ArrayList&lt;&gt;();</div><div class="line">        stringCollection.add(&quot;ddd2&quot;);</div><div class="line">        stringCollection.add(&quot;aaa2&quot;);</div><div class="line">        stringCollection.add(&quot;bbb1&quot;);</div><div class="line">        stringCollection.add(&quot;aaa1&quot;);</div><div class="line">        stringCollection.add(&quot;bbb3&quot;);</div><div class="line">        stringCollection.add(&quot;ccc&quot;);</div><div class="line">        stringCollection.add(&quot;bbb2&quot;);</div><div class="line">        stringCollection.add(&quot;ddd1&quot;);</div><div class="line">        System.out.println(stringCollection.toString());</div><div class="line">        //Filter过滤</div><div class="line">        stringCollection.stream().filter(s -&gt; s.startsWith(&quot;b&quot;)).forEach(System.out::println);</div><div class="line">        //Sort排序</div><div class="line">        stringCollection.stream().sorted().filter(s -&gt; s.startsWith(&quot;b&quot;)).forEach(System.out::println);</div><div class="line">        // map操作</div><div class="line">        stringCollection.stream().map(String::toUpperCase).sorted().forEach(System.out::println);</div><div class="line">        //Match 匹配操作</div><div class="line">        System.out.println(stringCollection.stream().anyMatch(s -&gt; s.startsWith(&quot;a&quot;)));</div><div class="line">        System.out.println(stringCollection.stream().allMatch(s -&gt; s.length() &gt; 0));</div><div class="line">        System.out.println(stringCollection.stream().noneMatch(s -&gt; s.startsWith(&quot;h&quot;)));</div><div class="line">        // count计数</div><div class="line">        long count = stringCollection.stream().filter(s -&gt; s.startsWith(&quot;b&quot;)).count();</div><div class="line">        System.out.println(count);</div><div class="line">        // reduce规约</div><div class="line">        Optional&lt;String&gt; reduce = stringCollection.stream().sorted().reduce((s1,s2) -&gt; s1 + &quot;##&quot; + s2);</div><div class="line">        reduce.ifPresent(System.out::println);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<pre><code>* Filter过滤：通过一个Predicate接口来过滤并只保留符合条件的元素，该操作属于中间操作，所以在过滤后可以将结果来应用其他Stream操作。forEach需要一个函数来对过滤后的 元素依次执行。forEach时一个最终操作，不能在其之后再执行Stream操作。
+
+* Sort排序：排序是一个中间操作。
+
+* Map映射：中间操作map，会将元素根据指定的Function接口来依次将元素转换成另外的对象，如将小写转换成大写
+
+* Match匹配：检测指定的Predicate是否匹配整个Stream，最终操作。
+
+* Count计数，最终操作，返回Stream中元素的个数，返回值为long
+
+* Reduce规约，将stream中的多个元素规约为一个元素，通过Optional接口来接收结果
+</code></pre><p>上述的输出结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">[ddd2, aaa2, bbb1, aaa1, bbb3, ccc, bbb2, ddd1]</div><div class="line">bbb1</div><div class="line">bbb3</div><div class="line">bbb2</div><div class="line">bbb1</div><div class="line">bbb2</div><div class="line">bbb3</div><div class="line">AAA1</div><div class="line">AAA2</div><div class="line">BBB1</div><div class="line">BBB2</div><div class="line">BBB3</div><div class="line">CCC</div><div class="line">DDD1</div><div class="line">DDD2</div><div class="line">true</div><div class="line">true</div><div class="line">true</div><div class="line">3</div><div class="line">aaa1##aaa2##bbb1##bbb2##bbb3##ccc##ddd1##ddd2</div></pre></td></tr></table></figure>
+<h1 id="并行Stream"><a href="#并行Stream" class="headerlink" title="并行Stream"></a>并行Stream</h1><p>多个线程并行计算。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">public class MultiStreams &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        List&lt;String&gt; strings = new ArrayList&lt;&gt;(1000000);</div><div class="line">        for (int i = 0 ; i &lt; strings.size(); i++) &#123;</div><div class="line">            UUID uuid = UUID.randomUUID();</div><div class="line">            strings.add(uuid.toString());</div><div class="line">        &#125;</div><div class="line">        //串行计算</div><div class="line">        long time1 = System.nanoTime();</div><div class="line">        strings.stream().sorted();</div><div class="line">        long end1 = System.nanoTime();</div><div class="line">        long mills = TimeUnit.NANOSECONDS.toMillis(end1 - time1);</div><div class="line">        System.out.println(&quot;串行Stream排序1000万个数的时间为&quot; + mills + &quot;ms&quot;);</div><div class="line"></div><div class="line">        //并行计算</div><div class="line">        long time2 = System.nanoTime();</div><div class="line">        strings.stream().sorted();</div><div class="line">        long end2 = System.nanoTime();</div><div class="line">        long mill2 = TimeUnit.NANOSECONDS.toMillis(end2 - time2);</div><div class="line">        System.out.println(&quot;串行Stream排序1000万个数的时间为&quot; + mill2 + &quot;ms&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">串行Stream排序1000万个数的时间为1ms</div><div class="line">串行Stream排序1000万个数的时间为0ms</div></pre></td></tr></table></figure>
+<p>实际上，并行计算不一定会快于串行运算，影响的因素很多：</p>
+<ul>
+<li>数据大小输入数据的大小会影响并行化处理对性能的提升。将问题分解之后并行化处理， 再将结果合并会带来额外的开销。 因此只有数据足够大、 每个数据处理管道花费的时间足够多<br>时， 并行化处理才有意义。</li>
+<li>源数据结构，每个管道的操作都基于一些初始数据源，通常是集合。将不同的数据源分割相对容易,这里的开销影响了在管道中并行处理数据时到底能带来多少性能上的提升。</li>
+<li>装箱,处理基本类型比处理装箱类型要快。</li>
+<li>核的数量，极端情况下，只有一个核，因此完全没必要并行化。显然，拥有的核越多，获得潜在性能提升的幅度就越大。在实践中，核的数量不单指你的机器上有多少核，更是指运行时你的机器能使用多少核。这也就是说同时运行的其他进程，或者线程关联性（强制线程在某些核或CPU上运行）会影响性能。</li>
+<li>单元处理开销，比如数据大小，这是一场并行执行花费时间和分解合并操作开销之间的战争。花在流中每个元素身上的时间越长，并行操作带来的性能提升越明显。</li>
+</ul>
+<h1 id="Date-API"><a href="#Date-API" class="headerlink" title="Date API"></a>Date API</h1><p>Java8中包含了一组全新的时间日期API，简单介绍下：</p>
+<ul>
+<li>Clock时钟：访问当前日期和时间的方法，对时区敏感。</li>
+<li>Timezones时区：ZoneID来标志时区。</li>
+<li>LocalTime本地时间：没有时区信息的时间</li>
+<li>LocalDate本地日期</li>
+<li>LocalDateTime：本地日期时间</li>
+</ul>
+<h1 id="Annotation注解"><a href="#Annotation注解" class="headerlink" title="Annotation注解"></a>Annotation注解</h1><ul>
+<li>Java8中吃吃了多重注解。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">@interface Hints &#123;</div><div class="line">    Hint[] value();</div><div class="line">&#125;</div><div class="line">@Repeatable(Hints.class)</div><div class="line">@interface Hint &#123;</div><div class="line">    String value();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Java8中允许一个类型的注解使用多次</li>
+</ul>
+<p>使用包装类当容器来存多个注解</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">@Hints(&#123;@Hint(&quot;hint1&quot;), @Hint(&quot;hint2&quot;)&#125;)</div><div class="line">class Person &#123;&#125;</div></pre></td></tr></table></figure>
+<p>使用多重注解</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@Hint(&quot;hint1&quot;)</div><div class="line">@Hint(&quot;hint2&quot;)</div><div class="line">class Person &#123;&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/19/Java 反射/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/19/Java 反射/" itemprop="url">Java 反射</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-19T21:49:38+08:00">
+                2018-04-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="什么是反射"><a href="#什么是反射" class="headerlink" title="什么是反射"></a>什么是反射</h1><p>Java反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法，对于任意一个对象，都能过调用他的任意一个方法和属性。这种动态获取的信息以及动态调用对象的方法的功能成为Java语言的反射机制。</p>
+<p>反射其实就是把Java类中的各种成分映射成一个个Java的对象。比如一个类包括成员变量，方法，构造方法，接口，包等信息，利用反射技术可以对一个类进行解剖，把各个组成部分映射成一个个对象进行操作。首先需要了解类的加载过程，</p>
+<h1 id="类加载过程和对象创建过程"><a href="#类加载过程和对象创建过程" class="headerlink" title="类加载过程和对象创建过程"></a>类加载过程和对象创建过程</h1><h2 id="类加载过程"><a href="#类加载过程" class="headerlink" title="类加载过程"></a>类加载过程</h2><ol>
+<li><p>JVM会先去方法区中找有没有相应类的.class存在，如果有直接使用就可以，如果没有，需要把相关类的.class文件加载到方法区。</p>
+</li>
+<li><p>.class文件加载到方法区时，会分成两部分加载，先加载非静态内容，再加载静态内容</p>
+</li>
+<li><p>加载非静态内容：把.class中的所有非静态内容加载到方法区下的非静态区域内</p>
+</li>
+<li><p>加载静态内容：</p>
+<ul>
+<li><p>把.class文件中的所有静态内容加载到方法区的静态区域内</p>
+</li>
+<li><p>静态内容加载完成后，对所有静态变量进行默认初始化</p>
+</li>
+<li><p>所有的静态变量默认初始化完成之后，再进行显示初始化。</p>
+</li>
+<li><p>当静态区域下的所有静态变量显示初始化完后，执行静态代码段。</p>
+</li>
+</ul>
+</li>
+<li><p>静态区域下的静态代码快执行完毕之后，整个类的加载就完成了。</p>
+</li>
+</ol>
+<h2 id="对象创建过程"><a href="#对象创建过程" class="headerlink" title="对象创建过程"></a>对象创建过程</h2><ol>
+<li><p>在堆内存中开辟一块空间</p>
+</li>
+<li><p>给开辟的空间分配一个地址</p>
+</li>
+<li><p>把对象的所有非静态成员变量加载到所开辟的空间下</p>
+</li>
+<li><p>所有的非静态成员加载完成之后，对所有的非静态成员变量进行默认初始化</p>
+</li>
+<li><p>默认初始化完成之后，调用构造函数</p>
+</li>
+<li><p>构造函数入栈执行时，先执行构造函数中的隐式三步，再执行构造函数。</p>
+<ul>
+<li><p>隐式三步：</p>
+<ul>
+<li><p>执行super语句</p>
+</li>
+<li><p>对开辟空间下所有非静态成员变量进行显示初始化</p>
+</li>
+<li><p>执行构造代码块</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>构造函数执行完毕并弹栈之后，把空间分配的地址赋值给一个引用对象。</p>
+</li>
+</ol>
+<h1 id="Class类"><a href="#Class类" class="headerlink" title="Class类"></a>Class类</h1><ol>
+<li><p>Class类实现了Serializable, AnnotatedElement, GenericDeclaration, Type这四个接口</p>
+</li>
+<li><p>final函数头，不可继承</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public final class Class&lt;T&gt;</div><div class="line">extends Object</div><div class="line">implements Serializable, GenericDeclaration, Type, AnnotatedElement</div></pre></td></tr></table></figure>
+</li>
+<li><p>Class类实例表示Java程序中运行的类或者接口，枚举是类的一种而注解是接口的一种。同样数组也是一个可以被反射为Class对象，从而被所有数组来共享其维度和数据。8种基本类型也可以看做为class对象。</p>
+</li>
+<li><p>需要注意的是Class类没有公有的构造方法，Class对象是有JVM及ClassLoader记载类的过程中自动创建的。</p>
+</li>
+<li><p>方法列表</p>
+<ul>
+<li>静态方法</li>
+</ul>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>返回值</th>
+<th style="text-align:center">方法及描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>static Class&lt;?&gt;</td>
+<td style="text-align:center">forName(String className) Returns the Class object associated with the class or interface with the given string name.</td>
+</tr>
+<tr>
+<td>static Class&lt;?&gt;</td>
+<td style="text-align:center">forName(String name, boolean initialize, ClassLoader loader) Returns the Class object associated with the class or interface with the given string name, using the given class loader.</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>常用实例方法</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>返回值</th>
+<th style="text-align:center">方法及描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Class&lt;?&gt;[]</td>
+<td style="text-align:center">getClasses() Returns an array containing Class objects representing all the public classes and interfaces that are members of the class represented by this Class object</td>
+</tr>
+<tr>
+<td>ClassLoader</td>
+<td style="text-align:center">getClassLoader() Returns the class loader for the class.</td>
+</tr>
+<tr>
+<td>Constructor<t></t></td>
+<td style="text-align:center">getConstructor(Class&lt;?&gt;… parameterTypes) Returns a Constructor object that reflects the specified public constructor of the class represented by this Class object.</td>
+</tr>
+<tr>
+<td>Field</td>
+<td style="text-align:center">getField(String name) Returns a Field object that reflects the specified public member field of the class or interface represented by this Class object.</td>
+</tr>
+<tr>
+<td>Class&lt;?&gt;[]</td>
+<td style="text-align:center">getInterfaces() Determines the interfaces implemented by the class or interface represented by this object.</td>
+</tr>
+<tr>
+<td>Method</td>
+<td style="text-align:center">getMethod(String name, Class&lt;?&gt;… parameterTypes) Returns a Method object that reflects the specified public member method of the class or interface represented by this Class object.</td>
+</tr>
+<tr>
+<td>T</td>
+<td style="text-align:center">newInstance() Creates a new instance of the class represented by this Class object.</td>
+</tr>
+</tbody>
+</table>
+<h1 id="反射的使用"><a href="#反射的使用" class="headerlink" title="反射的使用"></a>反射的使用</h1><p>实际上，我们获取Class对象的方法有三种:</p>
+<ol>
+<li><p>Object对象的getClass()方法</p>
+</li>
+<li><p>任何数据类型都有一个都有一个“静态”的class属性</p>
+</li>
+<li><p>通过Class类的静态方法：forName(String className)</p>
+</li>
+</ol>
+<p>实际中我们需要使用反射来动态的生成对象，而如果已经有了对象也就不需要反射了，多以第一种很少用，第二种需要提前有类的包，同样导入了类的包可以直接创建。因此常用的是第三种，通过一个字符串来将要反射的类的信息传递进来动态生成对象。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">package reflect;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/20</div><div class="line"> */</div><div class="line">public class GetClassMethod &#123;</div><div class="line">    public static void main(String[] args) throws ClassNotFoundException &#123;</div><div class="line">        //通过getClass方法</div><div class="line">        Student s1 = new Student();</div><div class="line">        Class stuClass = s1.getClass();</div><div class="line">        System.out.println(stuClass.getName());</div><div class="line"></div><div class="line">        //通过类来获得Class对象</div><div class="line">        Class stuClass2 = Student.class;</div><div class="line">        System.out.println(stuClass2.getName());</div><div class="line"></div><div class="line">        // 通过forName来获取</div><div class="line">        Class stuClass3 = Class.forName(&quot;reflect.Student&quot;);</div><div class="line">        System.out.println(stuClass3.getName());</div><div class="line">        System.out.println(stuClass3 == stuClass2);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="通过反射获取构造方法并使用"><a href="#通过反射获取构造方法并使用" class="headerlink" title="通过反射获取构造方法并使用"></a>通过反射获取构造方法并使用</h2><p>Student类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div></pre></td><td class="code"><pre><div class="line">package reflect;</div><div class="line"></div><div class="line">import java.lang.reflect.Constructor;</div><div class="line">import java.lang.reflect.InvocationTargetException;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/20</div><div class="line"> */</div><div class="line">public class Student &#123;</div><div class="line"></div><div class="line">    //（默认的构造方法）</div><div class="line">    Student(String str)&#123;</div><div class="line">        System.out.println(&quot;(默认)的构造方法 s = &quot; + str);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //无参构造方法</div><div class="line">    public Student()&#123;</div><div class="line">        System.out.println(&quot;调用了公有、无参构造方法执行了。。。&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //有一个参数的构造方法</div><div class="line">    public Student(char name)&#123;</div><div class="line">        System.out.println(&quot;姓名：&quot; + name);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //有多个参数的构造方法</div><div class="line">    public Student(String name ,int age)&#123;</div><div class="line">        System.out.println(&quot;姓名：&quot;+name+&quot;年龄：&quot;+ age);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //受保护的构造方法</div><div class="line">    protected Student(boolean n)&#123;</div><div class="line">        System.out.println(&quot;受保护的构造方法 n = &quot; + n);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //私有构造方法</div><div class="line">    private Student(int age)&#123;</div><div class="line">        System.out.println(&quot;私有的构造方法   年龄：&quot;+ age);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException &#123;</div><div class="line">        Object obj;</div><div class="line">        // 1. 加载Class对象</div><div class="line">        Class&lt;?&gt; aClass = Class.forName(&quot;reflect.Student&quot;);</div><div class="line">        // 2. 获取所有的公有构造方法</div><div class="line">        Constructor&lt;?&gt;[] constructors = aClass.getConstructors();</div><div class="line">        System.out.println(&quot;公有的构造方法：&quot;);</div><div class="line">        for (Constructor constructor : constructors)</div><div class="line">            System.out.println(constructor);</div><div class="line">        //3. 获得所有的构造方法</div><div class="line">        Constructor&lt;?&gt;[] declaredConstructors = aClass.getDeclaredConstructors();</div><div class="line">        System.out.println(&quot;所有声明的构造方法：&quot;);</div><div class="line">        for (Constructor constructor : declaredConstructors)</div><div class="line">            System.out.println(constructor);</div><div class="line">        //4. 获得无参构造方法</div><div class="line">        Constructor constructor1 = aClass.getConstructor(null);</div><div class="line">        System.out.println(&quot;所有公有无参构造方法：&quot;);</div><div class="line">        System.out.println(constructor1);</div><div class="line"></div><div class="line">        obj = constructor1.newInstance();</div><div class="line">        System.out.println(&quot;obj = &quot; + obj);</div><div class="line"></div><div class="line">        //5. 获得私有的构造方法</div><div class="line">        Constructor&lt;?&gt; declaredConstructor = aClass.getDeclaredConstructor(int.class);</div><div class="line">        System.out.println(&quot;私有的构造方法：&quot;);</div><div class="line">        System.out.println(declaredConstructor);</div><div class="line"></div><div class="line">        declaredConstructor.setAccessible(true);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">公有的构造方法：</div><div class="line">public reflect.Student(java.lang.String,int)</div><div class="line">public reflect.Student()</div><div class="line">public reflect.Student(char)</div><div class="line">所有声明的构造方法：</div><div class="line">private reflect.Student(int)</div><div class="line">protected reflect.Student(boolean)</div><div class="line">public reflect.Student(java.lang.String,int)</div><div class="line">reflect.Student(java.lang.String)</div><div class="line">public reflect.Student()</div><div class="line">public reflect.Student(char)</div><div class="line">所有公有无参构造方法：</div><div class="line">public reflect.Student()</div><div class="line">调用了公有、无参构造方法执行了。。。</div><div class="line">obj = reflect.Student@4554617c</div><div class="line">私有的构造方法：</div><div class="line">private reflect.Student(int)</div></pre></td></tr></table></figure>
+<h2 id="获得成员变量并调用"><a href="#获得成员变量并调用" class="headerlink" title="获得成员变量并调用"></a>获得成员变量并调用</h2><ol>
+<li>批量的：<br>  public Method[] getMethods():获取所有”公有方法”；（包含了父类的方法也包含Object类）<br>  public Method[] getDeclaredMethods():获取所有的成员方法，包括私有的(不包括继承的)</li>
+<li><p>获取单个的：<br>   public Method getMethod(String name,Class&lt;?&gt;… parameterTypes)，name : 方法名；Class … : 形参的Class类型对象<br>   public Method getDeclaredMethod(String name,Class&lt;?&gt;… parameterTypes)</p>
+</li>
+<li><p>调用方法：<br>   Method –&gt; public Object invoke(Object obj,Object… args): obj : 要调用方法的对象，args:调用方式时所传递的实参</p>
+</li>
+</ol>
+<p>Student1类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">package reflect;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/20</div><div class="line"> */</div><div class="line">public class Student1 &#123;</div><div class="line">    public void show1(String s)&#123;</div><div class="line">        System.out.println(&quot;调用了：公有的，String参数的show1(): s = &quot; + s);</div><div class="line">    &#125;</div><div class="line">    protected void show2()&#123;</div><div class="line">        System.out.println(&quot;调用了：受保护的，无参的show2()&quot;);</div><div class="line">    &#125;</div><div class="line">    void show3()&#123;</div><div class="line">        System.out.println(&quot;调用了：默认的，无参的show3()&quot;);</div><div class="line">    &#125;</div><div class="line">    private String show4(int age)&#123;</div><div class="line">        System.out.println(&quot;调用了，私有的，并且有返回值的，int参数的show4(): age = &quot; + age);</div><div class="line">        return &quot;abcd&quot;;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>测试类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">package reflect;</div><div class="line"></div><div class="line">import java.lang.reflect.Method;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/20</div><div class="line"> */</div><div class="line">public class MethodInvoke &#123;</div><div class="line">    public static void main(String[] args) throws Exception&#123;</div><div class="line">        // 1. 获取Class对象</div><div class="line">        Class clazz = Class.forName(&quot;reflect.Student1&quot;);</div><div class="line">        // 2. 获取所有公有方法并打印</div><div class="line">        System.out.println(&quot;***************获取所有的”公有“方法*******************&quot;);</div><div class="line">        Method[] methods = clazz.getMethods();</div><div class="line">        for (Method method : methods)</div><div class="line">            System.out.println(method);</div><div class="line">        // 3. 获取所有方法并打印</div><div class="line">        System.out.println(&quot;***************获取所有的方法*******************&quot;);</div><div class="line">        methods = clazz.getDeclaredMethods();</div><div class="line">        for (Method method : methods)</div><div class="line">            System.out.println(method);</div><div class="line">        // 4. 获取所有公有show1方法并调用</div><div class="line">        System.out.println(&quot;***************获取show1()方法*******************&quot;);</div><div class="line">        Method show1 = clazz.getMethod(&quot;show1&quot;, String.class);</div><div class="line">        System.out.println(show1);</div><div class="line">        Object o = clazz.getConstructor().newInstance();</div><div class="line">        show1.invoke(o, &quot;haha&quot;);</div><div class="line"></div><div class="line">        System.out.println(&quot;***************获取私有show4()方法*******************&quot;);</div><div class="line">        Method show4 = clazz.getDeclaredMethod(&quot;show4&quot;, int.class);</div><div class="line">        System.out.println(show4);</div><div class="line">        show4.setAccessible(true);</div><div class="line">        Object invoke = show4.invoke(o, 188);</div><div class="line">        System.out.println(invoke);</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">package reflect;</div><div class="line"></div><div class="line">import java.lang.reflect.Method;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/20</div><div class="line"> */</div><div class="line">public class MethodInvoke &#123;</div><div class="line">    public static void main(String[] args) throws Exception&#123;</div><div class="line">        // 1. 获取Class对象</div><div class="line">        Class clazz = Class.forName(&quot;reflect.Student1&quot;);</div><div class="line">        // 2. 获取所有公有方法并打印</div><div class="line">        System.out.println(&quot;***************获取所有的”公有“方法*******************&quot;);</div><div class="line">        Method[] methods = clazz.getMethods();</div><div class="line">        for (Method method : methods)</div><div class="line">            System.out.println(method);</div><div class="line">        // 3. 获取所有方法并打印</div><div class="line">        System.out.println(&quot;***************获取所有的方法*******************&quot;);</div><div class="line">        methods = clazz.getDeclaredMethods();</div><div class="line">        for (Method method : methods)</div><div class="line">            System.out.println(method);</div><div class="line">        // 4. 获取所有公有show1方法并调用</div><div class="line">        System.out.println(&quot;***************获取show1()方法*******************&quot;);</div><div class="line">        Method show1 = clazz.getMethod(&quot;show1&quot;, String.class);</div><div class="line">        System.out.println(show1);</div><div class="line">        Object o = clazz.getConstructor().newInstance();</div><div class="line">        show1.invoke(o, &quot;haha&quot;);</div><div class="line"></div><div class="line">        System.out.println(&quot;***************获取私有show4()方法*******************&quot;);</div><div class="line">        Method show4 = clazz.getDeclaredMethod(&quot;show4&quot;, int.class);</div><div class="line">        System.out.println(show4);</div><div class="line">        show4.setAccessible(true);</div><div class="line">        Object invoke = show4.invoke(o, 188);</div><div class="line">        System.out.println(invoke);</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="反射main方法"><a href="#反射main方法" class="headerlink" title="反射main方法"></a>反射main方法</h2><p>Student2类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">package reflect;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/20</div><div class="line"> */</div><div class="line">public class Student3 &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        System.out.println(&quot;Main 方法执行&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>测试类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">package reflect;</div><div class="line"></div><div class="line">import java.lang.reflect.Method;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/20</div><div class="line"> */</div><div class="line">public class MainInvoke &#123;</div><div class="line">    public static void main(String[] args) throws Exception&#123;</div><div class="line">        Class clazz = Class.forName(&quot;reflect.Student3&quot;);</div><div class="line">        Method main = clazz.getMethod(&quot;main&quot;, String[].class);</div><div class="line">        main.invoke(null, (Object) new String[]&#123;&quot;a&quot;, &quot;b&quot;, &quot;c&quot;&#125;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>其中调用main方法时，第一个参数是对象的类型，由于为静态类，则设置为null就可以，第二个参数是方法参数，注意强制转换。</p>
+<h2 id="通过反射运行配置文件的内容"><a href="#通过反射运行配置文件的内容" class="headerlink" title="通过反射运行配置文件的内容"></a>通过反射运行配置文件的内容</h2><p>Student4类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">package reflect;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/20</div><div class="line"> */</div><div class="line">public class Studnet4 &#123;</div><div class="line">    public void show() &#123;</div><div class="line">        System.out.println(&quot;show&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>a.txt文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">className = reflect.Studnet4</div><div class="line">methodName = show</div></pre></td></tr></table></figure>
+<p>测试类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">package reflect;</div><div class="line"></div><div class="line">import java.io.FileReader;</div><div class="line">import java.io.IOException;</div><div class="line">import java.lang.reflect.Method;</div><div class="line">import java.util.Properties;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/20</div><div class="line"> */</div><div class="line">public class TxtInvoke &#123;</div><div class="line">    public static void main(String[] args) throws Exception&#123;</div><div class="line">        //通过反射获取Class对象</div><div class="line">        Class clazz = Class.forName(getValue(&quot;className&quot;));</div><div class="line">        //2获取show()方法</div><div class="line">        Method method = clazz.getMethod(getValue(&quot;methodName&quot;));</div><div class="line">        //3.调用show()方法</div><div class="line">        method.invoke(clazz.getDeclaredConstructor().newInstance());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //此方法接收一个key，在配置文件中获取相应的value</div><div class="line">    public static String getValue(String key) throws IOException &#123;</div><div class="line">        //获取配置文件的对象</div><div class="line">        Properties properties = new Properties();</div><div class="line">        //获取输入流</div><div class="line">        FileReader in = new FileReader(&quot;E:\\Java_Code\\JavaSE\\ConsistenceHash\\src\\reflect\\a.txt&quot;);</div><div class="line">        //将流加载到配置文件对象中</div><div class="line">        properties.load(in);</div><div class="line">        in.close();</div><div class="line">        //返回根据key获取的value值</div><div class="line">        return properties.getProperty(key);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>更新要反射的类只操作配置文件就可以，便于后期维护和更新。</p>
+<h2 id="反射越过泛型检查"><a href="#反射越过泛型检查" class="headerlink" title="反射越过泛型检查"></a>反射越过泛型检查</h2><p>泛型用于编译器，编译过后进行泛型擦除，可以通过反射来越过泛型检查。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">package reflect;</div><div class="line"></div><div class="line">import java.lang.reflect.Method;</div><div class="line">import java.util.ArrayList;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/20</div><div class="line"> */</div><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) throws Exception&#123;</div><div class="line">        ArrayList&lt;String&gt; strList = new ArrayList&lt;&gt;();</div><div class="line">        strList.add(&quot;aaa&quot;);</div><div class="line">        strList.add(&quot;bbb&quot;);</div><div class="line"></div><div class="line">        //  strList.add(100);</div><div class="line">        //获取ArrayList的Class对象，反向的调用add()方法，添加数据</div><div class="line">        Class clazz = strList.getClass(); //得到 strList 对象的字节码 对象</div><div class="line">        //获取add()方法</div><div class="line">        Method m = clazz.getMethod(&quot;add&quot;, Object.class);</div><div class="line">        //调用add()方法</div><div class="line">        m.invoke(strList, 100);</div><div class="line"></div><div class="line">        //遍历集合</div><div class="line">        for(Object obj : strList)&#123;</div><div class="line">            System.out.println(obj);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/19/Java Enum的用法总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/19/Java Enum的用法总结/" itemprop="url">Java Enum用法总结</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-19T16:51:17+08:00">
+                2018-04-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="常量"><a href="#常量" class="headerlink" title="常量"></a>常量</h1><p>枚举类可以用来当做常量使用，非常的方便。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public enum Color &#123;</div><div class="line">    RED, GREEN, BLACK, YELLOW</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="枚举类可以做switch中的判定类型"><a href="#枚举类可以做switch中的判定类型" class="headerlink" title="枚举类可以做switch中的判定类型"></a>枚举类可以做switch中的判定类型</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">public class Aweek &#123;</div><div class="line">    Day day = Day.MONDAY;</div><div class="line">    public void getDay() &#123;</div><div class="line">        switch (day) &#123;</div><div class="line">            case MONDAY:</div><div class="line">                day = Day.MONDAY;</div><div class="line">                break;</div><div class="line">            case TUESDAY:</div><div class="line">                day = Day.TUESDAY;</div><div class="line">                break;</div><div class="line">            case WEDSDAY:</div><div class="line">                day = Day.WEDSDAY;</div><div class="line">                break;</div><div class="line">            case THURSDAY:</div><div class="line">                day = Day.THURSDAY;</div><div class="line">                break;</div><div class="line">            case SATURDAY:</div><div class="line">                day = Day.SATURDAY;</div><div class="line">                break;</div><div class="line">            case SUNDAY:</div><div class="line">                day = Day.SUNDAY;</div><div class="line">                break;</div><div class="line">            case FRIDAY:</div><div class="line">                day = Day.FRIDAY;</div><div class="line">                break;</div><div class="line">        &#125;</div><div class="line">        System.out.println(day);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        new Aweek().getDay();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">enum Day &#123;</div><div class="line">    MONDAY, TUESDAY, WEDSDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="枚举中可以添加方法，也可以覆盖方法"><a href="#枚举中可以添加方法，也可以覆盖方法" class="headerlink" title="枚举中可以添加方法，也可以覆盖方法"></a>枚举中可以添加方法，也可以覆盖方法</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line">public enum Colors&#123;</div><div class="line">    RED(&quot;red&quot;, 1), GREEN(&quot;green&quot;, 2), BLANK(&quot;blank&quot;, 3), YELLOW(&quot;yellow&quot;, 4);</div><div class="line"></div><div class="line">    //成员变量</div><div class="line">    private String name;</div><div class="line">    private int index;</div><div class="line"></div><div class="line">    // 构造方法</div><div class="line">    Colors(String name, int index) &#123;</div><div class="line">        this.name = name;</div><div class="line">        this.index = index;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    // 覆盖方法</div><div class="line">    @Override</div><div class="line">    public String toString() &#123;</div><div class="line">        return this.index + &quot;&quot; + this.name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String getName() &#123;</div><div class="line">        return name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setName(String name) &#123;</div><div class="line">        this.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public int getIndex() &#123;</div><div class="line">        return index;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setIndex(int index) &#123;</div><div class="line">        this.index = index;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //普通方法</div><div class="line">    public static String getName(int index) &#123;</div><div class="line">        for (Colors colors : Colors.values()) &#123;</div><div class="line">            if (colors.getIndex() == index)</div><div class="line">                return colors.getName();</div><div class="line">        &#125;</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="枚举类可以实现接口，但是不能继承类"><a href="#枚举类可以实现接口，但是不能继承类" class="headerlink" title="枚举类可以实现接口，但是不能继承类"></a>枚举类可以实现接口，但是不能继承类</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">public interface Print &#123;</div><div class="line">    void print();</div><div class="line">&#125;</div><div class="line"></div><div class="line">public enum Colors implements Print&#123;</div><div class="line">    RED(&quot;red&quot;, 1), GREEN(&quot;green&quot;, 2), BLANK(&quot;blank&quot;, 3), YELLOW(&quot;yellow&quot;, 4);</div><div class="line"></div><div class="line">    //成员变量</div><div class="line">    private String name;</div><div class="line">    private int index;</div><div class="line"></div><div class="line">    // 构造方法</div><div class="line">    Colors(String name, int index) &#123;</div><div class="line">        this.name = name;</div><div class="line">        this.index = index;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void print() &#123;</div><div class="line">        System.out.println(&quot;haha&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="使用接口来组织枚举的结构"><a href="#使用接口来组织枚举的结构" class="headerlink" title="使用接口来组织枚举的结构"></a>使用接口来组织枚举的结构</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public interface Food &#123;</div><div class="line">    enum Coffee implements Food &#123;</div><div class="line">        BLACK_COFFEE, DECAF_CAFFEE, LATTE, CAPPUCCINO</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    enum Dessert implements Food&#123;</div><div class="line">        FRUIT, CAKE, GELATO</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/19/JDK源码之ArrayList源码剖析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -591,7 +1293,7 @@
 <li>负载：一个缓冲区被多个用户映射为不同的内容，需要降低缓冲的负载。</li>
 </ol>
 <h1 id="传统哈希算法"><a href="#传统哈希算法" class="headerlink" title="传统哈希算法"></a>传统哈希算法</h1><p>针对分布式场景，假定有1000W个数据项，100个存储接待你，一个数据的存储位置为该数据的Hash值对服务器数量取余，这样可以将数据尽可能的分散到各个服务器上。</p>
-<p><img src="/img/cons-Hash-1.png" alt="Alt text"></p>
+<p>  <img src="/img/cons-Hash-1.png" alt="Alt text"></p>
 <p>这种哈希方案的优点是每个节点的的数据量是相仿的，相对均衡，但是当在集群里面增加一台服务器，或者减少一台服务器的话，几乎所有的缓存都会失效，需要重新哈希。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/18\</div><div class="line"> * 传统哈希方法</div><div class="line"> * 100000000个数据项，100个存储节点</div><div class="line"> */</div><div class="line">public class NormalHashMethod &#123;</div><div class="line">    //数据数</div><div class="line">    public static final int NUMBER_OF_DATA = 10000000;</div><div class="line">    //节点数</div><div class="line">    public static final int NUMBER_OF_NODE = 100;</div><div class="line">    //节点中存放的数据个数</div><div class="line">    private static int[] record = new int[NUMBER_OF_NODE];</div><div class="line"></div><div class="line">    //将节点放入对应的服务器中</div><div class="line">    public static void hashProcess() &#123;</div><div class="line">        for (int i = 0; i &lt; NUMBER_OF_DATA; i++) &#123;</div><div class="line">            int result = getHash(i+&quot;&quot;);</div><div class="line">            record[result%100]++;</div><div class="line">        &#125;</div><div class="line">        System.out.println(&quot;平均节点中的数据量： &quot; + NUMBER_OF_DATA/NUMBER_OF_NODE);</div><div class="line">        System.out.println(&quot;最多的一个节点的数量： &quot; + getMax(record));</div><div class="line">        System.out.println(&quot;最少的一个节点的数量： &quot; + getMin(record));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //添加一个节点或者减少一个节点时，需要移动的节点数</div><div class="line">    public static void afterAddOrDeleteOneNode() &#123;</div><div class="line">        int count = 0;</div><div class="line">        int count1 = 0;</div><div class="line">        //对所有数据进行hash，对新的服务器数量取余</div><div class="line">        for (int i = 0; i &lt; NUMBER_OF_DATA; i++) &#123;</div><div class="line">            int result = getHash(i+&quot;&quot;);</div><div class="line">            if (result % NUMBER_OF_NODE != result % (NUMBER_OF_NODE + 1))</div><div class="line">                count++;</div><div class="line">            if (result % NUMBER_OF_NODE != result % (NUMBER_OF_NODE - 1))</div><div class="line">                count1++;</div><div class="line">        &#125;</div><div class="line">        System.out.println(&quot;添加一个节点数据移动的数量： &quot; + count);</div><div class="line">        System.out.println(&quot;减少一个节点数据移动的数量： &quot; + count1);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //使用FNV1_32_HASH算法</div><div class="line">    private static int getHash(String str) &#123;</div><div class="line">        final int p = 16777619;</div><div class="line">        int hash = (int) 2166136261L;</div><div class="line">        for (int i = 0; i &lt; str.length(); i++)</div><div class="line">            hash = (hash ^ str.charAt(i)) * p;</div><div class="line">        hash += hash &lt;&lt; 13;</div><div class="line">        hash ^= hash &gt;&gt; 7;</div><div class="line">        hash += hash &lt;&lt; 3;</div><div class="line">        hash ^= hash &gt;&gt; 17;</div><div class="line">        hash += hash &lt;&lt; 5;</div><div class="line"></div><div class="line">        // 如果算出来的值为负数则取其绝对值</div><div class="line">        if (hash &lt; 0)</div><div class="line">            hash = Math.abs(hash);</div><div class="line">        return hash;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static int getMax(int[] arr) &#123;</div><div class="line">        int max = arr[0];</div><div class="line">        for (int x = 1; x &lt; arr.length; x++) &#123;</div><div class="line">            if (arr[x] &gt; max)</div><div class="line">                max = arr[x];</div><div class="line"></div><div class="line">        &#125;</div><div class="line">        return max;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static int getMin(int[] arr) &#123;</div><div class="line">        int min = arr[0];</div><div class="line">        for (int x = 1; x &lt; arr.length; x++) &#123;</div><div class="line">            if (arr[x] &lt; min)</div><div class="line">                min = arr[x];</div><div class="line"></div><div class="line">        &#125;</div><div class="line">        return min;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        hashProcess();</div><div class="line">        afterAddOrDeleteOneNode();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>上面的例子中是用普通哈希方法来做的，输出结果如下：</p>
@@ -601,28 +1303,27 @@
 <li>唤醒hash空间：按照常用的hash算法来将对应的key哈希到一个具有2^32次方个桶的空间中，也就是0-2^32-1的数字空间中，将其收尾相连，形成一个环空间。</li>
 </ul>
 <p>Hash(object1) = key1；<br>Hash(object2) = key2；<br>Hash(object3) = key3；<br>Hash(object4) = key4；</p>
-<p><img src="/img/cons-Hash-2.png" alt="Alt text"></p>
+<p>  <img src="/img/cons-Hash-2.png" alt="Alt text"></p>
 <ul>
-<li>将数据通过一定的哈希算法处理后映射到环上</li>
-</ul>
+<li><p>将数据通过一定的哈希算法处理后映射到环上</p>
 <p><img src="/img/cons-Hash-3.png" alt="Alt text"></p>
-<ul>
-<li>将服务器通过哈希算法映射到环上,和数据的哈希算法是一样的，环上的数据，顺时针遇到的第一个服务器就是该数据的存储位置。假定有三个服务器节点。</li>
+</li>
+<li><p>将服务器通过哈希算法映射到环上,和数据的哈希算法是一样的，环上的数据，顺时针遇到的第一个服务器就是该数据的存储位置。假定有三个服务器节点。</p>
+</li>
 </ul>
 <p>Hash(NODE1) = KEY1;<br>Hash(NODE2) = KEY2;<br>Hash(NODE3) = KEY3;</p>
-<p><img src="/img/cons-Hash-4.png" alt="Alt text"></p>
+<p>  <img src="/img/cons-Hash-4.png" alt="Alt text"></p>
 <p>由于哈希环是不会变更的，因此一个数据可以快速的知道他的真正的存储位置。</p>
 <h2 id="服务器的删除与添加"><a href="#服务器的删除与添加" class="headerlink" title="服务器的删除与添加"></a>服务器的删除与添加</h2><p>不同于传统哈希求余方法，一致性哈希算法在增加或者删除服务器节点是，需要换位置的节点很少，性能很高。</p>
 <ol>
-<li>删除服务器节点,如果NODE2出现故障，则从集群里面溢出，那么object3会迁移到Node3中，其他数据的位置不变。</li>
-</ol>
+<li><p>删除服务器节点,如果NODE2出现故障，则从集群里面溢出，那么object3会迁移到Node3中，其他数据的位置不变。</p>
 <p><img src="/img/cons-Hash-5.png" alt="Alt text"></p>
-<ol>
-<li>添加服务器节点，向集群里面添加新的 首先将其映射到环中，通过顺时针迁移的规则，object2会迁移到NODE4中，其他对象不会发生改变。数据迁移的数量很小，很适合分布式集群。</li>
-</ol>
+</li>
+<li><p>添加服务器节点，向集群里面添加新的 首先将其映射到环中，通过顺时针迁移的规则，object2会迁移到NODE4中，其他对象不会发生改变。数据迁移的数量很小，很适合分布式集群。</p>
 <p><img src="/img/cons-Hash-6.png" alt="Alt text"></p>
-<ol>
-<li>java示范</li>
+</li>
+<li><p>java示范</p>
+</li>
 </ol>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div></pre></td><td class="code"><pre><div class="line">import java.util.Objects;</div><div class="line">import java.util.SortedMap;</div><div class="line">import java.util.TreeMap;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/18\</div><div class="line"> * 一致性哈希方法</div><div class="line"> * 100000000个数据项，100个存储节点</div><div class="line"> */</div><div class="line">public class ConsistentHashMethod &#123;</div><div class="line">    public static final int NUMBER_OF_DATA = 10000000;</div><div class="line">    public static final int NUMBER_OF_NODE = 100;</div><div class="line">    //记录服务器要添加的环上的位置，默认为均匀分布的</div><div class="line">    private static int[] servers = new int[NUMBER_OF_NODE];</div><div class="line">    //key-服务器的哈希值，value表示服务器的位置</div><div class="line">    private static SortedMap&lt;Integer, Integer&gt; sortedMap = new TreeMap&lt;&gt;();</div><div class="line">    //记录每个服务器节点放置的数据数</div><div class="line">    private static int[] record = new int[NUMBER_OF_NODE];</div><div class="line"></div><div class="line">    //初始化，将服务器放入环中</div><div class="line">    public static void init() &#123;</div><div class="line">        int div = (Integer.MAX_VALUE) / NUMBER_OF_NODE;</div><div class="line">        for (int i = 0; i &lt; 100; i++) &#123;</div><div class="line">            servers[i] = i * div;</div><div class="line">        &#125;</div><div class="line">        //将所有服务器放入SortedMap中</div><div class="line">        for (int i = 0; i &lt; servers.length; i++) &#123;</div><div class="line">            int hash = getHash(servers[i] + &quot;&quot;);</div><div class="line">            sortedMap.put(hash, servers[i]);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void hashProcess() &#123;</div><div class="line">        int div = 21474836;</div><div class="line">        for (int i = 0; i &lt; NUMBER_OF_DATA; i++) &#123;</div><div class="line">            int hash = getHash(i+&quot;&quot;);</div><div class="line">            //得到大于该Hash值的所有Map</div><div class="line">            SortedMap&lt;Integer, Integer&gt; subMap = sortedMap.tailMap(hash);</div><div class="line">            //将节点放入对应的服务器中</div><div class="line">            if (subMap.isEmpty()) &#123;</div><div class="line">                Integer index = sortedMap.firstKey();</div><div class="line">                record[sortedMap.get(index) / div]++;</div><div class="line">            &#125; else &#123;</div><div class="line">                Integer index = subMap.firstKey();</div><div class="line">                record[sortedMap.get(index)/div]++;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        System.out.println(&quot;平均节点中的数据量： &quot; + NUMBER_OF_DATA/NUMBER_OF_NODE);</div><div class="line">        System.out.println(&quot;最多的一个节点的数量： &quot; + getMax(record));</div><div class="line">        System.out.println(&quot;最少的一个节点的数量： &quot; + getMin(record));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void afterAddOneNode() &#123;</div><div class="line">        int count = 0;</div><div class="line">        int div1 = (Integer.MAX_VALUE) / NUMBER_OF_NODE;</div><div class="line">        SortedMap&lt;Integer, Integer&gt; addNode = new TreeMap&lt;&gt;(sortedMap);</div><div class="line">        addNode.put(getHash(&quot;2333&quot;), 2333);</div><div class="line">        for (int i = 0; i &lt; NUMBER_OF_DATA; i++) &#123;</div><div class="line">            int hash = getHash(i + &quot;&quot;);</div><div class="line">            SortedMap&lt;Integer, Integer&gt; sub = sortedMap.tailMap(hash);</div><div class="line">            SortedMap&lt;Integer, Integer&gt; sub1 = addNode.tailMap(hash);</div><div class="line">            if (sub.isEmpty() &amp;&amp; sub1.isEmpty() ) &#123;</div><div class="line">                count++;</div><div class="line">            &#125;</div><div class="line">            if (!sub.isEmpty() &amp;&amp; !sub1.isEmpty() &amp;&amp; !Objects.equals(sub.firstKey(), sub1.firstKey())) &#123;</div><div class="line">                count++;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        System.out.println(&quot;添加一个节点数据移动的数量： &quot; + count);</div><div class="line">    &#125;</div><div class="line">    //使用FNV1_32_HASH算法</div><div class="line">    private static int getHash(String str) &#123;</div><div class="line">        final int p = 16777619;</div><div class="line">        int hash = (int) 2166136261L;</div><div class="line">        for (int i = 0; i &lt; str.length(); i++)</div><div class="line">            hash = (hash ^ str.charAt(i)) * p;</div><div class="line">        hash += hash &lt;&lt; 13;</div><div class="line">        hash ^= hash &gt;&gt; 7;</div><div class="line">        hash += hash &lt;&lt; 3;</div><div class="line">        hash ^= hash &gt;&gt; 17;</div><div class="line">        hash += hash &lt;&lt; 5;</div><div class="line"></div><div class="line">        // 如果算出来的值为负数则取其绝对值</div><div class="line">        if (hash &lt; 0)</div><div class="line">            hash = Math.abs(hash);</div><div class="line">        return hash;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static int getMax(int[] arr) &#123;</div><div class="line">        int max = arr[0];</div><div class="line">        for (int x = 1; x &lt; arr.length; x++) &#123;</div><div class="line">            if (arr[x] &gt; max)</div><div class="line">                max = arr[x];</div><div class="line"></div><div class="line">        &#125;</div><div class="line">        return max;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static int getMin(int[] arr) &#123;</div><div class="line">        int min = arr[0];</div><div class="line">        for (int x = 1; x &lt; arr.length; x++) &#123;</div><div class="line">            if (arr[x] &lt; min)</div><div class="line">                min = arr[x];</div><div class="line"></div><div class="line">        &#125;</div><div class="line">        return min;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        init();</div><div class="line">        hashProcess();</div><div class="line">        afterAddOneNode();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>运行结果为：</p>
@@ -630,11 +1331,12 @@
 <p>可以看出添加一个节点之后，要修改的数据只有十万个，效率很高。</p>
 <h2 id="虚拟节点"><a href="#虚拟节点" class="headerlink" title="虚拟节点"></a>虚拟节点</h2><p>上面可以明确看出，一致性哈希算法满足了单调性和负载均衡的特性以及一般hash算法的分散性，平衡性的体现通过虚拟节点来实现。哈希算法是不保证平衡的，如值部署了NODE1和NODE3的情况，object1存储到NODE1中，其他的都存到NODE3中，这样就非常不平衡了。因此引入了虚拟节点。</p>
 <ul>
-<li>虚拟节点：实际上是及其在哈希空间中的复制品，一个实际的节点对应了若干个虚拟节点，这样对应个数也成为复制个数，虚拟节点在哈希空间中以哈希值排列。新建两个复制节点之后可以看到节点分配变得很均衡。</li>
-</ul>
+<li><p>虚拟节点：实际上是及其在哈希空间中的复制品，一个实际的节点对应了若干个虚拟节点，这样对应个数也成为复制个数，虚拟节点在哈希空间中以哈希值排列。新建两个复制节点之后可以看到节点分配变得很均衡。</p>
 <p><img src="/img/cons-Hash-7.png" alt="Alt text"></p>
+</li>
+</ul>
 <p>其中涉及了哈希虚拟节点到实际节点的转换，其实只是一个简单的映射：</p>
-<p><img src="/img/cons-Hash-8.png" alt="Alt text"></p>
+<p>  <img src="/img/cons-Hash-8.png" alt="Alt text"></p>
 <p>而在实际的场景中，可以通过对真实节点进行编号来生成相应的虚拟节点。如真实节点的IP为192.168.10.11，则虚拟节点可以设置为192.168.10.11#1,192.168.10.11#2。</p>
 
           
@@ -2135,660 +2837,6 @@ assertTrue(avgElapse.getAsDouble() &gt; 1666.0);
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/15/Redis-redis基础总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/04/15/Redis-redis基础总结/" itemprop="url">Redis-redis基础总结</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-15T20:55:44+08:00">
-                2018-04-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/redis/" itemprop="url" rel="index">
-                    <span itemprop="name">redis</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="redis简介"><a href="#redis简介" class="headerlink" title="redis简介"></a>redis简介</h1><p>redis是一个开源的，C语言编写的、支持网络交互的，可基于内存也可以持久化的key-value数据库，是当前最为热门的非关系型数据库。其官网为redis.io。</p>
-<h2 id="redis的安装"><a href="#redis的安装" class="headerlink" title="redis的安装"></a>redis的安装</h2><ol>
-<li>下载redis源码并解压缩</li>
-<li>进入redis源码目录，make编译一下。</li>
-<li>make install PREFIX=/usr/local/redis</li>
-</ol>
-<p>安装完毕，其目录如下：</p>
-<blockquote>
-<p>./redis-benchmark //用于进行redis性能测试的工具<br>  ./redis-check-dump //用于修复出问题的dump.rdb文件<br>  ./redis-cli //redis的客户端<br>  ./redis-server //redis的服务端<br>  ./redis-check-aof //用于修复出问题的AOF文件<br>  ./redis-sentinel //用于集群管理</p>
-</blockquote>
-<h2 id="redis的使用"><a href="#redis的使用" class="headerlink" title="redis的使用"></a>redis的使用</h2><p>./redis-server redis.conf 可指定配置文件并启动redis服务，默认端口号为6379。可以通过redis-cli或者可视化的客户端如redis management来远程登录操作服务器。</p>
-<h1 id="redis的五种数据类型"><a href="#redis的五种数据类型" class="headerlink" title="redis的五种数据类型"></a>redis的五种数据类型</h1><ol>
-<li>String</li>
-</ol>
-<p>字符串是redis最基本的数据类型，一个key对应一个value.String类型是二进制安全的。也就是说redis的String可以包含任何数据。比如JPG图片或者序列化的对象。String类型是redis最基本的数据类型，一个redis中字符串value最多可以是512M。</p>
-<p>基本操作包括get、set、incr、decr</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">127.0.0.1:6379&gt; set mynum &quot;2&quot;</div><div class="line">OK</div><div class="line">127.0.0.1:6379&gt; get mynum</div><div class="line">&quot;2&quot;</div><div class="line">127.0.0.1:6379&gt; incr mynum</div><div class="line">(integer) 3</div><div class="line">127.0.0.1:6379&gt; get mynum</div><div class="line">&quot;3&quot;</div></pre></td></tr></table></figure>
-<p>考虑到INCR等指令本身就具有原子操作的特性，可以利用redis的INCR，DECR等指令来实现原子计数，用这个特性来实现业务上的统计技术需求。</p>
-<ol>
-<li>Hash</li>
-</ol>
-<p>Hash是一个键值对集合,相当于一个key对应一个map，map中还有键值对。使用hash对key进行归类。</p>
-<p>基本操作包括hset、hget。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">127.0.0.1:6379&gt; HMSET user:001 username antirez password P1pp0 age 34</div><div class="line">OK</div><div class="line">127.0.0.1:6379&gt; HGETALL user:001</div><div class="line">1) &quot;username&quot;</div><div class="line">2) &quot;antirez&quot;</div><div class="line">3) &quot;password&quot;</div><div class="line">4) &quot;P1pp0&quot;</div><div class="line">5) &quot;age&quot;</div><div class="line">6) &quot;34&quot;</div><div class="line">127.0.0.1:6379&gt; HSET user:001 password 12345</div><div class="line">(integer) 0</div><div class="line">127.0.0.1:6379&gt; HGETALL user:001</div><div class="line">1) &quot;username&quot;</div><div class="line">2) &quot;antirez&quot;</div><div class="line">3) &quot;password&quot;</div><div class="line">4) &quot;12345&quot;</div><div class="line">5) &quot;age&quot;</div><div class="line">6) &quot;34&quot;</div></pre></td></tr></table></figure>
-<ol>
-<li>List</li>
-</ol>
-<p>列表在低层的实现为链表，则其插入和删除的效率非常高。其存在的缺点在于链表中元素的定位比较慢。</p>
-<p>其基本操作包括lpush,rpush,lrange等,也就是从左侧插入，右侧插入以及指定一个范围来提取元素。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">127.0.0.1:6379&gt; lpush mylist &quot;1&quot;</div><div class="line">(integer) 1</div><div class="line">127.0.0.1:6379&gt; rpush mylist &quot;2&quot;</div><div class="line">(integer) 2</div><div class="line">127.0.0.1:6379&gt; lpush mylist &quot;0&quot;</div><div class="line">(integer) 3</div><div class="line">127.0.0.1:6379&gt; lrange mylist 0 1</div><div class="line">1) &quot;0&quot;</div><div class="line">2) &quot;1&quot;</div><div class="line">127.0.0.1:6379&gt; lrange mylist 0 -1</div><div class="line">1) &quot;0&quot;</div><div class="line">2) &quot;1&quot;</div><div class="line">3) &quot;2</div></pre></td></tr></table></figure>
-<p>list的使用场景包括：</p>
-<ul>
-<li>利用lists来实现一个消息队列，可以确保消息的顺序执行。</li>
-<li>利用LRANGE实现分页功能</li>
-</ul>
-<ol>
-<li>Set</li>
-</ol>
-<p>集合和Java中的集合定义类似，无序，不重合。可以对集合进行添加，删除，取交集，取并集，取差集等。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">127.0.0.1:6379&gt; sadd myset &quot;one&quot;</div><div class="line">(integer) 1</div><div class="line">127.0.0.1:6379&gt; sadd myset &quot;two&quot;</div><div class="line">(integer) 1</div><div class="line">127.0.0.1:6379&gt; smembers myset</div><div class="line">1) &quot;one&quot;</div><div class="line">2) &quot;two&quot;</div><div class="line">127.0.0.1:6379&gt; sismember myset &quot;one&quot;</div><div class="line">(integer) 1</div><div class="line">127.0.0.1:6379&gt; sismember myset &quot;three&quot;</div><div class="line">(integer) 0</div><div class="line">127.0.0.1:6379&gt; sadd yourset &quot;1&quot;</div><div class="line">(integer) 1</div><div class="line">127.0.0.1:6379&gt; sadd yourset &quot;2&quot;</div><div class="line">(integer) 1</div><div class="line">127.0.0.1:6379&gt; smembers yourset</div><div class="line">1) &quot;1&quot;</div><div class="line">2) &quot;2&quot;</div><div class="line">127.0.0.1:6379&gt; sunion myset yourset</div><div class="line">1) &quot;1&quot;</div><div class="line">2) &quot;one&quot;</div><div class="line">3) &quot;2&quot;</div><div class="line">4) &quot;two&quot;</div></pre></td></tr></table></figure>
-<ol>
-<li>zset</li>
-</ol>
-<p>有序集合，每个元素都关联一个score，据此来进行排序。常用操作有zrange,zadd,zreevrange,zrangebyscore等等。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">127.0.0.1:6379&gt; zadd myzset 1 baidu.com</div><div class="line">(integer) 1</div><div class="line">127.0.0.1:6379&gt; zadd myzset 3 360.com</div><div class="line">(integer) 1</div><div class="line">127.0.0.1:6379&gt; zadd myzset 2 google.com</div><div class="line">(integer) 1</div><div class="line">127.0.0.1:6379&gt; zrange myzset 0 -1 with scores</div><div class="line">1) &quot;baidu.com&quot;</div><div class="line">2) &quot;1&quot;</div><div class="line">3) &quot;google.com&quot;</div><div class="line">4) &quot;2&quot;</div><div class="line">5) &quot;360.com&quot;</div><div class="line">6) &quot;3&quot;</div><div class="line">127.0.0.1:6379&gt; zrange myzset 0 -1</div><div class="line">1) &quot;baidu.com&quot;</div><div class="line">2) &quot;google.com&quot;</div><div class="line">3) &quot;360.com&quot;</div></pre></td></tr></table></figure>
-<h1 id="redis持久化"><a href="#redis持久化" class="headerlink" title="redis持久化"></a>redis持久化</h1><p>redis提供了两种持久化方案：RDB和AOF。</p>
-<h2 id="RDB-Redis-Database"><a href="#RDB-Redis-Database" class="headerlink" title="RDB-Redis Database"></a>RDB-Redis Database</h2><ul>
-<li><p>rdb是将redis某一个时刻的数据持久化到磁盘中，是一种快照式的持久化方法。redis在持久化过程中，会将数据都写入到一个临时文件中，待持久化过程都结束了，才会用这个临时文件替换上次持久化好的dump.rdb。保证快照文件试完整可用的，可以随时进行备份。</p>
-</li>
-<li><p>RDB进行持久化过程时，redis会单独fork一个子进程来进行持久化，而主进程不会进行任何的IO操作，从而保证了redis的高性能。</p>
-<ul>
-<li>fork的作用是复制一个和当前进程一样的进程。新进程的所有数据数值和原进程一致，但是是一个全新的进程，并作为原进程的子进程。</li>
-</ul>
-</li>
-<li><p>RDB快照的触发方法</p>
-<ul>
-<li>配置文件中默认的快照配置，cp后重新使用。</li>
-<li>命令save、bgsave，其中save时只保存，其他全部阻塞，bgsave会在后台进行快照操作，快照同时还可以响应客户端的请求，可以通过lastsave命令获取最后一次成功执行快照的时间。</li>
-<li>使用flushall命令，不过里面是空的，无意义。</li>
-</ul>
-</li>
-<li><p>RDB的优势和劣势</p>
-<ul>
-<li>优势：如果需要进行大规模的数据恢复，且对于数据恢复的完整性不是非常敏感，nameRDB方式要比AOF方式更加的高效。</li>
-<li>劣势：RDB的缺点在于如果对于数据完整性要求比较高，则当redis故障时，会丢失掉最后一次快照后的所有数据。而如果持久化频率太高，会增加服务器的多余压力。同时fork时，内存中的数据被复制了一份，内存膨胀需要考虑。</li>
-</ul>
-</li>
-</ul>
-<h2 id="AOF-Append-Only-File"><a href="#AOF-Append-Only-File" class="headerlink" title="AOF-Append Only File"></a>AOF-Append Only File</h2><ul>
-<li><p>AOF,只允许对文件追加。AOF采用的持久化方案是将执行过的写指令记录下来，在数据恢复时按照从前到后的顺序将指令都执行一遍。AOF的开启可以通过修改redis.conf中的appendonly yes来设置。此时，如果有写操作，都会追加到AOF文件的末尾。默认的AOF持久化策略为每秒种fsync一次，由于向磁盘中写一个指令对系统的压力很小，因此此时redis保持高效运行。而redis重启时根据日志文件顺次执行其指令来完成数据恢复。</p>
-</li>
-<li><p>redis出现故障，丢失的数据也就是这1s没有被同步的数据。同时在追加日志时，恰好遇到磁盘空间满，断电等情况导致日志写入不完整，此时redis提供了redis-check-aof工具来修复日志。</p>
-<p>  如果AOF文件出现了被写坏的情况，可以通过以下步骤来修复：</p>
-<pre><code>* 备份被写坏的AOF文件
-* 运行redis-check-aof-fix进行修复
-* 用diff -u来查看两个文件的差异，确认问题点
-* 重启redis,加载修改后的AOF文件
-</code></pre></li>
-</ul>
-<ul>
-<li><p>重写机制：bgrewriteaof</p>
-<ul>
-<li><p>追加方式会导致AOF文件越来越大，因此redis提供了AOF文件重写机制，也就是当AOF文件的大小超过所设定的阈值时，redis会启动AOF文件的内容压缩，只保留可以恢复数据的最小指令集。比如，如果我们队一个字符串的值进行了1000次INCR，AOF中应该记录1000条指令，这时候我们完全可以用一个set的值，将其设置为正确的数据。同时AOF重写过程中，仍然是采用先写临时文件，全部完成后再替换的流程，所以断电、磁盘满等问题都不会影响AOF文件的可用性。</p>
-</li>
-<li><p>重写原理：</p>
-<ul>
-<li>重写时会fork一个新进程来将文件进行重写，先写临时文件然后rename覆盖。重写过程为遍历此时内存中的数据，每条数据有一条对应的set语句。重写AOF文件的操作并不是读取旧的AOF文件，而是将整个内存中的数据库内容用命令的方式重写了一个新的AOF文件，类似于快照。</li>
-</ul>
-</li>
-<li><p>重写触发条件：</p>
-<ul>
-<li>redis会记录上次重写时的AOF大小，默认配置是当AOF文件大小是上次rewrite后的大小的一倍且文件大于64M时触发。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>AOF的优势和劣势</p>
-<ul>
-<li><p>AOF的优势：</p>
-<ul>
-<li>每秒同步，异步操作，每秒记录，如果1s以内的宕机，有数据丢失</li>
-<li>不需要同步</li>
-</ul>
-</li>
-<li><p>AOF的缺陷主要有两个方面：</p>
-<ul>
-<li>同样数据规模的情况下，AOF文件要比RDB文件的体积大。</li>
-<li>AOF方式的恢复速度也要慢于RDB方式。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h2 id="选择方案"><a href="#选择方案" class="headerlink" title="选择方案"></a>选择方案</h2><p>RDB持久化方式能够在指定时间间隔内对你的数据进行快照存储。而AOF持久化方式能记录每次对服务器写的操作，当服务器重启时重新执行这些命令来回复原始数据，AOF命令以redis协议追加保存每次写的操作到文件末尾。Redis还能对AOF文件进行后台重写，使得AOF文件不至于过大。</p>
-<ul>
-<li>两种方式都开启来提供更加可靠的持久化方案</li>
-</ul>
-<p>这种情况下，当redis重启时会优先载入AOF文件来回复原始的数据，因为在通常的情况下AOF文件保存的数据比RDB文件要更加完整。而RDB作为候选方案，对当前内存的数据进行定期的备份，来防范AOF可能存在的BUG。</p>
-<ul>
-<li>性能建议</li>
-</ul>
-<p>考虑到RDB做数据备份，建议在Slave上持久化RDB文件。</p>
-<p>如果这时候Enable AOF，好处是最坏的情况下丢失的数据也不会超过2s，启动脚本简单的load自己的AOF文件就可以看，代价是带来了持续的IO，以及rewrite过程中将产生的新数据写到新文件造成的阻塞难以避免。在磁盘允许的情况下，应该尽量减少AOF重写的频率。</p>
-<p>如果不Enable AOF，仅仅依靠主从复制来实现高可靠也是可以的。这样能节省一大笔IO操作，也减少了rewrite时带来的系统资源占用，但是如果master和slave同时坏掉，会丢失十几分钟的数据，启动脚本要比较Master、Slave中的RDB文件，载入比较新的哪一个。</p>
-<h1 id="redis的主从复制"><a href="#redis的主从复制" class="headerlink" title="redis的主从复制"></a>redis的主从复制</h1><p>redis支持主从同步的，同时支持一主多从以及多级从结构。主从结构的优点在于：</p>
-<ul>
-<li>冗余备份</li>
-<li>提升读性能。</li>
-</ul>
-<p>redis主从结构中，一般推荐关闭主服务器的数据持久化功能，只让从服务器进行数据持久化，这样可以提高主服务器的处理性能，。。</p>
-<p>主从架构中，从服务器通常设置为只读模式，这样可以避免从服务器的数据被误修改。但是从服务器仍然可以接受config等指令，不应该将从服务器直接暴露到不安全的网络环境中。如果必须如此，需要考虑给其指令进行重命名，避免误操作。</p>
-<h2 id="主从同步的配置方法"><a href="#主从同步的配置方法" class="headerlink" title="主从同步的配置方法"></a>主从同步的配置方法</h2><ol>
-<li>配置的是Slave库。</li>
-<li>从库配置：slaveof 主库ip 主库port， 每次与master断开之后，都需要进行重新连接，除非你配置进redis.conf中的info replication。</li>
-<li>修改配置文件的细节操作：<ul>
-<li>拷贝多个redis.conf文件</li>
-<li>开启daemonize yes</li>
-<li>pid文件名字</li>
-<li>指定端口</li>
-<li>log文件名称</li>
-<li>dump.rdb文件名称。</li>
-</ul>
-</li>
-</ol>
-<h2 id="一主二仆的配置"><a href="#一主二仆的配置" class="headerlink" title="一主二仆的配置"></a>一主二仆的配置</h2><ul>
-<li>初始化启动一个Master和两个Slave</li>
-<li>查看日志包括主机，备份机的日志，以及info replication</li>
-<li>上一个Slave可以是下一个Slave的Master，Slave同样可以接受其他Slave的连接和同步请求，那么该Slave作为了链条中的下一个的Master，可以有效减轻master的写压力。</li>
-<li>中途变更转向时会清除之前的数据，重新拷贝最新的slaveof ip port</li>
-<li>slaveof no one， 使得当前的数据库停止与其他数据库的同步，转成主数据库。</li>
-</ul>
-<h2 id="主从复制原理"><a href="#主从复制原理" class="headerlink" title="主从复制原理"></a>主从复制原理</h2><ol>
-<li>Slave启动成功连接到master之后会发送一个sync命令。</li>
-<li>Master接到命令后，调用bgsave指令来创建一个子进程专门进行数据持久化工作，也就是讲主服务器的数据写入RDB文件中。在数据持久化过程中，主服务器将执行的写指令都缓存在内存中。</li>
-<li>bgsave指令完成之后，主服务器会将持久化好的RDB文件发送给服务器，从服务器接到此文件后会将其存储到磁盘上，然后再将读取到内存中。这个动作完成之后，主服务器会将这段时间缓存的写指令以redis协议的格式发送给从服务器。也就是全量复制和增量复制结合使用。</li>
-</ol>
-<ul>
-<li>全量复制与增量复制<ul>
-<li>全量复制：slave服务在接收到数据库文件数据之后，将其存盘并加载到内存中。</li>
-<li>增量复制：master继续将新的收集到的修改命令依次传给slave，完成同步。</li>
-</ul>
-</li>
-<li><p>多个从服务器同时发来SYNC指令，主服务器也只会执行一个bgsave，然后把持久化好的RDB文件发送给多个下游节点。redis2.8之前，从服务器和主服务器断开连接之后，都会进行一次主从之间的全量数据同步，2.8之后，redis支持效率更高的增量同步策略。</p>
-</li>
-<li><p>主服务器会在内存中维护一个缓冲区，缓冲区中存储着将要发给从服务器的内容。从服务器在与主服务器出现网络瞬间断开之后，从服务器会尝试与主服务器连接，一旦连接成功，从服务器就会把希望同步的主服务器ID和希望请求的数据偏移量位置发送给主服务器。主服务器接收到这种同步请求之后，首先会验证主服务器ID是否和自己的ID匹配，其次会检查请求的偏移量是否存在于自己的缓冲区中，如果两者都满足的话，主服务器会向服务器发送增量内容。</p>
-</li>
-</ul>
-<h1 id="redis事务管理"><a href="#redis事务管理" class="headerlink" title="redis事务管理"></a>redis事务管理</h1><p>redis事务处理的基础为MULTI、EXEC、DISCARD、WATCH四个指令。</p>
-<p>MULTI：用来组装一个事务，标记事务的开始<br>EXEC：用来执行一个事务<br>DISCARD：用来取消一个事务<br>WATCH：用来监视一些可以，一旦这些key在事务执行前被改变，则取消事务的执行</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">redis&gt; MULTI</div><div class="line">OK</div><div class="line">redis&gt; INCR user_id</div><div class="line">QUEUED</div><div class="line">redis&gt; INCR user_id</div><div class="line">QUEUED</div><div class="line">redis&gt; INCR user_id</div><div class="line">QUEUED</div><div class="line">redis&gt; PING</div><div class="line">QUEUED</div><div class="line">redis&gt; EXEC</div><div class="line">1) (integer) 1</div><div class="line">2) (integer) 2</div><div class="line">3) (integer) 3</div><div class="line">4) PONG</div></pre></td></tr></table></figure>
-<ul>
-<li><p>其中QUEUED表示我们在用MULTI组装事务时，每一个命令都会进入到内存队列中缓存起来，如果出现QUEUED则表示我们这个命令成功的插入了缓存队列，将来执行EXEC时，这些被QUEUED的命令都会被组装成一个事务来执行。</p>
-</li>
-<li><p>事务执行完成之后，如果redis开启了AOF持久化的话，那么一旦事务被成功执行，事务中的命令就会通过write命令一次性写入到磁盘中，如果写入过程中出现故障则会造成部分命令AOF持久化，此时可以使用redis-check-aof工具来修复这个问题，这个问题会将AOF文件中不完整的信息溢出，确保AOF文件完整可用。</p>
-</li>
-<li><p>事务遇到的错误分为：</p>
-<ul>
-<li><p>调用EXEC之前的错误：导致某个命令无法成功写入缓冲队列，调用redis会拒绝执行这个事务。</p>
-<ul>
-<li>语法错误</li>
-<li><p>内存不足</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">127.0.0.1:6379&gt; multi</div><div class="line">OK</div><div class="line">127.0.0.1:6379&gt; haha</div><div class="line">(error) ERR unknown command &apos;haha&apos;</div><div class="line">127.0.0.1:6379&gt; ping</div><div class="line">QUEUED</div><div class="line">127.0.0.1:6379&gt; exec</div><div class="line">(error) EXECABORT Transaction discarded because of previous errors.</div></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-<li><p>调用EXEC之后的错误：redis会忽略这些错误，而是继续向下执行事务中的其他命令。也就是某一条命令失败并不会影响其他命令的执行。</p>
-<pre><code><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">127.0.0.1:6379&gt; multi</div><div class="line">OK</div><div class="line">127.0.0.1:6379&gt; set age 23</div><div class="line">QUEUED</div><div class="line">127.0.0.1:6379&gt; sadd age 15</div><div class="line">QUEUED</div><div class="line">127.0.0.1:6379&gt; set age 29</div><div class="line">QUEUED</div><div class="line">127.0.0.1:6379&gt; exec</div><div class="line">1) OK</div><div class="line">2) (error) WRONGTYPE Operation against a key holding the wrong kind of value</div><div class="line">3) OK</div><div class="line">127.0.0.1:6379&gt; get age</div><div class="line">&quot;29&quot;</div></pre></td></tr></table></figure>
-</code></pre></li>
-<li><p>WATCH指令可以使用类似于乐观锁的效果也就是CAS，WATCH本身作用是监视某些key是否被改动过，只要还没有真正的触发事务，WATCH都会监视指定的key，一旦发现某个key被修改了，在执行EXEC时就会返回nil，表示事务无法触发。</p>
-</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">  127.0.0.1:6379&gt; set age 23</div><div class="line">OK</div><div class="line">127.0.0.1:6379&gt; watch age</div><div class="line">OK</div><div class="line">127.0.0.1:6379&gt; set age 24</div><div class="line">OK</div><div class="line">127.0.0.1:6379&gt; multi</div><div class="line">OK</div><div class="line">127.0.0.1:6379&gt; set age 25</div><div class="line">QUEUED</div><div class="line">127.0.0.1:6379&gt; get age</div><div class="line">QUEUED</div><div class="line">127.0.0.1:6379&gt; exec</div><div class="line">(nil)</div></pre></td></tr></table></figure>
-</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/15/数据结构-两个栈实现一个队列以及两个队列实现一个栈/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/04/15/数据结构-两个栈实现一个队列以及两个队列实现一个栈/" itemprop="url">数据结构-两个栈实现一个队列和两个队列实现一个栈</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-15T19:15:03+08:00">
-                2018-04-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/数据结构/" itemprop="url" rel="index">
-                    <span itemprop="name">数据结构</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="两个栈实现一个队列"><a href="#两个栈实现一个队列" class="headerlink" title="两个栈实现一个队列"></a>两个栈实现一个队列</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/13</div><div class="line"> */</div><div class="line">public class TwoStackImpQueue &#123;</div><div class="line">    private Stack&lt;Integer&gt; stack1 = new Stack&lt;&gt;();</div><div class="line">    private Stack&lt;Integer&gt; stack2 = new Stack&lt;&gt;();</div><div class="line"></div><div class="line">    public void push(int node) &#123;</div><div class="line">        stack1.push(node);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public Integer pop() &#123;</div><div class="line">        if (stack2.size() &lt;= 0) &#123;</div><div class="line">            while (stack1.size() &gt; 0) &#123;</div><div class="line">                stack2.push(stack1.pop());</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        if (stack2.isEmpty()) &#123;</div><div class="line">            try &#123;</div><div class="line">                throw new Exception(&quot;queue is empty&quot;);</div><div class="line">            &#125; catch (Exception e)&#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return stack2.pop();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="两个队列实现一个栈"><a href="#两个队列实现一个栈" class="headerlink" title="两个队列实现一个栈"></a>两个队列实现一个栈</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line">import java.util.LinkedList;</div><div class="line">import java.util.Queue;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/13</div><div class="line"> */</div><div class="line">public class TwoListImpStack &#123;</div><div class="line">    private Queue&lt;Integer&gt; list1 = new LinkedList&lt;&gt;();</div><div class="line">    private Queue&lt;Integer&gt; list2 = new LinkedList&lt;&gt;();</div><div class="line"></div><div class="line">    public void push(int node) &#123;</div><div class="line">        if (list1.isEmpty() &amp;&amp; list2.isEmpty())&#123;</div><div class="line">            list1.add(node);</div><div class="line">        &#125; else if (list1.isEmpty()) &#123;</div><div class="line">            list2.add(node);</div><div class="line">        &#125; else &#123;</div><div class="line">            list2.add(node);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public Integer pop() &#123;</div><div class="line">        if (list1.isEmpty() &amp;&amp; list2.isEmpty())&#123;</div><div class="line">            try &#123;</div><div class="line">                throw new Exception(&quot;stack is Empty!&quot;);</div><div class="line">            &#125; catch (Exception e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">        &#125; else if (list1.isEmpty()) &#123;</div><div class="line">            while (list2.size() &gt; 1) &#123;</div><div class="line">                list1.add(list2.poll());</div><div class="line">            &#125;</div><div class="line">            return list2.poll();</div><div class="line">        &#125; else &#123;</div><div class="line">            while (list1.size() &gt; 1) &#123;</div><div class="line">                list2.add(list1.poll());</div><div class="line">            &#125;</div><div class="line">            return list1.poll();</div><div class="line">        &#125;</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/15/算法之查找/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/04/15/算法之查找/" itemprop="url">算法-查找</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-15T18:40:18+08:00">
-                2018-04-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/algorithms/" itemprop="url" rel="index">
-                    <span itemprop="name">algorithms</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="数组重复元素问题"><a href="#数组重复元素问题" class="headerlink" title="数组重复元素问题"></a>数组重复元素问题</h1><h2 id="给定一个数组，查看数组是否存在重复元素"><a href="#给定一个数组，查看数组是否存在重复元素" class="headerlink" title="给定一个数组，查看数组是否存在重复元素"></a>给定一个数组，查看数组是否存在重复元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashSet;</div><div class="line">import java.util.Set;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/6</div><div class="line"> */</div><div class="line">public class ContainsDuplicate_217 &#123;</div><div class="line">    public boolean containsDuplicate(int[] nums) &#123;</div><div class="line">        Set&lt;Integer&gt; record = new HashSet&lt;&gt;();</div><div class="line">        for (int i = 0; i &lt; nums.length; i++) &#123;</div><div class="line">            if (record.contains(nums[i]))</div><div class="line">                return true;</div><div class="line">            record.add(nums[i]);</div><div class="line">        &#125;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="给定一个数组，是否存在两个元素重复，并且两个元素下标之差的绝对值小于等于k。"><a href="#给定一个数组，是否存在两个元素重复，并且两个元素下标之差的绝对值小于等于k。" class="headerlink" title="给定一个数组，是否存在两个元素重复，并且两个元素下标之差的绝对值小于等于k。"></a>给定一个数组，是否存在两个元素重复，并且两个元素下标之差的绝对值小于等于k。</h2><p>维持set的长度为K</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line">import java.util.HashSet;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/6</div><div class="line"> */</div><div class="line">public class ContainsDuplicateII &#123;</div><div class="line">    public boolean containsNearbyDuplicate(int[] nums, int k) &#123;</div><div class="line">        HashSet&lt;Integer&gt; record = new HashSet&lt;&gt;();</div><div class="line">        for (int i = 0; i &lt; nums.length; i++) &#123;</div><div class="line">            if (record.contains(nums[i]))</div><div class="line">                return true;</div><div class="line">            record.add(nums[i]);</div><div class="line">            if (record.size() == k + 1)</div><div class="line">                record.remove(nums[i-k]);</div><div class="line">        &#125;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="给定一个数组，是否存在两个元素的之差的绝对值小于等于t，并且两个元素下标之差的绝对值小于等于k。"><a href="#给定一个数组，是否存在两个元素的之差的绝对值小于等于t，并且两个元素下标之差的绝对值小于等于k。" class="headerlink" title="给定一个数组，是否存在两个元素的之差的绝对值小于等于t，并且两个元素下标之差的绝对值小于等于k。"></a>给定一个数组，是否存在两个元素的之差的绝对值小于等于t，并且两个元素下标之差的绝对值小于等于k。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashSet;</div><div class="line">import java.util.TreeSet;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/6</div><div class="line"> */</div><div class="line">public class ContainsDuplicateIII &#123;</div><div class="line">    public boolean containsNearbyAlmostDuplicate(int[] nums, int k, int t) &#123;</div><div class="line">        if (nums.length &lt; 2 || k == 0) &#123;</div><div class="line">            return false;</div><div class="line">        &#125;</div><div class="line">        TreeSet&lt;Long&gt; set = new TreeSet&lt;&gt;();</div><div class="line"></div><div class="line">        int i = 0;</div><div class="line">        while (i &lt; nums.length) &#123;</div><div class="line">            Long floor = set.floor((long) nums[i]);</div><div class="line">            Long ceiling = set.ceiling((long) nums[i]);</div><div class="line">            if ((floor != null &amp;&amp; nums[i] - floor &lt;= t ) ||</div><div class="line">                    (ceiling != null &amp;&amp; ceiling - nums[i] &lt;= t)) &#123;</div><div class="line">                return true;</div><div class="line">            &#125;</div><div class="line">            set.add((long) nums[i++]);</div><div class="line">            if (i &gt; k) &#123;</div><div class="line">                set.remove((long) nums[i - k - 1]);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="数组和问题"><a href="#数组和问题" class="headerlink" title="数组和问题"></a>数组和问题</h1><h2 id="数组中查找是否存在和为target的问题"><a href="#数组中查找是否存在和为target的问题" class="headerlink" title="数组中查找是否存在和为target的问题"></a>数组中查找是否存在和为target的问题</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class TwoSum_1 &#123;</div><div class="line">    //1、暴力O(N^2)</div><div class="line">    public int[] twoSum3(int[] nums, int target) &#123;</div><div class="line">        int[] res = new int[2];</div><div class="line">        for (int i = 0; i &lt; nums.length-1; i++) &#123;</div><div class="line">            for (int j = i + 1; j &lt; nums.length; j++) &#123;</div><div class="line">                if (nums[i] + nums[j] == target) &#123;</div><div class="line">                    res[0] = i;</div><div class="line">                    res[1] = j;</div><div class="line">                    return res;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //O(N) O(N)</div><div class="line">    public int[] twoSum(int[] nums, int target) &#123;</div><div class="line">        int[] res = new int[2];</div><div class="line">        HashMap&lt;Integer, Integer&gt; record = new HashMap&lt;&gt;();</div><div class="line">        for (int i = 0; i &lt; nums.length; i++) &#123;</div><div class="line">            int complement = target - nums[i];</div><div class="line">            if (record.containsKey(complement)) &#123;</div><div class="line">                res[1] = i;</div><div class="line">                res[0] = record.get(complement);</div><div class="line">                return res;</div><div class="line">            &#125;</div><div class="line">            record.put(nums[i], i);</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="查找表问题"><a href="#查找表问题" class="headerlink" title="查找表问题"></a>查找表问题</h1><h2 id="给定四个整形列表，A-i-B-j-C-k-D-l-0-找出所有的i-j-k-l的个数。"><a href="#给定四个整形列表，A-i-B-j-C-k-D-l-0-找出所有的i-j-k-l的个数。" class="headerlink" title="给定四个整形列表，A[i] + B[j] + C[k] + D[l] = 0,找出所有的i,j,k,l的个数。"></a>给定四个整形列表，A[i] + B[j] + C[k] + D[l] = 0,找出所有的i,j,k,l的个数。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/5</div><div class="line"> */</div><div class="line">public class FourSumII_454 &#123;</div><div class="line">    //查找表中记录C,D中任意两个和的可能次数O(N^2)</div><div class="line">    public int fourSumCount(int[] A, int[] B, int[] C, int[] D) &#123;</div><div class="line">        HashMap&lt;Integer, Integer&gt; record = new HashMap&lt;&gt;();</div><div class="line">        for (int aC : C) &#123;</div><div class="line">            for (int aD : D) &#123;</div><div class="line">                int tmp = aC + aD;</div><div class="line">                if (record.containsKey(tmp)) &#123;</div><div class="line">                    record.put(tmp, record.get(tmp) + 1);</div><div class="line">                &#125; else &#123;</div><div class="line">                    record.put(tmp, 1);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        int count = 0;</div><div class="line">        for (int i = 0; i &lt; A.length; i++) &#123;</div><div class="line">            for (int j = 0; j &lt; B.length; j++) &#123;</div><div class="line">                int tmp = 0 - A[i] - B[j];</div><div class="line">                if (record.containsKey(tmp)) &#123;</div><div class="line">                    count += record.get(tmp);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return count;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="返回两个数组的交集"><a href="#返回两个数组的交集" class="headerlink" title="返回两个数组的交集"></a>返回两个数组的交集</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashSet;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class IntersectoionOfTwoArray &#123;</div><div class="line">    public int[] intersection(int[] num1, int[] num2) &#123;</div><div class="line">        HashSet&lt;Integer&gt; record = new HashSet&lt;&gt;();</div><div class="line">        HashSet&lt;Integer&gt; result = new HashSet&lt;&gt;();</div><div class="line"></div><div class="line">        for (int aNum1 : num1) &#123;</div><div class="line">            record.add(aNum1);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        for (int aNum1 : num2) &#123;</div><div class="line">            if (record.contains(aNum1))</div><div class="line">                result.add(aNum1);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        int[] resultA = new int[result.size()];</div><div class="line"></div><div class="line">        int j = 0;</div><div class="line">        for (int i : result) &#123;</div><div class="line">            resultA[j++] = i;</div><div class="line">        &#125;</div><div class="line">        return resultA;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="给定两个字符串s-t，确定s是否可以通过替换变成t。Given-“egg”-“add”-return-true-Given-“foo”-“bar”-return-false-Given-“paper”-“title”-return-true"><a href="#给定两个字符串s-t，确定s是否可以通过替换变成t。Given-“egg”-“add”-return-true-Given-“foo”-“bar”-return-false-Given-“paper”-“title”-return-true" class="headerlink" title="给定两个字符串s,t，确定s是否可以通过替换变成t。Given “egg”, “add”, return true.Given “foo”, “bar”, return false.Given “paper”, “title”, return true."></a>给定两个字符串s,t，确定s是否可以通过替换变成t。Given “egg”, “add”, return true.Given “foo”, “bar”, return false.Given “paper”, “title”, return true.</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashSet;</div><div class="line">import java.util.Set;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class IsomorphicStrings_205 &#123;</div><div class="line">    public boolean isIsomorphic(String s, String t) &#123;</div><div class="line">        int[] num = new int[256];</div><div class="line">        Set&lt;Integer&gt; set = new HashSet&lt;&gt;();</div><div class="line">        for (int i = 0; i &lt; num.length; i++)</div><div class="line">            num[i] = Integer.MAX_VALUE;</div><div class="line">        for (int i = 0; i &lt; s.length(); i++) &#123;</div><div class="line">            int tmp = t.charAt(i);</div><div class="line">            if (num[s.charAt(i)] == Integer.MAX_VALUE) &#123;</div><div class="line">                num[s.charAt(i)] = tmp;</div><div class="line">                if (set.contains(tmp))</div><div class="line">                    return false;</div><div class="line">                else</div><div class="line">                    set.add(tmp);</div><div class="line">            &#125; else &#123;</div><div class="line">                if (tmp != num[s.charAt(i)])</div><div class="line">                    return false;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="i和j的距离与i和k的距离相等"><a href="#i和j的距离与i和k的距离相等" class="headerlink" title="i和j的距离与i和k的距离相等"></a>i和j的距离与i和k的距离相等</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/5</div><div class="line"> */</div><div class="line">public class NumberOfBoomerangs_447 &#123;</div><div class="line">    public int numberOfBoomerangs(int[][] points) &#123;</div><div class="line">        int res = 0;</div><div class="line">        for (int i = 0; i &lt; points.length; i++) &#123;</div><div class="line">            //和i点的距离，距离出现的频率</div><div class="line">            HashMap&lt;Integer, Integer&gt; record = new HashMap&lt;&gt;();</div><div class="line">            for (int j = 0; j &lt; points.length; j++) &#123;</div><div class="line">                if (j != i) &#123;</div><div class="line">                    int dis = dis(points[i], points[j]);</div><div class="line">                    if (record.containsKey(dis))&#123;</div><div class="line">                        record.put(dis, record.get(dis)+1);</div><div class="line">                    &#125; else &#123;</div><div class="line">                        record.put(dis, 1);</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            for (Integer integer : record.keySet()) &#123;</div><div class="line">                if (record.get(integer) &gt;= 2) &#123;</div><div class="line">                    res += record.get(integer) * (record.get(integer)-1);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private int dis(int[] point, int[] point1) &#123;</div><div class="line">        return (point[0] - point1[0]) * (point[0] - point1[0])</div><div class="line">                + (point[1] - point1[1]) * (point[1] - point1[1]);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="按照字符串的频率逆序排列"><a href="#按照字符串的频率逆序排列" class="headerlink" title="按照字符串的频率逆序排列"></a>按照字符串的频率逆序排列</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.*;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class SortCharactersByFrequency_451 &#123;</div><div class="line">    public String frequencySort(String s) &#123;</div><div class="line">        HashMap&lt;Character, Integer&gt; map = new HashMap&lt;&gt;();</div><div class="line">        for (char c : s.toCharArray()) &#123;</div><div class="line">            if (map.containsKey(c))</div><div class="line">                map.put(c, map.get(c) + 1);</div><div class="line">            else</div><div class="line">                map.put(c, 1);</div><div class="line">        &#125;</div><div class="line">        List&lt;Character&gt; [] bucket = new List[s.length() + 1];</div><div class="line">        for (char key : map.keySet()) &#123;</div><div class="line">            int freq = map.get(key);</div><div class="line">            if (bucket[freq] == null)</div><div class="line">                bucket[freq] = new ArrayList&lt;&gt;();</div><div class="line">            bucket[freq].add(key);</div><div class="line">        &#125;</div><div class="line">        StringBuilder sb = new StringBuilder();</div><div class="line">        for (int j = bucket.length - 1; j &gt;= 0; j--) &#123;</div><div class="line">            if (bucket[j] != null) &#123;</div><div class="line">                for (char ch : bucket[j]) &#123;</div><div class="line">                    for (int i = 0; i &lt; map.get(ch); i++)</div><div class="line">                        sb.append(ch);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return sb.toString();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="判断t和S是否由相同的char组成"><a href="#判断t和S是否由相同的char组成" class="headerlink" title="判断t和S是否由相同的char组成"></a>判断t和S是否由相同的char组成</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class ValidAnagram_242 &#123;</div><div class="line">    public boolean isAnagram(String s, String t) &#123;</div><div class="line">        if (s == null &amp;&amp; t == null)</div><div class="line">            return true;</div><div class="line">        if (s == null || t == null)</div><div class="line">            return false;</div><div class="line">        if (s.length() != t.length())</div><div class="line">            return false;</div><div class="line">        HashMap&lt;Character, Integer&gt; sMap = new HashMap&lt;&gt;();</div><div class="line">        for (int i = 0; i &lt; s.length(); i++) &#123;</div><div class="line">            char s1 = s.charAt(i);</div><div class="line">            char t1 = t.charAt(i);</div><div class="line">            if (sMap.containsKey(s1))</div><div class="line">                sMap.put(s1, sMap.get(s1)+1);</div><div class="line">            else</div><div class="line">                sMap.put(s1,1);</div><div class="line">            if (sMap.containsKey(t1))</div><div class="line">                sMap.put(t1, sMap.get(t1)-1);</div><div class="line">            else</div><div class="line">                sMap.put(t1, -1);</div><div class="line">        &#125;</div><div class="line">        for (Character ch : sMap.keySet()) &#123;</div><div class="line">            if (sMap.get(ch) != 0)</div><div class="line">                return false;</div><div class="line">        &#125;</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public boolean isAnagram1(String s, String t) &#123;</div><div class="line">        int[] chars = new int[26];</div><div class="line">        for (char c : s.toCharArray()) &#123;</div><div class="line">            chars[c-&apos;a&apos;]++;</div><div class="line">        &#125;</div><div class="line">        for (char c : t.toCharArray()) &#123;</div><div class="line">            chars[c-&apos;a&apos;]--;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        for (int i : chars) &#123;</div><div class="line">            if (i != 0)</div><div class="line">                return false;</div><div class="line">        &#125;</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="判断一个字符串是否遵循固定的样式，如pattern-“abba”-str-“dog-cat-cat-dog”-should-return-true"><a href="#判断一个字符串是否遵循固定的样式，如pattern-“abba”-str-“dog-cat-cat-dog”-should-return-true" class="headerlink" title="判断一个字符串是否遵循固定的样式，如pattern = “abba”, str = “dog cat cat dog” should return true."></a>判断一个字符串是否遵循固定的样式，如pattern = “abba”, str = “dog cat cat dog” should return true.</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line">import java.util.HashSet;</div><div class="line">import java.util.Objects;</div><div class="line">import java.util.Set;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class WordPattern_290 &#123;</div><div class="line">    public boolean wordPattern(String pattern, String str) &#123;</div><div class="line">        if (pattern == null || str == null)</div><div class="line">            return false;</div><div class="line">        HashMap&lt;Object, Integer&gt; map = new HashMap&lt;&gt;();</div><div class="line">        char[] chars = pattern.toCharArray();</div><div class="line">        String[] strings = str.split(&quot; &quot;);</div><div class="line">        if (chars.length != strings.length)</div><div class="line">            return false;</div><div class="line">        for (int i = 0; i &lt; chars.length; i++) &#123;</div><div class="line">            if (!Objects.equals(map.put(chars[i], i), map.put(strings[i], i)))</div><div class="line">                return false;</div><div class="line">        &#125;</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public boolean wordPattern1(String pattern, String str) &#123;</div><div class="line">        char[] chars = pattern.toCharArray();</div><div class="line">        String[] strings = str.split(&quot; &quot;);</div><div class="line">        String[] pat = new String[26];</div><div class="line">        if (chars.length != strings.length)</div><div class="line">            return false;</div><div class="line">        Set&lt;String&gt; set = new HashSet&lt;&gt;();</div><div class="line"></div><div class="line">        for (int i = 0; i &lt; chars.length; i++) &#123;</div><div class="line">            if (pat[chars[i]-&apos;a&apos;] == null) &#123;</div><div class="line">                pat[chars[i]-&apos;a&apos;] = strings[i];</div><div class="line">                if (set.contains(strings[i]))</div><div class="line">                    return false;</div><div class="line">                else</div><div class="line">                    set.add(strings[i]);</div><div class="line">            &#125; else &#123;</div><div class="line">                if (!strings[i].equals(pat[chars[i]-&apos;a&apos;]))</div><div class="line">                    return false;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="happy-Number判定"><a href="#happy-Number判定" class="headerlink" title="happy Number判定"></a>happy Number判定</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashSet;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class HappyNum_202 &#123;</div><div class="line">    public boolean isHappy(int n) &#123;</div><div class="line">        HashSet&lt;Integer&gt; set = new HashSet&lt;&gt;();</div><div class="line">        int sum = 0;</div><div class="line">        while (n != 1) &#123;</div><div class="line">            set.add(n);</div><div class="line">            while (n != 0) &#123;</div><div class="line">                sum += (n % 10) * (n % 10);</div><div class="line">                n = n / 10;</div><div class="line">            &#125;</div><div class="line">            n = sum;</div><div class="line">            sum = 0;</div><div class="line">            if (set.contains(n))</div><div class="line">                return false;</div><div class="line">        &#125;</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2842,7 +2890,7 @@ assertTrue(avgElapse.getAsDouble() &gt; 1666.0);
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">62</span>
+                <span class="site-state-item-count">65</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

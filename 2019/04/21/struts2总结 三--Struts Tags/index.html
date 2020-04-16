@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java,Struts2," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="5 Struts Tags要在jsp中使用Struts2的标签，需要先引入&amp;lt;%@ taglib prefix=&amp;quot;s&amp;quot; uri=&amp;quot;/struts-tags&amp;quot; %&amp;gt; 5.1 通用标签 property 1234&amp;lt;li&amp;gt;property: &amp;lt;s:property value=&amp;quot;username&amp;quot;/&amp;gt; &amp;lt;">
+<meta name="keywords" content="Java,Struts2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="struts2总结（三）--Struts Tags">
+<meta property="og:url" content="http://yoursite.com/2019/04/21/struts2总结 三--Struts Tags/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="5 Struts Tags要在jsp中使用Struts2的标签，需要先引入&amp;lt;%@ taglib prefix=&amp;quot;s&amp;quot; uri=&amp;quot;/struts-tags&amp;quot; %&amp;gt; 5.1 通用标签 property 1234&amp;lt;li&amp;gt;property: &amp;lt;s:property value=&amp;quot;username&amp;quot;/&amp;gt; &amp;lt;">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-09-08T08:15:44.144Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="struts2总结（三）--Struts Tags">
+<meta name="twitter:description" content="5 Struts Tags要在jsp中使用Struts2的标签，需要先引入&amp;lt;%@ taglib prefix=&amp;quot;s&amp;quot; uri=&amp;quot;/struts-tags&amp;quot; %&amp;gt; 5.1 通用标签 property 1234&amp;lt;li&amp;gt;property: &amp;lt;s:property value=&amp;quot;username&amp;quot;/&amp;gt; &amp;lt;">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/21/struts2总结 三--Struts Tags/"/>
+
+
+
+
+
+  <title>struts2总结（三）--Struts Tags | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/struts2总结 三--Struts Tags/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">struts2总结（三）--Struts Tags</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/Struts2/" itemprop="url" rel="index">
+                    <span itemprop="name">Struts2</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="5-Struts-Tags"><a href="#5-Struts-Tags" class="headerlink" title="5 Struts Tags"></a>5 Struts Tags</h2><p>要在jsp中使用Struts2的标签，需要先引入<code>&lt;%@ taglib prefix=&quot;s&quot; uri=&quot;/struts-tags&quot; %&gt;</code></p>
+<h3 id="5-1-通用标签"><a href="#5-1-通用标签" class="headerlink" title="5.1 通用标签"></a>5.1 通用标签</h3><ul>
+<li><p>property</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;li&gt;property: &lt;s:property value=&quot;username&quot;/&gt; &lt;/li&gt;</div><div class="line">&lt;li&gt;property 取值为字符串: &lt;s:property value=&quot;&apos;username&apos;&quot;/&gt; &lt;/li&gt;</div><div class="line">&lt;li&gt;property 设定默认值: &lt;s:property value=&quot;admin&quot; default=&quot;管理员&quot;/&gt; &lt;/li&gt;</div><div class="line">&lt;li&gt;property 设定HTML: &lt;s:property value=&quot;&apos;&lt;hr/&gt;&apos;&quot; escape=&quot;false&quot;/&gt; &lt;/li&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>set 将某个值放入指定范围内</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&lt;li&gt;set 设定adminName值（默认为request 和 ActionContext）: &lt;s:set var=&quot;adminName&quot; value=&quot;username&quot; /&gt;&lt;/li&gt;</div><div class="line"></div><div class="line">&lt;li&gt;set 从request取值: &lt;s:property value=&quot;#request.adminName&quot; /&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;set 从ActionContext取值: &lt;s:property value=&quot;#adminName&quot; /&gt;&lt;/li&gt;</div><div class="line"></div><div class="line">&lt;%--&lt;li&gt;set 设定范围: &lt;s:set name=&quot;adminPassword&quot; value=&quot;password&quot; scope=&quot;page&quot;/&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;set 从相应范围取值: &lt;%=pageContext.getAttribute(&quot;adminPassword&quot;) %&gt;&lt;/li&gt;</div><div class="line">--%&gt;</div><div class="line">&lt;li&gt;set 设定var，范围为ActionContext: &lt;s:set var=&quot;adminPassword&quot; value=&quot;password&quot; scope=&quot;session&quot;/&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;set 使用#取值: &lt;s:property value=&quot;#adminPassword&quot;/&gt; &lt;/li&gt;</div><div class="line">&lt;li&gt;set 从相应范围取值: &lt;s:property value=&quot;#session.adminPassword&quot;/&gt; &lt;/li&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>bean 实例化一个JavaBean</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">&lt;li&gt;bean 定义bean,并使用param来设定新的属性值:</div><div class="line">        &lt;s:bean name=&quot;com.struts2.tags.Dog&quot; &gt;</div><div class="line">            &lt;s:param name=&quot;name&quot; value=&quot;&apos;pp&apos;&quot;&gt;&lt;/s:param&gt;</div><div class="line">            &lt;s:property value=&quot;name&quot;/&gt;</div><div class="line"></div><div class="line">        &lt;/s:bean&gt;</div><div class="line">&lt;/li&gt;</div><div class="line">&lt;li&gt;bean 查看debug情况:</div><div class="line">        &lt;s:bean name=&quot;com.struts2.tags.Dog&quot; var=&quot;myDog&quot;&gt;</div><div class="line">            &lt;s:param name=&quot;name&quot; value=&quot;&apos;oudy&apos;&quot;&gt;&lt;/s:param&gt;</div><div class="line">        &lt;/s:bean&gt;</div><div class="line">        拿出值：</div><div class="line">        &lt;s:property value=&quot;#myDog.name&quot;/&gt;</div><div class="line">&lt;/li&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>include 将一JSP或者Servlet包含到当前页面</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">&lt;li&gt;include _include1.html 包含静态英文文件</div><div class="line">       &lt;s:include value=&quot;/_include1.html&quot;&gt;&lt;/s:include&gt;</div><div class="line">   &lt;/li&gt;</div><div class="line"></div><div class="line">   &lt;li&gt;include _include2.html 包含静态中文文件</div><div class="line">       &lt;s:include value=&quot;/_include2.html&quot;&gt;&lt;/s:include&gt;</div><div class="line">   &lt;/li&gt;</div><div class="line"></div><div class="line">   &lt;li&gt;include _include1.html 包含静态英文文件，说明%用法</div><div class="line">       &lt;s:set var=&quot;incPage&quot; value=&quot;%&#123;&apos;/_include1.html&apos;&#125;&quot; /&gt;</div><div class="line">       &lt;s:include value=&quot;%&#123;#incPage&#125;&quot;&gt;&lt;/s:include&gt;</div><div class="line">   &lt;/li&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>param 为其他标签提供参数</p>
+</li>
+<li>debug 辅助调试，查看值栈等信息<h3 id="5-2-控制标签"><a href="#5-2-控制标签" class="headerlink" title="5.2 控制标签"></a>5.2 控制标签</h3></li>
+<li><p>if elseif else 用来控制选择输出的标签</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;li&gt;if elseif else:</div><div class="line">    age = &lt;s:property value=&quot;#parameters.age[0]&quot; /&gt; &lt;br /&gt;</div><div class="line">    &lt;s:set var=&quot;age&quot; value=&quot;#parameters.age[0]&quot; /&gt;</div><div class="line">    &lt;s:if test=&quot;#age &lt; 0&quot;&gt;wrong age!&lt;/s:if&gt;</div><div class="line">    &lt;s:elseif test=&quot;#parameters.age[0] &lt; 20&quot;&gt;too young!&lt;/s:elseif&gt;</div><div class="line">    &lt;s:else&gt;yeah!&lt;/s:else&gt;&lt;br /&gt;</div><div class="line"></div><div class="line">    &lt;s:if test=&quot;#parameters.aaa == null&quot;&gt;null&lt;/s:if&gt;</div><div class="line">&lt;/li&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>iterator 迭代器，用于将集合迭代输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">&lt;li&gt;遍历集合：&lt;br /&gt;</div><div class="line">    &lt;s:iterator value=&quot;&#123;1, 2, 3&#125;&quot; &gt;</div><div class="line">        &lt;s:property/&gt; |</div><div class="line">    &lt;/s:iterator&gt;</div><div class="line">&lt;/li&gt;</div><div class="line">&lt;li&gt;自定义变量：&lt;br /&gt;</div><div class="line">    &lt;s:iterator value=&quot;&#123;&apos;aaa&apos;, &apos;bbb&apos;, &apos;ccc&apos;&#125;&quot; var=&quot;x&quot;&gt;</div><div class="line">        &lt;s:property value=&quot;#x.toUpperCase()&quot;/&gt; |</div><div class="line">    &lt;/s:iterator&gt;</div><div class="line">&lt;/li&gt;</div><div class="line">&lt;li&gt;使用status:&lt;br /&gt;</div><div class="line">    &lt;s:iterator value=&quot;&#123;&apos;aaa&apos;, &apos;bbb&apos;, &apos;ccc&apos;&#125;&quot; status=&quot;status&quot;&gt;</div><div class="line">        &lt;s:property/&gt; |</div><div class="line">        遍历过的元素总数：&lt;s:property value=&quot;#status.count&quot;/&gt; |</div><div class="line">        遍历过的元素索引：&lt;s:property value=&quot;#status.index&quot;/&gt; |</div><div class="line">        当前是偶数？：&lt;s:property value=&quot;#status.even&quot;/&gt; |</div><div class="line">        当前是奇数？：&lt;s:property value=&quot;#status.odd&quot;/&gt; |</div><div class="line">        是第一个元素吗？：&lt;s:property value=&quot;#status.first&quot;/&gt; |</div><div class="line">        是最后一个元素吗？：&lt;s:property value=&quot;#status.last&quot;/&gt;</div><div class="line">        &lt;br /&gt;</div><div class="line">    &lt;/s:iterator&gt;</div><div class="line"></div><div class="line">&lt;/li&gt;</div><div class="line"></div><div class="line">&lt;li&gt;</div><div class="line">    &lt;s:iterator value=&quot;#&#123;1:&apos;a&apos;, 2:&apos;b&apos;, 3:&apos;c&apos;&#125;&quot; &gt;</div><div class="line">        &lt;s:property value=&quot;key&quot;/&gt; | &lt;s:property value=&quot;value&quot;/&gt; &lt;br /&gt;</div><div class="line">    &lt;/s:iterator&gt;</div><div class="line">&lt;/li&gt;</div><div class="line"></div><div class="line">&lt;li&gt;</div><div class="line">    &lt;s:iterator value=&quot;#&#123;1:&apos;a&apos;, 2:&apos;b&apos;, 3:&apos;c&apos;&#125;&quot; var=&quot;x&quot;&gt;</div><div class="line">        &lt;s:property value=&quot;#x.key&quot;/&gt; | &lt;s:property value=&quot;#x.value&quot;/&gt; &lt;br /&gt;</div><div class="line">    &lt;/s:iterator&gt;</div><div class="line">&lt;/li&gt;</div><div class="line"></div><div class="line">&lt;li&gt;</div><div class="line"></div><div class="line">    &lt;s:fielderror fieldName=&quot;fielderror.test&quot; theme=&quot;simple&quot;&gt;&lt;/s:fielderror&gt;</div><div class="line"></div><div class="line">&lt;/li&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>subset 用于截取集合的部分元素，形成新的子集合</p>
+<h3 id="5-3-UI标签"><a href="#5-3-UI标签" class="headerlink" title="5.3 UI标签"></a>5.3 UI标签</h3><p>Struts2中一共定义了4个主题，simple， XHTML（默认）， css_xhtml, ajax.</p>
+<h3 id="5-4-AJAX标签"><a href="#5-4-AJAX标签" class="headerlink" title="5.4 AJAX标签"></a>5.4 AJAX标签</h3><p>后续可以查</p>
+<h3 id="5-5-的区别"><a href="#5-5-的区别" class="headerlink" title="5.5 $ # % 的区别"></a>5.5 $ # % 的区别</h3></li>
+<li><p>$用于i18n和struts配置文件</p>
+</li>
+<li>#取得ActionContext的值</li>
+<li>%将原本的文本属性解析为OGNL，对本来是OGNL的属性不起作用</li>
+</ul>
+<h3 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h3><p>这部分用的不多，所以存了几个相关的比较全的博客地址，方便需要的时候去学习:<br><a href="http://blog.csdn.net/liujiahan629629/article/details/39274997" target="_blank" rel="external">Struts2标签小结</a><br><a href="http://www.cnblogs.com/lihuiyy/archive/2012/04/09/2439509.html" target="_blank" rel="external">UI标签</a><br><a href="http://blog.csdn.net/zklxuankai/article/details/8468815" target="_blank" rel="external">AJAX标签</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/Struts2/" rel="tag"># Struts2</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/21/struts2总结 一--简介和Action/" rel="next" title="struts2总结（一）--简介和Action">
+                <i class="fa fa-chevron-left"></i> struts2总结（一）--简介和Action
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/21/struts2总结 二--Result和OGNL表达式/" rel="prev" title="struts2总结（二）--Result和OGNL表达式">
+                struts2总结（二）--Result和OGNL表达式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">79</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Struts-Tags"><span class="nav-number">1.</span> <span class="nav-text">5 Struts Tags</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-通用标签"><span class="nav-number">1.1.</span> <span class="nav-text">5.1 通用标签</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-控制标签"><span class="nav-number">1.2.</span> <span class="nav-text">5.2 控制标签</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-UI标签"><span class="nav-number">1.3.</span> <span class="nav-text">5.3 UI标签</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-AJAX标签"><span class="nav-number">1.4.</span> <span class="nav-text">5.4 AJAX标签</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-的区别"><span class="nav-number">1.5.</span> <span class="nav-text">5.5 $ # % 的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考文章"><span class="nav-number">1.6.</span> <span class="nav-text">参考文章</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

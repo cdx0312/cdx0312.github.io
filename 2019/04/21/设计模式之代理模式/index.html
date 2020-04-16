@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java,design patterns," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="模式定义为其他对象提供一种代理，以控制对这个对象的访问。代理对象起到中介作用，可以去掉功能服务或者增加额外的功能服务。 静态代理代理和被代理对象在代理之前是确定的。他们都是事先相同的接口或者继承相同的抽象类。  创建一个接口Moveable，Car继承Moveable接口，要求用代理类来记录Car的运行时间。 Car继承Moveable接口: 123public interface Moveabl">
+<meta name="keywords" content="Java,design patterns">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式之代理模式">
+<meta property="og:url" content="http://yoursite.com/2019/04/21/设计模式之代理模式/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="模式定义为其他对象提供一种代理，以控制对这个对象的访问。代理对象起到中介作用，可以去掉功能服务或者增加额外的功能服务。 静态代理代理和被代理对象在代理之前是确定的。他们都是事先相同的接口或者继承相同的抽象类。  创建一个接口Moveable，Car继承Moveable接口，要求用代理类来记录Car的运行时间。 Car继承Moveable接口: 123public interface Moveabl">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/img/dp-staticProxy.png">
+<meta property="og:image" content="http://yoursite.com/img/dp-dynamicProxy.png">
+<meta property="og:updated_time" content="2018-03-26T01:22:24.734Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="设计模式之代理模式">
+<meta name="twitter:description" content="模式定义为其他对象提供一种代理，以控制对这个对象的访问。代理对象起到中介作用，可以去掉功能服务或者增加额外的功能服务。 静态代理代理和被代理对象在代理之前是确定的。他们都是事先相同的接口或者继承相同的抽象类。  创建一个接口Moveable，Car继承Moveable接口，要求用代理类来记录Car的运行时间。 Car继承Moveable接口: 123public interface Moveabl">
+<meta name="twitter:image" content="http://yoursite.com/img/dp-staticProxy.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/21/设计模式之代理模式/"/>
+
+
+
+
+
+  <title>设计模式之代理模式 | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/设计模式之代理模式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">设计模式之代理模式</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/design-patterns/" itemprop="url" rel="index">
+                    <span itemprop="name">design patterns</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>为其他对象提供一种代理，以控制对这个对象的访问。代理对象起到中介作用，可以去掉功能服务或者增加额外的功能服务。</p>
+<h1 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h1><p>代理和被代理对象在代理之前是确定的。他们都是事先相同的接口或者继承相同的抽象类。</p>
+<p><img src="/img/dp-staticProxy.png" alt="Alt text"></p>
+<p>创建一个接口Moveable，Car继承Moveable接口，要求用代理类来记录Car的运行时间。</p>
+<p>Car继承Moveable接口:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public interface Moveable &#123;</div><div class="line">    void move();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Car:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public class Car implements Moveable&#123;</div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        try &#123;</div><div class="line">            Thread.sleep(new Random().nextInt(1000));</div><div class="line">        &#125; catch (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="继承实现静态代理"><a href="#继承实现静态代理" class="headerlink" title="继承实现静态代理"></a>继承实现静态代理</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">public class Car2 extends Car&#123;</div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        System.out.println(startTime);</div><div class="line">        super.move();</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime);</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="聚合实现静态代理"><a href="#聚合实现静态代理" class="headerlink" title="聚合实现静态代理"></a>聚合实现静态代理</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">public class Car3 implements Moveable&#123;</div><div class="line"></div><div class="line">    private Car car;</div><div class="line"></div><div class="line">    public Car3(Car car) &#123;</div><div class="line">        this.car = car;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        System.out.println(startTime);</div><div class="line">        car.move();</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime);</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>考虑到继承方式扩展代理功能的不方便，推荐使用聚合实现静态代理。也就是代理类和实际类实现共同的接口，代理类中包含所实现接口的引用。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">public class CarLogProxy implements Moveable&#123;</div><div class="line"></div><div class="line">    private Moveable moveable;</div><div class="line"></div><div class="line">    public CarLogProxy(Moveable moveable) &#123;</div><div class="line">        this.moveable = moveable;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        System.out.println(&quot;log start&quot;);</div><div class="line">        moveable.move();</div><div class="line">        System.out.println(&quot;log end&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">public class CarTimeProxy implements Moveable&#123;</div><div class="line"></div><div class="line">    private Moveable moveable;</div><div class="line"></div><div class="line">    public CarTimeProxy(Moveable moveable) &#123;</div><div class="line">        this.moveable = moveable;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        System.out.println(startTime);</div><div class="line">        moveable.move();</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime);</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Moveable car = new Car();</div><div class="line">        CarTimeProxy carTimeProxy = new CarTimeProxy(car);</div><div class="line">        CarLogProxy carLogProxy = new CarLogProxy(carTimeProxy);</div><div class="line">        carLogProxy.move();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h1><p>前面实现了Car类的静态代理，为其添加了运行时间记录和日志记录的功能。如果需要为火车或者自行车添加类似的功能，需要重新定义相同的类，类十分臃肿，同时代码重用性不高，因此引入了动态代理，也就是在程序</p>
+<h2 id="jdk动态代理"><a href="#jdk动态代理" class="headerlink" title="jdk动态代理"></a>jdk动态代理</h2><p><img src="/img/dp-dynamicProxy.png" alt="Alt text"></p>
+<ul>
+<li>InvocationHandler接口，接口中定义了一个invoke方法，invoke方法中第一个参数表示代理类，第二个参数指被代理的方法，args指该方法的参数数组。这个抽象方法会在代理类中动态实现。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">public interface InvocationHandler &#123;</div><div class="line">    public Object invoke(Object proxy, Method method, Object[] args)</div><div class="line">        throws Throwable;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Proxy：该类为动态代理类，其中的newProxyInstance方法返回一个代理类实例，返回后的代理类可以被当做代理类使用，可使用被代理类的在接口中声明过的方法。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">public static Object newProxyInstance(ClassLoader loader,</div><div class="line">                                          Class&lt;?&gt;[] interfaces,</div><div class="line">                                          InvocationHandler h)</div><div class="line">        throws IllegalArgumentException</div><div class="line">    &#123;</div><div class="line">        Objects.requireNonNull(h);</div><div class="line"></div><div class="line">        final Class&lt;?&gt;[] intfs = interfaces.clone();</div><div class="line">        final SecurityManager sm = System.getSecurityManager();</div><div class="line">        if (sm != null) &#123;</div><div class="line">            checkProxyAccess(Reflection.getCallerClass(), loader, intfs);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        /*</div><div class="line">         * Look up or generate the designated proxy class.</div><div class="line">         */</div><div class="line">        Class&lt;?&gt; cl = getProxyClass0(loader, intfs);</div><div class="line"></div><div class="line">        /*</div><div class="line">         * Invoke its constructor with the designated invocation handler.</div><div class="line">         */</div><div class="line">        try &#123;</div><div class="line">            if (sm != null) &#123;</div><div class="line">                checkNewProxyPermission(Reflection.getCallerClass(), cl);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            final Constructor&lt;?&gt; cons = cl.getConstructor(constructorParams);</div><div class="line">            final InvocationHandler ih = h;</div><div class="line">            if (!Modifier.isPublic(cl.getModifiers())) &#123;</div><div class="line">                AccessController.doPrivileged(new PrivilegedAction&lt;Void&gt;() &#123;</div><div class="line">                    public Void run() &#123;</div><div class="line">                        cons.setAccessible(true);</div><div class="line">                        return null;</div><div class="line">                    &#125;</div><div class="line">                &#125;);</div><div class="line">            &#125;</div><div class="line">            return cons.newInstance(new Object[]&#123;h&#125;);</div><div class="line">        &#125; catch (IllegalAccessException|InstantiationException e) &#123;</div><div class="line">            throw new InternalError(e.toString(), e);</div><div class="line">        &#125; catch (InvocationTargetException e) &#123;</div><div class="line">            Throwable t = e.getCause();</div><div class="line">            if (t instanceof RuntimeException) &#123;</div><div class="line">                throw (RuntimeException) t;</div><div class="line">            &#125; else &#123;</div><div class="line">                throw new InternalError(t.toString(), t);</div><div class="line">            &#125;</div><div class="line">        &#125; catch (NoSuchMethodException e) &#123;</div><div class="line">            throw new InternalError(e.toString(), e);</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<h2 id="动态代理实现步骤"><a href="#动态代理实现步骤" class="headerlink" title="动态代理实现步骤"></a>动态代理实现步骤</h2><ol>
+<li>创建一个实现接口InvocationHandler的类，实现invoke方法</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">public class TimeHandler implements InvocationHandler&#123;</div><div class="line"></div><div class="line">    private Object target;</div><div class="line"></div><div class="line">    public TimeHandler(Object target) &#123;</div><div class="line">        this.target = target;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     *</div><div class="line">     * @param proxy 被代理的对象</div><div class="line">     * @param method 被代理对象的方法</div><div class="line">     * @param args 被代理对象的方法的参数</div><div class="line">     * @return Object对象，方法的返回值</div><div class="line">     * @throws Throwable</div><div class="line">     */</div><div class="line">    @Override</div><div class="line">    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;</div><div class="line">        System.out.println(&quot;time begin&quot;);</div><div class="line">        method.invoke(target);</div><div class="line">        System.out.println(&quot;time end&quot;);</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li>创建被代理的类以及接口(Car以及Moveable)</li>
+<li>调用Proxy的静态方法，创建一个代理类</li>
+<li>通过代理调用方法</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Car car = new Car();</div><div class="line"></div><div class="line">        InvocationHandler h = new TimeHandler(car);</div><div class="line">        Class&lt;?&gt; cls = car.getClass();</div><div class="line"></div><div class="line">        /**</div><div class="line">         * loader：类加载器</div><div class="line">         * interfaces：实现接口</div><div class="line">         * h ：invocationHandler</div><div class="line">         */</div><div class="line">        Moveable m = (Moveable) Proxy.newProxyInstance(cls.getClassLoader(), cls.getInterfaces(), h);</div><div class="line"></div><div class="line">        m.move();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="JDK动态代理与CGLIB动态代理的区别"><a href="#JDK动态代理与CGLIB动态代理的区别" class="headerlink" title="JDK动态代理与CGLIB动态代理的区别"></a>JDK动态代理与CGLIB动态代理的区别</h2><table>
+<thead>
+<tr>
+<th>jdk动态代理</th>
+<th>CGLIB动态代理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>只能代理实现了接口的类</td>
+<td>针对类来实现代理</td>
+</tr>
+<tr>
+<td>没有实现接口的类不能实现JDK动态代理</td>
+<td>对指定目标类产生一个子类，通过方法拦截技术拦截所有父类方法调用</td>
+</tr>
+<tr>
+<td>JDK动态代理利用反射机制生成一个实现代理接口的匿名类，在调用具体方法前调用InvocationHandler来处理</td>
+<td>cglib是利用asm开源包，对代理对象的class文件加载进来，通过修改其字节码生成子类来处理</td>
+</tr>
+</tbody>
+</table>
+<h2 id="模拟JDK动态代理的实现"><a href="#模拟JDK动态代理的实现" class="headerlink" title="模拟JDK动态代理的实现"></a>模拟JDK动态代理的实现</h2><p>实现功能，通过Proxy的newproxyInstance返回代理对象<br>1、声明一段源码，动态产生代理<br>2、编译源码，产生新的类<br>3、将这个类load到内存中，产生一个新的对象<br>4、return代理对象</p>
+<p>handler:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">package proxy;</div><div class="line"></div><div class="line">import java.lang.reflect.Method;</div><div class="line"></div><div class="line">public interface InvocationHandler &#123;</div><div class="line">    public void invoke(Object o, Method m);</div><div class="line">&#125;</div><div class="line"></div><div class="line">package proxy;</div><div class="line"></div><div class="line">import java.lang.reflect.InvocationTargetException;</div><div class="line">import java.lang.reflect.Method;</div><div class="line"></div><div class="line">public class TimeHandler implements InvocationHandler&#123;</div><div class="line"></div><div class="line">    private Object target;</div><div class="line"></div><div class="line">    public TimeHandler(Object target) &#123;</div><div class="line">        this.target = target;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void invoke(Object o, Method m) &#123;</div><div class="line">        try &#123;</div><div class="line">            long starttime = System.currentTimeMillis();</div><div class="line">            System.out.println(&quot;汽车开始行驶....&quot;);</div><div class="line">            m.invoke(target);</div><div class="line">            long endtime = System.currentTimeMillis();</div><div class="line">            System.out.println(&quot;汽车结束行驶....  汽车行驶时间：&quot;+ (endtime - starttime) + &quot;毫秒！&quot;);</div><div class="line">        &#125; catch (IllegalAccessException | InvocationTargetException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>proxy:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">public class Proxy &#123;</div><div class="line"></div><div class="line">    public static Object newProxyInstance(Class infce, InvocationHandler h) throws IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException &#123;</div><div class="line">        //创建源码</div><div class="line">        String rt = &quot;\r\n&quot;;</div><div class="line">        String methodStr = &quot;&quot;;</div><div class="line">        for(Method m : infce.getMethods())&#123;</div><div class="line">            methodStr += &quot;	@Override&quot; + rt +</div><div class="line">                    &quot;	public void &quot; + m.getName() + &quot;() &#123;&quot; + rt +</div><div class="line">                    &quot;  try&#123;&quot; + rt +</div><div class="line">                    &quot;  Method md = &quot; + infce.getName() + &quot;.class.getMethod(\&quot;&quot;</div><div class="line">                    + m.getName() + &quot;\&quot;);&quot; + rt +</div><div class="line">                    &quot;  h.invoke(this,md);&quot; +rt+</div><div class="line">                    &quot;  &#125;catch(Exception e)&#123; e.printStackTrace();&#125;&quot; + rt +</div><div class="line">                    &quot;	&#125;&quot; ;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        String str =</div><div class="line">                &quot;package proxy;&quot; + rt +</div><div class="line">                        &quot;import java.lang.reflect.Method;&quot; + rt +</div><div class="line">                        &quot;import proxy.InvocationHandler;&quot; +  rt+</div><div class="line">                        &quot;public class $Proxy0 implements &quot; + infce.getName() + &quot; &#123;&quot; + rt +</div><div class="line">                        &quot;	public $Proxy0(InvocationHandler h) &#123;&quot; + rt +</div><div class="line">                        &quot;		this.h = h;&quot; + rt +</div><div class="line">                        &quot;	&#125;&quot; + rt +</div><div class="line">                        &quot;  private InvocationHandler h;&quot; + rt+</div><div class="line">                        methodStr + rt +</div><div class="line">                        &quot;&#125;&quot; ;</div><div class="line">        String fileName = System.getProperty(&quot;user.dir&quot;) + &quot;/out/production/Design_Patterns_new/proxy/$Proxy0.java&quot;;</div><div class="line">        File file = new File(fileName);</div><div class="line">        FileUtils.writeStringToFile(file, str);</div><div class="line"></div><div class="line">        //编译源码</div><div class="line">        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();</div><div class="line">        StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);</div><div class="line">        Iterable units = fileManager.getJavaFileObjects(fileName);</div><div class="line">        //编译任务</div><div class="line">        JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, null, null, null, units);</div><div class="line">        //执行任务</div><div class="line">        task.call();</div><div class="line">        fileManager.close();</div><div class="line"></div><div class="line">        //load到内存</div><div class="line">        ClassLoader loader = ClassLoader.getSystemClassLoader();</div><div class="line">        Class&lt;?&gt; c = loader.loadClass(&quot;proxy.$Proxy0&quot;);</div><div class="line"></div><div class="line">        Constructor constructor = c.getConstructor(InvocationHandler.class);</div><div class="line">        return constructor.newInstance(h);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/design-patterns/" rel="tag"># design patterns</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/21/设计模式之单例模式与工厂方法/" rel="next" title="设计模式之单例模式与工厂方法">
+                <i class="fa fa-chevron-left"></i> 设计模式之单例模式与工厂方法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/21/设计模式简介/" rel="prev" title="设计模式简介">
+                设计模式简介 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">79</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#模式定义"><span class="nav-number">1.</span> <span class="nav-text">模式定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#静态代理"><span class="nav-number">2.</span> <span class="nav-text">静态代理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#继承实现静态代理"><span class="nav-number">2.1.</span> <span class="nav-text">继承实现静态代理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#聚合实现静态代理"><span class="nav-number">2.2.</span> <span class="nav-text">聚合实现静态代理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#动态代理"><span class="nav-number">3.</span> <span class="nav-text">动态代理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#jdk动态代理"><span class="nav-number">3.1.</span> <span class="nav-text">jdk动态代理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动态代理实现步骤"><span class="nav-number">3.2.</span> <span class="nav-text">动态代理实现步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JDK动态代理与CGLIB动态代理的区别"><span class="nav-number">3.3.</span> <span class="nav-text">JDK动态代理与CGLIB动态代理的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模拟JDK动态代理的实现"><span class="nav-number">3.4.</span> <span class="nav-text">模拟JDK动态代理的实现</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

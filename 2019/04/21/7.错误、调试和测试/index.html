@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Python基础," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="错误、调试和测试在程序运行过程中，总会遇到各种各样的错误。 有的错误是程序编写有问题造成的，比如本来应该输出整数结果输出了字符串，这种错误我们通常称之为bug，bug是必须修复的。 有的错误是用户输入造成的，比如让用户输入email地址，结果得到一个空字符串，这种错误可以通过检查用户输入来做相应的处理。 还有一类错误是完全无法在程序运行过程中预测的，比如写入文件的时候，磁盘满了，写不进去了，或者从">
+<meta name="keywords" content="Python基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="7. 错误、调试和测试">
+<meta property="og:url" content="http://yoursite.com/2019/04/21/7.错误、调试和测试/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="错误、调试和测试在程序运行过程中，总会遇到各种各样的错误。 有的错误是程序编写有问题造成的，比如本来应该输出整数结果输出了字符串，这种错误我们通常称之为bug，bug是必须修复的。 有的错误是用户输入造成的，比如让用户输入email地址，结果得到一个空字符串，这种错误可以通过检查用户输入来做相应的处理。 还有一类错误是完全无法在程序运行过程中预测的，比如写入文件的时候，磁盘满了，写不进去了，或者从">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-09-09T10:16:56.345Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="7. 错误、调试和测试">
+<meta name="twitter:description" content="错误、调试和测试在程序运行过程中，总会遇到各种各样的错误。 有的错误是程序编写有问题造成的，比如本来应该输出整数结果输出了字符串，这种错误我们通常称之为bug，bug是必须修复的。 有的错误是用户输入造成的，比如让用户输入email地址，结果得到一个空字符串，这种错误可以通过检查用户输入来做相应的处理。 还有一类错误是完全无法在程序运行过程中预测的，比如写入文件的时候，磁盘满了，写不进去了，或者从">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/21/7.错误、调试和测试/"/>
+
+
+
+
+
+  <title>7. 错误、调试和测试 | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/7.错误、调试和测试/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">7. 错误、调试和测试</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="错误、调试和测试"><a href="#错误、调试和测试" class="headerlink" title="错误、调试和测试"></a>错误、调试和测试</h1><p>在程序运行过程中，总会遇到各种各样的错误。</p>
+<p>有的错误是程序编写有问题造成的，比如本来应该输出整数结果输出了字符串，这种错误我们通常称之为bug，bug是必须修复的。</p>
+<p>有的错误是用户输入造成的，比如让用户输入email地址，结果得到一个空字符串，这种错误可以通过检查用户输入来做相应的处理。</p>
+<p>还有一类错误是完全无法在程序运行过程中预测的，比如写入文件的时候，磁盘满了，写不进去了，或者从网络抓取数据，网络突然断掉了。这类错误也称为异常，在程序中通常是必须处理的，否则，程序会因为各种问题终止并退出。</p>
+<p>Python内置了一套异常处理机制，来帮助我们进行错误处理。</p>
+<p>此外，我们也需要跟踪程序的执行，查看变量的值是否正确，这个过程称为调试。Python的pdb可以让我们以单步方式执行代码。</p>
+<p>最后，编写测试也很重要。有了良好的测试，就可以在程序修改后反复运行，确保程序输出符合我们编写的测试。</p>
+<h2 id="错误处理"><a href="#错误处理" class="headerlink" title="错误处理"></a>错误处理</h2><p>在程序运行过程中，如果发生了错误，可以预先约定返回一个错误代码，这样就知道是否有错，以及错误的原因了。在操作系统提供的调用中，返回错误代码非常常见。比如打开文件的函数<code>open()</code>，成功时返回文件描述符，出错时返回-1。</p>
+<p>用错误码来表示是否出错十分不便，因为函数本身该返回的正常结果和错误码混杂在一起，造成调用者必须用大量的代码来判断是否出错：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">()</span>:</span></div><div class="line"><span class="meta">... </span>    r=some_function()</div><div class="line"><span class="meta">... </span>    <span class="keyword">if</span> r==(<span class="number">-1</span>):</div><div class="line"><span class="meta">... </span>            <span class="keyword">return</span> (<span class="number">-1</span>)</div><div class="line"><span class="meta">... </span>    <span class="keyword">return</span> r</div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">bar</span><span class="params">()</span>:</span></div><div class="line"><span class="meta">... </span>    r=foo()</div><div class="line"><span class="meta">... </span>    <span class="keyword">if</span> r==(<span class="number">-1</span>):</div><div class="line"><span class="meta">... </span>            print(<span class="string">'Error'</span>)</div><div class="line"><span class="meta">... </span>    <span class="keyword">else</span>:</div><div class="line"><span class="meta">... </span>            <span class="keyword">pass</span></div><div class="line">...</div></pre></td></tr></table></figure></p>
+<p>一旦出错，还要一级一级的上报，直到某个函数可以处理该错误。所以高级语言通常内置了一套<code>try...except...finally...</code>的错误处理机制，Python也不例外。</p>
+<h3 id="try"><a href="#try" class="headerlink" title="try"></a>try</h3><p>让我们用一个例子来看看<code>try</code>的机制：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; try:</div><div class="line">...     print(&apos;trying&apos;)</div><div class="line">...     r=10/0</div><div class="line">...     print(&apos;result:&apos;,r)</div><div class="line">... except ZeroDivisionError as e:</div><div class="line">...     print(&apos;except:&apos;,e)</div><div class="line">... finally:</div><div class="line">...     print(&apos;finally..&apos;)</div><div class="line">... print(&apos;End&apos;)</div></pre></td></tr></table></figure></p>
+<p>当我们认为某段代码可能会出错的时候，就可以用<code>try</code>来运行这段代码，如果执行出错，则后续代码不会继续执行，而是直接跳转至错误处理代码，即<code>except</code> 语句块，执行完<code>except</code>后，如果有<code>finally</code>语句块，则执行<code>finally</code>语句块，至此，执行完毕！</p>
+<p>上面代码在计算10/0时会产生一个除法运算错误：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">trying</div><div class="line"><span class="keyword">except</span>: division by zero</div><div class="line"><span class="keyword">finally</span>..</div><div class="line">End</div></pre></td></tr></table></figure></p>
+<p>从输出可以看出，当错误发生的时候，后续语句<code>print(&#39;result:&#39;,r)</code>不会被执行，<code>except</code>由于捕获到了<code>ZeroDivisionError</code>，因此被执行。最后，<code>finally</code>语句被执行。然后程序按照流程走下去。</p>
+<p>如果把除数0改为2，则执行结果如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">trying</div><div class="line">result: 5.0</div><div class="line">finally...</div><div class="line">end</div></pre></td></tr></table></figure></p>
+<p>由于没有错误发生，所以<code>except</code>语句块不会被执行，但是<code>finally</code>如果有，则一定会被执行 。</p>
+<p>而且错误应该有很多种类，如果发生了不同类型的错误，应该由不同类型的<code>except</code>语句块处理。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">try</span>:</div><div class="line"><span class="meta">... </span>    print(<span class="string">'trying'</span>)</div><div class="line"><span class="meta">... </span>    r=<span class="number">10</span>/int(<span class="string">'a'</span>)</div><div class="line"><span class="meta">... </span>    print(<span class="string">'result:'</span>,r)</div><div class="line"><span class="meta">... </span><span class="keyword">except</span> ValueError <span class="keyword">as</span> e:</div><div class="line"><span class="meta">... </span>    print(<span class="string">'ValueError:'</span>,e)</div><div class="line"><span class="meta">... </span><span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> e:</div><div class="line"><span class="meta">... </span>    print(<span class="string">'ZeroDivisionError:'</span>,e)</div><div class="line"><span class="meta">... </span><span class="keyword">finally</span>:</div><div class="line"><span class="meta">... </span>    print(<span class="string">'finally...'</span>)</div><div class="line"><span class="meta">... </span>    print(<span class="string">'END'</span>)</div><div class="line">...</div><div class="line">trying</div><div class="line">ValueError: invalid literal <span class="keyword">for</span> int() <span class="keyword">with</span> base <span class="number">10</span>: <span class="string">'a'</span></div><div class="line"><span class="keyword">finally</span>...</div><div class="line">END</div></pre></td></tr></table></figure></p>
+<p><code>int()</code>函数可能会抛出<code>ValueError</code>错误，所以我们用一个<code>except</code>捕获<code>ValueError</code>，用另一个<code>except</code>捕获<code>ZeroDivisionError</code>。</p>
+<p>此外，如果没有错误发生，可以在<code>except</code>后面语句块加一个else，当没有错误发生时，会自动执行else语句。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">try</span>:</div><div class="line"><span class="meta">... </span>    print(<span class="string">'trying'</span>)</div><div class="line"><span class="meta">... </span>    r=<span class="number">10</span>/int(<span class="string">'2'</span>)</div><div class="line"><span class="meta">... </span>    print(<span class="string">'result:'</span>,r)</div><div class="line"><span class="meta">... </span><span class="keyword">except</span> ValueError <span class="keyword">as</span> e:</div><div class="line"><span class="meta">... </span>    print(<span class="string">'ValueError:'</span>,e)</div><div class="line"><span class="meta">... </span><span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> e:</div><div class="line"><span class="meta">... </span>    print(<span class="string">'ZeroDivisionError:'</span>,e)</div><div class="line"><span class="meta">... </span><span class="keyword">else</span>:</div><div class="line"><span class="meta">... </span>    print(<span class="string">'no error！'</span>)</div><div class="line"><span class="meta">... </span><span class="keyword">finally</span>:</div><div class="line"><span class="meta">... </span>    print(<span class="string">'finally...'</span>)</div><div class="line"><span class="meta">... </span>    print(<span class="string">'END'</span>)</div><div class="line">...</div><div class="line">trying</div><div class="line">result: <span class="number">5.0</span></div><div class="line">no error！</div><div class="line"><span class="keyword">finally</span>...</div><div class="line">END</div></pre></td></tr></table></figure></p>
+<p>Python 的错误其实也是class，所有的错误类型都继承自<code>BaseException</code>，所以在使用<code>except</code>时需要注意的是，它不但捕获该类型的错误，还把其他子类而已捕获了，比如：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">try</span>:</div><div class="line"><span class="meta">... </span>    foo()</div><div class="line"><span class="meta">... </span><span class="keyword">except</span> ValueError <span class="keyword">as</span> e:</div><div class="line"><span class="meta">... </span>    print(<span class="string">'ValueError'</span>)</div><div class="line"><span class="meta">... </span><span class="keyword">except</span> UnicodeError <span class="keyword">as</span> e:</div><div class="line"><span class="meta">... </span>    print(<span class="string">'UnicodeError'</span>)</div><div class="line">...</div></pre></td></tr></table></figure></p>
+<p>第二个<code>except</code>永远也捕获不到<code>UnicodeError</code>，因为<code>UnicodeError</code>是<code>ValueError</code>的子类，如果有也被第一个<code>except</code>捕获了。</p>
+<p>Python所有的错误都是从<code>BaseException</code>类派生的，常见的错误类型和继承关系如下：<br><a href="https://docs.python.org/3/library/exceptions.html#exception-hierarchy" target="_blank" rel="external">https://docs.python.org/3/library/exceptions.html#exception-hierarchy</a></p>
+<p>使<code>try...except</code>捕获错误还有一个巨大的好处就是可以跨越多层调用，比如函数<code>main()</code>调用<code>foo()</code>，<code>foo()</code>调用<code>bar()</code>，结果<code>bar()</code>出错了，这时只要<code>main()</code>捕获到了，就可以处理：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">(s)</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">return</span> <span class="number">10</span>/int(s)</div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">bar</span><span class="params">(s)</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">return</span> foo(s)*<span class="number">2</span></div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">try</span>:</div><div class="line"><span class="meta">... </span>            bar(<span class="string">'0'</span>)</div><div class="line"><span class="meta">... </span>    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</div><div class="line"><span class="meta">... </span>            print(<span class="string">'Error:'</span>,e)</div><div class="line"><span class="meta">... </span>    <span class="keyword">finally</span>:</div><div class="line"><span class="meta">... </span>            print(<span class="string">'finally..'</span>)</div><div class="line">...</div></pre></td></tr></table></figure></p>
+<p>也就是说，不需要再每个可能出错的地方去捕获错误，只要在合适的层次去捕获错误就可以了。这样一来，就大大减少了写<code>try,,,except,,,finally</code>的麻烦。</p>
+<hr>
+<h3 id="调用堆栈"><a href="#调用堆栈" class="headerlink" title="调用堆栈"></a>调用堆栈</h3><p>如果错误没有被捕获，它就会一直往上抛，最后被Python解释器捕获，打印一个错误信息，然后程序退出，来看看<code>err.py</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">(s)</span>:</span></div><div class="line">	<span class="keyword">return</span> <span class="number">10</span>/int(s)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">bar</span><span class="params">(s)</span>:</span></div><div class="line">	<span class="keyword">return</span> foo(s)*<span class="number">2</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></div><div class="line">	bar(<span class="string">'0'</span>)</div><div class="line">main()</div></pre></td></tr></table></figure>
+<p>执行结果如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">Traceback (most recent call last):</div><div class="line">  File <span class="string">"err.py"</span>, line <span class="number">13</span>, <span class="keyword">in</span> &lt;module&gt;</div><div class="line">    main()</div><div class="line">  File <span class="string">"err.py"</span>, line <span class="number">11</span>, <span class="keyword">in</span> main</div><div class="line">    bar(<span class="string">'0'</span>)</div><div class="line">  File <span class="string">"err.py"</span>, line <span class="number">8</span>, <span class="keyword">in</span> bar</div><div class="line">    <span class="keyword">return</span> foo(s)*<span class="number">2</span></div><div class="line">  File <span class="string">"err.py"</span>, line <span class="number">5</span>, <span class="keyword">in</span> foo</div><div class="line">    <span class="keyword">return</span> <span class="number">10</span>/int(s)</div><div class="line">ZeroDivisionError: division by zero</div></pre></td></tr></table></figure></p>
+<p>解读错误信息是定位错误的关键。我们从上往下可以看到整个错误的调用函数链：</p>
+<p>错误信息第一行：</p>
+<blockquote>
+<p>Traceback (most recent call last):</p>
+</blockquote>
+<p>告诉我们这是错误的跟踪信息。</p>
+<p>第二行和第三行：</p>
+<blockquote>
+<p>File “err.py”, line 13, in <module><br>    main()</module></p>
+</blockquote>
+<p>调用<code>main()</code>出错了。在 代码文件<code>err.py</code>的第13行代码，但是原因在第11行：</p>
+<blockquote>
+<p>File “err.py”, line 11, in main<br>   bar(‘0’)</p>
+</blockquote>
+<p>调用<code>bar(0)</code>出错了，在代码文件的第11行，但是原因在第8行：</p>
+<blockquote>
+<p>File “err.py”, line 8, in bar<br>   <code>return foo(s)*2</code></p>
+</blockquote>
+<p>原因是<code>retrun foo(s)*2</code>这个语句出错了，但这不是最终原因：</p>
+<blockquote>
+<p>File “err.py”, line 5, in foo<br>    return 10/int(s)</p>
+</blockquote>
+<p>原因是<code>return 10/int(s)</code>这个语句出错了，这个是错误的源头，因为下面打印了：</p>
+<blockquote>
+<p>ZeroDivisionError: division by zero</p>
+</blockquote>
+<p>根据错误类型<code>ZeroDivisionError</code>，我们判断<code>int(s)</code>本身并没有错，但是<code>int(s)</code>返回0，在计算10/0时出错。</p>
+<h3 id="记录错误"><a href="#记录错误" class="headerlink" title="记录错误"></a>记录错误</h3><p>如果不捕获错误，自然可以让Python解释器来打印出错误堆栈，但程序也被结束了。既然我们能捕获错误，就可以把错误的堆栈打印出来，然后分析错误原因，同时让程序继续执行下去。</p>
+<p>Python内置的<code>logging</code>模块可以非常容易的记录错误信息：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> logging</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">(s)</span>:</span></div><div class="line">	<span class="keyword">return</span> <span class="number">10</span>/int(s)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">bar</span><span class="params">(s)</span>:</span></div><div class="line">	<span class="keyword">return</span> foo(s)*<span class="number">2</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">try</span>:</div><div class="line">		bar(<span class="string">'0'</span>)</div><div class="line">	<span class="keyword">except</span> Exception <span class="keyword">as</span> e:</div><div class="line">		logging.exception(e)</div><div class="line"></div><div class="line">main()</div><div class="line">print(<span class="string">'END'</span>)</div></pre></td></tr></table></figure></p>
+<p>同样是出错，但程序打印完错误信息会继续执行并正常退出：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">ERROR:root:division by zero</div><div class="line">Traceback (most recent call last):</div><div class="line">  File <span class="string">"err_logging.py"</span>, line <span class="number">14</span>, <span class="keyword">in</span> main</div><div class="line">    bar(<span class="string">'0'</span>)</div><div class="line">  File <span class="string">"err_logging.py"</span>, line <span class="number">10</span>, <span class="keyword">in</span> bar</div><div class="line">    <span class="keyword">return</span> foo(s)*<span class="number">2</span></div><div class="line">  File <span class="string">"err_logging.py"</span>, line <span class="number">7</span>, <span class="keyword">in</span> foo</div><div class="line">    <span class="keyword">return</span> <span class="number">10</span>/int(s)</div><div class="line">ZeroDivisionError: division by zero</div><div class="line">END</div></pre></td></tr></table></figure></p>
+<p>通过配置，<code>logging</code>还可以把错误记录到日志文件里，方便事后排查。</p>
+<h3 id="抛出错误"><a href="#抛出错误" class="headerlink" title="抛出错误"></a>抛出错误</h3><p>因为错误是class，捕获一个错误就是捕获该class的一个实例。因此错误不是凭空产生的，而是有意识的创建并抛出的。python的内置函数会抛出很多类型的错误，我们自己编写的函数也可以抛出错误。</p>
+<p>如果要抛出错误，首先要根据需要，定义一个错误的class，选择好继承关系，然后，用<code>raise</code>语句抛出一个错误的实例：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">FooError</span><span class="params">(ValueError)</span>:</span></div><div class="line">	<span class="keyword">pass</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">(s)</span>:</span></div><div class="line">	n=int(s)</div><div class="line">	<span class="keyword">if</span> n==<span class="number">0</span>:</div><div class="line">		<span class="keyword">raise</span> FooError(<span class="string">'invald value:%s'</span> % s)</div><div class="line">	<span class="keyword">return</span> <span class="number">10</span>/n</div><div class="line"></div><div class="line">foo(<span class="string">'0'</span>)</div></pre></td></tr></table></figure></p>
+<p>执行，可以最后追踪到我们定义的错误：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++&gt;python err_raise.py</div><div class="line">Traceback (most recent call last):</div><div class="line">  File <span class="string">"err_raise.py"</span>, line <span class="number">13</span>, <span class="keyword">in</span> &lt;module&gt;</div><div class="line">    foo(<span class="string">'0'</span>)</div><div class="line">  File <span class="string">"err_raise.py"</span>, line <span class="number">10</span>, <span class="keyword">in</span> foo</div><div class="line">    <span class="keyword">raise</span> FooError(<span class="string">'invald value:%s'</span> % s)</div><div class="line">__main__.FooError: invald value:<span class="number">0</span></div></pre></td></tr></table></figure></p>
+<p>只有在必要的时候才定义我们自己的错误类型。如果可以选择Python已有的内置的错误类型，尽量使用Python内置的错误类型。</p>
+<p>最后，我们来看另一种错误处理的方式：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">(s)</span>:</span></div><div class="line">	n=int(<span class="string">'s'</span>)</div><div class="line">	<span class="keyword">if</span> n==<span class="number">0</span>:</div><div class="line">		<span class="keyword">raise</span> ValueError(<span class="string">'invalid value: %s'</span> % s)</div><div class="line">	<span class="keyword">return</span> <span class="number">10</span>/n</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">bar</span><span class="params">(s)</span>:</span></div><div class="line">	<span class="keyword">try</span>:</div><div class="line">		foo(<span class="string">'0'</span>)</div><div class="line">	<span class="keyword">except</span> ValueError <span class="keyword">as</span> e:</div><div class="line">		print(<span class="string">'ValueError!'</span>)</div><div class="line">		<span class="keyword">raise</span></div><div class="line"></div><div class="line">bar()</div></pre></td></tr></table></figure></p>
+<p>在<code>bar()</code>函数中，我们明明已经捕获了错误，打印了一个<code>ValueError！</code>后，又把错误通过<code>raise</code>语句抛出去了。</p>
+<p>捕获错误目的是记录，便于后续追踪。但是由于当前函数不知道应该怎么处理该错误，最恰当的做法就是继续上抛，让顶层调用者去处理。</p>
+<p><code>raise</code>语句如果不带参数，就会把当前错误原样抛出。此外，在<code>except</code>中<code>raise</code>一个Error，还可以把一种类型的错误转化为另一种类型：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">try</span>:</div><div class="line">	<span class="number">10</span>/<span class="number">0</span></div><div class="line"><span class="keyword">except</span> ZeroDivisionError:</div><div class="line">	<span class="keyword">raise</span> ValueError(<span class="string">'input error!'</span>)</div></pre></td></tr></table></figure></p>
+<p>只要合理的转换逻辑都可以接受。</p>
+<hr>
+<h2 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h2><p>程序能一次性写完并正常运行的概率很小，会有各种各样的bug需要修正，因此需要一整套调试程序的手段来修复。</p>
+<p>第一种方法简单直接，就是用<code>print()</code>把可能有问题的变量打印出来：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">(s)</span>:</span></div><div class="line">	n=int(s)</div><div class="line">	print(<span class="string">'&gt;&gt;&gt;n=%d'</span> %n)</div><div class="line">	<span class="keyword">return</span> <span class="number">10</span>/int(s)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></div><div class="line">	foo(<span class="string">'0'</span>)</div><div class="line"></div><div class="line">main()</div></pre></td></tr></table></figure></p>
+<p>执行后在输出中查找打印的变量值：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;n=<span class="number">0</span></div><div class="line">Traceback (most recent call last):</div><div class="line">  File <span class="string">"err.py"</span>, line <span class="number">12</span>, <span class="keyword">in</span> &lt;module&gt;</div><div class="line">    main()</div><div class="line">  File <span class="string">"err.py"</span>, line <span class="number">10</span>, <span class="keyword">in</span> main</div><div class="line">    foo(<span class="string">'0'</span>)</div><div class="line">  File <span class="string">"err.py"</span>, line <span class="number">7</span>, <span class="keyword">in</span> foo</div><div class="line">    <span class="keyword">return</span> <span class="number">10</span>/int(s)</div><div class="line">ZeroDivisionError: division by zero</div></pre></td></tr></table></figure></p>
+<p>用<code>print()</code>最大的坏处是以后还要删掉他，运行结果中会包含很多垃圾信息。</p>
+<h3 id="断言"><a href="#断言" class="headerlink" title="断言"></a>断言</h3><p>凡是用<code>print()</code>来辅助查看的地方，都可以用断言（assert）来替代：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">(s)</span>:</span></div><div class="line">	n=int(s)</div><div class="line">	<span class="keyword">assert</span> n!=<span class="number">0</span>, <span class="string">'n is zero'</span></div><div class="line">	<span class="keyword">return</span> <span class="number">10</span>/int(s)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></div><div class="line">	foo(<span class="string">'0'</span>)</div><div class="line"></div><div class="line">main()</div></pre></td></tr></table></figure></p>
+<p><code>assert</code>的意思是，表达式<code>n!=0</code>应该是真，否则，根据程序运行的逻辑，后面的代码肯定会出错。如果断言失败，<code>assert</code>语句本身就会抛出<code>AssertionError</code>:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++&gt;python err.py</div><div class="line">Traceback (most recent call last):</div><div class="line">  File <span class="string">"err.py"</span>, line <span class="number">12</span>, <span class="keyword">in</span> &lt;module&gt;</div><div class="line">    main()</div><div class="line">  File <span class="string">"err.py"</span>, line <span class="number">10</span>, <span class="keyword">in</span> main</div><div class="line">    foo(<span class="string">'0'</span>)</div><div class="line">  File <span class="string">"err.py"</span>, line <span class="number">6</span>, <span class="keyword">in</span> foo</div><div class="line">    <span class="keyword">assert</span> n!=<span class="number">0</span>, <span class="string">'n is zero'</span></div><div class="line">AssertionError: n <span class="keyword">is</span> zero</div></pre></td></tr></table></figure></p>
+<p>程序中如果到处都是<code>assert</code>，和<code>print()</code>相比没有好多少。不过启动Python解释器时可以用<code>-0</code>参数来关闭<code>assert</code>。关闭之后，可以把其当做pass来看。</p>
+<h3 id="logging"><a href="#logging" class="headerlink" title="logging"></a>logging</h3><p>把<code>print()</code>替换为<code>logging</code>是第三种方法，和<code>assert</code>相比，logging不会抛出错误，而是可以输出到文件：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> logging</div><div class="line"></div><div class="line">s=<span class="string">'0'</span></div><div class="line">n=int(s)</div><div class="line">logging.info(<span class="string">'n=%d'</span> %n)</div><div class="line">print(<span class="number">10</span>/n)</div></pre></td></tr></table></figure></p>
+<p><code>logging.info()</code>就可以输出一段文本。运行，发现除了<code>ZeroDivisionError</code>，没有任何信息。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Traceback (most recent call last):</div><div class="line">  File <span class="string">"err.py"</span>, line <span class="number">9</span>, <span class="keyword">in</span> &lt;module&gt;</div><div class="line">    print(<span class="number">10</span>/n)</div><div class="line">ZeroDivisionError: division by zero</div></pre></td></tr></table></figure></p>
+<p>在<code>import logging</code>之后加上一行配置：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> logging</div><div class="line">logging.basicConfig(level=logging.INFO)</div></pre></td></tr></table></figure></p>
+<p>输出为：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">INFO:root:n=<span class="number">0</span></div><div class="line">Traceback (most recent call last):</div><div class="line">  File <span class="string">"err.py"</span>, line <span class="number">10</span>, <span class="keyword">in</span> &lt;module&gt;</div><div class="line">    print(<span class="number">10</span>/n)</div><div class="line">ZeroDivisionError: division by zero</div></pre></td></tr></table></figure></p>
+<p>这就是<code>logging</code>的好处，它允许你指定记录信息的级别，有<code>debug</code>，<code>info</code>，<code>warning</code>，<code>error</code>等几个级别，当我们指定<code>level=INFO</code>时，<code>logging.debug</code>就不起错用了。这样一来，你可以放心的输出不同级别的信息，也不用删除，最后统一控制输出那个级别的信息。</p>
+<p><code>logging</code>的另一个好处是通过简单的配置，一条语句可以同时输出到不同的地方，比如console和文件。</p>
+<h3 id="pdb"><a href="#pdb" class="headerlink" title="pdb"></a>pdb</h3><p>第四种方式是启动Python的调试器pdb，让程序以单步方式运行，可以随时查看运行状态：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">s=<span class="string">'0'</span></div><div class="line">n=int(s)</div><div class="line">print(<span class="number">10</span>/n)</div></pre></td></tr></table></figure></p>
+<p>运行结果：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++&gt;python -m pdb err.py</div><div class="line">&gt; d:\笔记\python\notepad++\err.py(<span class="number">4</span>)&lt;module&gt;()</div><div class="line">-&gt; s='0'</div></pre></td></tr></table></figure></p>
+<p>以参数<code>-m pdb</code>启动后，pdb定位到下一步要执行的代码<code>-&gt; s=&#39;0&#39;</code>.输入命令l来查看代码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">(Pdb) l</div><div class="line">  <span class="number">1</span>     <span class="comment">#!/usr/bin/env python3</span></div><div class="line">  <span class="number">2</span>     <span class="comment">#-*- coding: utf-8 -*-</span></div><div class="line">  <span class="number">3</span></div><div class="line">  4  -&gt; s='0'</div><div class="line">  <span class="number">5</span>     n=int(s)</div><div class="line">  <span class="number">6</span>     print(<span class="number">10</span>/n)</div><div class="line">[EOF]</div></pre></td></tr></table></figure></p>
+<p>输入命令n可以单步执行代码：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">(Pdb) n</div><div class="line">&gt; d:\笔记\python\notepad++\err.py(<span class="number">5</span>)&lt;module&gt;()</div><div class="line">-&gt; n=int(s)</div><div class="line">(Pdb) n</div><div class="line">&gt; d:\笔记\python\notepad++\err.py(<span class="number">6</span>)&lt;module&gt;()</div><div class="line">-&gt; print(10/n)</div></pre></td></tr></table></figure>
+<p>任何时候都可以输入命令<code>p 变量名</code>来查看变量：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">(Pdb) p s</div><div class="line"><span class="string">'0'</span></div><div class="line">(Pdb) p n</div><div class="line"><span class="number">0</span></div></pre></td></tr></table></figure>
+<p>输入命令q结束调制：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">(Pdb) q</div><div class="line"></div><div class="line">D:\笔记\Python\Notepad++&gt;</div></pre></td></tr></table></figure></p>
+<h3 id="pdb-set-trace"><a href="#pdb-set-trace" class="headerlink" title="pdb.set_trace()"></a>pdb.set_trace()</h3><p>这个方法也是用pdb，但是不需要单步执行，我们只需要<code>import pdb</code>，然后，可能出错的地方放一个<code>pdb.set_trace()</code>，就可以设置一个断点：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> pdb</div><div class="line"></div><div class="line">s=<span class="string">'0'</span></div><div class="line">n=int(s)</div><div class="line">pdb.set_trace()        <span class="comment">#断点位置</span></div><div class="line">print(<span class="number">10</span>/n)</div></pre></td></tr></table></figure>
+<p>运行代码，程序会在<code>pdb.set_trace()</code>暂停并进入pdb调试环境，可以用命令<code>p</code>查看变量，或者用命令c继续运行：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++&gt;python -m pdb err.py</div><div class="line">&gt; d:\笔记\python\notepad++\err.py(<span class="number">4</span>)&lt;module&gt;()</div><div class="line">-&gt; import pdb</div><div class="line">(Pdb) c</div><div class="line">&gt; d:\笔记\python\notepad++\err.py(<span class="number">9</span>)&lt;module&gt;()</div><div class="line">-&gt; print(10/n)</div><div class="line">(Pdb) p n</div><div class="line"><span class="number">0</span></div></pre></td></tr></table></figure></p>
+<h3 id="IDE"><a href="#IDE" class="headerlink" title="IDE"></a>IDE</h3><p>可以用IDE调试，如PyCharm：<a href="http://www.jetbrains.com/pycharm/" target="_blank" rel="external">enter link description here</a><br>或者Eclipse加上pydev。</p>
+<p>IDE调试很方便，但是logging更适合python调试。</p>
+<h2 id="单元测试"><a href="#单元测试" class="headerlink" title="单元测试"></a>单元测试</h2><p>单元测试是用来对一个模块、一个函数或者一个类来进行正确性检验的测试工作。比如对函数<code>abs()</code>，我们可以编写出以下几个测试用例：</p>
+<blockquote>
+<p>1.输入正数，1、2.3、0.34，期待返回值和输入值相同<br>2.输入负数，-1、-1.2、-0.33，期待返回值与输入相反<br>3.输入0，期待返回0<br>4.输入非数值类型，比如<code>None</code>、<code>[]</code>、<code>{}</code>，期待抛出<code>TypeError</code></p>
+</blockquote>
+<p>把上面的测试用例放到一个测试模块里，就是一个完整的单元测试。</p>
+<p>如果单元测试通过，说明我们测试的这个函数能够正常工作，如果单元测试不通过，要么函数有bug，要么测试条件输入不正确，需要修复。</p>
+<p>单元测试通过后的意义在于如果我们对<code>abs()</code>函数代码做了修改，只需要跑一遍单元测试，如果通过，说明我们的修改不会对<code>abs()</code>函数原有的行为造成影响，如果不通过，说明我们的修改和原有行为不一致，要么修改代码，要么修改测试。</p>
+<p>这种以测试为驱动的开发模式最大的好处就是确保一个程序模块的行为符合我们设计的测试用例。在将来修改的时候，可以极大程度的保证该模块行为仍然是正确的。</p>
+<p>我们来编写一个<code>Dict</code>类，这个类的行为和<code>dict</code>一致，但是可以通过属性来访问，用起来如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Dict</span><span class="params">(dict)</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,**kw)</span>:</span></div><div class="line"><span class="meta">... </span>            super().__init__(**kw)</div><div class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__getattr__</span><span class="params">(self,key)</span>:</span></div><div class="line"><span class="meta">... </span>            <span class="keyword">try</span>:</div><div class="line"><span class="meta">... </span>                    <span class="keyword">return</span> self[key]</div><div class="line"><span class="meta">... </span>            <span class="keyword">except</span> KeyError:</div><div class="line"><span class="meta">... </span>                    <span class="keyword">raise</span> AttributeError(<span class="string">r"'Dict' object has no attribute '%s'"</span> %key)</div><div class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__setattr__</span><span class="params">(self,key,value)</span>:</span></div><div class="line"><span class="meta">... </span>            self[key]=value</div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>d=Dict(a=<span class="number">1</span>,b=<span class="number">2</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>d[<span class="string">'a'</span>]</div><div class="line"><span class="number">1</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>d.a</div><div class="line"><span class="number">1</span></div></pre></td></tr></table></figure></p>
+<p>为了编写单元测试，我们需要引入Python自带的<code>unittest</code>模块，编写<code>mydict_test.py</code>:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> unittest</div><div class="line"></div><div class="line"><span class="keyword">from</span> mydict <span class="keyword">import</span> Dict</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestDict</span><span class="params">(unittest.TestCase)</span>:</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">test_init</span><span class="params">(self)</span>:</span></div><div class="line">		d=Dict(a=<span class="number">1</span>,b=<span class="string">'test'</span>)</div><div class="line">		self.assertEqual(d.a,<span class="number">1</span>)</div><div class="line">		self.assertEqual(d.b,<span class="string">'test'</span>)</div><div class="line">		self.assertTrue(isinstance(d,dict))</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">test_key</span><span class="params">(self)</span>:</span></div><div class="line">		d=Dict()</div><div class="line">		d[<span class="string">'key'</span>]=<span class="string">'value'</span></div><div class="line">		self.assertEqual(d.key,<span class="string">'value'</span>)</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span>  <span class="title">test_attr</span><span class="params">(self)</span>:</span></div><div class="line">		d=Dict()</div><div class="line">		d.key=<span class="string">'value'</span></div><div class="line">		self.assertTrue(<span class="string">'key'</span> <span class="keyword">in</span> d)</div><div class="line">		self.assertEqual(d[key],<span class="string">'value'</span>)</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">test_keyerror</span><span class="params">(self)</span>:</span></div><div class="line">		d=Dict()</div><div class="line">		<span class="keyword">with</span> self.assertRaises(KeyError):</div><div class="line">			value=d[<span class="string">'empty'</span>]</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">test_attrerror</span><span class="params">(self)</span>:</span></div><div class="line">		d=Dict()</div><div class="line">		<span class="keyword">with</span> self.assertRaises(AttributeError):</div><div class="line">			value=d.empty</div></pre></td></tr></table></figure></p>
+<p>编写单元测试时，我们需要编写一个测试类，从<code>unittest.TestCase</code>继承。</p>
+<p>以<code>test</code>开头的方法就是测试方法，不以<code>test</code>开头的方法不被认为是测试方法，测试的时候不会被执行。对每一类测试都需要编写一个<code>test_xxx()</code> 方法。由于<code>unittest.TestCase</code>提供了很多内置的条件判断，我们只需要调用这些方法就可以断言输出是否是我们所期望的。最常用的断言就是<code>assertEqual()</code>：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">self.assertEqual(abs(<span class="number">-1</span>),<span class="number">1</span>)  <span class="comment">#断言函数返回的结果和1相等</span></div></pre></td></tr></table></figure></p>
+<p>另一种重要的断言就是期待抛出指定类型Error，比如通过<code>d[&#39;empty&#39;]</code>访问不存在的key时，断言会抛出<code>KeyError</code>：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">with</span> self.assertRaises(KeyError):</div><div class="line">	value=d[<span class="string">'empty'</span>]</div></pre></td></tr></table></figure></p>
+<p>而通过<code>d.empty</code>访问不存在key时，我们期待抛出<code>AttributeError</code>：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">with</span> self.assertRaises(AttributeError):</div><div class="line">	value=d.empty</div></pre></td></tr></table></figure></p>
+<h3 id="运行单元测试"><a href="#运行单元测试" class="headerlink" title="运行单元测试"></a>运行单元测试</h3><p>一旦编写好单元测试，我们就可以运行单元测试。最简单的方式是在<code>mydict_test.py</code>的最后加上两行代码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++&gt;python mydict.py</div><div class="line"></div><div class="line">D:\笔记\Python\Notepad++&gt;python mydict_test.py</div><div class="line">EE...</div><div class="line">======================================================================</div><div class="line">ERROR: test_attr (__main__.TestDict)</div><div class="line">----------------------------------------------------------------------</div><div class="line">Traceback (most recent call last):</div><div class="line">  File <span class="string">"mydict_test.py"</span>, line <span class="number">25</span>, <span class="keyword">in</span> test_attr</div><div class="line">    self.assertEqual(d[key],<span class="string">'value'</span>)</div><div class="line">NameError: name <span class="string">'key'</span> <span class="keyword">is</span> <span class="keyword">not</span> defined</div><div class="line"></div><div class="line">======================================================================</div><div class="line">ERROR: test_attrerror (__main__.TestDict)</div><div class="line">----------------------------------------------------------------------</div><div class="line">Traceback (most recent call last):</div><div class="line">  File <span class="string">"D:\笔记\Python\Notepad++\mydict.py"</span>, line <span class="number">11</span>, <span class="keyword">in</span> __getattr__</div><div class="line">    <span class="keyword">return</span> self[key]</div><div class="line">KeyError: <span class="string">'empty'</span></div><div class="line"></div><div class="line">During handling of the above exception, another exception occurred:</div><div class="line"></div><div class="line">Traceback (most recent call last):</div><div class="line">  File <span class="string">"mydict_test.py"</span>, line <span class="number">35</span>, <span class="keyword">in</span> test_attrerror</div><div class="line">    value=d.empty</div><div class="line">  File <span class="string">"D:\笔记\Python\Notepad++\mydict.py"</span>, line <span class="number">13</span>, <span class="keyword">in</span> __getattr__</div><div class="line">    <span class="keyword">raise</span> ArithmeticError(<span class="string">r"'Dict' object has no attrribute '%s'"</span> %key)</div><div class="line">ArithmeticError: <span class="string">'Dict'</span> object has no attrribute <span class="string">'empty'</span></div><div class="line"></div><div class="line">----------------------------------------------------------------------</div><div class="line">Ran <span class="number">5</span> tests <span class="keyword">in</span> <span class="number">0.004</span>s</div></pre></td></tr></table></figure></p>
+<p>或者在命令行通过参数<code>-m unittest</code>直接运行单元测试。</p>
+<h3 id="setUp与tearDown"><a href="#setUp与tearDown" class="headerlink" title="setUp与tearDown"></a>setUp与tearDown</h3><p>可以在单元测试中编写两个特殊的<code>setup()</code>和<code>tearDown()</code>有什么用呢，这时，就可以在<code>setUp()</code>方法中连接数据库，在<code>tearDown()</code>方法中关闭数据库，这样不必再每个测试方法中重复相同的代码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestDict</span><span class="params">(unittest.TestCase)</span>:</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">setUp</span><span class="params">(self)</span>:</span></div><div class="line">		print(<span class="string">'setUp...'</span>)</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">tearDown</span><span class="params">(self)</span>:</span></div><div class="line">		print(<span class="string">'tearDown...'</span>)</div></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="文档测试"><a href="#文档测试" class="headerlink" title="文档测试"></a>文档测试</h2><p>很多文档都有实例代码，比如re模块：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> re</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>m=re.search(<span class="string">'(?&lt;=abc)def'</span>,<span class="string">'abcdef'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>m.group(<span class="number">0</span>)</div><div class="line"><span class="string">'def</span></div></pre></td></tr></table></figure></p>
+<p>可以把这些示例代码在Python的交互环境下输入并执行，结果与文档中的实例代码显示一致。</p>
+<p>这些代码与其他说明可以写在注释中，然后由一些工具来自动生成文档。也可以自动执行写在注释中的代码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">abs</span><span class="params">(n)</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="string">'''</span></div><div class="line"><span class="string"><span class="meta">... </span>    Function to get absolute value of number.</span></div><div class="line"><span class="string"><span class="meta">... </span>    Exampel:</span></div><div class="line"><span class="string"><span class="meta">... </span>    &gt;&gt;&gt;abs(1)</span></div><div class="line"><span class="string"><span class="meta">... </span>    1</span></div><div class="line"><span class="string"><span class="meta">... </span>    &gt;&gt;&gt;abs(-1)</span></div><div class="line"><span class="string"><span class="meta">... </span>    1</span></div><div class="line"><span class="string"><span class="meta">... </span>    &gt;&gt;&gt;abs(0)</span></div><div class="line"><span class="string"><span class="meta">... </span>    0</span></div><div class="line"><span class="string"><span class="meta">... </span>    '''</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">return</span> n <span class="keyword">if</span> n&gt;=<span class="number">0</span> <span class="keyword">else</span> (-n)</div><div class="line">...</div></pre></td></tr></table></figure></p>
+<p>无疑问更明确的告诉函数的调用者该函数的期望输入和输出。并且，Python内置的文档测试（doctest）模块可以直接提取注释中的diamante并执行测试。</p>
+<p>doctest严格按照Python交互命令行的输入和输出来判断测试结果是否正确。只有测试异常的时候，可以用<code>...</code>表示中间一大段烦人的输入。</p>
+<p>用doctest来测试上次编写的Dict类：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dict</span><span class="params">(dict)</span>:</span></div><div class="line">	<span class="string">'''</span></div><div class="line"><span class="string">    Simple dict but also support access as x.y style.</span></div><div class="line"><span class="string"></span></div><div class="line"><span class="string">    &gt;&gt;&gt; d1 = Dict()</span></div><div class="line"><span class="string">    &gt;&gt;&gt; d1['x'] = 100</span></div><div class="line"><span class="string">    &gt;&gt;&gt; d1.x</span></div><div class="line"><span class="string">    100</span></div><div class="line"><span class="string">    &gt;&gt;&gt; d1.y = 200</span></div><div class="line"><span class="string">    &gt;&gt;&gt; d1['y']</span></div><div class="line"><span class="string">    200</span></div><div class="line"><span class="string">    &gt;&gt;&gt; d2 = Dict(a=1, b=2, c='3')</span></div><div class="line"><span class="string">    &gt;&gt;&gt; d2.c</span></div><div class="line"><span class="string">    '3'</span></div><div class="line"><span class="string">    &gt;&gt;&gt; d2['empty']</span></div><div class="line"><span class="string">    Traceback (most recent call last):</span></div><div class="line"><span class="string">        ...</span></div><div class="line"><span class="string">    KeyError: 'empty'</span></div><div class="line"><span class="string">    &gt;&gt;&gt; d2.empty</span></div><div class="line"><span class="string">    Traceback (most recent call last):</span></div><div class="line"><span class="string">        ...</span></div><div class="line"><span class="string">    AttributeError: 'Dict' object has no attribute 'empty'</span></div><div class="line"><span class="string">    '''</span></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__int__</span><span class="params">(self,**kw)</span>:</span></div><div class="line">		super().__int__(**kw)</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__getattr__</span><span class="params">(self,key)</span>:</span></div><div class="line">		<span class="keyword">try</span>:</div><div class="line">			<span class="keyword">return</span> self[key]</div><div class="line">		<span class="keyword">except</span> KeyError:</div><div class="line">			<span class="keyword">raise</span> ArithmeticError(<span class="string">r"'Dict' object has no attrribute '%s'"</span> %key)</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__setattr__</span><span class="params">(self,key,value)</span>:</span></div><div class="line">		self[key]=value</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</div><div class="line">	<span class="keyword">import</span> doctest</div><div class="line">	doctest.testmod()</div></pre></td></tr></table></figure></p>
+<p>运行结果：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++&gt;python mydict2.py</div><div class="line">**********************************************************************</div><div class="line">File <span class="string">"mydict2.py"</span>, line <span class="number">23</span>, <span class="keyword">in</span> __main__.Dict</div><div class="line">Failed example:</div><div class="line">    d2.empty</div><div class="line">Expected:</div><div class="line">    Traceback (most recent call last):</div><div class="line">        ...</div><div class="line">    AttributeError: <span class="string">'Dict'</span> object has no attribute <span class="string">'empty'</span></div><div class="line">Got:</div><div class="line">    Traceback (most recent call last):</div><div class="line">      File <span class="string">"mydict2.py"</span>, line <span class="number">33</span>, <span class="keyword">in</span> __getattr__</div><div class="line">        <span class="keyword">return</span> self[key]</div><div class="line">    KeyError: <span class="string">'empty'</span></div><div class="line">    &lt;BLANKLINE&gt;</div><div class="line">    During handling of the above exception, another exception occurred:</div><div class="line">    &lt;BLANKLINE&gt;</div><div class="line">    Traceback (most recent call last):</div><div class="line">      File <span class="string">"C:\Users\cdxu0\AppData\Local\Programs\Python\Python35\lib\doctest.py"</span>, line <span class="number">1320</span>, <span class="keyword">in</span> __run</div><div class="line">        compileflags, <span class="number">1</span>), test.globs)</div><div class="line">      File <span class="string">"&lt;doctest __main__.Dict[8]&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</div><div class="line">        d2.empty</div><div class="line">      File <span class="string">"mydict2.py"</span>, line <span class="number">35</span>, <span class="keyword">in</span> __getattr__</div><div class="line">        <span class="keyword">raise</span> ArithmeticError(<span class="string">r"'Dict' object has no attrribute '%s'"</span> %key)</div><div class="line">    ArithmeticError: <span class="string">'Dict'</span> object has no attrribute <span class="string">'empty'</span></div><div class="line">**********************************************************************</div><div class="line"><span class="number">1</span> items had failures:</div><div class="line">   <span class="number">1</span> of   <span class="number">9</span> <span class="keyword">in</span> __main__.Dict</div><div class="line">***Test Failed*** <span class="number">1</span> failures.</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Python基础/" rel="tag"># Python基础</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/21/5.面向对象编程/" rel="next" title="5. 面向对象编程">
+                <i class="fa fa-chevron-left"></i> 5. 面向对象编程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/21/6.面向对象高级编程/" rel="prev" title="6.面向对象高级编程">
+                6.面向对象高级编程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">79</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#错误、调试和测试"><span class="nav-number">1.</span> <span class="nav-text">错误、调试和测试</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#错误处理"><span class="nav-number">1.1.</span> <span class="nav-text">错误处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#try"><span class="nav-number">1.1.1.</span> <span class="nav-text">try</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#调用堆栈"><span class="nav-number">1.1.2.</span> <span class="nav-text">调用堆栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#记录错误"><span class="nav-number">1.1.3.</span> <span class="nav-text">记录错误</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#抛出错误"><span class="nav-number">1.1.4.</span> <span class="nav-text">抛出错误</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#调试"><span class="nav-number">1.2.</span> <span class="nav-text">调试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#断言"><span class="nav-number">1.2.1.</span> <span class="nav-text">断言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#logging"><span class="nav-number">1.2.2.</span> <span class="nav-text">logging</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pdb"><span class="nav-number">1.2.3.</span> <span class="nav-text">pdb</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pdb-set-trace"><span class="nav-number">1.2.4.</span> <span class="nav-text">pdb.set_trace()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IDE"><span class="nav-number">1.2.5.</span> <span class="nav-text">IDE</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单元测试"><span class="nav-number">1.3.</span> <span class="nav-text">单元测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#运行单元测试"><span class="nav-number">1.3.1.</span> <span class="nav-text">运行单元测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#setUp与tearDown"><span class="nav-number">1.3.2.</span> <span class="nav-text">setUp与tearDown</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文档测试"><span class="nav-number">1.4.</span> <span class="nav-text">文档测试</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

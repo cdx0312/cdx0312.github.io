@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java,concurrent programming," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="并发基础知识与核心知识并发与高并发 并发：同时拥有两个或者多个线程，如果程序在单核处理器上运行，多个线程将交替的换入或者换出内存，这些线程是同时存在的，每个线程处于执行过程中的某个状态，如果运行在多核处理器上，此时程序中的每个线程将被分到一个处理器核上，因此可以同时运行。 高并发：high concurrency是互联网分布式系统架构设计中必须考虑的因素之一，它通常是指通过设计保证系统能够同时并行">
+<meta name="keywords" content="Java,concurrent programming">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多线程并发编程">
+<meta property="og:url" content="http://yoursite.com/2019/04/21/多线程并发编程/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="并发基础知识与核心知识并发与高并发 并发：同时拥有两个或者多个线程，如果程序在单核处理器上运行，多个线程将交替的换入或者换出内存，这些线程是同时存在的，每个线程处于执行过程中的某个状态，如果运行在多核处理器上，此时程序中的每个线程将被分到一个处理器核上，因此可以同时运行。 高并发：high concurrency是互联网分布式系统架构设计中必须考虑的因素之一，它通常是指通过设计保证系统能够同时并行">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-20181030193947869.png">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-20181030195647642.png">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-20181030201239548.png">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-20181030202501137.png">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-20181030203010624.png">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-20181101154059310.png">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-20181101155018876.png">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-20181102152907971.png">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-20181102155642312.png">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-20181102185614826.png">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-2018110219583022.png">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-20181102195850302.png">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-20181102195945446.png">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-20181102200153487.png">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-2018110315153084.png">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-20181103151950629.png">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-20181103155755996.png">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-20181103155932871.png">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-2018110316453581.png">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-20181103164650199.png">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-20181103164807626.png">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-2018110316490416.png">
+<meta property="og:updated_time" content="2018-11-03T10:57:25.095Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="多线程并发编程">
+<meta name="twitter:description" content="并发基础知识与核心知识并发与高并发 并发：同时拥有两个或者多个线程，如果程序在单核处理器上运行，多个线程将交替的换入或者换出内存，这些线程是同时存在的，每个线程处于执行过程中的某个状态，如果运行在多核处理器上，此时程序中的每个线程将被分到一个处理器核上，因此可以同时运行。 高并发：high concurrency是互联网分布式系统架构设计中必须考虑的因素之一，它通常是指通过设计保证系统能够同时并行">
+<meta name="twitter:image" content="http://yoursite.com/img/markdown-img-paste-20181030193947869.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/21/多线程并发编程/"/>
+
+
+
+
+
+  <title>多线程并发编程 | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/多线程并发编程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">多线程并发编程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/concurrent-programming/" itemprop="url" rel="index">
+                    <span itemprop="name">concurrent programming</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="并发基础知识与核心知识"><a href="#并发基础知识与核心知识" class="headerlink" title="并发基础知识与核心知识"></a>并发基础知识与核心知识</h1><h2 id="并发与高并发"><a href="#并发与高并发" class="headerlink" title="并发与高并发"></a>并发与高并发</h2><ul>
+<li>并发：同时拥有两个或者多个线程，如果程序在单核处理器上运行，多个线程将交替的换入或者换出内存，这些线程是同时存在的，每个线程处于执行过程中的某个状态，如果运行在多核处理器上，此时程序中的每个线程将被分到一个处理器核上，因此可以同时运行。</li>
+<li>高并发：high concurrency是互联网分布式系统架构设计中必须考虑的因素之一，它通常是指通过设计保证系统能够同时并行处理很多请求。</li>
+</ul>
+<h2 id="CPU多级缓存"><a href="#CPU多级缓存" class="headerlink" title="CPU多级缓存"></a>CPU多级缓存</h2><p><img src="/img/markdown-img-paste-20181030193947869.png" alt="CPU多级缓存"></p>
+<ul>
+<li>CPU的频率远远快与主存的速度，在处理器的时钟周期内，CPU需要等待主存，为了最大限度的利用CPU的性能，引入了Cache，环节CPU和内存之间速度的不匹配。</li>
+<li><p>缓存的意义：</p>
+<ul>
+<li><p>时间局部性：如果某个数据被访问，那么在不久的将来它很可能再次被访问</p>
+</li>
+<li><p>空间局部性：如果某个数据被访问，那么与它相邻的数据很快也可能被访问</p>
+</li>
+</ul>
+</li>
+<li><p>缓存一致性-MESI：</p>
+<ul>
+<li><p>用于保证多个CPU cache之间缓存共享数据的一致性</p>
+</li>
+<li><p><img src="/img/markdown-img-paste-20181030195647642.png" alt=""></p>
+<ul>
+<li><p>M：修改，该缓存行只被缓存在缓存中，与CPU之间的数据是不同的，需要重新写入主存</p>
+</li>
+<li><p>E：独享，该缓存行只被缓存在缓存中，与CPU之间的数据一致</p>
+</li>
+<li><p>S：共享，该缓存行可能被多个CPU进行缓存</p>
+</li>
+<li><p>I：无效，有其他CPU修改了该缓存航</p>
+</li>
+<li><p>local read</p>
+</li>
+<li><p>local write</p>
+</li>
+<li><p>remote read</p>
+</li>
+<li><p>remote write</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>乱序执行优化：处理器为提高运算速度而做出违背代码原有顺序的优化</p>
+</li>
+<li><p>Java内存模型</p>
+<ul>
+<li><p>Heap：运行时数据区，可以动态分配内存大小，GC负责，存取速度相对较慢</p>
+</li>
+<li><p>Stack：存取速度较快，大小固定</p>
+</li>
+<li><p>当两个线程同时调用同一个对象的同一个方法，两个线程则拥有这个对象的私有拷贝</p>
+<p><img src="/img/markdown-img-paste-20181030201239548.png" alt=""></p>
+<p><img src="/img/markdown-img-paste-20181030202501137.png" alt="内存模型抽象图"></p>
+</li>
+<li><p>同步操作与规则：</p>
+<ul>
+<li><p>操作：</p>
+<ul>
+<li><p>lock：作用于主内存的变量，把一个变量标识为一个线程独占状态</p>
+</li>
+<li><p>unlock：作用于主内存的变量，把一个处于锁定状态的变量释放出来，释放后的变量才可以被其他线程锁定。</p>
+</li>
+<li><p>read：作用于主内存的变量，把一个变量值从主内存传输到线程的工作内存中，以便随后的load使用</p>
+</li>
+<li><p>load：作用于工作内存的变量，把read操作从主内存中得到的变量值放入到工作内存的变量副本中</p>
+</li>
+<li><p>use：作用于工作内存的变量，将工作内存中的一个变量值传递给执行引擎</p>
+</li>
+<li><p>assign：作用于工作内存的变量，把一个从执行引擎接收到的值赋值给工作内存的变量</p>
+</li>
+<li><p>store：作用于工作内存的变量，把工作内存中的一个变量的值传送到主内存中，以便随后的写入操作</p>
+</li>
+<li><p>write：作用于主内存的变量，把store操作从工作内存的中一个变量的值传送到主内存的变量中</p>
+</li>
+<li><p><img src="/img/markdown-img-paste-20181030203010624.png" alt=""></p>
+</li>
+</ul>
+</li>
+<li><p>规则：</p>
+<ul>
+<li><p>如果要把一个变量从主内存中复制到工作内存，就需要按顺序的执行read和load操作，如果把变量从工作内存中同步回主内存中，就要按顺序地执行store和write操作。但Java内存模型只要求上述操作必须按顺序执行，而没有保证必须是连续执行</p>
+</li>
+<li><p>不允许read和load，store和write操作之一单独出现</p>
+</li>
+<li><p>不允许一个线程丢弃它最近的assign操作，即变量在工作内存中改变了之后必须同步到主内存中</p>
+</li>
+<li><p>不允许一个线程无原因的把数据从工作内存同步回主内存中</p>
+</li>
+<li><p>一个新的变量只能在主内存中诞生，不允许在工作内存中直接使用一个未被初始化的变量。也就是对一个变量实施use和store操作之前，必须先执行过了assign和load操作</p>
+</li>
+<li><p>一个变量在同一时刻只允许一条线程对其进行lock操作，但是咯擦卡操作可以被同一条线程重复多次执行，多次lock之后，只有执行相同次数的unlock操作，变量才会被解锁。</p>
+</li>
+<li><p>如果对一个变量执行lock操作，将会清空工作内存中此变量的值，在执行引擎使用这个变量前需要重新执行load或assign操作初始化变量的值</p>
+</li>
+<li><p>如果一个变量事先没有被lock操作锁定，则不允许对它执行unlock操作，也不允许unlock一个被其他线程锁定的变量</p>
+</li>
+<li><p>对一个变量执行unlock操作之前，必须先把此变量同步到主内存中</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>并发的优势</p>
+<ul>
+<li><p>速度：同时处理多个请求，相应更快，复杂的操作可以分成多个进程同时进行</p>
+</li>
+<li><p>设计：程序设计在某些情况下会更简单，也可以有更多的选择</p>
+</li>
+<li><p>资源利用：CPU能够在等待IO的时候做一些其他事情</p>
+</li>
+</ul>
+</li>
+<li><p>并发的风险：</p>
+<ul>
+<li><p>安全性：多个线程共享数据时可能会产生与预期不相符的结果</p>
+</li>
+<li><p>活跃性：某个操作无法继续进行下去的时候，就会发生活跃性的问题，比如死锁问题，饥饿问题等</p>
+</li>
+<li><p>性能：线程过多会使得CPU频繁切换线程，调度时间增多，同步机制，消耗过多的内存</p>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="并发的线程安全处理"><a href="#并发的线程安全处理" class="headerlink" title="并发的线程安全处理"></a>并发的线程安全处理</h1><h2 id="并发模拟"><a href="#并发模拟" class="headerlink" title="并发模拟"></a>并发模拟</h2><ul>
+<li><p>PostMan</p>
+</li>
+<li><p>Apache Bench</p>
+</li>
+<li><p>JMeter</p>
+</li>
+<li><p>Semaphore、countdownLatch</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcurrencyTest</span> </span>&#123;</div><div class="line">    <span class="comment">// 请求总数</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> clientTotal = <span class="number">5000</span>;</div><div class="line">    <span class="comment">// 线程总数</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> threadTotal = <span class="number">200</span>;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> count = <span class="number">0</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">        ExecutorService es = Executors.newCachedThreadPool();</div><div class="line">        <span class="keyword">final</span> Semaphore semaphore = <span class="keyword">new</span> Semaphore(threadTotal);</div><div class="line">        <span class="keyword">final</span> CountDownLatch countDownLatch = <span class="keyword">new</span> CountDownLatch(clientTotal);</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; clientTotal; i++) &#123;</div><div class="line">            es.execute(() -&gt; &#123;</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    semaphore.acquire();</div><div class="line">                    add();</div><div class="line">                    semaphore.release();</div><div class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                    log.error(<span class="string">"exception"</span>, e);</div><div class="line">                    e.printStackTrace();</div><div class="line">                &#125;</div><div class="line">                countDownLatch.countDown();</div><div class="line">            &#125;);</div><div class="line">        &#125;</div><div class="line">        countDownLatch.await();</div><div class="line">        log.info(<span class="string">"count:&#123;&#125;"</span>, count);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">()</span> </span>&#123;</div><div class="line">        count++;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="线程安全性"><a href="#线程安全性" class="headerlink" title="线程安全性"></a>线程安全性</h2><p>当多个线程访问某个类时，不管运行时环境采用何种调度方式，或者这些进程将如何交替执行，并且在主调代码中不需要任何额外的同步或者协同，这个类都将表现出正确的行为，那么这个类时线程安全的。</p>
+<ul>
+<li><p>原子性：提供了互斥访问，同一个时刻只有一个线程对它进行操作</p>
+<ul>
+<li><p>Atomic包：CAS完成原子性</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Slf</span>4j</div><div class="line"><span class="meta">@ThreadSafe</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CountExample2</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> clientTotal = <span class="number">5000</span>;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> threadTotal = <span class="number">10</span>;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> AtomicInteger count = <span class="keyword">new</span> AtomicInteger(<span class="number">0</span>);</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">        ExecutorService es = Executors.newCachedThreadPool();</div><div class="line">        <span class="keyword">final</span> Semaphore semaphore = <span class="keyword">new</span> Semaphore(threadTotal);</div><div class="line">        <span class="keyword">final</span> CountDownLatch countDownLatch = <span class="keyword">new</span> CountDownLatch(clientTotal);</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span>  i = <span class="number">0</span>; i &lt; clientTotal; i++) &#123;</div><div class="line">            es.execute(() -&gt; &#123;</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    semaphore.acquire();</div><div class="line">                    add();</div><div class="line">                    semaphore.release();</div><div class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                    log.error(<span class="string">"exception"</span>, e);</div><div class="line">                &#125;</div><div class="line">                countDownLatch.countDown();</div><div class="line">            &#125;);</div><div class="line">        &#125;</div><div class="line">        countDownLatch.await();</div><div class="line">        es.shutdown();</div><div class="line">        log.info(<span class="string">"count: &#123;&#125;"</span>, count);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">()</span> </span>&#123;</div><div class="line">        count.incrementAndGet();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="comment">//21:20:18.403 [main] INFO com.imooc.concurentcy.example.count.CountExample2 - count: 5000</span></div></pre></td></tr></table></figure>
+<ul>
+<li><p>AtomicXXX：CAS、Unsafe.compareAndSwapInt</p>
+</li>
+<li><p>AtomicLong、LongAddr</p>
+</li>
+<li><p>AtomicReference、AtomicReferenceFieldUpdater</p>
+</li>
+<li><p>AtomicStampReference：CAS的ABA问题</p>
+</li>
+</ul>
+</li>
+<li><p>锁</p>
+<ul>
+<li><p>synchronized，关键字，依赖JVM，不可中断的锁，适合竞争不激烈，可读性好</p>
+<ul>
+<li><p>修饰代码块，作用于调用的对象</p>
+</li>
+<li><p>修饰方法，整个方法，作用于对象</p>
+</li>
+<li><p>修饰静态方法，整个静态方法，作用于所有对象</p>
+</li>
+<li><p>修饰类，作用于所有对象</p>
+</li>
+</ul>
+</li>
+<li><p>Lock：依赖特殊的CPU指令，可中断锁，多样化同步，适合竞争激烈时能维持常态</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>可见性：一个线程对主内存的数据的修改可以及时的被其他线程观察到</p>
+<ul>
+<li><p>导致共享变量在线程间不可见的原因</p>
+<ul>
+<li><p>线程交叉执行</p>
+</li>
+<li><p>重排序结合线程交叉执行</p>
+</li>
+<li><p>共享变量更新后的值没有在工作内存与主内存间及时更新</p>
+</li>
+</ul>
+</li>
+<li><p>JMM关于synchronized的规定：</p>
+<ul>
+<li><p>线程解锁前，必须把共享变量的值，刷新到主内存中</p>
+</li>
+<li><p>线程加锁时，将清空工作内存中共享变量的值，从而使用共享变量时需要从主内存中重新读取最新的值</p>
+</li>
+</ul>
+</li>
+<li><p>volatile，通过内存屏障和禁止重排序优化来实现：</p>
+<ul>
+<li><p>对volatile变量写操作时，会在写操作后加入一条store屏障指令，将本地内存中的共享变量值刷新到主内存</p>
+</li>
+<li><p>对volatile变量读操作时，会在读操作前键入一条load屏障指令，从主内存中读取共享变量</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>有序性：一个线程观察其他线程中的指令的执行顺序，由于指令重排序的存在，该观察结果一般杂乱无序</p>
+<ul>
+<li><p>Java内存模型中，允许编译器和处理器对指令进行重排序，但是重排序过程不会影响到单线程程序的执行，但是会影响多线程并发执行的正确性</p>
+</li>
+<li><p>volatile，synchronized，Lock</p>
+</li>
+<li><p>Happenes-Before原则</p>
+<ul>
+<li><p>程序次序原则：一个程序内，按照代码顺序，书写在前面的操作先行发生于书写在后面的操作</p>
+</li>
+<li><p>锁定规则：一个unlock操作线性发生于后面对同一个锁的Lock操作</p>
+</li>
+<li><p>volatile变量规则：对一个变量的写操作先行发生于后面对这个变量的读操作</p>
+</li>
+<li><p>传递规则：如果操作A先行发生于操作B，操作B先行发生于操作C，操作A先与操作C</p>
+</li>
+<li><p>线程启动规则：Thread对象的start方法先行发生于此线程的每一个动作</p>
+</li>
+<li><p>线程中断规则：对线程的interrupt方法的调用先行发生于被中断线程的代码检测到的中断事件的发生</p>
+</li>
+<li><p>线程终结规则：线程中所有的操作都先行发生于线程的终止检测</p>
+</li>
+<li><p>对象终结规则：一个对象的初始化完成先行发生于finalize()方法的开始</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="安全发布对象"><a href="#安全发布对象" class="headerlink" title="安全发布对象"></a>安全发布对象</h2><ol>
+<li><p>发布对象：使一个对象能够被当前范围之外的代码所使用</p>
+</li>
+<li><p>对象逸出：一种错误的发布，一个对象没有构造完成就被其他线程所见</p>
+</li>
+<li><p>安全发布对象</p>
+<ul>
+<li><p>在静态初始化函数中初始化一个对象的引用</p>
+</li>
+<li><p>将对象的引用保存到volatile类型域或者AtomicReference对象中</p>
+</li>
+<li><p>将对象的引用保存到某个正确构造对象的final类型域中</p>
+</li>
+<li><p>将对象的引用保存到一个由锁保护的域中</p>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="线程安全策略"><a href="#线程安全策略" class="headerlink" title="线程安全策略"></a>线程安全策略</h2><ol>
+<li><p>不可变对象–String类型</p>
+<ul>
+<li><p>条件</p>
+<ul>
+<li><p>对象创建以后其状态不能修改</p>
+</li>
+<li><p>对象所有的域都是final类型</p>
+</li>
+<li><p>对象时正确创建的，创建过程中this引用没有逸出</p>
+</li>
+</ul>
+</li>
+<li><p>final关键字</p>
+<ul>
+<li><p>修饰类：不能被继承，String，Integer，Long</p>
+</li>
+<li><p>修饰方法：锁定方法不能被继承类修改，早期效率更高</p>
+</li>
+<li><p>修饰变量：</p>
+<ul>
+<li><p>基本数据类型变量，数值在初始化之后不可被修改</p>
+</li>
+<li><p>引用类型变量，初始化之后不能再指向另外一个对象，对象里面的值时可以进行修改的</p>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ImmutableExample1</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> Integer a = <span class="number">1</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> String b = <span class="string">"2"</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> Map&lt;Integer, Integer&gt; map = Maps.newHashMap();</div><div class="line"></div><div class="line">    <span class="keyword">static</span> &#123;</div><div class="line">        map.put(<span class="number">1</span>,<span class="number">2</span>);</div><div class="line">        map.put(<span class="number">3</span>,<span class="number">4</span>);</div><div class="line">        map.put(<span class="number">5</span>,<span class="number">6</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line"><span class="comment">//        a = 2;</span></div><div class="line"><span class="comment">//        b = "a";</span></div><div class="line"><span class="comment">//        map = Maps.newTreeMap();</span></div><div class="line">        log.info(<span class="string">"&#123;&#125;"</span>, map.get(<span class="number">1</span>));</div><div class="line">        map.put(<span class="number">1</span>,<span class="number">4</span>);</div><div class="line">        log.info(<span class="string">"&#123;&#125;"</span>, map.get(<span class="number">1</span>));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span> a)</span> </span>&#123;</div><div class="line"><span class="comment">//        a = 1;</span></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * 17:04:10.511 [main] INFO com.imooc.concurentcy.example.immutable.ImmutableExample1 - 2</span></div><div class="line"><span class="comment"> * 17:04:10.517 [main] INFO com.imooc.concurentcy.example.immutable.ImmutableExample1 - 4</span></div><div class="line"><span class="comment"> */</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p>Collections.unmodifiableXXX:Collection, List, Set, Map…</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ImmutableExample2</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> Integer a = <span class="number">1</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> String b = <span class="string">"2"</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Map&lt;Integer, Integer&gt; map = Maps.newHashMap();</div><div class="line"></div><div class="line">    <span class="keyword">static</span> &#123;</div><div class="line">        map.put(<span class="number">1</span>,<span class="number">2</span>);</div><div class="line">        map.put(<span class="number">3</span>,<span class="number">4</span>);</div><div class="line">        map.put(<span class="number">5</span>,<span class="number">6</span>);</div><div class="line">        map = Collections.unmodifiableMap(map);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line"><span class="comment">//        a = 2;</span></div><div class="line"><span class="comment">//        b = "a";</span></div><div class="line"><span class="comment">//        map = Maps.newTreeMap();</span></div><div class="line">        log.info(<span class="string">"&#123;&#125;"</span>, map.get(<span class="number">1</span>));</div><div class="line">        map.put(<span class="number">1</span>,<span class="number">4</span>);</div><div class="line">        log.info(<span class="string">"&#123;&#125;"</span>, map.get(<span class="number">1</span>));</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * Exception in thread "main" java.lang.UnsupportedOperationException</span></div><div class="line"><span class="comment"> * 17:02:41.546 [main] INFO com.imooc.concurentcy.example.immutable.ImmutableExample2 - 2</span></div><div class="line"><span class="comment"> * 	at java.util.Collections$UnmodifiableMap.put(Collections.java:1457)</span></div><div class="line"><span class="comment"> * 	at com.imooc.concurentcy.example.immutable.ImmutableExample2.main(ImmutableExample2.java:34)</span></div><div class="line"><span class="comment"> */</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>Guava：ImmutableXXX:Collection, List, Set, Map…</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ImmutableExample3</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> ImmutableList list = ImmutableList.of(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>);</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> ImmutableSet set = ImmutableSet.copyOf(list);</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> ImmutableMap&lt;Integer, Integer&gt; map = ImmutableMap.of(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>);</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> ImmutableMap&lt;Integer, Integer&gt; map2 = ImmutableMap.&lt;Integer, Integer&gt;builder().put(<span class="number">1</span>,<span class="number">2</span>)</div><div class="line">            .put(<span class="number">3</span>,<span class="number">4</span>).put(<span class="number">5</span>,<span class="number">6</span>).build();</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line"><span class="comment">//        list.add(4);</span></div><div class="line"><span class="comment">//        Exception in thread "main" java.lang.UnsupportedOperationException</span></div><div class="line"><span class="comment">//        at com.google.common.collect.ImmutableCollection.add(ImmutableCollection.java:222)</span></div><div class="line"><span class="comment">//        at com.imooc.concurentcy.example.immutable.ImmutableExample3.main(ImmutableExample3.java:26)</span></div><div class="line">        map.put(<span class="number">6</span>,<span class="number">7</span>);</div><div class="line">        map2.put(<span class="number">7</span>,<span class="number">8</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>线程封闭</p>
+<ul>
+<li><p>Ad-hoc线程封闭：程序控制是实现</p>
+</li>
+<li><p>堆栈封闭：局部变量，无并发问题</p>
+</li>
+<li><p>ThreadLocal线程封闭</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RequestHolder</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> ThreadLocal&lt;Long&gt; requesetHolder = <span class="keyword">new</span> ThreadLocal&lt;&gt;();</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(Long id)</span> </span>&#123;</div><div class="line">        requesetHolder.set(id);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Long <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> requesetHolder.get();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">()</span> </span>&#123;</div><div class="line">        requesetHolder.remove();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>线程不安全的类与写法</p>
+<ul>
+<li><p>StringBuilder-&gt;StringBuffer</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Slf</span>4j</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StringExample1</span> </span>&#123;</div><div class="line">    <span class="comment">// 请求总数</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> clientTotal = <span class="number">5000</span>;</div><div class="line"></div><div class="line">    <span class="comment">// 同时并发执行的线程数</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> threadTotal = <span class="number">200</span>;</div><div class="line"></div><div class="line"><span class="comment">//    public static StringBuilder  sb = new StringBuilder();</span></div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> StringBuffer  sb = <span class="keyword">new</span> StringBuffer();</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        ExecutorService executorService = Executors.newCachedThreadPool();</div><div class="line">        <span class="keyword">final</span> Semaphore semaphore = <span class="keyword">new</span> Semaphore(threadTotal);</div><div class="line">        <span class="keyword">final</span> CountDownLatch countDownLatch = <span class="keyword">new</span> CountDownLatch(clientTotal);</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; clientTotal ; i++) &#123;</div><div class="line">            executorService.execute(() -&gt; &#123;</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    semaphore.acquire();</div><div class="line">                    update();</div><div class="line">                    semaphore.release();</div><div class="line">                &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">                    log.error(<span class="string">"exception"</span>, e);</div><div class="line">                &#125;</div><div class="line">                countDownLatch.countDown();</div><div class="line">            &#125;);</div><div class="line">        &#125;</div><div class="line">        countDownLatch.await();</div><div class="line">        executorService.shutdown();</div><div class="line">        log.info(<span class="string">"count:&#123;&#125;"</span>, sb.length());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">()</span> </span>&#123;</div><div class="line">        sb.append(<span class="number">1</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>SimpleDateFormate-JodaTime</p>
+</li>
+<li><p>ArrayList，HashSet，HashMap等集合类</p>
+</li>
+</ul>
+</li>
+<li><p>同步容器</p>
+<ul>
+<li><p>Vector,Stack</p>
+</li>
+<li><p>HashTable:key和value不能为null</p>
+</li>
+<li><p>Collections.synchronizedXXX(List, Set, Map)</p>
+</li>
+</ul>
+</li>
+<li><p>并发容器</p>
+<ul>
+<li><p>ArrayList-&gt;CopyOnWriteArrayList</p>
+<ul>
+<li><p>读写分离</p>
+</li>
+<li><p>保证最终一致性</p>
+</li>
+<li><p>通过另外开辟空间来解决并发冲突</p>
+</li>
+</ul>
+</li>
+<li><p>HashSet,TreeSet-&gt;CopyOnWriteArraySet,ConcurrentSkipListSet</p>
+</li>
+<li><p>HashMap,TreeMap-&gt;ConcurrentHashMap,ConcurrentSkipListMap</p>
+</li>
+<li><p>JUC的实际构成：<br><img src="/img/markdown-img-paste-20181101154059310.png" alt=""></p>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="J-U-C之AQS"><a href="#J-U-C之AQS" class="headerlink" title="J.U.C之AQS"></a>J.U.C之AQS</h2><h3 id="AQS-AbstractQueuedSynchronizer"><a href="#AQS-AbstractQueuedSynchronizer" class="headerlink" title="AQS-AbstractQueuedSynchronizer"></a>AQS-AbstractQueuedSynchronizer</h3><p><img src="/img/markdown-img-paste-20181101155018876.png" alt=""></p>
+<ul>
+<li><p>使用Node实现FIFO队列，可以用于构建锁或者其他同步装置的基础框架</p>
+</li>
+<li><p>利用一个int类型表示状态</p>
+</li>
+<li><p>使用方法是继承</p>
+</li>
+<li><p>子类通过继承并通过实现其方法管理其状态，也就是acquire方法和release方法</p>
+</li>
+<li><p>可以同时实现排他锁和共享锁模式</p>
+</li>
+</ul>
+<h3 id="CountDownLatch"><a href="#CountDownLatch" class="headerlink" title="CountDownLatch"></a>CountDownLatch</h3><h3 id="Semaphore"><a href="#Semaphore" class="headerlink" title="Semaphore"></a>Semaphore</h3><h3 id="CyclicBarrier"><a href="#CyclicBarrier" class="headerlink" title="CyclicBarrier"></a>CyclicBarrier</h3><h3 id="ReentrantLock"><a href="#ReentrantLock" class="headerlink" title="ReentrantLock"></a>ReentrantLock</h3><ol>
+<li><p>ReentrantLock和synchronized的区别</p>
+<ul>
+<li><p>可重入性，都可以</p>
+</li>
+<li><p>锁的实现，synchronized是依赖于JVM</p>
+</li>
+<li><p>性能：优化之后差不多</p>
+</li>
+<li><p>功能区别</p>
+</li>
+</ul>
+</li>
+<li><p>ReenTrantLock独有的功能：</p>
+<ul>
+<li><p>可以执行公平锁还是非公平锁</p>
+</li>
+<li><p>提供一个Condition类，可以分组唤醒需要唤醒的线程</p>
+</li>
+<li><p>可以终端等待锁的线程的机制</p>
+</li>
+</ul>
+</li>
+<li><p>StampLock–读，写，乐观读三种模式</p>
+</li>
+</ol>
+<h3 id="Condition"><a href="#Condition" class="headerlink" title="Condition"></a>Condition</h3><h3 id="FutureTask"><a href="#FutureTask" class="headerlink" title="FutureTask"></a>FutureTask</h3><ul>
+<li><p>Callable和Runnable接口对比</p>
+<ul>
+<li><p>run,call</p>
+</li>
+<li><p>返回值</p>
+</li>
+</ul>
+</li>
+<li><p>Future接口–获取线程运行状态和结果</p>
+</li>
+<li><p>FutureTask</p>
+<ul>
+<li><p>Runnable</p>
+</li>
+<li><p>Future</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="BlockingQueue"><a href="#BlockingQueue" class="headerlink" title="BlockingQueue"></a>BlockingQueue</h3><p>阻塞队列中的操作：</p>
+<p><img src="/img/markdown-img-paste-20181102152907971.png" alt=""></p>
+<ul>
+<li><p>ArrayBlockingQueue</p>
+</li>
+<li><p>DelayQueue</p>
+</li>
+<li><p>LinkedBlockingQueue</p>
+</li>
+<li><p>PriorityBlockingQueue</p>
+</li>
+<li><p>SynchronousQueue</p>
+</li>
+</ul>
+<h2 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h2><ul>
+<li><p>new Thread的弊端</p>
+<ul>
+<li><p>性能差</p>
+</li>
+<li><p>线程缺乏统一管理，可能无限制的新建线程，相互竞争，有可能OOM</p>
+</li>
+<li><p>缺少更多功能，</p>
+</li>
+</ul>
+</li>
+<li><p>线程池的好处</p>
+<ul>
+<li><p>重用存在的线程，减少对象的创建，销毁的开销，性能好</p>
+</li>
+<li><p>可以有效的控制最大并发线程数，提高系统资源利用率，同时可以避免过多资源竞争，避免阻塞</p>
+</li>
+<li><p>提供定期执行，定时执行，单线程，并发数控制等功能</p>
+</li>
+</ul>
+</li>
+<li><p>ThreadPoolExecutor</p>
+<ul>
+<li><p>corePoolSize</p>
+</li>
+<li><p>maximumPoolSize</p>
+</li>
+<li><p>workQueue-阻塞队列</p>
+</li>
+<li><p>keepAliveTime</p>
+</li>
+<li><p>unit</p>
+</li>
+<li><p>threadFactory</p>
+</li>
+<li><p>rejectHandler</p>
+</li>
+</ul>
+</li>
+<li><p>线程池的状态</p>
+<ul>
+<li><p>running</p>
+</li>
+<li><p>shutdown</p>
+</li>
+<li><p>stop</p>
+</li>
+<li><p>tidying</p>
+</li>
+<li><p>terminated</p>
+</li>
+</ul>
+<p><img src="/img/markdown-img-paste-20181102155642312.png" alt="线程池状态"></p>
+</li>
+<li><p>提供的方法</p>
+<ul>
+<li><p>execute</p>
+</li>
+<li><p>submit 有返回值 execute+future</p>
+</li>
+<li><p>shutdown</p>
+</li>
+<li><p>shutdownNow</p>
+</li>
+<li><p>getTaskCount：获取一致性和未执行的任务总数</p>
+</li>
+<li><p>getCompletedTaskCount</p>
+</li>
+<li><p>getPoolSize</p>
+</li>
+<li><p>getActiveCount</p>
+</li>
+</ul>
+</li>
+<li><p>四种线程池</p>
+<ul>
+<li><p>Executors.newCachedThreadPool</p>
+</li>
+<li><p>Executors.newFixedThreadPool</p>
+</li>
+<li><p>Executors.newScheduledhreadPool</p>
+</li>
+<li><p>Executors.newSingleThreadExecutor</p>
+</li>
+</ul>
+</li>
+<li><p>合理配置</p>
+<ul>
+<li><p>CPU密集型任务，需要尽量压榨CPU，参考值可以设置为CPU的核数+1</p>
+</li>
+<li><p>IO密集型任务，参考值可以设置为2*CPU的核数</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="并发扩展"><a href="#并发扩展" class="headerlink" title="并发扩展"></a>并发扩展</h2><h3 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h3><ul>
+<li><p>必要条件</p>
+<ul>
+<li><p>互斥条件</p>
+</li>
+<li><p>请求和保持条件：对已经获取的资源不释放</p>
+</li>
+<li><p>不剥夺条件</p>
+</li>
+<li><p>环路等待条件：循环等待</p>
+</li>
+</ul>
+</li>
+<li><p>死锁实例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeadLock</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">int</span> flag = <span class="number">1</span>;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Object o1 = <span class="keyword">new</span> Object();</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Object o2 = <span class="keyword">new</span> Object();</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        log.info(<span class="string">"flag : &#123;&#125;"</span>, flag);</div><div class="line">        <span class="keyword">if</span> (flag == <span class="number">1</span>) &#123;</div><div class="line">            <span class="keyword">synchronized</span> (o1) &#123;</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    Thread.sleep(<span class="number">500</span>);</div><div class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                    e.printStackTrace();</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">synchronized</span> (o2) &#123;</div><div class="line">                    log.info(<span class="string">"1"</span>);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">if</span> (flag == <span class="number">0</span>) &#123;</div><div class="line">            <span class="keyword">synchronized</span> (o2) &#123;</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    Thread.sleep(<span class="number">500</span>);</div><div class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                    e.printStackTrace();</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">synchronized</span> (o1) &#123;</div><div class="line">                    log.info(<span class="string">"0"</span>);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        DeadLock td1 = <span class="keyword">new</span> DeadLock();</div><div class="line">        DeadLock td2 = <span class="keyword">new</span> DeadLock();</div><div class="line">        td1.flag = <span class="number">1</span>;</div><div class="line">        td2.flag = <span class="number">0</span>;</div><div class="line">        <span class="comment">//td1,td2都处于可执行状态，但JVM线程调度先执行哪个线程是不确定的。</span></div><div class="line">        <span class="comment">//td2的run()可能在td1的run()之前运行</span></div><div class="line">        <span class="keyword">new</span> Thread(td1).start();</div><div class="line">        <span class="keyword">new</span> Thread(td2).start();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>死锁避免方法：</p>
+<ul>
+<li><p>加锁顺序</p>
+</li>
+<li><p>加锁时限，超时释放机制</p>
+</li>
+<li><p>死锁检测</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="多线程并发的最佳实践"><a href="#多线程并发的最佳实践" class="headerlink" title="多线程并发的最佳实践"></a>多线程并发的最佳实践</h2><ul>
+<li><p>使用本地变量</p>
+</li>
+<li><p>使用不可变类</p>
+</li>
+<li><p>最小化锁的作用于范围：s = 1 / (1 - a + a / n);</p>
+</li>
+<li><p>使用线程池的Executor,而不是直接new Thread</p>
+</li>
+<li><p>宁可使用同步也不要使用线程的wait和notify方法</p>
+</li>
+<li><p>使用blockingQueue实现生产-消费模式</p>
+</li>
+<li><p>使用并发集合而不是使用加了锁的同步集合</p>
+</li>
+<li><p>使用Semaphore创建有界的访问</p>
+</li>
+<li><p>宁可使用同步代码块，也不使用同步的方法</p>
+</li>
+<li><p>避免使用静态变量</p>
+</li>
+</ul>
+<h1 id="高并发处理思路及手段"><a href="#高并发处理思路及手段" class="headerlink" title="高并发处理思路及手段"></a>高并发处理思路及手段</h1><h2 id="扩容"><a href="#扩容" class="headerlink" title="扩容"></a>扩容</h2><ul>
+<li><p>垂直扩容：提高系统部件能力，如加大内存</p>
+</li>
+<li><p>水平扩容：增加更多系统成员来实现，如增加机器</p>
+</li>
+<li><p>数据库扩容</p>
+<ul>
+<li><p>读操作扩展：memcache，redis,CDN缓存等</p>
+</li>
+<li><p>写操作扩展：Cassandra,Hbase等</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h2><ul>
+<li><p>缓存特征</p>
+<ul>
+<li><p>缓存命中率：命中数 / (命中数+未命中数)</p>
+</li>
+<li><p>最大空间：缓存清空策略</p>
+<ul>
+<li><p>FIFO：淘汰最先创建的数据</p>
+</li>
+<li><p>LFU：最少使用次数，清除使用次数最少的数据</p>
+</li>
+<li><p>LRU：淘汰最远使用的数据的时间戳-热点数据</p>
+</li>
+<li><p>过期时间：过期时间最长的</p>
+</li>
+<li><p>Random：随机淘汰</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>影响缓存命中率的因素</p>
+<ul>
+<li><p>业务场景和业务需求-读写</p>
+</li>
+<li><p>缓存的设计(粒度和过期策略)</p>
+</li>
+<li><p>缓存的容量和基础设施</p>
+</li>
+<li><p>缓存节点故障等问题–一致性哈希算法</p>
+</li>
+</ul>
+</li>
+<li><p>缓存分类和应用场景：</p>
+<ul>
+<li><p>本地缓存：编程实现，Guava Cache</p>
+</li>
+<li><p>分布式缓存：Memcached，Redis</p>
+</li>
+</ul>
+</li>
+<li><p>Redis</p>
+<p><img src="/img/markdown-img-paste-20181102185614826.png" alt="redis核心对象"></p>
+</li>
+<li><p>高并发场景下存在的问题</p>
+<ul>
+<li><p>缓存一致性</p>
+<p><img src="/img/markdown-img-paste-2018110219583022.png" alt=""></p>
+</li>
+<li><p>缓存并发问题</p>
+<p><img src="/img/markdown-img-paste-20181102195850302.png" alt=""></p>
+</li>
+<li><p>缓存穿透问题</p>
+<p><img src="/img/markdown-img-paste-20181102195945446.png" alt=""></p>
+<ul>
+<li>缓存空对象</li>
+</ul>
+</li>
+<li><p>缓存雪崩现象</p>
+<p><img src="/img/markdown-img-paste-20181102200153487.png" alt=""></p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h2><ul>
+<li><p>消息队列特性</p>
+<ul>
+<li><p>业务无关：只做消息分发</p>
+</li>
+<li><p>FIFO：先到先出</p>
+</li>
+<li><p>容灾：节点的动态增删和消息的持久化</p>
+</li>
+<li><p>性能：吞吐量提升，系统内部通信效率提高</p>
+</li>
+</ul>
+</li>
+<li><p>消息队列的好处</p>
+<ul>
+<li><p>业务解耦</p>
+</li>
+<li><p>最终一致性</p>
+</li>
+<li><p>广播</p>
+</li>
+<li><p>错峰与流控</p>
+</li>
+</ul>
+</li>
+<li><p>队列实例</p>
+<ul>
+<li><p>Kafka</p>
+<p><img src="/img/markdown-img-paste-2018110315153084.png" alt=""></p>
+<ul>
+<li><p>高性能，跨语言，分布式发布订阅消息队列系统</p>
+</li>
+<li><p>快速持久化,O(1)</p>
+</li>
+<li><p>高吞吐</p>
+</li>
+<li><p>分布式系统</p>
+</li>
+<li><p>支持Hadoop数据加载</p>
+</li>
+</ul>
+</li>
+<li><p>RabbitMQ</p>
+<p><img src="/img/markdown-img-paste-20181103151950629.png" alt=""></p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="应用拆分-解决单个服务器处理上限的问题"><a href="#应用拆分-解决单个服务器处理上限的问题" class="headerlink" title="应用拆分-解决单个服务器处理上限的问题"></a>应用拆分-解决单个服务器处理上限的问题</h2><ul>
+<li><p>应用拆分原则</p>
+<ul>
+<li><p>业务优先</p>
+</li>
+<li><p>循序渐进</p>
+</li>
+<li><p>兼顾技术：重构，分层</p>
+</li>
+<li><p>可靠测试</p>
+</li>
+</ul>
+</li>
+<li><p>拆分过程中的关注点</p>
+<ul>
+<li><p>应用之间的通信：RPC or 消息队列 or …</p>
+</li>
+<li><p>应用之间的数据库设计：每个应用单独库</p>
+</li>
+<li><p>避免事务操作跨应用</p>
+</li>
+</ul>
+</li>
+<li><p>应用拆分</p>
+<ul>
+<li><p>服务化-Dubbo</p>
+<p><img src="/img/markdown-img-paste-20181103155755996.png" alt="dubbo架构"></p>
+</li>
+<li><p>微服务-springcloud</p>
+<p><img src="/img/markdown-img-paste-20181103155932871.png" alt="微服务架构"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="应用限流"><a href="#应用限流" class="headerlink" title="应用限流"></a>应用限流</h2><ul>
+<li><p>算法</p>
+<ul>
+<li><p>计数器法-滑动窗口的低精度情况</p>
+<p><img src="/img/markdown-img-paste-2018110316453581.png" alt="计数器法"></p>
+</li>
+<li><p>滑动窗口</p>
+<p><img src="/img/markdown-img-paste-20181103164650199.png" alt="滑动窗口"></p>
+</li>
+<li><p>漏桶算法-leaky Bucket</p>
+<p><img src="/img/markdown-img-paste-20181103164807626.png" alt="漏桶算法"></p>
+</li>
+<li><p>令牌桶算法-token Bucket-允许流量一定程度的突发</p>
+<p><img src="/img/markdown-img-paste-2018110316490416.png" alt="令牌桶算法"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="服务降级"><a href="#服务降级" class="headerlink" title="服务降级"></a>服务降级</h2><ul>
+<li><p>服务降级：设置默认返回，解决处理不了的请求。</p>
+<ul>
+<li><p>自动降级：超时，失败次数，故障，限流</p>
+</li>
+<li><p>人工降级：秒杀，双11大促等</p>
+</li>
+</ul>
+</li>
+<li><p>服务熔断：过载保护</p>
+</li>
+</ul>
+<h2 id="数据库分库分表"><a href="#数据库分库分表" class="headerlink" title="数据库分库分表"></a>数据库分库分表</h2><ul>
+<li><p>数据库瓶颈</p>
+<ul>
+<li><p>单个库的数据量上限（1-2T)</p>
+</li>
+<li><p>单个数据库服务压力过大，读写瓶颈：多个库</p>
+</li>
+<li><p>单个表的数据量过大：分表</p>
+</li>
+</ul>
+</li>
+<li><p>数据库切库</p>
+<ul>
+<li>读写分离，降低主库的压力，多个从库通过负载均衡来调节</li>
+</ul>
+</li>
+<li><p>数据库分表-单个表的数据量过大</p>
+<ul>
+<li><p>横向分表：同样结构的不同数据的表，id取模划分</p>
+</li>
+<li><p>纵向分表：将本来可以在一个表的内容认为的划分为多个表，根据不同列的数据的活跃数量等进行分配</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="高可用"><a href="#高可用" class="headerlink" title="高可用"></a>高可用</h2><ul>
+<li><p>任务调度系统分布式：elastic-job + zookeeper</p>
+</li>
+<li><p>主备切换：Apache curator + zookeeper分布式锁实现</p>
+</li>
+<li><p>监控报警机制</p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/concurrent-programming/" rel="tag"># concurrent programming</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/21/一致性哈希算法及其Java实现/" rel="next" title="一致性哈希及其Java实现">
+                <i class="fa fa-chevron-left"></i> 一致性哈希及其Java实现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/21/数据库整理/" rel="prev" title="数据库整理">
+                数据库整理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">79</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#并发基础知识与核心知识"><span class="nav-number">1.</span> <span class="nav-text">并发基础知识与核心知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#并发与高并发"><span class="nav-number">1.1.</span> <span class="nav-text">并发与高并发</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU多级缓存"><span class="nav-number">1.2.</span> <span class="nav-text">CPU多级缓存</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#并发的线程安全处理"><span class="nav-number">2.</span> <span class="nav-text">并发的线程安全处理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#并发模拟"><span class="nav-number">2.1.</span> <span class="nav-text">并发模拟</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程安全性"><span class="nav-number">2.2.</span> <span class="nav-text">线程安全性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安全发布对象"><span class="nav-number">2.3.</span> <span class="nav-text">安全发布对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程安全策略"><span class="nav-number">2.4.</span> <span class="nav-text">线程安全策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#J-U-C之AQS"><span class="nav-number">2.5.</span> <span class="nav-text">J.U.C之AQS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#AQS-AbstractQueuedSynchronizer"><span class="nav-number">2.5.1.</span> <span class="nav-text">AQS-AbstractQueuedSynchronizer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CountDownLatch"><span class="nav-number">2.5.2.</span> <span class="nav-text">CountDownLatch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Semaphore"><span class="nav-number">2.5.3.</span> <span class="nav-text">Semaphore</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CyclicBarrier"><span class="nav-number">2.5.4.</span> <span class="nav-text">CyclicBarrier</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ReentrantLock"><span class="nav-number">2.5.5.</span> <span class="nav-text">ReentrantLock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Condition"><span class="nav-number">2.5.6.</span> <span class="nav-text">Condition</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FutureTask"><span class="nav-number">2.5.7.</span> <span class="nav-text">FutureTask</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BlockingQueue"><span class="nav-number">2.5.8.</span> <span class="nav-text">BlockingQueue</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程池"><span class="nav-number">2.6.</span> <span class="nav-text">线程池</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#并发扩展"><span class="nav-number">2.7.</span> <span class="nav-text">并发扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#死锁"><span class="nav-number">2.7.1.</span> <span class="nav-text">死锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程并发的最佳实践"><span class="nav-number">2.8.</span> <span class="nav-text">多线程并发的最佳实践</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#高并发处理思路及手段"><span class="nav-number">3.</span> <span class="nav-text">高并发处理思路及手段</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#扩容"><span class="nav-number">3.1.</span> <span class="nav-text">扩容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缓存"><span class="nav-number">3.2.</span> <span class="nav-text">缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#消息队列"><span class="nav-number">3.3.</span> <span class="nav-text">消息队列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用拆分-解决单个服务器处理上限的问题"><span class="nav-number">3.4.</span> <span class="nav-text">应用拆分-解决单个服务器处理上限的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用限流"><span class="nav-number">3.5.</span> <span class="nav-text">应用限流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#服务降级"><span class="nav-number">3.6.</span> <span class="nav-text">服务降级</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据库分库分表"><span class="nav-number">3.7.</span> <span class="nav-text">数据库分库分表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#高可用"><span class="nav-number">3.8.</span> <span class="nav-text">高可用</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -95,20 +95,48 @@
 
 
 
-<meta name="description" content="设计模式  设计模式是一套被反复使用的，多数人知晓的，经过分类编目的，代码设计经验的总结。使用设计模式是为了可重用代码。 单例模式 定义：单例模式确保只有一个实例，而且自行实例化并向整个系统提供这个实例。  类型：创建类模式  组成：私有构造方法则不能通过构造方法来创建类，静态属性在类加载时就创建了一个对象，公有静态方法保证外部类可以直接调用。  私有的构造方法 指向自己实例的私有静态引用 以自己">
-<meta name="keywords" content="Java,design patterns">
+<meta name="description" content="设计模式  设计模式是一套被反复使用的，多数人知晓的，经过分类编目的，代码设计经验的总结。使用设计模式是为了可重用代码。
+单例模式
+定义：单例模式确保只有一个实例，而且自行实例化并向整个系统提供这个实例。
+
+类型：创建类模式
+
+组成：私有构造方法则不能通过构造方法来创建类，静态属性在类加载时就创建了一个对象，公有静态方法保证外部类可以直接调用。
+
+私有的构造方法
+指向自己实例的私有静态引用
+以自己">
 <meta property="og:type" content="article">
 <meta property="og:title" content="设计模式之单例模式与工厂方法">
 <meta property="og:url" content="http://yoursite.com/2019/04/21/设计模式之单例模式与工厂方法/index.html">
 <meta property="og:site_name" content="小黄">
-<meta property="og:description" content="设计模式  设计模式是一套被反复使用的，多数人知晓的，经过分类编目的，代码设计经验的总结。使用设计模式是为了可重用代码。 单例模式 定义：单例模式确保只有一个实例，而且自行实例化并向整个系统提供这个实例。  类型：创建类模式  组成：私有构造方法则不能通过构造方法来创建类，静态属性在类加载时就创建了一个对象，公有静态方法保证外部类可以直接调用。  私有的构造方法 指向自己实例的私有静态引用 以自己">
-<meta property="og:locale" content="zh-Hans">
+<meta property="og:description" content="设计模式  设计模式是一套被反复使用的，多数人知晓的，经过分类编目的，代码设计经验的总结。使用设计模式是为了可重用代码。
+单例模式
+定义：单例模式确保只有一个实例，而且自行实例化并向整个系统提供这个实例。
+
+类型：创建类模式
+
+组成：私有构造方法则不能通过构造方法来创建类，静态属性在类加载时就创建了一个对象，公有静态方法保证外部类可以直接调用。
+
+私有的构造方法
+指向自己实例的私有静态引用
+以自己">
 <meta property="og:image" content="http://yoursite.com/img/dp-factory-simpleFactory.png">
 <meta property="og:image" content="http://yoursite.com/img/dp-factory-factoryMethod.png">
 <meta property="og:updated_time" content="2018-03-25T05:23:32.427Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="设计模式之单例模式与工厂方法">
-<meta name="twitter:description" content="设计模式  设计模式是一套被反复使用的，多数人知晓的，经过分类编目的，代码设计经验的总结。使用设计模式是为了可重用代码。 单例模式 定义：单例模式确保只有一个实例，而且自行实例化并向整个系统提供这个实例。  类型：创建类模式  组成：私有构造方法则不能通过构造方法来创建类，静态属性在类加载时就创建了一个对象，公有静态方法保证外部类可以直接调用。  私有的构造方法 指向自己实例的私有静态引用 以自己">
+<meta name="twitter:description" content="设计模式  设计模式是一套被反复使用的，多数人知晓的，经过分类编目的，代码设计经验的总结。使用设计模式是为了可重用代码。
+单例模式
+定义：单例模式确保只有一个实例，而且自行实例化并向整个系统提供这个实例。
+
+类型：创建类模式
+
+组成：私有构造方法则不能通过构造方法来创建类，静态属性在类加载时就创建了一个对象，公有静态方法保证外部类可以直接调用。
+
+私有的构造方法
+指向自己实例的私有静态引用
+以自己">
 <meta name="twitter:image" content="http://yoursite.com/img/dp-factory-simpleFactory.png">
 
 
@@ -571,8 +599,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/04/21/设计模式之Spring中的应用/" rel="next" title="设计模式之Spring中的应用">
-                <i class="fa fa-chevron-left"></i> 设计模式之Spring中的应用
+              <a href="/2019/04/21/设计模式之代理模式/" rel="next" title="设计模式之代理模式">
+                <i class="fa fa-chevron-left"></i> 设计模式之代理模式
               </a>
             
           </div>
@@ -581,8 +609,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/04/21/设计模式之代理模式/" rel="prev" title="设计模式之代理模式">
-                设计模式之代理模式 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/04/21/设计模式之原型模式/" rel="prev" title="设计模式之原型模式">
+                设计模式之原型模式 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -663,7 +691,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">79</span>
+                <span class="site-state-item-count">83</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -674,7 +702,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -685,7 +713,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">28</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

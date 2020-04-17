@@ -95,14 +95,14 @@
 
 
 
-<meta name="description" content="1、Springmvc介绍 Spring MVC 是一个模型 - 视图 - 控制器（MVC）的Web框架建立在中央前端控制器servlet（DispatcherServlet），它负责发送每个请求到合适的处理程序，使用视图来最终返回响应结果的概念。Spring MVC 是 Spring 产品组合的一部分，它享有 Spring IoC容器紧密结合Spring松耦合等特点，因此它有Spring的所有优">
-<meta name="keywords" content="Java,Springmvc">
+<meta name="description" content="1、Springmvc介绍
+Spring MVC 是一个模型 - 视图 - 控制器（MVC）的Web框架建立在中央前端控制器servlet（DispatcherServlet），它负责发送每个请求到合适的处理程序，使用视图来最终返回响应结果的概念。Spring MVC 是 Spring 产品组合的一部分，它享有 Spring IoC容器紧密结合Spring松耦合等特点，因此它有Spring的所有优">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Springmvc总结">
 <meta property="og:url" content="http://yoursite.com/2019/04/21/Springmvc总结/index.html">
 <meta property="og:site_name" content="小黄">
-<meta property="og:description" content="1、Springmvc介绍 Spring MVC 是一个模型 - 视图 - 控制器（MVC）的Web框架建立在中央前端控制器servlet（DispatcherServlet），它负责发送每个请求到合适的处理程序，使用视图来最终返回响应结果的概念。Spring MVC 是 Spring 产品组合的一部分，它享有 Spring IoC容器紧密结合Spring松耦合等特点，因此它有Spring的所有优">
-<meta property="og:locale" content="zh-Hans">
+<meta property="og:description" content="1、Springmvc介绍
+Spring MVC 是一个模型 - 视图 - 控制器（MVC）的Web框架建立在中央前端控制器servlet（DispatcherServlet），它负责发送每个请求到合适的处理程序，使用视图来最终返回响应结果的概念。Spring MVC 是 Spring 产品组合的一部分，它享有 Spring IoC容器紧密结合Spring松耦合等特点，因此它有Spring的所有优">
 <meta property="og:image" content="http://yoursite.com/img/springmvc-1.png">
 <meta property="og:image" content="http://yoursite.com/img/springmvc-2.png">
 <meta property="og:image" content="http://yoursite.com/img/springmvc-3.png">
@@ -112,7 +112,8 @@
 <meta property="og:updated_time" content="2018-01-30T10:31:36.861Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Springmvc总结">
-<meta name="twitter:description" content="1、Springmvc介绍 Spring MVC 是一个模型 - 视图 - 控制器（MVC）的Web框架建立在中央前端控制器servlet（DispatcherServlet），它负责发送每个请求到合适的处理程序，使用视图来最终返回响应结果的概念。Spring MVC 是 Spring 产品组合的一部分，它享有 Spring IoC容器紧密结合Spring松耦合等特点，因此它有Spring的所有优">
+<meta name="twitter:description" content="1、Springmvc介绍
+Spring MVC 是一个模型 - 视图 - 控制器（MVC）的Web框架建立在中央前端控制器servlet（DispatcherServlet），它负责发送每个请求到合适的处理程序，使用视图来最终返回响应结果的概念。Spring MVC 是 Spring 产品组合的一部分，它享有 Spring IoC容器紧密结合Spring松耦合等特点，因此它有Spring的所有优">
 <meta name="twitter:image" content="http://yoursite.com/img/springmvc-1.png">
 
 
@@ -853,7 +854,7 @@ String(request.getParamter(&quot;userName&quot;).getBytes(&quot;ISO8859-1&quot;)
 </li>
 </ul>
 <h2 id="5、静态资源访问"><a href="#5、静态资源访问" class="headerlink" title="5、静态资源访问"></a>5、静态资源访问<mvc:resources></mvc:resources></h2><ul>
-<li><p>如果在DispatcherServlet中设置url-pattern为 /则必须对静态资源进行访问处理。spring mvc 的<mvc:resources mapping="" location="">实现对静态资源进行映射访问。</mvc:resources></p>
+<li><p>如果在DispatcherServlet中设置url-pattern为 /则必须对静态资源进行访问处理。spring mvc 的<mvc:resources mapping location>实现对静态资源进行映射访问。</mvc:resources></p>
 </li>
 <li><p>如下是对js文件访问配置：<code>&lt;mvc:resources location=&quot;/js/&quot; mapping=&quot;/js/**&quot;/&gt;</code></p>
 </li>
@@ -1184,8 +1185,8 @@ String(request.getParamter(&quot;userName&quot;).getBytes(&quot;ISO8859-1&quot;)
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/04/21/Spring_Data/" rel="next" title="Spring Data">
-                <i class="fa fa-chevron-left"></i> Spring Data
+              <a href="/2019/04/21/Spring1_Spring的核心/" rel="next" title="1_Spring的核心">
+                <i class="fa fa-chevron-left"></i> 1_Spring的核心
               </a>
             
           </div>
@@ -1194,8 +1195,8 @@ String(request.getParamter(&quot;userName&quot;).getBytes(&quot;ISO8859-1&quot;)
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/04/21/SQL开发技巧/" rel="prev" title="SQL开发技巧">
-                SQL开发技巧 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/04/21/Spring_Data/" rel="prev" title="Spring Data">
+                Spring Data <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -1276,7 +1277,7 @@ String(request.getParamter(&quot;userName&quot;).getBytes(&quot;ISO8859-1&quot;)
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">79</span>
+                <span class="site-state-item-count">83</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1287,7 +1288,7 @@ String(request.getParamter(&quot;userName&quot;).getBytes(&quot;ISO8859-1&quot;)
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -1298,7 +1299,7 @@ String(request.getParamter(&quot;userName&quot;).getBytes(&quot;ISO8859-1&quot;)
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">28</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

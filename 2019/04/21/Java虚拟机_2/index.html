@@ -95,14 +95,28 @@
 
 
 
-<meta name="description" content="垃圾收集器 垃圾收集器的历史要远早于Java，不过我们很多人都是通过Java才了解垃圾收集器的。学习垃圾收集器可以更好进行内存泄漏，内存溢出的排查，以及高并发场景下垃圾收集成为系统性能瓶颈。  垃圾收集器关注的问题很简单： 哪些垃圾需要回收？--who 什么时候回收？-- when 怎么回收？--how  程序计数器，虚拟机栈，本地方法栈是线程私有的，也就是和线程的生命周期一致，栈帧随着方法的执行">
-<meta name="keywords" content="Java,JVM">
+<meta name="description" content="垃圾收集器
+垃圾收集器的历史要远早于Java，不过我们很多人都是通过Java才了解垃圾收集器的。学习垃圾收集器可以更好进行内存泄漏，内存溢出的排查，以及高并发场景下垃圾收集成为系统性能瓶颈。
+
+垃圾收集器关注的问题很简单：
+哪些垃圾需要回收？--who
+什么时候回收？-- when
+怎么回收？--how
+
+程序计数器，虚拟机栈，本地方法栈是线程私有的，也就是和线程的生命周期一致，栈帧随着方法的执行">
 <meta property="og:type" content="article">
 <meta property="og:title" content="垃圾收集器和内存分配策略">
 <meta property="og:url" content="http://yoursite.com/2019/04/21/Java虚拟机_2/index.html">
 <meta property="og:site_name" content="小黄">
-<meta property="og:description" content="垃圾收集器 垃圾收集器的历史要远早于Java，不过我们很多人都是通过Java才了解垃圾收集器的。学习垃圾收集器可以更好进行内存泄漏，内存溢出的排查，以及高并发场景下垃圾收集成为系统性能瓶颈。  垃圾收集器关注的问题很简单： 哪些垃圾需要回收？--who 什么时候回收？-- when 怎么回收？--how  程序计数器，虚拟机栈，本地方法栈是线程私有的，也就是和线程的生命周期一致，栈帧随着方法的执行">
-<meta property="og:locale" content="zh-Hans">
+<meta property="og:description" content="垃圾收集器
+垃圾收集器的历史要远早于Java，不过我们很多人都是通过Java才了解垃圾收集器的。学习垃圾收集器可以更好进行内存泄漏，内存溢出的排查，以及高并发场景下垃圾收集成为系统性能瓶颈。
+
+垃圾收集器关注的问题很简单：
+哪些垃圾需要回收？--who
+什么时候回收？-- when
+怎么回收？--how
+
+程序计数器，虚拟机栈，本地方法栈是线程私有的，也就是和线程的生命周期一致，栈帧随着方法的执行">
 <meta property="og:image" content="http://yoursite.com/img/jvm-3.png">
 <meta property="og:image" content="http://yoursite.com/img/jvm-4.png">
 <meta property="og:image" content="http://yoursite.com/img/jvm-5.png">
@@ -117,7 +131,15 @@
 <meta property="og:updated_time" content="2018-03-21T13:17:34.117Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="垃圾收集器和内存分配策略">
-<meta name="twitter:description" content="垃圾收集器 垃圾收集器的历史要远早于Java，不过我们很多人都是通过Java才了解垃圾收集器的。学习垃圾收集器可以更好进行内存泄漏，内存溢出的排查，以及高并发场景下垃圾收集成为系统性能瓶颈。  垃圾收集器关注的问题很简单： 哪些垃圾需要回收？--who 什么时候回收？-- when 怎么回收？--how  程序计数器，虚拟机栈，本地方法栈是线程私有的，也就是和线程的生命周期一致，栈帧随着方法的执行">
+<meta name="twitter:description" content="垃圾收集器
+垃圾收集器的历史要远早于Java，不过我们很多人都是通过Java才了解垃圾收集器的。学习垃圾收集器可以更好进行内存泄漏，内存溢出的排查，以及高并发场景下垃圾收集成为系统性能瓶颈。
+
+垃圾收集器关注的问题很简单：
+哪些垃圾需要回收？--who
+什么时候回收？-- when
+怎么回收？--how
+
+程序计数器，虚拟机栈，本地方法栈是线程私有的，也就是和线程的生命周期一致，栈帧随着方法的执行">
 <meta name="twitter:image" content="http://yoursite.com/img/jvm-3.png">
 
 
@@ -740,7 +762,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">79</span>
+                <span class="site-state-item-count">83</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -751,7 +773,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -762,7 +784,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">28</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

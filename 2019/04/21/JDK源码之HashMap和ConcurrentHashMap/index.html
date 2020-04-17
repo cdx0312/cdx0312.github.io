@@ -95,18 +95,46 @@
 
 
 
-<meta name="description" content="HashMap hashhMap本质是数组+链表。根据key取得hash值，然后计算出数组下标，如果多个key对应到同一个下标，就用链表连接起来，最新插入的数据在链表头。  HashMap继承AbstractHashMap，实现了Map，Cloneable，Serializable接口  HashMap设计线程不安全的。  对键值对的描述，Node：   1234567891011121314st">
-<meta name="keywords" content="Java">
+<meta name="description" content="HashMap
+hashhMap本质是数组+链表。根据key取得hash值，然后计算出数组下标，如果多个key对应到同一个下标，就用链表连接起来，最新插入的数据在链表头。
+
+HashMap继承AbstractHashMap，实现了Map，Cloneable，Serializable接口
+
+HashMap设计线程不安全的。
+
+对键值对的描述，Node：
+
+
+1234567891011121314st">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JDK源码之HashMap和ConcurrentHashMap理解">
 <meta property="og:url" content="http://yoursite.com/2019/04/21/JDK源码之HashMap和ConcurrentHashMap/index.html">
 <meta property="og:site_name" content="小黄">
-<meta property="og:description" content="HashMap hashhMap本质是数组+链表。根据key取得hash值，然后计算出数组下标，如果多个key对应到同一个下标，就用链表连接起来，最新插入的数据在链表头。  HashMap继承AbstractHashMap，实现了Map，Cloneable，Serializable接口  HashMap设计线程不安全的。  对键值对的描述，Node：   1234567891011121314st">
-<meta property="og:locale" content="zh-Hans">
+<meta property="og:description" content="HashMap
+hashhMap本质是数组+链表。根据key取得hash值，然后计算出数组下标，如果多个key对应到同一个下标，就用链表连接起来，最新插入的数据在链表头。
+
+HashMap继承AbstractHashMap，实现了Map，Cloneable，Serializable接口
+
+HashMap设计线程不安全的。
+
+对键值对的描述，Node：
+
+
+1234567891011121314st">
 <meta property="og:updated_time" content="2018-04-19T02:06:27.510Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JDK源码之HashMap和ConcurrentHashMap理解">
-<meta name="twitter:description" content="HashMap hashhMap本质是数组+链表。根据key取得hash值，然后计算出数组下标，如果多个key对应到同一个下标，就用链表连接起来，最新插入的数据在链表头。  HashMap继承AbstractHashMap，实现了Map，Cloneable，Serializable接口  HashMap设计线程不安全的。  对键值对的描述，Node：   1234567891011121314st">
+<meta name="twitter:description" content="HashMap
+hashhMap本质是数组+链表。根据key取得hash值，然后计算出数组下标，如果多个key对应到同一个下标，就用链表连接起来，最新插入的数据在链表头。
+
+HashMap继承AbstractHashMap，实现了Map，Cloneable，Serializable接口
+
+HashMap设计线程不安全的。
+
+对键值对的描述，Node：
+
+
+1234567891011121314st">
 
 
 
@@ -622,7 +650,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">79</span>
+                <span class="site-state-item-count">83</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -633,7 +661,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -644,7 +672,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">28</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

@@ -95,21 +95,46 @@
 
 
 
-<meta name="description" content="Redis介绍  redis是一个基于键值对的分布式存储系统，与memcached类似，却优于memcached的一个高性能的key-value数据库。其中键值对的key总是为一个字符串对象，字符串的值可以为字符串对象，列表对象，哈希对象，集合对象，有序集合对象之一。   Redis中value的值为上面五种，但是底层数据结构包括：  简单动态字符串 链表 字典 跳跃表 整数集合 压缩列表 对象">
-<meta name="keywords" content="redis">
+<meta name="description" content="Redis介绍  redis是一个基于键值对的分布式存储系统，与memcached类似，却优于memcached的一个高性能的key-value数据库。其中键值对的key总是为一个字符串对象，字符串的值可以为字符串对象，列表对象，哈希对象，集合对象，有序集合对象之一。
+  Redis中value的值为上面五种，但是底层数据结构包括：
+
+简单动态字符串
+链表
+字典
+跳跃表
+整数集合
+压缩列表
+对象">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis-redis底层数据结构">
 <meta property="og:url" content="http://yoursite.com/2019/04/21/Redis-redis底层数据结构/index.html">
 <meta property="og:site_name" content="小黄">
-<meta property="og:description" content="Redis介绍  redis是一个基于键值对的分布式存储系统，与memcached类似，却优于memcached的一个高性能的key-value数据库。其中键值对的key总是为一个字符串对象，字符串的值可以为字符串对象，列表对象，哈希对象，集合对象，有序集合对象之一。   Redis中value的值为上面五种，但是底层数据结构包括：  简单动态字符串 链表 字典 跳跃表 整数集合 压缩列表 对象">
-<meta property="og:locale" content="zh-Hans">
+<meta property="og:description" content="Redis介绍  redis是一个基于键值对的分布式存储系统，与memcached类似，却优于memcached的一个高性能的key-value数据库。其中键值对的key总是为一个字符串对象，字符串的值可以为字符串对象，列表对象，哈希对象，集合对象，有序集合对象之一。
+  Redis中value的值为上面五种，但是底层数据结构包括：
+
+简单动态字符串
+链表
+字典
+跳跃表
+整数集合
+压缩列表
+对象">
 <meta property="og:image" content="http://yoursite.com/img/redis-sds-example.png">
 <meta property="og:image" content="http://yoursite.com/img/redis-linked-example.png">
 <meta property="og:image" content="http://yoursite.com/img/redis-ziplist.png">
 <meta property="og:updated_time" content="2018-04-16T02:14:42.873Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redis-redis底层数据结构">
-<meta name="twitter:description" content="Redis介绍  redis是一个基于键值对的分布式存储系统，与memcached类似，却优于memcached的一个高性能的key-value数据库。其中键值对的key总是为一个字符串对象，字符串的值可以为字符串对象，列表对象，哈希对象，集合对象，有序集合对象之一。   Redis中value的值为上面五种，但是底层数据结构包括：  简单动态字符串 链表 字典 跳跃表 整数集合 压缩列表 对象">
+<meta name="twitter:description" content="Redis介绍  redis是一个基于键值对的分布式存储系统，与memcached类似，却优于memcached的一个高性能的key-value数据库。其中键值对的key总是为一个字符串对象，字符串的值可以为字符串对象，列表对象，哈希对象，集合对象，有序集合对象之一。
+  Redis中value的值为上面五种，但是底层数据结构包括：
+
+简单动态字符串
+链表
+字典
+跳跃表
+整数集合
+压缩列表
+对象">
 <meta name="twitter:image" content="http://yoursite.com/img/redis-sds-example.png">
 
 
@@ -584,8 +609,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/04/21/MySQL数据库优化/" rel="next" title="MySQL数据库优化">
-                <i class="fa fa-chevron-left"></i> MySQL数据库优化
+              <a href="/2019/04/21/Redis-redis基础总结/" rel="next" title="Redis-redis基础总结">
+                <i class="fa fa-chevron-left"></i> Redis-redis基础总结
               </a>
             
           </div>
@@ -676,7 +701,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">79</span>
+                <span class="site-state-item-count">83</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -687,7 +712,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -698,7 +723,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">28</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

@@ -95,18 +95,37 @@
 
 
 
-<meta name="description" content="锁与同步 同步synchronized用来修饰方法，lock是一个实例变量，通过调用lock()方法来取得锁 同步和锁都是针对方法，不是同步变量和类 同步无法保证线程取得方法执行的先后顺序，锁可以设置公平锁来确保 不必同步类中的所有方法，类可以同时拥有同步和非同步方法 如果线程拥有同步和非同步方法，则非同步方法和同步方法被多个线程自由访问而不受锁的限制 线程睡眠时，持有的锁不会被释放 线程可以获得">
-<meta name="keywords" content="Java,Multi-Thread">
+<meta name="description" content="锁与同步
+同步synchronized用来修饰方法，lock是一个实例变量，通过调用lock()方法来取得锁
+同步和锁都是针对方法，不是同步变量和类
+同步无法保证线程取得方法执行的先后顺序，锁可以设置公平锁来确保
+不必同步类中的所有方法，类可以同时拥有同步和非同步方法
+如果线程拥有同步和非同步方法，则非同步方法和同步方法被多个线程自由访问而不受锁的限制
+线程睡眠时，持有的锁不会被释放
+线程可以获得">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java多线程-锁机制">
 <meta property="og:url" content="http://yoursite.com/2019/04/21/Java多线程-锁机制/index.html">
 <meta property="og:site_name" content="小黄">
-<meta property="og:description" content="锁与同步 同步synchronized用来修饰方法，lock是一个实例变量，通过调用lock()方法来取得锁 同步和锁都是针对方法，不是同步变量和类 同步无法保证线程取得方法执行的先后顺序，锁可以设置公平锁来确保 不必同步类中的所有方法，类可以同时拥有同步和非同步方法 如果线程拥有同步和非同步方法，则非同步方法和同步方法被多个线程自由访问而不受锁的限制 线程睡眠时，持有的锁不会被释放 线程可以获得">
-<meta property="og:locale" content="zh-Hans">
+<meta property="og:description" content="锁与同步
+同步synchronized用来修饰方法，lock是一个实例变量，通过调用lock()方法来取得锁
+同步和锁都是针对方法，不是同步变量和类
+同步无法保证线程取得方法执行的先后顺序，锁可以设置公平锁来确保
+不必同步类中的所有方法，类可以同时拥有同步和非同步方法
+如果线程拥有同步和非同步方法，则非同步方法和同步方法被多个线程自由访问而不受锁的限制
+线程睡眠时，持有的锁不会被释放
+线程可以获得">
 <meta property="og:updated_time" content="2018-09-04T06:12:16.969Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java多线程-锁机制">
-<meta name="twitter:description" content="锁与同步 同步synchronized用来修饰方法，lock是一个实例变量，通过调用lock()方法来取得锁 同步和锁都是针对方法，不是同步变量和类 同步无法保证线程取得方法执行的先后顺序，锁可以设置公平锁来确保 不必同步类中的所有方法，类可以同时拥有同步和非同步方法 如果线程拥有同步和非同步方法，则非同步方法和同步方法被多个线程自由访问而不受锁的限制 线程睡眠时，持有的锁不会被释放 线程可以获得">
+<meta name="twitter:description" content="锁与同步
+同步synchronized用来修饰方法，lock是一个实例变量，通过调用lock()方法来取得锁
+同步和锁都是针对方法，不是同步变量和类
+同步无法保证线程取得方法执行的先后顺序，锁可以设置公平锁来确保
+不必同步类中的所有方法，类可以同时拥有同步和非同步方法
+如果线程拥有同步和非同步方法，则非同步方法和同步方法被多个线程自由访问而不受锁的限制
+线程睡眠时，持有的锁不会被释放
+线程可以获得">
 
 
 
@@ -619,7 +638,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">79</span>
+                <span class="site-state-item-count">83</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -630,7 +649,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -641,7 +660,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">28</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

@@ -95,18 +95,25 @@
 
 
 
-<meta name="description" content="总结一下消息队列面试过程中遇到的问题，各个互联网公司对于消息队列还是很感兴趣的，问的问题很多，深度也够，一遍面试一边学习的效率其实很高，希望可以通过整理更加了解ActiveMQ这个消息队列，后续计划对RocketMQ，RabbitMQ，kafka学习一下。 ActiveMQ的存储机制 通常情况下，非持久化消息时存储在内存中的，持久化消息时存储在日志文件中的，最大限制可以配置。 内存中的非持久化消息">
-<meta name="keywords" content="JMS,ActiveMQ">
+<meta name="description" content="总结一下消息队列面试过程中遇到的问题，各个互联网公司对于消息队列还是很感兴趣的，问的问题很多，深度也够，一遍面试一边学习的效率其实很高，希望可以通过整理更加了解ActiveMQ这个消息队列，后续计划对RocketMQ，RabbitMQ，kafka学习一下。
+ActiveMQ的存储机制
+通常情况下，非持久化消息时存储在内存中的，持久化消息时存储在日志文件中的，最大限制可以配置。
+内存中的非持久化消息">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ActiveMQ学习总结（三）">
 <meta property="og:url" content="http://yoursite.com/2019/04/21/ActiveMQ学习总结（三）/index.html">
 <meta property="og:site_name" content="小黄">
-<meta property="og:description" content="总结一下消息队列面试过程中遇到的问题，各个互联网公司对于消息队列还是很感兴趣的，问的问题很多，深度也够，一遍面试一边学习的效率其实很高，希望可以通过整理更加了解ActiveMQ这个消息队列，后续计划对RocketMQ，RabbitMQ，kafka学习一下。 ActiveMQ的存储机制 通常情况下，非持久化消息时存储在内存中的，持久化消息时存储在日志文件中的，最大限制可以配置。 内存中的非持久化消息">
-<meta property="og:locale" content="zh-Hans">
+<meta property="og:description" content="总结一下消息队列面试过程中遇到的问题，各个互联网公司对于消息队列还是很感兴趣的，问的问题很多，深度也够，一遍面试一边学习的效率其实很高，希望可以通过整理更加了解ActiveMQ这个消息队列，后续计划对RocketMQ，RabbitMQ，kafka学习一下。
+ActiveMQ的存储机制
+通常情况下，非持久化消息时存储在内存中的，持久化消息时存储在日志文件中的，最大限制可以配置。
+内存中的非持久化消息">
 <meta property="og:updated_time" content="2018-04-18T09:27:42.241Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ActiveMQ学习总结（三）">
-<meta name="twitter:description" content="总结一下消息队列面试过程中遇到的问题，各个互联网公司对于消息队列还是很感兴趣的，问的问题很多，深度也够，一遍面试一边学习的效率其实很高，希望可以通过整理更加了解ActiveMQ这个消息队列，后续计划对RocketMQ，RabbitMQ，kafka学习一下。 ActiveMQ的存储机制 通常情况下，非持久化消息时存储在内存中的，持久化消息时存储在日志文件中的，最大限制可以配置。 内存中的非持久化消息">
+<meta name="twitter:description" content="总结一下消息队列面试过程中遇到的问题，各个互联网公司对于消息队列还是很感兴趣的，问的问题很多，深度也够，一遍面试一边学习的效率其实很高，希望可以通过整理更加了解ActiveMQ这个消息队列，后续计划对RocketMQ，RabbitMQ，kafka学习一下。
+ActiveMQ的存储机制
+通常情况下，非持久化消息时存储在内存中的，持久化消息时存储在日志文件中的，最大限制可以配置。
+内存中的非持久化消息">
 
 
 
@@ -485,8 +492,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/04/21/ActiveMQ学习总结（一）/" rel="next" title="ActiveMQ学习总结（一）">
-                <i class="fa fa-chevron-left"></i> ActiveMQ学习总结（一）
+              <a href="/2019/04/21/9.进程和线程/" rel="next" title="9. 进程和线程">
+                <i class="fa fa-chevron-left"></i> 9. 进程和线程
               </a>
             
           </div>
@@ -495,8 +502,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/04/21/ActiveMQ学习总结（二）/" rel="prev" title="ActiveMQ学习总结（二）">
-                ActiveMQ学习总结（二） <i class="fa fa-chevron-right"></i>
+              <a href="/2019/04/21/ActiveMQ学习总结（一）/" rel="prev" title="ActiveMQ学习总结（一）">
+                ActiveMQ学习总结（一） <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -577,7 +584,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">79</span>
+                <span class="site-state-item-count">83</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -588,7 +595,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -599,7 +606,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">28</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

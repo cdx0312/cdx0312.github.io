@@ -95,20 +95,21 @@
 
 
 
-<meta name="description" content="运行时数据区域 Java和C++之间有一堵由内存动态分配和垃圾收集机制所围成的墙，墙外面的人想进来，墙里面的人想出去。深入理解Java虚拟机这本书的作者在介绍自动化内存管理时写到。个人认为内存动态分配和垃圾收集机制是Java的特点，不同于C++，一个对象从创建的内存分配，到销毁的内存回收都需要程序员来掌控，Java把这部分权限从程序员手中收回，限制了程序员的权限，但同时也减少了开发中存在的内存泄漏">
-<meta name="keywords" content="Java,JVM">
+<meta name="description" content="运行时数据区域
+Java和C++之间有一堵由内存动态分配和垃圾收集机制所围成的墙，墙外面的人想进来，墙里面的人想出去。深入理解Java虚拟机这本书的作者在介绍自动化内存管理时写到。个人认为内存动态分配和垃圾收集机制是Java的特点，不同于C++，一个对象从创建的内存分配，到销毁的内存回收都需要程序员来掌控，Java把这部分权限从程序员手中收回，限制了程序员的权限，但同时也减少了开发中存在的内存泄漏">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java内存区域">
 <meta property="og:url" content="http://yoursite.com/2019/04/21/Java虚拟机_1/index.html">
 <meta property="og:site_name" content="小黄">
-<meta property="og:description" content="运行时数据区域 Java和C++之间有一堵由内存动态分配和垃圾收集机制所围成的墙，墙外面的人想进来，墙里面的人想出去。深入理解Java虚拟机这本书的作者在介绍自动化内存管理时写到。个人认为内存动态分配和垃圾收集机制是Java的特点，不同于C++，一个对象从创建的内存分配，到销毁的内存回收都需要程序员来掌控，Java把这部分权限从程序员手中收回，限制了程序员的权限，但同时也减少了开发中存在的内存泄漏">
-<meta property="og:locale" content="zh-Hans">
+<meta property="og:description" content="运行时数据区域
+Java和C++之间有一堵由内存动态分配和垃圾收集机制所围成的墙，墙外面的人想进来，墙里面的人想出去。深入理解Java虚拟机这本书的作者在介绍自动化内存管理时写到。个人认为内存动态分配和垃圾收集机制是Java的特点，不同于C++，一个对象从创建的内存分配，到销毁的内存回收都需要程序员来掌控，Java把这部分权限从程序员手中收回，限制了程序员的权限，但同时也减少了开发中存在的内存泄漏">
 <meta property="og:image" content="http://yoursite.com/img/jvm-1.png">
 <meta property="og:image" content="http://yoursite.com/img/jvm-2.png">
 <meta property="og:updated_time" content="2018-03-25T06:35:28.410Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java内存区域">
-<meta name="twitter:description" content="运行时数据区域 Java和C++之间有一堵由内存动态分配和垃圾收集机制所围成的墙，墙外面的人想进来，墙里面的人想出去。深入理解Java虚拟机这本书的作者在介绍自动化内存管理时写到。个人认为内存动态分配和垃圾收集机制是Java的特点，不同于C++，一个对象从创建的内存分配，到销毁的内存回收都需要程序员来掌控，Java把这部分权限从程序员手中收回，限制了程序员的权限，但同时也减少了开发中存在的内存泄漏">
+<meta name="twitter:description" content="运行时数据区域
+Java和C++之间有一堵由内存动态分配和垃圾收集机制所围成的墙，墙外面的人想进来，墙里面的人想出去。深入理解Java虚拟机这本书的作者在介绍自动化内存管理时写到。个人认为内存动态分配和垃圾收集机制是Java的特点，不同于C++，一个对象从创建的内存分配，到销毁的内存回收都需要程序员来掌控，Java把这部分权限从程序员手中收回，限制了程序员的权限，但同时也减少了开发中存在的内存泄漏">
 <meta name="twitter:image" content="http://yoursite.com/img/jvm-1.png">
 
 
@@ -639,7 +640,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">79</span>
+                <span class="site-state-item-count">83</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -650,7 +651,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -661,7 +662,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">28</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

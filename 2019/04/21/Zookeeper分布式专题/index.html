@@ -95,39 +95,70 @@
 
 
 
-<meta name="description" content="zookeeper简介 中间件，提供协调服务 作用于分布式系统，发挥其优势，可以为大数据服务 支持java，提供java和c语言的客户端API  特性：  一致性：数据一致性，数据按照顺序分批入库 原子性：事物要么成功，要么失败，不会局部化执行 单一视图：客户端连接集群中的任一个zk节点，数据都是一致的 可靠性：每次对zk的操作状态都会保存在服务端 实时性：客户端可以读取到zk服务端的最新数据">
-<meta name="keywords" content="分布式,zookeeper">
+<meta name="description" content="zookeeper简介
+中间件，提供协调服务
+作用于分布式系统，发挥其优势，可以为大数据服务
+支持java，提供java和c语言的客户端API
+
+特性：
+
+一致性：数据一致性，数据按照顺序分批入库
+原子性：事物要么成功，要么失败，不会局部化执行
+单一视图：客户端连接集群中的任一个zk节点，数据都是一致的
+可靠性：每次对zk的操作状态都会保存在服务端
+实时性：客户端可以读取到zk服务端的最新数据">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Zookeeper分布式专题">
 <meta property="og:url" content="http://yoursite.com/2019/04/21/Zookeeper分布式专题/index.html">
 <meta property="og:site_name" content="小黄">
-<meta property="og:description" content="zookeeper简介 中间件，提供协调服务 作用于分布式系统，发挥其优势，可以为大数据服务 支持java，提供java和c语言的客户端API  特性：  一致性：数据一致性，数据按照顺序分批入库 原子性：事物要么成功，要么失败，不会局部化执行 单一视图：客户端连接集群中的任一个zk节点，数据都是一致的 可靠性：每次对zk的操作状态都会保存在服务端 实时性：客户端可以读取到zk服务端的最新数据">
-<meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2019/04/21/Zookeeper分布式专题/assets/markdown-img-paste-20181017195401356.png">
-<meta property="og:image" content="http://yoursite.com/2019/04/21/Zookeeper分布式专题/assets/markdown-img-paste-20181017195429318.png">
-<meta property="og:image" content="http://yoursite.com/2019/04/21/Zookeeper分布式专题/assets/markdown-img-paste-20181017195553887.png">
-<meta property="og:image" content="http://yoursite.com/2019/04/21/Zookeeper分布式专题/assets/markdown-img-paste-20181017195526564.png">
-<meta property="og:image" content="http://yoursite.com/2019/04/21/Zookeeper分布式专题/assets/markdown-img-paste-20181017200354365.png">
-<meta property="og:image" content="http://yoursite.com/2019/04/21/Zookeeper分布式专题/assets/markdown-img-paste-20181017200449517.png">
-<meta property="og:image" content="http://yoursite.com/2019/04/21/Zookeeper分布式专题/assets/markdown-img-paste-20181017200805341.png">
-<meta property="og:image" content="http://yoursite.com/2019/04/21/Zookeeper分布式专题/assets/markdown-img-paste-20181017201052567.png">
-<meta property="og:image" content="http://yoursite.com/2019/04/21/Zookeeper分布式专题/assets/markdown-img-paste-20181017201144595.png">
-<meta property="og:image" content="http://yoursite.com/2019/04/21/Zookeeper分布式专题/assets/markdown-img-paste-2018101720133103.png">
-<meta property="og:image" content="http://yoursite.com/2019/04/21/Zookeeper分布式专题/assets/markdown-img-paste-20181017201438164.png">
-<meta property="og:image" content="http://yoursite.com/2019/04/21/Zookeeper分布式专题/assets/markdown-img-paste-20181017202244131.png">
-<meta property="og:image" content="http://yoursite.com/2019/04/21/Zookeeper分布式专题/assets/markdown-img-paste-20181017202411972.png">
-<meta property="og:image" content="http://yoursite.com/2019/04/21/Zookeeper分布式专题/assets/markdown-img-paste-20181017202630988.png">
-<meta property="og:image" content="http://yoursite.com/2019/04/21/Zookeeper分布式专题/assets/markdown-img-paste-20181017202829923.png">
-<meta property="og:image" content="http://yoursite.com/2019/04/21/Zookeeper分布式专题/assets/markdown-img-paste-20181017202933755.png">
-<meta property="og:image" content="http://yoursite.com/2019/04/21/Zookeeper分布式专题/assets/markdown-img-paste-20181017203123310.png">
-<meta property="og:image" content="http://yoursite.com/2019/04/21/Zookeeper分布式专题/assets/markdown-img-paste-20181018120809334.png">
-<meta property="og:image" content="http://yoursite.com/2019/04/21/Zookeeper分布式专题/assets/markdown-img-paste-2018101812272445.png">
-<meta property="og:image" content="http://yoursite.com/2019/04/21/Zookeeper分布式专题/assets/markdown-img-paste-20181018130237413.png">
+<meta property="og:description" content="zookeeper简介
+中间件，提供协调服务
+作用于分布式系统，发挥其优势，可以为大数据服务
+支持java，提供java和c语言的客户端API
+
+特性：
+
+一致性：数据一致性，数据按照顺序分批入库
+原子性：事物要么成功，要么失败，不会局部化执行
+单一视图：客户端连接集群中的任一个zk节点，数据都是一致的
+可靠性：每次对zk的操作状态都会保存在服务端
+实时性：客户端可以读取到zk服务端的最新数据">
+<meta property="og:image" content="http://yoursite.com/assets/markdown-img-paste-20181017195401356.png">
+<meta property="og:image" content="http://yoursite.com/assets/markdown-img-paste-20181017195429318.png">
+<meta property="og:image" content="http://yoursite.com/assets/markdown-img-paste-20181017195553887.png">
+<meta property="og:image" content="http://yoursite.com/assets/markdown-img-paste-20181017195526564.png">
+<meta property="og:image" content="http://yoursite.com/assets/markdown-img-paste-20181017200354365.png">
+<meta property="og:image" content="http://yoursite.com/assets/markdown-img-paste-20181017200449517.png">
+<meta property="og:image" content="http://yoursite.com/assets/markdown-img-paste-20181017200805341.png">
+<meta property="og:image" content="http://yoursite.com/assets/markdown-img-paste-20181017201052567.png">
+<meta property="og:image" content="http://yoursite.com/assets/markdown-img-paste-20181017201144595.png">
+<meta property="og:image" content="http://yoursite.com/assets/markdown-img-paste-2018101720133103.png">
+<meta property="og:image" content="http://yoursite.com/assets/markdown-img-paste-20181017201438164.png">
+<meta property="og:image" content="http://yoursite.com/assets/markdown-img-paste-20181017202244131.png">
+<meta property="og:image" content="http://yoursite.com/assets/markdown-img-paste-20181017202411972.png">
+<meta property="og:image" content="http://yoursite.com/assets/markdown-img-paste-20181017202630988.png">
+<meta property="og:image" content="http://yoursite.com/assets/markdown-img-paste-20181017202829923.png">
+<meta property="og:image" content="http://yoursite.com/assets/markdown-img-paste-20181017202933755.png">
+<meta property="og:image" content="http://yoursite.com/assets/markdown-img-paste-20181017203123310.png">
+<meta property="og:image" content="http://yoursite.com/assets/markdown-img-paste-20181018120809334.png">
+<meta property="og:image" content="http://yoursite.com/assets/markdown-img-paste-2018101812272445.png">
+<meta property="og:image" content="http://yoursite.com/assets/markdown-img-paste-20181018130237413.png">
 <meta property="og:updated_time" content="2018-10-18T06:36:13.116Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Zookeeper分布式专题">
-<meta name="twitter:description" content="zookeeper简介 中间件，提供协调服务 作用于分布式系统，发挥其优势，可以为大数据服务 支持java，提供java和c语言的客户端API  特性：  一致性：数据一致性，数据按照顺序分批入库 原子性：事物要么成功，要么失败，不会局部化执行 单一视图：客户端连接集群中的任一个zk节点，数据都是一致的 可靠性：每次对zk的操作状态都会保存在服务端 实时性：客户端可以读取到zk服务端的最新数据">
-<meta name="twitter:image" content="http://yoursite.com/2019/04/21/Zookeeper分布式专题/assets/markdown-img-paste-20181017195401356.png">
+<meta name="twitter:description" content="zookeeper简介
+中间件，提供协调服务
+作用于分布式系统，发挥其优势，可以为大数据服务
+支持java，提供java和c语言的客户端API
+
+特性：
+
+一致性：数据一致性，数据按照顺序分批入库
+原子性：事物要么成功，要么失败，不会局部化执行
+单一视图：客户端连接集群中的任一个zk节点，数据都是一致的
+可靠性：每次对zk的操作状态都会保存在服务端
+实时性：客户端可以读取到zk服务端的最新数据">
+<meta name="twitter:image" content="http://yoursite.com/assets/markdown-img-paste-20181017195401356.png">
 
 
 
@@ -455,19 +486,19 @@
 <li><p>ls</p>
 </li>
 </ul>
-<p><img src="assets/markdown-img-paste-20181017195401356.png" alt=""></p>
+<p><img src="assets/markdown-img-paste-20181017195401356.png" alt></p>
 <ul>
 <li>ls2</li>
 </ul>
-<p><img src="assets/markdown-img-paste-20181017195429318.png" alt=""></p>
+<p><img src="assets/markdown-img-paste-20181017195429318.png" alt></p>
 <ul>
 <li>get</li>
 </ul>
-<p><img src="assets/markdown-img-paste-20181017195553887.png" alt=""></p>
+<p><img src="assets/markdown-img-paste-20181017195553887.png" alt></p>
 <ul>
 <li>stat</li>
 </ul>
-<p><img src="assets/markdown-img-paste-20181017195526564.png" alt=""></p>
+<p><img src="assets/markdown-img-paste-20181017195526564.png" alt></p>
 <p>参数信息：</p>
 <ul>
 <li>cZid：节点id</li>
@@ -492,28 +523,28 @@
 <h2 id="create命令"><a href="#create命令" class="headerlink" title="create命令"></a>create命令</h2><ul>
 <li>创建持久化节点</li>
 </ul>
-<p><img src="assets/markdown-img-paste-20181017200354365.png" alt=""></p>
+<p><img src="assets/markdown-img-paste-20181017200354365.png" alt></p>
 <ul>
 <li>创建临时节点</li>
 </ul>
-<p><img src="assets/markdown-img-paste-20181017200449517.png" alt=""></p>
+<p><img src="assets/markdown-img-paste-20181017200449517.png" alt></p>
 <ul>
 <li>创建顺序节点</li>
 </ul>
-<p><img src="assets/markdown-img-paste-20181017200805341.png" alt=""></p>
-<h2 id="set命令"><a href="#set命令" class="headerlink" title="set命令"></a>set命令</h2><p><img src="assets/markdown-img-paste-20181017201052567.png" alt=""></p>
+<p><img src="assets/markdown-img-paste-20181017200805341.png" alt></p>
+<h2 id="set命令"><a href="#set命令" class="headerlink" title="set命令"></a>set命令</h2><p><img src="assets/markdown-img-paste-20181017201052567.png" alt></p>
 <ul>
 <li>根据版本号实现乐观锁</li>
 </ul>
-<p><img src="assets/markdown-img-paste-20181017201144595.png" alt=""></p>
+<p><img src="assets/markdown-img-paste-20181017201144595.png" alt></p>
 <h2 id="delete命令"><a href="#delete命令" class="headerlink" title="delete命令"></a>delete命令</h2><ul>
 <li>不设置版本号</li>
 </ul>
-<p><img src="assets/markdown-img-paste-2018101720133103.png" alt=""></p>
+<p><img src="assets/markdown-img-paste-2018101720133103.png" alt></p>
 <ul>
 <li>设置版本号需要版本号匹配才可以删除</li>
 </ul>
-<p><img src="assets/markdown-img-paste-20181017201438164.png" alt=""></p>
+<p><img src="assets/markdown-img-paste-20181017201438164.png" alt></p>
 <h2 id="watcher机制"><a href="#watcher机制" class="headerlink" title="watcher机制"></a>watcher机制</h2><ul>
 <li>针对每一个节点的操作，都会有一个监督者，也就是watcher</li>
 <li>当监控的某一个对象（znode）发生了变化，则出发watcher事件</li>
@@ -529,12 +560,12 @@
 <h2 id="watcher命令行"><a href="#watcher命令行" class="headerlink" title="watcher命令行"></a>watcher命令行</h2><ul>
 <li><p>watcher事件类型</p>
 <ul>
-<li>创建父节点触发：NodeCreated<br><img src="assets/markdown-img-paste-20181017202244131.png" alt=""></li>
-<li>修改父节点数据触发：NodeDataChanged<br><img src="assets/markdown-img-paste-20181017202411972.png" alt=""></li>
-<li>删除节点触发：NodeDeleted<br><img src="assets/markdown-img-paste-20181017202630988.png" alt=""></li>
-<li>ls为父节点设置watcher，创建子节点触发：NodeChildrenChanged<br><img src="assets/markdown-img-paste-20181017202829923.png" alt=""></li>
-<li>ls为父节点设置watcher，删除子节点触发：NodeChildrenChanged<br><img src="assets/markdown-img-paste-20181017202933755.png" alt=""></li>
-<li>ls为父节点设置watcher，修改子节点不触发任何事件<br><img src="assets/markdown-img-paste-20181017203123310.png" alt=""></li>
+<li>创建父节点触发：NodeCreated<br><img src="assets/markdown-img-paste-20181017202244131.png" alt></li>
+<li>修改父节点数据触发：NodeDataChanged<br><img src="assets/markdown-img-paste-20181017202411972.png" alt></li>
+<li>删除节点触发：NodeDeleted<br><img src="assets/markdown-img-paste-20181017202630988.png" alt></li>
+<li>ls为父节点设置watcher，创建子节点触发：NodeChildrenChanged<br><img src="assets/markdown-img-paste-20181017202829923.png" alt></li>
+<li>ls为父节点设置watcher，删除子节点触发：NodeChildrenChanged<br><img src="assets/markdown-img-paste-20181017202933755.png" alt></li>
+<li>ls为父节点设置watcher，修改子节点不触发任何事件<br><img src="assets/markdown-img-paste-20181017203123310.png" alt></li>
 </ul>
 </li>
 <li><p>watcher使用场景</p>
@@ -576,14 +607,14 @@
 <ol>
 <li>world:anyone:cdrwa</li>
 </ol>
-<p><img src="assets/markdown-img-paste-20181018120809334.png" alt=""></p>
-<p><img src="assets/markdown-img-paste-2018101812272445.png" alt=""></p>
+<p><img src="assets/markdown-img-paste-20181018120809334.png" alt></p>
+<p><img src="assets/markdown-img-paste-2018101812272445.png" alt></p>
 <ol>
 <li>auth:user:pwd:cdrwa</li>
 <li>digest:user:BASE64(SHA1(pwd)):cdrwa</li>
 <li>addauth digest user:pwd</li>
 </ol>
-<p><img src="assets/markdown-img-paste-20181018130237413.png" alt=""></p>
+<p><img src="assets/markdown-img-paste-20181018130237413.png" alt></p>
 <h1 id="zk集群"><a href="#zk集群" class="headerlink" title="zk集群"></a>zk集群</h1><h2 id="集群搭建的注意点"><a href="#集群搭建的注意点" class="headerlink" title="集群搭建的注意点"></a>集群搭建的注意点</h2><ul>
 <li>配置文件myid 1/2/3对应server.1.2.3</li>
 <li>通过./zkCli.sh -server [ip]:[port]检测集群是否配置成功</li>
@@ -654,8 +685,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/04/21/struts2总结 四--异常处理和I18N/" rel="next" title="struts2总结（四）--异常处理和I18N">
-                <i class="fa fa-chevron-left"></i> struts2总结（四）--异常处理和I18N
+              <a href="/2019/04/21/一致性哈希算法及其Java实现/" rel="next" title="一致性哈希及其Java实现">
+                <i class="fa fa-chevron-left"></i> 一致性哈希及其Java实现
               </a>
             
           </div>
@@ -664,8 +695,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/04/21/一致性哈希算法及其Java实现/" rel="prev" title="一致性哈希及其Java实现">
-                一致性哈希及其Java实现 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/04/21/struts2总结 四--异常处理和I18N/" rel="prev" title="struts2总结（四）--异常处理和I18N">
+                struts2总结（四）--异常处理和I18N <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -746,7 +777,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">79</span>
+                <span class="site-state-item-count">83</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -757,7 +788,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -768,7 +799,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">28</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

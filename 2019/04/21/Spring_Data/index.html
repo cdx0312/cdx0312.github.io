@@ -95,21 +95,25 @@
 
 
 
-<meta name="description" content="概念  Spring Data JPA 是 Spring Data 系列的一部分，可以轻松实现基于 JPA 的存储库。 该模块处理对基于 JPA 的数据访问层的增强的支持。 这使得使用数据访问技术构建Spring 的应用程序变得更加容易。 传统方式访问数据库JDBC驱动创建Maven项目 maven工程的目录结构|– pom.xml|– src|   |– main|   |   -- java">
-<meta name="keywords" content="Spring,java">
+<meta name="description" content="概念  Spring Data JPA 是 Spring Data 系列的一部分，可以轻松实现基于 JPA 的存储库。 该模块处理对基于 JPA 的数据访问层的增强的支持。 这使得使用数据访问技术构建Spring 的应用程序变得更加容易。
+传统方式访问数据库JDBC驱动创建Maven项目
+maven工程的目录结构|– pom.xml|– src|   |– main|   |   -- java">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Spring Data">
 <meta property="og:url" content="http://yoursite.com/2019/04/21/Spring_Data/index.html">
 <meta property="og:site_name" content="小黄">
-<meta property="og:description" content="概念  Spring Data JPA 是 Spring Data 系列的一部分，可以轻松实现基于 JPA 的存储库。 该模块处理对基于 JPA 的数据访问层的增强的支持。 这使得使用数据访问技术构建Spring 的应用程序变得更加容易。 传统方式访问数据库JDBC驱动创建Maven项目 maven工程的目录结构|– pom.xml|– src|   |– main|   |   -- java">
-<meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2019/04/21/Spring_Data/spring_data_repository_query_1">
-<meta property="og:image" content="http://yoursite.com/2019/04/21/Spring_Data/spring_data_repository_query_2">
+<meta property="og:description" content="概念  Spring Data JPA 是 Spring Data 系列的一部分，可以轻松实现基于 JPA 的存储库。 该模块处理对基于 JPA 的数据访问层的增强的支持。 这使得使用数据访问技术构建Spring 的应用程序变得更加容易。
+传统方式访问数据库JDBC驱动创建Maven项目
+maven工程的目录结构|– pom.xml|– src|   |– main|   |   -- java">
+<meta property="og:image" content="http://yoursite.com/./spring_data_repository_query_1">
+<meta property="og:image" content="http://yoursite.com/./spring_data_repository_query_2">
 <meta property="og:updated_time" content="2018-03-23T02:45:59.638Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Spring Data">
-<meta name="twitter:description" content="概念  Spring Data JPA 是 Spring Data 系列的一部分，可以轻松实现基于 JPA 的存储库。 该模块处理对基于 JPA 的数据访问层的增强的支持。 这使得使用数据访问技术构建Spring 的应用程序变得更加容易。 传统方式访问数据库JDBC驱动创建Maven项目 maven工程的目录结构|– pom.xml|– src|   |– main|   |   -- java">
-<meta name="twitter:image" content="http://yoursite.com/2019/04/21/Spring_Data/spring_data_repository_query_1">
+<meta name="twitter:description" content="概念  Spring Data JPA 是 Spring Data 系列的一部分，可以轻松实现基于 JPA 的存储库。 该模块处理对基于 JPA 的数据访问层的增强的支持。 这使得使用数据访问技术构建Spring 的应用程序变得更加容易。
+传统方式访问数据库JDBC驱动创建Maven项目
+maven工程的目录结构|– pom.xml|– src|   |– main|   |   -- java">
+<meta name="twitter:image" content="http://yoursite.com/./spring_data_repository_query_1">
 
 
 
@@ -418,7 +422,7 @@
 <hr>
 <h1 id="Spring-data-JPA进阶"><a href="#Spring-data-JPA进阶" class="headerlink" title="Spring data JPA进阶"></a>Spring data JPA进阶</h1><h2 id="Repository接口讲解"><a href="#Repository接口讲解" class="headerlink" title="Repository接口讲解"></a>Repository接口讲解</h2><ol>
 <li>Repository是Spring Data的核心接口，不提供任何方法</li>
-<li>Public interface Repository<t, id="" extends="" serializable="">{ }</t,></li>
+<li>Public interface Repository<t, id extends serializable>{ }</t,></li>
 <li><code>@RepositoryDefinition</code>注解的使用</li>
 <li>Repository是一个空接口，也叫做标记接口（没有包含方法声明的接口）</li>
 <li>如果我们定义的EmployeeRepository extends Repository，如果我们自己的接口没有继承Repository接口，会报错</li>
@@ -542,8 +546,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/04/21/Spring1_Spring的核心/" rel="next" title="1_Spring的核心">
-                <i class="fa fa-chevron-left"></i> 1_Spring的核心
+              <a href="/2019/04/21/Springmvc总结/" rel="next" title="Springmvc总结">
+                <i class="fa fa-chevron-left"></i> Springmvc总结
               </a>
             
           </div>
@@ -552,8 +556,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/04/21/Springmvc总结/" rel="prev" title="Springmvc总结">
-                Springmvc总结 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/04/21/SQL开发技巧/" rel="prev" title="SQL开发技巧">
+                SQL开发技巧 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -634,7 +638,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">79</span>
+                <span class="site-state-item-count">83</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -645,7 +649,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -656,7 +660,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">28</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

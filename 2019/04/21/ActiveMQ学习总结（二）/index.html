@@ -95,21 +95,25 @@
 
 
 
-<meta name="description" content="上一节总结了ActiveMQ的使用，主要的还是总结了在项目中直接使用和用Spring集成使用。这一节要进一步深入ActiveMQ，学习其内部的原理性的东西。 SessionActiveMQ消息的发送和接收到离不开Session的建立，首先查看Session的源码： 123456789public interface Session extends Runnable &amp;#123;    int AU">
-<meta name="keywords" content="JMS,ActiveMQ">
+<meta name="description" content="上一节总结了ActiveMQ的使用，主要的还是总结了在项目中直接使用和用Spring集成使用。这一节要进一步深入ActiveMQ，学习其内部的原理性的东西。
+SessionActiveMQ消息的发送和接收到离不开Session的建立，首先查看Session的源码：
+123456789public interface Session extends Runnable &amp;#123;    int AU">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ActiveMQ学习总结（二）">
 <meta property="og:url" content="http://yoursite.com/2019/04/21/ActiveMQ学习总结（二）/index.html">
 <meta property="og:site_name" content="小黄">
-<meta property="og:description" content="上一节总结了ActiveMQ的使用，主要的还是总结了在项目中直接使用和用Spring集成使用。这一节要进一步深入ActiveMQ，学习其内部的原理性的东西。 SessionActiveMQ消息的发送和接收到离不开Session的建立，首先查看Session的源码： 123456789public interface Session extends Runnable &amp;#123;    int AU">
-<meta property="og:locale" content="zh-Hans">
+<meta property="og:description" content="上一节总结了ActiveMQ的使用，主要的还是总结了在项目中直接使用和用Spring集成使用。这一节要进一步深入ActiveMQ，学习其内部的原理性的东西。
+SessionActiveMQ消息的发送和接收到离不开Session的建立，首先查看Session的源码：
+123456789public interface Session extends Runnable &amp;#123;    int AU">
 <meta property="og:image" content="http://yoursite.com/img/ActiveMQ-1.png">
 <meta property="og:image" content="http://yoursite.com/img/ActiveMQ-2.png">
 <meta property="og:image" content="http://yoursite.com/img/ActiveMQ-3.png">
 <meta property="og:updated_time" content="2018-04-18T09:27:35.192Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ActiveMQ学习总结（二）">
-<meta name="twitter:description" content="上一节总结了ActiveMQ的使用，主要的还是总结了在项目中直接使用和用Spring集成使用。这一节要进一步深入ActiveMQ，学习其内部的原理性的东西。 SessionActiveMQ消息的发送和接收到离不开Session的建立，首先查看Session的源码： 123456789public interface Session extends Runnable &amp;#123;    int AU">
+<meta name="twitter:description" content="上一节总结了ActiveMQ的使用，主要的还是总结了在项目中直接使用和用Spring集成使用。这一节要进一步深入ActiveMQ，学习其内部的原理性的东西。
+SessionActiveMQ消息的发送和接收到离不开Session的建立，首先查看Session的源码：
+123456789public interface Session extends Runnable &amp;#123;    int AU">
 <meta name="twitter:image" content="http://yoursite.com/img/ActiveMQ-1.png">
 
 
@@ -617,8 +621,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/04/21/ActiveMQ学习总结（三）/" rel="next" title="ActiveMQ学习总结（三）">
-                <i class="fa fa-chevron-left"></i> ActiveMQ学习总结（三）
+              <a href="/2019/04/21/ActiveMQ学习总结（一）/" rel="next" title="ActiveMQ学习总结（一）">
+                <i class="fa fa-chevron-left"></i> ActiveMQ学习总结（一）
               </a>
             
           </div>
@@ -709,7 +713,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">79</span>
+                <span class="site-state-item-count">83</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -720,7 +724,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -731,7 +735,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">28</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

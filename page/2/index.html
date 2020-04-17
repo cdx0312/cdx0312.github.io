@@ -101,7 +101,6 @@
 <meta property="og:url" content="http://yoursite.com/page/2/index.html">
 <meta property="og:site_name" content="小黄">
 <meta property="og:description" content="Be a better man!">
-<meta property="og:locale" content="zh-Hans">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="小黄">
 <meta name="twitter:description" content="Be a better man!">
@@ -264,6 +263,733 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/设计模式之Spring中的应用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/21/设计模式之Spring中的应用/" itemprop="url">设计模式之Spring中的应用</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/design-patterns/" itemprop="url" rel="index">
+                    <span itemprop="name">design patterns</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/design-patterns/Spring/" itemprop="url" rel="index">
+                    <span itemprop="name">Spring</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="Spring中使用的设计模式"><a href="#Spring中使用的设计模式" class="headerlink" title="Spring中使用的设计模式"></a>Spring中使用的设计模式</h1><ol>
+<li><p>简单工厂</p>
+<ul>
+<li>又称为静态工厂，简单工厂模式的实质是由一个工厂类根据传入的参数，动态决定创建哪一个产品类。</li>
+<li>Spring中BeanFactory通过传入一个唯一标示来获取bean对象</li>
+</ul>
+</li>
+<li><p>工厂方法</p>
+<ul>
+<li>程序将对象的创建及初始化职责交给工厂对象，工厂父类负责定义创建产品对象的公共接口，工厂子类负责生成具体的产品对象。将产品类的实例化操作延迟到工厂子类中完成。</li>
+<li>Spring中的FactoryBean就是一个典型的工厂方法模式。</li>
+</ul>
+</li>
+<li><p>单例</p>
+<ul>
+<li>保证一个类仅有一个实例，并提供一个访问他的全局访问点。</li>
+<li>Spring下默认的bean均为singleton，通过singleton或者scope属性指定</li>
+</ul>
+</li>
+<li><p>适配器</p>
+<ul>
+<li>将一个接口转换成客户希望的另一个接口，使得接口不兼容的类可以一起工作，其别名为Wrapper。</li>
+<li>Spring中AOP的处理利用了Adapter模式</li>
+</ul>
+</li>
+<li><p>装饰器</p>
+<ul>
+<li>动态的给一个对象添加一些额外的职责。就增加对象功能来说，装饰模式比生成子类实现更为灵活，别名与适配器相同。</li>
+<li>Spring中类名中含有Wrapper或者Decorator中应用了装饰器</li>
+</ul>
+</li>
+<li><p>代理</p>
+<ul>
+<li>为其他对象提供一种代理以控制对这个对象的访问。</li>
+<li>Spring中AOP就是利用JDK动态代理来增强类的切面管理。</li>
+</ul>
+</li>
+<li><p>观察者</p>
+<ul>
+<li>定义对象间的一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于他的对象都被通知并被自动更新</li>
+<li>spring中listener利用了观察者模式</li>
+</ul>
+</li>
+<li><p>策略</p>
+<ul>
+<li>定义一系列的算法，将他们封装起来，并且使他们可互相替换，策略模式让算法独立于使用它的客户而变化，也称为政策模式。</li>
+<li>Spring在实例化对象的时候使用到策略模式。</li>
+</ul>
+</li>
+<li><p>模板方法</p>
+<ul>
+<li>定义一个操作中的算法的骨架，而将一些步骤延迟到子类中，使得子类可以不改变一个算法的结构即可重新定义该算法的某些特定步骤。</li>
+<li>Spring中jdbcTemplate就使用了模板方法。 </li>
+</ul>
+</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/设计模式之七种单例模式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/21/设计模式之七种单例模式/" itemprop="url">设计模式之七种单例模式</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/design-patterns/" itemprop="url" rel="index">
+                    <span itemprop="name">design patterns</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>对其中单例模式做个总结，以备不时之需。</p>
+<h1 id="饿汉单例模式"><a href="#饿汉单例模式" class="headerlink" title="饿汉单例模式"></a>饿汉单例模式</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">package singleton;</div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/23</div><div class="line"> * 饿汉，基于ClassLoader机制避免了多线程的同步问题，加载过程较慢，获取对象速度较快</div><div class="line"> * 不过instance在类装载时就实例化。虽然大多数情况下调用单例模式的getInstance方法导致类加载，但是也不能确定没有其他</div><div class="line"> * 静态方法导致类被加载，从而没有达到懒加载的效果。</div><div class="line"> */</div><div class="line">public class Singleton &#123;</div><div class="line">    private Singleton() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static Singleton singleton = new Singleton();</div><div class="line"></div><div class="line">    public static Singleton getInstance() &#123;</div><div class="line">        return singleton;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="懒汉（线程不安全）"><a href="#懒汉（线程不安全）" class="headerlink" title="懒汉（线程不安全）"></a>懒汉（线程不安全）</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">package singleton;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/24</div><div class="line"> * 懒汉设计模式，线程安全，但是效率很低，每次调用getInstance方法都需要</div><div class="line"> * 获得锁，而大多数情况下不需要同步</div><div class="line"> */</div><div class="line">public class Singleton1 &#123;</div><div class="line">    private Singleton1()&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static Singleton1 singleton1;</div><div class="line"></div><div class="line">    public static synchronized Singleton1 getInstacne()&#123;</div><div class="line">        if (singleton1 == null)</div><div class="line">            singleton1 = new Singleton1();</div><div class="line">        return singleton1;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="懒汉（线程安全）"><a href="#懒汉（线程安全）" class="headerlink" title="懒汉（线程安全）"></a>懒汉（线程安全）</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">package singleton;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/24</div><div class="line"> * 懒汉设计模式，线程不安全</div><div class="line"> */</div><div class="line">public class Singleton2 &#123;</div><div class="line">    private Singleton2()&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static Singleton2 singleton1;</div><div class="line"></div><div class="line">    public static Singleton2 getInstacne()&#123;</div><div class="line">        if (singleton1 == null)</div><div class="line">            singleton1 = new Singleton2();</div><div class="line">        return singleton1;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="双重检查单例模式"><a href="#双重检查单例模式" class="headerlink" title="双重检查单例模式"></a>双重检查单例模式</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">package singleton;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/30</div><div class="line"> * 双重检查模式，第一次是为了减少不必要的同步，当singleton对象存在时，</div><div class="line"> * 直接返回实例对象，则同步只发生在多个线程同时调用getInstance加载类</div><div class="line"> * 第二次判空是为了singleton为null才创建实例。</div><div class="line"> * DCL优点是资源利用率高，第一次执行getInstance时单例对象才被实例化，效率高。</div><div class="line"> * 缺点是第一次加载速度慢，高并发场景中也会影响其性能，但是也存在DCL失效，</div><div class="line"> * 建议使用静态内部类单例模式来替代DCL</div><div class="line"> */</div><div class="line">public class Singleton3 &#123;</div><div class="line">    private volatile static Singleton3 singleton;</div><div class="line"></div><div class="line">    private Singleton3() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static Singleton3 getInstance() &#123;</div><div class="line">        if (singleton == null) &#123;</div><div class="line">            synchronized (Singleton3.class) &#123;</div><div class="line">                if (singleton == null) &#123;</div><div class="line">                    singleton = new Singleton3();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return singleton;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="静态内部类"><a href="#静态内部类" class="headerlink" title="静态内部类"></a>静态内部类</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">package singleton;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/30</div><div class="line"> * 静态内部类单例：</div><div class="line"> * 第一次加载Singleton类时并不会初始化是Instance，只有第一次调用Singleton</div><div class="line"> * 方法时虚拟机加载SingletonHolder并初始化sInstance，这样不仅能确保线程安</div><div class="line"> * 全也能保证Singleton的唯一性，推荐使用。</div><div class="line"> */</div><div class="line">public class Singleton4 &#123;</div><div class="line">    private Singleton4() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static Singleton4 getInstance() &#123;</div><div class="line">        return SingletonHolder.sInstance;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static class SingletonHolder&#123;</div><div class="line">        private static final Singleton4 sInstance = new Singleton4();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="枚举"><a href="#枚举" class="headerlink" title="枚举"></a>枚举</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">package singleton;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/30</div><div class="line"> * 默认枚举类实例的创建是线程安全的，并且在任何情况下都是单例，上述的几种</div><div class="line"> * 单例在反序列化的情况下会创建对象，将一个单例实例对象写到磁盘再读回来，</div><div class="line"> * 从而获得一个实例。反序列化操作提供了</div><div class="line"> */</div><div class="line">public enum Singleton5 &#123;</div><div class="line">    INSTANCE;</div><div class="line">    public void doSomething() &#123;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="容器实现单例"><a href="#容器实现单例" class="headerlink" title="容器实现单例"></a>容器实现单例</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">package singleton;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line">import java.util.Map;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/30</div><div class="line"> * 使用容器实现单例模式</div><div class="line"> * 用SingletonManager 将多种的单例类统一管理，在使用时根据key获取对象</div><div class="line"> * 对应类型的对象。这种方式使得我们可以管理多种类型的单例，并且在使用</div><div class="line"> * 时可以通过统一的接口进行获取操作，降低了用户的使用成本，也对用户隐</div><div class="line"> * 藏了具体实现，降低了耦合度。</div><div class="line"> */</div><div class="line">public class Singleton6 &#123;</div><div class="line">    private static Map&lt;String, Object&gt; objectMap = new HashMap&lt;&gt;();</div><div class="line">    private Singleton6() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void registerService(String key, Object instance) &#123;</div><div class="line">        if (!objectMap.containsKey(key)) &#123;</div><div class="line">            objectMap.put(key, instance);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static Object getService(String key) &#123;</div><div class="line">        return objectMap.get(key);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/设计模式之Builder模式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/21/设计模式之Builder模式/" itemprop="url">设计模式之Builder模式</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/design-patterns/" itemprop="url" rel="index">
+                    <span itemprop="name">design patterns</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>将一个复杂对象的构建与他的表示分离，使得同样的构建过程可以创建不同的表示。</p>
+<h1 id="模式使用场景"><a href="#模式使用场景" class="headerlink" title="模式使用场景"></a>模式使用场景</h1><ol>
+<li>相同的方法，不同的执行顺序，产生不同的时间结果时。</li>
+<li>多个部件或零件，都可以装配到一个对象中，但是产生的结果又不相同时。</li>
+<li>产品类非常复杂，或者产品类中的调用顺序不同产生了不同的效能时。</li>
+</ol>
+<h1 id="UML图"><a href="#UML图" class="headerlink" title="UML图"></a>UML图</h1><p><img src="/img/dp-factory-builder.png" alt="Alt text"></p>
+<h2 id="角色描述"><a href="#角色描述" class="headerlink" title="角色描述"></a>角色描述</h2><pre><code>* Product产品类：产品的抽象类
+* Builder：抽象类，规范产品的组件，一般由子类实现具体的组装过程。
+* ConcreteBuilder：具体的构造器
+* Director：统一组装过程
+</code></pre><h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>电脑组装过程比较复杂，步骤很多，但是顺序却不确定。适用于Builder模式</p>
+<p>Computer抽象类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">public abstract class Computer &#123;</div><div class="line">    protected int mCpuCore = 1;</div><div class="line">    protected int mRanSize = 0;</div><div class="line">    protected String mOs = &quot;Dos&quot;;</div><div class="line"></div><div class="line">    public Computer() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public abstract void setmCpuCore(int mCpuCore);</div><div class="line"></div><div class="line">    public abstract void setmRanSize(int mRanSize);</div><div class="line"></div><div class="line">    public abstract void setmOs(String mOs);</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public String toString() &#123;</div><div class="line">        return &quot;Computer&#123;&quot; +</div><div class="line">                &quot;mCpuCore=&quot; + mCpuCore +</div><div class="line">                &quot;, mRanSize=&quot; + mRanSize +</div><div class="line">                &quot;, mOs=&apos;&quot; + mOs + &apos;\&apos;&apos; +</div><div class="line">                &apos;&#125;&apos;;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>AppleComputer实现类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">public class AppleComputer extends Computer&#123;</div><div class="line">    protected AppleComputer()&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void setmCpuCore(int mCpuCore) &#123;</div><div class="line">        super.mCpuCore = mCpuCore;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void setmRanSize(int mRanSize) &#123;</div><div class="line">        super.mRanSize = mRanSize;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void setmOs(String mOs) &#123;</div><div class="line">        super.mOs = mOs;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Builder抽象类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public abstract class Builder &#123;</div><div class="line">    public abstract void buildCPU(int core);</div><div class="line"></div><div class="line">    public abstract void buildRAM(int gb);</div><div class="line"></div><div class="line">    public abstract void buildOs(String os);</div><div class="line"></div><div class="line">    public abstract Computer create();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>AppleBuilder实现类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">public class AppleBuilder extends Builder&#123;</div><div class="line"></div><div class="line">    private Computer mApplePC = new AppleComputer();</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void buildCPU(int core) &#123;</div><div class="line">        mApplePC.setmCpuCore(core);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void buildRAM(int gb) &#123;</div><div class="line">        mApplePC.setmRanSize(gb);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void buildOs(String os) &#123;</div><div class="line">        mApplePC.setmOs(os);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Computer create() &#123;</div><div class="line">        return mApplePC;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public class Director &#123;</div><div class="line">    Builder builder = null;</div><div class="line"></div><div class="line">    public Director(Builder builder) &#123;</div><div class="line">        this.builder = builder;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void construct(int cpu, int ram, String os) &#123;</div><div class="line">        builder.buildCPU(cpu);</div><div class="line">        builder.buildRAM(ram);</div><div class="line">        builder.buildOs(os);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Test</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Builder builder = new AppleBuilder();</div><div class="line">        Director director = new Director(builder);</div><div class="line">        director.construct(4,2,&quot;Max OS X 10.0.3&quot;);</div><div class="line">        System.out.println(builder.create().toString());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="优点和缺点"><a href="#优点和缺点" class="headerlink" title="优点和缺点"></a>优点和缺点</h2><ul>
+<li><p>优点：</p>
+<ul>
+<li>良好的封装性，使用Builder模式可以使客户端不必知道产品内部组成的细节。</li>
+<li>建造者独立，容易扩展</li>
+<li>在对象创建过程中会使用到系统中的其他对象，这些对象在产品的创建过程中不易得到。</li>
+</ul>
+</li>
+<li><p>缺点：</p>
+<ul>
+<li>会产生多余的Builder对象和Director对象，消耗内存</li>
+<li>对象的构建过程暴露。</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/算法之队列/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/21/算法之队列/" itemprop="url">算法-队列</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/algorithms/" itemprop="url" rel="index">
+                    <span itemprop="name">algorithms</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="树的层序遍历问题"><a href="#树的层序遍历问题" class="headerlink" title="树的层序遍历问题"></a>树的层序遍历问题</h1><h2 id="从上到下"><a href="#从上到下" class="headerlink" title="从上到下"></a>从上到下</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">package leetcode.queue;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line">import java.util.ArrayList;</div><div class="line">import java.util.LinkedList;</div><div class="line">import java.util.List;</div><div class="line">import java.util.Queue;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class BinaryTreeLevelOrderTraversal_102 &#123;</div><div class="line">    public List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) &#123;</div><div class="line">        List&lt;List&lt;Integer&gt;&gt; res = new ArrayList&lt;&gt;();</div><div class="line">        if (root == null)</div><div class="line">            return res;</div><div class="line">        Queue&lt;TreeNode&gt; queue = new LinkedList&lt;&gt;();</div><div class="line">        queue.offer(root);</div><div class="line">        while (!queue.isEmpty()) &#123;</div><div class="line">            int size = queue.size();</div><div class="line">            List&lt;Integer&gt; list = new ArrayList&lt;&gt;();</div><div class="line">            for (int i = 0; i &lt; size; i++) &#123;</div><div class="line">                TreeNode node = queue.poll();</div><div class="line">                list.add(node.val);</div><div class="line">                if (node.left != null)</div><div class="line">                    queue.offer(node.left);</div><div class="line">                if (node.right != null)</div><div class="line">                    queue.offer(node.right);</div><div class="line">            &#125;</div><div class="line">            res.add(list);</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="从下到上"><a href="#从下到上" class="headerlink" title="从下到上"></a>从下到上</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">package leetcode.queue;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">import java.util.ArrayList;</div><div class="line">import java.util.LinkedList;</div><div class="line">import java.util.List;</div><div class="line">import java.util.Queue;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class BinaryTreeLevelOrderTraversalII_107 &#123;</div><div class="line">    public List&lt;List&lt;Integer&gt;&gt; levelOrderBottom(TreeNode root) &#123;</div><div class="line">        List&lt;List&lt;Integer&gt;&gt; res = new ArrayList&lt;&gt;();</div><div class="line">        if (root == null)</div><div class="line">            return res;</div><div class="line">        Queue&lt;TreeNode&gt; queue = new LinkedList&lt;&gt;();</div><div class="line">        queue.offer(root);</div><div class="line">        while (!queue.isEmpty()) &#123;</div><div class="line">            int size = queue.size();</div><div class="line">            List&lt;Integer&gt; list = new ArrayList&lt;&gt;();</div><div class="line">            for (int i = 0; i &lt; size; i++) &#123;</div><div class="line">                TreeNode node = queue.poll();</div><div class="line">                list.add(node.val);</div><div class="line">                if (node.left != null)</div><div class="line">                    queue.offer(node.left);</div><div class="line">                if (node.right != null)</div><div class="line">                    queue.offer(node.right);</div><div class="line">            &#125;</div><div class="line">            res.add(0, list);</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="之字形层序遍历"><a href="#之字形层序遍历" class="headerlink" title="之字形层序遍历"></a>之字形层序遍历</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">package leetcode.queue;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">import java.util.ArrayList;</div><div class="line">import java.util.LinkedList;</div><div class="line">import java.util.List;</div><div class="line">import java.util.Queue;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class BinaryTreeZigzagLevelOrderTraversal_103 &#123;</div><div class="line">    public List&lt;List&lt;Integer&gt;&gt; zigzagLevelOrder(TreeNode root) &#123;</div><div class="line">        List&lt;List&lt;Integer&gt;&gt; res = new ArrayList&lt;&gt;();</div><div class="line">        if (root == null)</div><div class="line">            return res;</div><div class="line">        Queue&lt;TreeNode&gt; queue = new LinkedList&lt;&gt;();</div><div class="line">        queue.offer(root);</div><div class="line">        int flag = 1;</div><div class="line">        while (!queue.isEmpty()) &#123;</div><div class="line">            int size = queue.size();</div><div class="line">            List&lt;Integer&gt; list = new ArrayList&lt;&gt;();</div><div class="line">            for (int i = 0; i &lt; size; i++) &#123;</div><div class="line">                TreeNode node = queue.poll();</div><div class="line">                if (flag % 2 == 1)</div><div class="line">                    list.add(node.val);</div><div class="line">                else</div><div class="line">                    list.add(0, node.val);</div><div class="line">                if (node.left != null)</div><div class="line">                    queue.offer(node.left);</div><div class="line">                if (node.right != null)</div><div class="line">                    queue.offer(node.right);</div><div class="line">            &#125;</div><div class="line">            res.add(list);</div><div class="line">            flag++;</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="从一颗树右侧看过去的节点数"><a href="#从一颗树右侧看过去的节点数" class="headerlink" title="从一颗树右侧看过去的节点数"></a>从一颗树右侧看过去的节点数</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">package leetcode.queue;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">import java.util.ArrayList;</div><div class="line">import java.util.LinkedList;</div><div class="line">import java.util.List;</div><div class="line">import java.util.Queue;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class BinaryTreeRightSideView_199 &#123;</div><div class="line">    public List&lt;Integer&gt; rightSideView(TreeNode root) &#123;</div><div class="line">        List&lt;Integer&gt; res = new ArrayList&lt;&gt;();</div><div class="line">        if (root == null)</div><div class="line">            return res;</div><div class="line">        Queue&lt;TreeNode&gt; queue = new LinkedList&lt;&gt;();</div><div class="line">        queue.offer(root);</div><div class="line">        while (!queue.isEmpty()) &#123;</div><div class="line">            int size = queue.size();</div><div class="line">            for (int i = 0; i &lt; size; i++) &#123;</div><div class="line">                TreeNode node = queue.poll();</div><div class="line">                if (i == size - 1)</div><div class="line">                    res.add(node.val);</div><div class="line">                if (node.left != null)</div><div class="line">                    queue.offer(node.left);</div><div class="line">                if (node.right != null)</div><div class="line">                    queue.offer(node.right);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="合并k个排序链表-用优先队列，重写compare方法"><a href="#合并k个排序链表-用优先队列，重写compare方法" class="headerlink" title="合并k个排序链表, 用优先队列，重写compare方法"></a>合并k个排序链表, 用优先队列，重写compare方法</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">package leetcode.queue;</div><div class="line"></div><div class="line">import leetcode.linkedList.ListNode;</div><div class="line"></div><div class="line">import java.util.Comparator;</div><div class="line">import java.util.List;</div><div class="line">import java.util.PriorityQueue;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class MergeKSortedLists_23 &#123;</div><div class="line">    public ListNode mergeKLists(ListNode[] lists) &#123;</div><div class="line">        if (lists == null || lists.length == 0)</div><div class="line">            return null;</div><div class="line">        PriorityQueue&lt;ListNode&gt; queue = new PriorityQueue&lt;&gt;(lists.length, new Comparator&lt;ListNode&gt;() &#123;</div><div class="line">            @Override</div><div class="line">            public int compare(ListNode o1, ListNode o2) &#123;</div><div class="line">                return o1.val - o2.val;</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line"></div><div class="line">        ListNode dummy = new ListNode(0);</div><div class="line">        ListNode p = dummy;</div><div class="line">        for (ListNode node : lists) &#123;</div><div class="line">            if (node != null)</div><div class="line">                queue.add(node);</div><div class="line">        &#125;</div><div class="line">        while (!queue.isEmpty()) &#123;</div><div class="line">            p.next = queue.poll();</div><div class="line">            p = p.next;</div><div class="line">            if (p.next != null)</div><div class="line">                queue.add(p.next);</div><div class="line">        &#125;</div><div class="line">        return dummy.next;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="找到数组中出现频率最高的k个数"><a href="#找到数组中出现频率最高的k个数" class="headerlink" title="找到数组中出现频率最高的k个数"></a>找到数组中出现频率最高的k个数</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div></pre></td><td class="code"><pre><div class="line">package leetcode.queue;</div><div class="line"></div><div class="line">import java.util.ArrayList;</div><div class="line">import java.util.HashMap;</div><div class="line">import java.util.List;</div><div class="line">import java.util.PriorityQueue;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class TopKFrequentElements_347 &#123;</div><div class="line">    public List&lt;Integer&gt; topKFrequent(int[] nums, int k) &#123;</div><div class="line">        List&lt;Integer&gt; res = new ArrayList&lt;&gt;();</div><div class="line">        //统计数组中的元素出现的频率，key-num, value-次数</div><div class="line">        HashMap&lt;Integer, Integer&gt; map = new HashMap&lt;&gt;();</div><div class="line">        for (int i = 0; i &lt; nums.length; i++) &#123;</div><div class="line">            if (map.containsKey(nums[i])) &#123;</div><div class="line">                map.put(nums[i], map.get(nums[i])+1);</div><div class="line">            &#125; else &#123;</div><div class="line">                map.put(nums[i],1);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        //扫描map，维护当前频率最高的k个元素,</div><div class="line">        PriorityQueue&lt;Pair&gt; queue = new PriorityQueue&lt;&gt;(k);</div><div class="line">        for (Integer i : map.keySet()) &#123;</div><div class="line">            if (queue.size() == k) &#123;</div><div class="line">                if (map.get(i) &gt; queue.peek().freq)&#123;</div><div class="line">                    queue.poll();</div><div class="line">                    queue.add(new Pair(map.get(i),i));</div><div class="line">                &#125;</div><div class="line">            &#125; else &#123;</div><div class="line">                queue.add(new Pair(map.get(i), i));</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        //遍历优先队列，将num加入到结果集中</div><div class="line">        for (Pair pair : queue) &#123;</div><div class="line">            res.add(0, pair.num);</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    class Pair implements Comparable&lt;Pair&gt;&#123;</div><div class="line">        int freq;</div><div class="line">        int num;</div><div class="line">        public Pair(int freq, int num) &#123;</div><div class="line">            this.freq = freq;</div><div class="line">            this.num = num;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public int compareTo(Pair o) &#123;</div><div class="line">            return this.freq - o.freq;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -1295,677 +2021,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/算法之全排列和全组合/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/算法之全排列和全组合/" itemprop="url">算法-全排列和全组合</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/algorithms/" itemprop="url" rel="index">
-                    <span itemprop="name">algorithms</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="全排列"><a href="#全排列" class="headerlink" title="全排列"></a>全排列</h1><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><ul>
-<li><p>输入一个字符串，求字符串包含元素（含重复，比如aab的情况）的所有排列可能。</p>
-</li>
-<li><p>例如：输入abc,所有排列组合包括: abc, acb, bac, bca, cab, cba。</p>
-</li>
-</ul>
-<h2 id="递归解法"><a href="#递归解法" class="headerlink" title="递归解法"></a>递归解法</h2><ul>
-<li><p>思路：如果输入为abcdef，则首先确定排列的第一个字母，有6中可能，如果选定a,则其后接bcdef的全排列，明显适用于递归结题。结题思路为第一个字母分别选定所有可能的情况，然后对剩下的字母进行递归。递归终止条件为选定的字母的下标为字符串长度-1。</p>
-</li>
-<li><p>实现</p>
-</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">public class AllSort &#123;</div><div class="line">    private static ArrayList&lt;String&gt; list = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    public static void main(String[] args) throws IOException &#123;</div><div class="line">        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));</div><div class="line">        String str = br.readLine();</div><div class="line">        Permutation(str.toCharArray(), str.length(), 0);</div><div class="line">        System.out.println(list.toString());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void Permutation(char[] chars, int strLen, int curIndex) &#123;</div><div class="line">        //如果到最后一个数，将排好的加入到list中</div><div class="line">        if (curIndex == strLen - 1) &#123;</div><div class="line">            list.add(new String(chars));</div><div class="line">        &#125; else &#123;</div><div class="line">            for (int i = curIndex; i &lt;= strLen - 1; i++) &#123;</div><div class="line">                //去重，避免相同数字的交换造成最终结果存在重复</div><div class="line">                if (i == curIndex || chars[i] != chars[curIndex]) &#123;</div><div class="line">                    //依次交换开头字母与后面的进行递归</div><div class="line">                    Swap(chars, i, curIndex);</div><div class="line">                    Permutation(chars, strLen, curIndex + 1);</div><div class="line">                    Swap(chars, i, curIndex);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void Swap(char[] chars, int i, int curIndex) &#123;</div><div class="line">        char tmp = chars[i];</div><div class="line">        chars[i] = chars[curIndex];</div><div class="line">        chars[curIndex] = tmp;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="字典序法"><a href="#字典序法" class="headerlink" title="字典序法"></a>字典序法</h2><ul>
-<li>思想：将输入排序，如输入为1234，则其最小值为1234，然后下一次加入的值为除了1234以外，1,2,3,4组成的最小的值。获取方法为从末尾找第一个从右向左不递增的数a，然后找到从末尾开始从右向左第一个大于a的数，并将这两个数交换次序。然后将原来a的位置之后的字符串反序。也就是说1234，的下一个为1243，在下一个为1324..直到字符串从右向左递增为止。</li>
-</ul>
-<p>实现：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line">public class AllSort &#123;</div><div class="line">    private static ArrayList&lt;String&gt; list = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    public static void main(String[] args) throws IOException &#123;</div><div class="line">        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));</div><div class="line">        String str = br.readLine();</div><div class="line">        PermutationWithDictionary(str.toCharArray(), str.length());</div><div class="line">        System.out.println(list.toString());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void Swap(char[] chars, int i, int curIndex) &#123;</div><div class="line">        char tmp = chars[i];</div><div class="line">        chars[i] = chars[curIndex];</div><div class="line">        chars[curIndex] = tmp;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void PermutationWithDictionary(char[] chars, int strLen) &#123;</div><div class="line">        //对字符数组进行排序</div><div class="line">        Arrays.sort(chars);</div><div class="line"></div><div class="line">        while (true) &#123;</div><div class="line">            int j;</div><div class="line">            int index = 0;</div><div class="line">            //找到从右向左第一个不是非递增元素</div><div class="line">            for (j = strLen - 2; j &gt;= 0; j--) &#123;</div><div class="line">                if (chars[j] &lt; chars[j+1])&#123;</div><div class="line">                    index = j;</div><div class="line">                    break;</div><div class="line">                &#125; else if (j == 0)&#123;</div><div class="line">                    return;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            //与从右向左第一个大于这个元素的元素交换</div><div class="line">            for (j = strLen - 1; j &gt;= 0; j--) &#123;</div><div class="line">                if (chars[j] &gt; chars[index]) &#123;</div><div class="line">                    break;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            //交换这两个值</div><div class="line">            Swap(chars, index, j);</div><div class="line">            //对非递增元素位置后面的数组进行逆序排序</div><div class="line">            Reverse(chars, index+1);</div><div class="line">            list.add(new String(chars));</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void Reverse(char[] chars, int index) &#123;</div><div class="line">        int k = index, j = chars.length-1;</div><div class="line">        while (k &lt; j) &#123;</div><div class="line">            Swap(chars,k,j);</div><div class="line">            k++;</div><div class="line">            j--;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="全组合"><a href="#全组合" class="headerlink" title="全组合"></a>全组合</h1><ul>
-<li>题目描述：输入一个字符串，求字符的所有组合。如abc,则输出可能为a,b,c,ab,ac,bc,abc。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line">public class AllCombine &#123;</div><div class="line">    static ArrayList&lt;String&gt; list = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    public static void main(String[] args) throws IOException &#123;</div><div class="line">        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));</div><div class="line">        String str = br.readLine();</div><div class="line">        combinetion(str.toCharArray(), str.length());</div><div class="line">        System.out.println(list.toString());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void combinetion(char[] chars, int length) &#123;</div><div class="line">       if (chars == null || length == 0)</div><div class="line">           return;</div><div class="line">        List&lt;Character&gt; array = new ArrayList&lt;&gt;();</div><div class="line">        //n中情况分别考虑</div><div class="line">        for (int i = 1; i &lt;= length; i++) &#123;</div><div class="line">            combine(chars, 0, i, array);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 从字符数组中index以后挑选number个数加入list</div><div class="line">     * @param chars 输入的字符数组</div><div class="line">     * @param index 开始字符下标</div><div class="line">     * @param number</div><div class="line">     * @param array</div><div class="line">     */</div><div class="line">    private static void combine(char[] chars, int index, int number, List&lt;Character&gt; array) &#123;</div><div class="line">        if (number == 0) &#123;</div><div class="line">            //递归终止条件，判断是为了去重</div><div class="line">            if (!list.contains(array.toString())) &#123;</div><div class="line">                list.add(array.toString());</div><div class="line">            &#125;</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line">        if (index == chars.length) &#123;</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line">        //取当前元素，并考察递归选取n-1个元素的情况</div><div class="line">        array.add(chars[index]);</div><div class="line">        combine(chars, index+1, number - 1, array);</div><div class="line">        array.remove((Character) chars[index]);</div><div class="line">        //不取当前元素，考察后面选取n个元素</div><div class="line">        combine(chars, index+1, number, array);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>基于位图：假定元素有n个，则最终结果组合为2^n-1个，我们使用位操作方法：假设元素原本为123，则1表示取该元素，0表示不取该元素。000是没有意义是，则选取的对应如下：<br>001,010,100,011,101,110,111-&gt;a,b,c,bc,ac,ab,abc。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">public class AllCombine1 &#123;</div><div class="line">    static ArrayList&lt;String&gt; list = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    public static void main(String[] args) throws IOException &#123;</div><div class="line">        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));</div><div class="line">        String str = br.readLine();</div><div class="line">        combinetion(str.toCharArray());</div><div class="line">        System.out.println(list.toString());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void combinetion(char[] chars) &#123;</div><div class="line">        if (chars == null || chars.length == 0)</div><div class="line">            return;</div><div class="line">        int len = chars.length;</div><div class="line">        //n=2^len</div><div class="line">        int n = 1&lt;&lt;len;</div><div class="line">        for (int i = 1; i &lt; n; i++) &#123;</div><div class="line">            StringBuilder sb = new StringBuilder();</div><div class="line">            for (int j = 0; j &lt; len; j++) &#123;</div><div class="line">                int temp = i;</div><div class="line">                if ((temp &amp; (1&lt;&lt;j)) != 0)</div><div class="line">                    sb.append(chars[j]);</div><div class="line">            &#125;</div><div class="line">            list.add(sb.toString());</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/算法之二维矩阵各点到0值的距离/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/算法之二维矩阵各点到0值的距离/" itemprop="url">算法-二维矩阵各点到0值的距离</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/algorithms/" itemprop="url" rel="index">
-                    <span itemprop="name">algorithms</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="算法之二维矩阵各点到0值的距离"><a href="#算法之二维矩阵各点到0值的距离" class="headerlink" title="算法之二维矩阵各点到0值的距离"></a>算法之二维矩阵各点到0值的距离</h1><ul>
-<li>给定一个矩阵，返回各个节点到0点位置的最短路径</li>
-</ul>
-<p>如:<br>        {0,1,1,1}<br>        {1,1,1,0}<br>        {1,0,1,1}</p>
-<p>返回:<br>        [0, 1, 2, 1]<br>        [1, 1, 1, 0]<br>        [1, 0, 1, 1]</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> tmp;</div><div class="line"></div><div class="line"><span class="keyword">import</span> java.util.Arrays;</div><div class="line"><span class="keyword">import</span> java.util.LinkedList;</div><div class="line"><span class="keyword">import</span> java.util.Queue;</div><div class="line"><span class="keyword">import</span> java.util.Scanner;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * Created by cdx0312</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        <span class="keyword">int</span>[][] arr = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">3</span>][<span class="number">4</span>];</div><div class="line">        arr[<span class="number">0</span>] = <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>&#125;;</div><div class="line">        arr[<span class="number">1</span>] = <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>&#125;;</div><div class="line">        arr[<span class="number">2</span>] = <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>&#125;;</div><div class="line">        <span class="keyword">int</span>[][] res = getResult(arr);</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++)</div><div class="line">            System.out.println(Arrays.toString(res[i]));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span>[][] getResult(<span class="keyword">int</span>[][] arr) &#123;</div><div class="line">        <span class="keyword">int</span> M = arr.length;</div><div class="line">        <span class="keyword">int</span> N = arr[<span class="number">0</span>].length;</div><div class="line">        Queue&lt;Point&gt; queue = <span class="keyword">new</span> LinkedList&lt;&gt;();</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; M; i++) &#123;</div><div class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; N; j++) &#123;</div><div class="line">                <span class="keyword">if</span> (arr[i][j] == <span class="number">0</span>)</div><div class="line">                    queue.offer(<span class="keyword">new</span> Point(i, j));</div><div class="line">                <span class="keyword">else</span></div><div class="line">                    arr[i][j] = Integer.MAX_VALUE;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">while</span> (!queue.isEmpty()) &#123;</div><div class="line">            Point point = queue.poll();</div><div class="line">            <span class="keyword">int</span> x = point.x, y = point.y;</div><div class="line">            <span class="keyword">int</span> target = arr[x][y];</div><div class="line">            <span class="keyword">if</span> (x &gt;= <span class="number">1</span> &amp;&amp; arr[x-<span class="number">1</span>][y] &gt; target + <span class="number">1</span>) &#123;</div><div class="line">                arr[x - <span class="number">1</span>][y] = arr[x][y] + <span class="number">1</span>;</div><div class="line">                queue.offer(<span class="keyword">new</span> Point(x-<span class="number">1</span>, y));</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">if</span> (x &lt; M - <span class="number">1</span> &amp;&amp; arr[x+<span class="number">1</span>][y] &gt; target + <span class="number">1</span>) &#123;</div><div class="line">                arr[x + <span class="number">1</span>][y] = arr[x][y] + <span class="number">1</span>;</div><div class="line">                queue.offer(<span class="keyword">new</span> Point(x+<span class="number">1</span>, y));</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">if</span> (y &gt;= <span class="number">1</span> &amp;&amp; arr[x][y-<span class="number">1</span>] &gt; target + <span class="number">1</span>) &#123;</div><div class="line">                arr[x][y - <span class="number">1</span>] = arr[x][y] + <span class="number">1</span>;</div><div class="line">                queue.offer(<span class="keyword">new</span> Point(x, y-<span class="number">1</span>));</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">if</span> (y &lt; N - <span class="number">1</span> &amp;&amp; arr[x][y+<span class="number">1</span>] &gt; target + <span class="number">1</span>) &#123;</div><div class="line">                arr[x][y + <span class="number">1</span>] = arr[x][y] + <span class="number">1</span>;</div><div class="line">                queue.offer(<span class="keyword">new</span> Point(x, y+<span class="number">1</span>));</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> arr;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Point</span> </span>&#123;</div><div class="line">        <span class="keyword">int</span> x;</div><div class="line">        <span class="keyword">int</span> y;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Point</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span> </span>&#123;</div><div class="line">            <span class="keyword">this</span>.x = x;</div><div class="line">            <span class="keyword">this</span>.y = y;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/算法之二叉树/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/算法之二叉树/" itemprop="url">算法-二叉树</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/algorithms/" itemprop="url" rel="index">
-                    <span itemprop="name">algorithms</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>算法中关于二叉树的有很多，将最近做的关于二叉树相关的算法整理下，以备查看。</p>
-<h1 id="Path-Sum问题"><a href="#Path-Sum问题" class="headerlink" title="Path Sum问题"></a>Path Sum问题</h1><h2 id="Path-Sum-112"><a href="#Path-Sum-112" class="headerlink" title="Path Sum 112"></a>Path Sum 112</h2><p>给定一个二叉树和一个sum值，返回true如果存在一个从根节点到叶子节点的路径，否则返回false。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public class PathSum_112 &#123;</div><div class="line">    public boolean hasPathSum(TreeNode root, int sum) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return false;</div><div class="line">        if (root.left == null &amp;&amp; root.right == null)</div><div class="line">            return sum == root.val;</div><div class="line">        return hasPathSum(root.left, sum - root.val) || hasPathSum(root.right, sum - root.val);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="Path-SumII-113"><a href="#Path-SumII-113" class="headerlink" title="Path SumII 113"></a>Path SumII 113</h2><p>给定一个二叉树和一个sum值，找到所有的从根节点到叶子节点的路径和为sum的路径并返回。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.linkedList.ListNode;</div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">import java.util.ArrayList;</div><div class="line">import java.util.List;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/9</div><div class="line"> */</div><div class="line">public class PathSumII_113 &#123;</div><div class="line">    public List&lt;List&lt;Integer&gt;&gt; pathSum(TreeNode root, int sum) &#123;</div><div class="line">        List&lt;List&lt;Integer&gt;&gt; res = new ArrayList&lt;&gt;();</div><div class="line">        List&lt;Integer&gt; list = new ArrayList&lt;&gt;();</div><div class="line">        getPathSum(root, sum, res,list);</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     *</div><div class="line">     * @param root 跟节点</div><div class="line">     * @param sum 和</div><div class="line">     * @param res 返回的二维数组</div><div class="line">     * @param list 单个路径</div><div class="line">     */</div><div class="line">    private void getPathSum(TreeNode root, int sum, List&lt;List&lt;Integer&gt;&gt; res, List&lt;Integer&gt; list) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return;</div><div class="line">        list.add(root.val);</div><div class="line">        //递归到叶子节点进行判断，决定是否将当前list添加到列表中，不是叶子节点则继续递归左子树和右子树。</div><div class="line">        if (root.left == null &amp;&amp; root.right == null &amp;&amp; sum == root.val) &#123;</div><div class="line">            res.add(new ArrayList&lt;&gt;(list));</div><div class="line">            list.remove(list.size() - 1);</div><div class="line">            return;</div><div class="line">        &#125; else &#123;</div><div class="line">            getPathSum(root.left, sum - root.val, res, list);</div><div class="line">            getPathSum(root.right, sum - root.val, res, list);</div><div class="line">        &#125;</div><div class="line">        //添加完记得删除，回溯上一个状态。</div><div class="line">        list.remove(list.size() - 1);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="Path-SumIII-437"><a href="#Path-SumIII-437" class="headerlink" title="Path SumIII 437"></a>Path SumIII 437</h2><p>给定一个二叉树，节点值可以为负数，找到路径和等于sum的路径的个数，其中路径不需要从根节点开始，也不需要从叶子节点终止。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/10</div><div class="line"> */</div><div class="line">public class PathSumIII_437 &#123;</div><div class="line">    public int pathSum(TreeNode root, int sum) &#123;</div><div class="line">        int res = 0;</div><div class="line">        if (root == null)</div><div class="line">            return res;</div><div class="line">        res = findPath(root, sum);</div><div class="line">        res += pathSum(root.left, sum);</div><div class="line">        res += pathSum(root.right ,sum);</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private int findPath(TreeNode root, int sum) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return 0;</div><div class="line">        int res = 0;</div><div class="line">        if (root.val == sum)</div><div class="line">            res++;</div><div class="line">        return res + findPath(root.left, sum - root.val) + findPath(root.right, sum - root.val);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="树的深度问题"><a href="#树的深度问题" class="headerlink" title="树的深度问题"></a>树的深度问题</h1><h2 id="树的最大深度问题"><a href="#树的最大深度问题" class="headerlink" title="树的最大深度问题"></a>树的最大深度问题</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/9</div><div class="line"> */</div><div class="line">public class MaximunDepthOfBinaryTree_104 &#123;</div><div class="line">    public int maxDepth(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return 0;</div><div class="line">        int leftMaxDepth = maxDepth(root.left);</div><div class="line">        int rightMaxDepth = maxDepth(root.right);</div><div class="line">        return Math.max(leftMaxDepth, rightMaxDepth) + 1;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="树的最小深度"><a href="#树的最小深度" class="headerlink" title="树的最小深度"></a>树的最小深度</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/9</div><div class="line"> */</div><div class="line">public class MinimumDepthOfBinaryTree_111 &#123;</div><div class="line">    public int minDepth(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return 0;</div><div class="line">        if (root.left == null)</div><div class="line">            return 1 + minDepth(root.right);</div><div class="line">        if (root.right == null)</div><div class="line">            return 1 + minDepth(root.left);</div><div class="line">        return Math.min(minDepth(root.left), minDepth(root.right)) + 1;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="二叉树的最早祖先节点"><a href="#二叉树的最早祖先节点" class="headerlink" title="二叉树的最早祖先节点"></a>二叉树的最早祖先节点</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) &#123;</div><div class="line">    if (root == null || root == p || root == q)</div><div class="line">        return root;</div><div class="line">    TreeNode left = lowestCommonAncestor(root.left, p, q);</div><div class="line">    TreeNode right = lowestCommonAncestor(root.right, p, q);</div><div class="line">    if (left != null &amp;&amp; right != null)</div><div class="line">        return root;</div><div class="line">    return left != null ? left : right;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="二叉搜索树的最早祖先节点"><a href="#二叉搜索树的最早祖先节点" class="headerlink" title="二叉搜索树的最早祖先节点"></a>二叉搜索树的最早祖先节点</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/10</div><div class="line"> */</div><div class="line">public class LowestCommonAncestorOfABinarySearchTree_235 &#123;</div><div class="line">    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return null;</div><div class="line">        if (p.val &lt; root.val &amp;&amp; q.val &lt; root.val)</div><div class="line">            return lowestCommonAncestor(root.left, p, q);</div><div class="line">        else if (p.val &gt; root.val &amp;&amp; q.val &gt; root.val)</div><div class="line">            return lowestCommonAncestor(root.right, p, q);</div><div class="line">        return root;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="二叉搜索树"><a href="#二叉搜索树" class="headerlink" title="二叉搜索树"></a>二叉搜索树</h1><h2 id="二叉搜索树第k小的节点"><a href="#二叉搜索树第k小的节点" class="headerlink" title="二叉搜索树第k小的节点"></a>二叉搜索树第k小的节点</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/10</div><div class="line"> */</div><div class="line">public class KthSmallestElementInaBST_230 &#123;</div><div class="line">    //堆栈方法</div><div class="line">    public int kthSmallest(TreeNode root, int k) &#123;</div><div class="line">        Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();</div><div class="line">        while (root != null) &#123;</div><div class="line">            stack .push(root);</div><div class="line">            root = root.left;</div><div class="line">        &#125;</div><div class="line">        while (k != 0) &#123;</div><div class="line">            TreeNode node = stack.pop();</div><div class="line">            k--;</div><div class="line">            if (k == 0)</div><div class="line">                return node.val;</div><div class="line">            TreeNode right = node.right;</div><div class="line">            while (right != null) &#123;</div><div class="line">                stack.push(right);</div><div class="line">                right = right.left;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return -1;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //递归方法</div><div class="line">    public int kthSmallest1(TreeNode root, int k) &#123;</div><div class="line">        int count = countNodes(root.left);</div><div class="line">        if (k &lt;= count)</div><div class="line">            return kthSmallest(root.left, k);</div><div class="line">        else if (k &gt; count + 1)</div><div class="line">            return kthSmallest(root.right, k - 1 -count);</div><div class="line">        return root.val;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private int countNodes(TreeNode left) &#123;</div><div class="line">        if (left == null)</div><div class="line">            return 0;</div><div class="line">        return 1 + countNodes(left.left) + countNodes(left.right);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="检验一棵树是否为二叉搜索树"><a href="#检验一棵树是否为二叉搜索树" class="headerlink" title="检验一棵树是否为二叉搜索树"></a>检验一棵树是否为二叉搜索树</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/10</div><div class="line"> */</div><div class="line">public class ValidateBST_98 &#123;</div><div class="line">    public boolean isValidBST(TreeNode root) &#123;</div><div class="line">        return isValidBST(root, Long.MIN_VALUE, Long.MAX_VALUE);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private boolean isValidBST(TreeNode root, long minValue, long maxValue) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return true;</div><div class="line">        if (root.val &gt;= maxValue || root.val &lt;= minValue)</div><div class="line">            return false;</div><div class="line">        return isValidBST(root.left,minValue, root.val) &amp;&amp; isValidBST(root.right, root.val, maxValue);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="从二叉搜索树里面删除一个节点"><a href="#从二叉搜索树里面删除一个节点" class="headerlink" title="从二叉搜索树里面删除一个节点"></a>从二叉搜索树里面删除一个节点</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/10</div><div class="line"> */</div><div class="line">public class DeleteNodeInABST_450 &#123;</div><div class="line">    public TreeNode deleteNode(TreeNode root, int key) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return null;</div><div class="line">        if (key &lt; root.val)</div><div class="line">            root.left = deleteNode(root.left, key);</div><div class="line">        else if (key &gt; root.val)</div><div class="line">            root.right = deleteNode(root.right, key);</div><div class="line">        else &#123;</div><div class="line">            if (root.left == null) &#123;</div><div class="line">                return root.right;</div><div class="line">            &#125;else if (root.right == null) &#123;</div><div class="line">                return root.left;</div><div class="line">            &#125;</div><div class="line">            TreeNode min = find(root.right);</div><div class="line">            root.val = min.val;</div><div class="line">            root.right = deleteNode(root.right, root.val);</div><div class="line">        &#125;</div><div class="line">        return root;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private TreeNode find(TreeNode root) &#123;</div><div class="line">        while (root.left != null)</div><div class="line">            root = root.left;</div><div class="line">        return root;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="判断一颗树是否为平衡二叉树"><a href="#判断一颗树是否为平衡二叉树" class="headerlink" title="判断一颗树是否为平衡二叉树"></a>判断一颗树是否为平衡二叉树</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/9</div><div class="line"> */</div><div class="line">public class BalancedBinaryTree_110 &#123;</div><div class="line">    public boolean isBalanced(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return true;</div><div class="line">        int left = getHeight(root.left);</div><div class="line">        int right = getHeight(root.right);</div><div class="line">        return Math.abs(right - left) &lt; 2 &amp;&amp; isBalanced(root.left) &amp;&amp; isBalanced(root.right);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private int getHeight(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return 0;</div><div class="line">        return 1 + Math.max(getHeight(root.left), getHeight(root.right));</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="将一个有序队列转换成平衡二叉树"><a href="#将一个有序队列转换成平衡二叉树" class="headerlink" title="将一个有序队列转换成平衡二叉树"></a>将一个有序队列转换成平衡二叉树</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/10</div><div class="line"> */</div><div class="line">public class ConvertSortedArrayToBST_108 &#123;</div><div class="line">    public TreeNode sortedArrayToBST(int[] nums) &#123;</div><div class="line">        if (nums == null || nums.length == 0)</div><div class="line">            return null;</div><div class="line">        return help(nums, 0, nums.length-1);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private TreeNode help(int[] nums, int low, int high) &#123;</div><div class="line">        if (low &gt; high)</div><div class="line">            return null;</div><div class="line">        int mid = (low + high) / 2;</div><div class="line">        TreeNode root = new TreeNode(nums[mid]);</div><div class="line">        root.left = help(nums, low, mid - 1);</div><div class="line">        root.right = help(nums, mid + 1, high);</div><div class="line">        return root;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="计算一个完全二叉树的节点数"><a href="#计算一个完全二叉树的节点数" class="headerlink" title="计算一个完全二叉树的节点数"></a>计算一个完全二叉树的节点数</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">import java.util.LinkedList;</div><div class="line">import java.util.Queue;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/9</div><div class="line"> */</div><div class="line">public class CountCompleteTreeNode_222 &#123;</div><div class="line">    public int countNodes(TreeNode root) &#123;</div><div class="line">        int h = getHeight(root);</div><div class="line">        int nodes = 0;</div><div class="line">        while (root != null) &#123;</div><div class="line">            if (getHeight(root.right) == h - 1)&#123;</div><div class="line">                nodes += 1 &lt;&lt; h;</div><div class="line">                root = root.right;</div><div class="line">            &#125; else &#123;</div><div class="line">                nodes += 1 &lt;&lt; h - 1;</div><div class="line">                root = root.left;</div><div class="line">            &#125;</div><div class="line">            h--;</div><div class="line">        &#125;</div><div class="line">        return nodes;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private int getHeight(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return -1;</div><div class="line">        return 1 + getHeight(root.left);</div><div class="line">    &#125;</div><div class="line">    //队列</div><div class="line">    public int countNodes1(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return 0;</div><div class="line">        Queue&lt;TreeNode&gt; queue = new LinkedList&lt;&gt;();</div><div class="line">        queue.add(root);</div><div class="line">        int count = 1;</div><div class="line">        while (!queue.isEmpty()) &#123;</div><div class="line">            TreeNode tmp = queue.poll();</div><div class="line">            if (tmp.val != -1) &#123;</div><div class="line">                tmp.val = -1;</div><div class="line">                if (tmp.left != null) &#123;</div><div class="line">                    queue.offer(tmp.left);</div><div class="line">                    count++;</div><div class="line">                &#125;</div><div class="line">                if (tmp.right != null) &#123;</div><div class="line">                    queue.offer(tmp.right);</div><div class="line">                    count++;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return count;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="反转二叉树"><a href="#反转二叉树" class="headerlink" title="反转二叉树"></a>反转二叉树</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/9</div><div class="line"> */</div><div class="line">public class InverseBinaryTree_226 &#123;</div><div class="line">    public TreeNode invertTree(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return null;</div><div class="line">        invertTree(root.left);</div><div class="line">        invertTree(root.right);</div><div class="line">        TreeNode tmp = root.left;</div><div class="line">        root.left = root.right;</div><div class="line">        root.right = tmp;</div><div class="line">        return root;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="相等的树"><a href="#相等的树" class="headerlink" title="相等的树"></a>相等的树</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/9</div><div class="line"> */</div><div class="line">public class SameTree_100 &#123;</div><div class="line">    public boolean isSameTree(TreeNode p, TreeNode q) &#123;</div><div class="line">        if (p == null &amp;&amp; q == null)</div><div class="line">            return true;</div><div class="line">        if (p == null || q == null)</div><div class="line">            return false;</div><div class="line">        if (p.val == q.val)</div><div class="line">            return isSameTree(p.left,q.left) &amp;&amp; isSameTree(p.right, q.right);</div><div class="line">        else</div><div class="line">            return false;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="左叶子节点的和"><a href="#左叶子节点的和" class="headerlink" title="左叶子节点的和"></a>左叶子节点的和</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/9</div><div class="line"> */</div><div class="line">public class SumOfLeftLeaves_404 &#123;</div><div class="line">    public int sumOfLeftLeaves(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return 0;</div><div class="line">        if (root.left != null &amp;&amp; root.left.left == null &amp;&amp; root.left.right == null)</div><div class="line">            return root.left.val + sumOfLeftLeaves(root.right);</div><div class="line">        return sumOfLeftLeaves(root.left) + sumOfLeftLeaves(root.right);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="根节点到所有节点的和"><a href="#根节点到所有节点的和" class="headerlink" title="根节点到所有节点的和"></a>根节点到所有节点的和</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.linkedList.ListNode;</div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">import java.util.ArrayList;</div><div class="line">import java.util.List;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/9</div><div class="line"> */</div><div class="line">public class SumRootToLeafNumbers_129 &#123;</div><div class="line">    public int sumNumbers(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return 0;</div><div class="line">        List&lt;List&lt;Integer&gt;&gt; res = new ArrayList&lt;&gt;();</div><div class="line">        List&lt;Integer&gt; list = new ArrayList&lt;&gt;();</div><div class="line">        getPathSum(root, res, list);</div><div class="line">        int result = 0;</div><div class="line">        for (List&lt;Integer&gt; list1 : res) &#123;</div><div class="line">            int tmp = 0;</div><div class="line">            for (Integer i : list1) &#123;</div><div class="line">                tmp = tmp * 10 + i;</div><div class="line">            &#125;</div><div class="line">            result += tmp;</div><div class="line">        &#125;</div><div class="line">        return result;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    private void getPathSum(TreeNode root,List&lt;List&lt;Integer&gt;&gt; res, List&lt;Integer&gt; list) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return;</div><div class="line">        list.add(root.val);</div><div class="line">        if (root.left == null &amp;&amp; root.right == null) &#123;</div><div class="line">            res.add(new ArrayList&lt;&gt;(list));</div><div class="line">            list.remove(list.size() - 1);</div><div class="line">            return;</div><div class="line">        &#125; else &#123;</div><div class="line">            getPathSum(root.left, res, list);</div><div class="line">            getPathSum(root.right, res, list);</div><div class="line">        &#125;</div><div class="line">        list.remove(list.size() - 1);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public int sumNumbers1(TreeNode root) &#123;</div><div class="line">        return sumNumbers(root, 0);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public int sumNumbers(TreeNode root, int sum) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return 0;</div><div class="line">        sum = sum * 10 + root.val;</div><div class="line">        if (root.left == null &amp;&amp; root.right == null) &#123;</div><div class="line">            return sum;</div><div class="line">        &#125;</div><div class="line">        return sumNumbers(root.left, sum) + sumNumbers(root.right, sum);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="镜像树问题"><a href="#镜像树问题" class="headerlink" title="镜像树问题"></a>镜像树问题</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">package leetcode.binaryTree;</div><div class="line"></div><div class="line">import leetcode.stack.TreeNode;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/9</div><div class="line"> */</div><div class="line">public class SymmetricTree_101 &#123;</div><div class="line">    public boolean isSymmetric(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return true;</div><div class="line">        return isSymmetricHelp(root.left, root.right);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private boolean isSymmetricHelp(TreeNode left, TreeNode right) &#123;</div><div class="line">        if (left == null &amp;&amp; right == null)</div><div class="line">            return true;</div><div class="line">        if (left == null || right == null)</div><div class="line">            return false;</div><div class="line">        if (left.val == right.val)</div><div class="line">            return isSymmetricHelp(left.left, right.right) &amp;&amp; isSymmetricHelp(left.right,right.left);</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/算法之BFS/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/算法之BFS/" itemprop="url">算法-BFS</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/algorithms/" itemprop="url" rel="index">
-                    <span itemprop="name">algorithms</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="完美平方数"><a href="#完美平方数" class="headerlink" title="完美平方数"></a>完美平方数</h1><p>DP解法和图论解法，掌握DP的为准，参考图论解法。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line">package leetcode.BFSGraphic;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line">import java.util.LinkedList;</div><div class="line">import java.util.Queue;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class PerfectSquares_279 &#123;</div><div class="line">    public int numSquares(int n) &#123;</div><div class="line">        Queue&lt;Pair&gt; queue = new LinkedList&lt;&gt;();</div><div class="line">        queue.offer(new Pair(n, 0));</div><div class="line">        boolean[] visited = new boolean[n+1];</div><div class="line">        visited[n] = true;</div><div class="line">        while (!queue.isEmpty()) &#123;</div><div class="line">            Pair pair = queue.poll();</div><div class="line">            int num = pair.num;</div><div class="line">            int step = pair.step;</div><div class="line">            if (num == 0)</div><div class="line">                return step;</div><div class="line">            for (int i = 1; num - i * i &gt;= 0; i++) &#123;</div><div class="line">                if (!visited[num-i*i]) &#123;</div><div class="line">                    queue.offer(new Pair(num - i * i, step + 1));</div><div class="line">                    visited[num - i * i] = true;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return n;</div><div class="line">    &#125;</div><div class="line">    /**</div><div class="line">     * num:当前数</div><div class="line">     * step:n到num需要的步数</div><div class="line">     */</div><div class="line">    class Pair &#123;</div><div class="line">        int num;</div><div class="line">        int step;</div><div class="line">        public Pair(int num, int step) &#123;</div><div class="line">            this.num = num;</div><div class="line">            this.step = step;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="WordLadder"><a href="#WordLadder" class="headerlink" title="WordLadder"></a>WordLadder</h1><p>注释很清楚了。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">package leetcode.BFSGraphic;</div><div class="line"></div><div class="line">import java.util.*;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class WordLadder_127 &#123;</div><div class="line">    /*</div><div class="line">        beginSet开始存放beginword，然后将经过一次变更字母之后可以编程的wordList中的字符串</div><div class="line">        放入beginSet，直到出现变换成最终的字符串。</div><div class="line">     */</div><div class="line">    public int ladderLength(String beginWord, String endWord, List&lt;String&gt; wordList) &#123;</div><div class="line">        Set&lt;String&gt; dict = new HashSet&lt;&gt;(wordList), qs = new HashSet&lt;&gt;(), qe = new HashSet&lt;&gt;(), vis = new HashSet&lt;&gt;();</div><div class="line">        qs.add(beginWord);</div><div class="line">        if (dict.contains(endWord))</div><div class="line">            qe.add(endWord); // all transformed words must be in dict (including endWord)</div><div class="line">        for (int len = 2; !qs.isEmpty(); len++) &#123;</div><div class="line">            Set&lt;String&gt; nq = new HashSet&lt;&gt;();</div><div class="line">            for (String w : qs) &#123;</div><div class="line">                for (int j = 0; j &lt; w.length(); j++) &#123;</div><div class="line">                    char[] ch = w.toCharArray();</div><div class="line">                    for (char c = &apos;a&apos;; c &lt;= &apos;z&apos;; c++) &#123;</div><div class="line">                        if (c == w.charAt(j))</div><div class="line">                            continue; // beginWord and endWord not the same, so bypass itself</div><div class="line">                        ch[j] = c;</div><div class="line">                        String nb = String.valueOf(ch);</div><div class="line">                        if (qe.contains(nb))</div><div class="line">                            return len; // meet from two ends</div><div class="line">                        if (dict.contains(nb) &amp;&amp; vis.add(nb))</div><div class="line">                            nq.add(nb); // not meet yet, vis is safe to use</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            qs = (nq.size() &lt; qe.size()) ? nq : qe; // switch to small one to traverse from other end</div><div class="line">            qe = (qs == nq) ? qe : nq;</div><div class="line">        &#125;</div><div class="line">        return 0;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2014,7 +2074,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">79</span>
+                <span class="site-state-item-count">83</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2025,7 +2085,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -2036,7 +2096,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">28</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

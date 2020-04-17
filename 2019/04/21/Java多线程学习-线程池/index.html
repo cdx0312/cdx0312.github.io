@@ -95,19 +95,26 @@
 
 
 
-<meta name="description" content="线程池定义 多线程的程序可以最大限度的发挥多核CPU的性能，但是如果不对线程进行合理的管控，会影响整体系统的性能。线程虽然相对进程来说很轻量级，但是也要占据一定的内存，新建和销毁也需要时间，不能无节制的创建线程。 线程池本质上是一组线程实时处理休眠状态，等待唤醒执行，使用线程池中，创建线程变成了从线程池中获取线程。 线程池可以较少创建和销毁线程上所花的时间以及系统资源的开销，同时将当前任务和主线程">
-<meta name="keywords" content="Java,Multi-Thread">
+<meta name="description" content="线程池定义
+多线程的程序可以最大限度的发挥多核CPU的性能，但是如果不对线程进行合理的管控，会影响整体系统的性能。线程虽然相对进程来说很轻量级，但是也要占据一定的内存，新建和销毁也需要时间，不能无节制的创建线程。
+线程池本质上是一组线程实时处理休眠状态，等待唤醒执行，使用线程池中，创建线程变成了从线程池中获取线程。
+线程池可以较少创建和销毁线程上所花的时间以及系统资源的开销，同时将当前任务和主线程">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java多线程-线程池">
 <meta property="og:url" content="http://yoursite.com/2019/04/21/Java多线程学习-线程池/index.html">
 <meta property="og:site_name" content="小黄">
-<meta property="og:description" content="线程池定义 多线程的程序可以最大限度的发挥多核CPU的性能，但是如果不对线程进行合理的管控，会影响整体系统的性能。线程虽然相对进程来说很轻量级，但是也要占据一定的内存，新建和销毁也需要时间，不能无节制的创建线程。 线程池本质上是一组线程实时处理休眠状态，等待唤醒执行，使用线程池中，创建线程变成了从线程池中获取线程。 线程池可以较少创建和销毁线程上所花的时间以及系统资源的开销，同时将当前任务和主线程">
-<meta property="og:locale" content="zh-Hans">
+<meta property="og:description" content="线程池定义
+多线程的程序可以最大限度的发挥多核CPU的性能，但是如果不对线程进行合理的管控，会影响整体系统的性能。线程虽然相对进程来说很轻量级，但是也要占据一定的内存，新建和销毁也需要时间，不能无节制的创建线程。
+线程池本质上是一组线程实时处理休眠状态，等待唤醒执行，使用线程池中，创建线程变成了从线程池中获取线程。
+线程池可以较少创建和销毁线程上所花的时间以及系统资源的开销，同时将当前任务和主线程">
 <meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-20180902215839990.png">
 <meta property="og:updated_time" content="2018-09-03T04:46:18.502Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java多线程-线程池">
-<meta name="twitter:description" content="线程池定义 多线程的程序可以最大限度的发挥多核CPU的性能，但是如果不对线程进行合理的管控，会影响整体系统的性能。线程虽然相对进程来说很轻量级，但是也要占据一定的内存，新建和销毁也需要时间，不能无节制的创建线程。 线程池本质上是一组线程实时处理休眠状态，等待唤醒执行，使用线程池中，创建线程变成了从线程池中获取线程。 线程池可以较少创建和销毁线程上所花的时间以及系统资源的开销，同时将当前任务和主线程">
+<meta name="twitter:description" content="线程池定义
+多线程的程序可以最大限度的发挥多核CPU的性能，但是如果不对线程进行合理的管控，会影响整体系统的性能。线程虽然相对进程来说很轻量级，但是也要占据一定的内存，新建和销毁也需要时间，不能无节制的创建线程。
+线程池本质上是一组线程实时处理休眠状态，等待唤醒执行，使用线程池中，创建线程变成了从线程池中获取线程。
+线程池可以较少创建和销毁线程上所花的时间以及系统资源的开销，同时将当前任务和主线程">
 <meta name="twitter:image" content="http://yoursite.com/img/markdown-img-paste-20180902215839990.png">
 
 
@@ -633,7 +640,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">79</span>
+                <span class="site-state-item-count">83</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -644,7 +651,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -655,7 +662,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">28</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

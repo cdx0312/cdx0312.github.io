@@ -95,19 +95,20 @@
 
 
 
-<meta name="description" content="常用内建模块datetimedatetime是Python处理日期和时间的标准库。 获取当前的日期和时间：123456&amp;gt;&amp;gt;&amp;gt; from datetime import datetime&amp;gt;&amp;gt;&amp;gt; now=datetime.now()  #获取当前的datetime&amp;gt;&amp;gt;&amp;gt; print(now)2016-11-01 20:25:50.305269&amp;gt">
-<meta name="keywords" content="Python基础">
+<meta name="description" content="常用内建模块datetimedatetime是Python处理日期和时间的标准库。
+获取当前的日期和时间：123456&amp;gt;&amp;gt;&amp;gt; from datetime import datetime&amp;gt;&amp;gt;&amp;gt; now=datetime.now()  #获取当前的datetime&amp;gt;&amp;gt;&amp;gt; print(now)2016-11-01 20:25:50.305269&amp;gt">
 <meta property="og:type" content="article">
 <meta property="og:title" content="11. 常用内建模块">
 <meta property="og:url" content="http://yoursite.com/2019/04/21/11.常用内建模块/index.html">
 <meta property="og:site_name" content="小黄">
-<meta property="og:description" content="常用内建模块datetimedatetime是Python处理日期和时间的标准库。 获取当前的日期和时间：123456&amp;gt;&amp;gt;&amp;gt; from datetime import datetime&amp;gt;&amp;gt;&amp;gt; now=datetime.now()  #获取当前的datetime&amp;gt;&amp;gt;&amp;gt; print(now)2016-11-01 20:25:50.305269&amp;gt">
-<meta property="og:locale" content="zh-Hans">
+<meta property="og:description" content="常用内建模块datetimedatetime是Python处理日期和时间的标准库。
+获取当前的日期和时间：123456&amp;gt;&amp;gt;&amp;gt; from datetime import datetime&amp;gt;&amp;gt;&amp;gt; now=datetime.now()  #获取当前的datetime&amp;gt;&amp;gt;&amp;gt; print(now)2016-11-01 20:25:50.305269&amp;gt">
 <meta property="og:image" content="http://yoursite.com/img/1478069277975.png">
 <meta property="og:updated_time" content="2017-09-09T10:26:36.853Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="11. 常用内建模块">
-<meta name="twitter:description" content="常用内建模块datetimedatetime是Python处理日期和时间的标准库。 获取当前的日期和时间：123456&amp;gt;&amp;gt;&amp;gt; from datetime import datetime&amp;gt;&amp;gt;&amp;gt; now=datetime.now()  #获取当前的datetime&amp;gt;&amp;gt;&amp;gt; print(now)2016-11-01 20:25:50.305269&amp;gt">
+<meta name="twitter:description" content="常用内建模块datetimedatetime是Python处理日期和时间的标准库。
+获取当前的日期和时间：123456&amp;gt;&amp;gt;&amp;gt; from datetime import datetime&amp;gt;&amp;gt;&amp;gt; now=datetime.now()  #获取当前的datetime&amp;gt;&amp;gt;&amp;gt; print(now)2016-11-01 20:25:50.305269&amp;gt">
 <meta name="twitter:image" content="http://yoursite.com/img/1478069277975.png">
 
 
@@ -399,7 +400,7 @@
 <p>datetime表示时间需要时区信息才能确定一个特定的时间，否则只能视为本地时间。如果要存储datetime，最佳方法是将其转换为timestamp再存储，因为timestamp的值与时区完全无关。</p>
 <hr>
 <h2 id="collections"><a href="#collections" class="headerlink" title="collections"></a>collections</h2><p>collections是Python内建的一个集合模块，提供了许多有用的集合类。</p>
-<h3 id="namedtuple"><a href="#namedtuple" class="headerlink" title="namedtuple"></a>namedtuple</h3><p>我们知道<code>tuple</code>可以表示不变集合，比如，一个点的二维坐标可以表示为：<br>                                    <figure class="highlight plain"><figcaption><span>p</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">但是看到(1,2)，很难看出这个`tuple`是用来表示一个坐标的。定义一个class又没有必要，这时候，`namedtuple`就可以使用了：</div><div class="line"></div><div class="line">```python</div><div class="line">&gt;&gt;&gt; from collections import namedtuple</div><div class="line">&gt;&gt;&gt; Point=namedtuple(&apos;Point&apos;,[&apos;x&apos;,&apos;y&apos;])</div><div class="line">&gt;&gt;&gt; p=Point(1,2)</div><div class="line">&gt;&gt;&gt; p.x</div><div class="line">1</div><div class="line">&gt;&gt;&gt; p.y</div><div class="line">2</div><div class="line">&gt;&gt;&gt; isinstance(p,Point)</div><div class="line">True</div><div class="line">&gt;&gt;&gt; isinstance(p,tuple)</div><div class="line">True</div></pre></td></tr></table></figure></p>
+<h3 id="namedtuple"><a href="#namedtuple" class="headerlink" title="namedtuple"></a>namedtuple</h3><p>我们知道<code>tuple</code>可以表示不变集合，比如，一个点的二维坐标可以表示为：<br>                                    <figure class="highlight plain"><figcaption><span>p=(1,2)```</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">但是看到(1,2)，很难看出这个`tuple`是用来表示一个坐标的。定义一个class又没有必要，这时候，`namedtuple`就可以使用了：</div><div class="line"></div><div class="line">```python</div><div class="line">&gt;&gt;&gt; from collections import namedtuple</div><div class="line">&gt;&gt;&gt; Point=namedtuple(&apos;Point&apos;,[&apos;x&apos;,&apos;y&apos;])</div><div class="line">&gt;&gt;&gt; p=Point(1,2)</div><div class="line">&gt;&gt;&gt; p.x</div><div class="line">1</div><div class="line">&gt;&gt;&gt; p.y</div><div class="line">2</div><div class="line">&gt;&gt;&gt; isinstance(p,Point)</div><div class="line">True</div><div class="line">&gt;&gt;&gt; isinstance(p,tuple)</div><div class="line">True</div></pre></td></tr></table></figure></p>
 <p><code>namedtuple</code>是一个函数，它用来创建一个自定义的<code>tuple</code>对象，并且规定了<code>tuple</code>元素的个数，并可以用属性而不是索引来引用<code>tuple</code>的某个元素。这样我们可以用<code>namedtuple</code>可以很方便的定义一种数据结构，它具备tuple的不变性，又可以根据属性来引用，十分方便。可以验证创建的<code>Point</code>对象是<code>tuple</code>的一种子类。</p>
 <p>类似的如果要用坐标和半径定义一个圆：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>Circle=namedtuple(<span class="string">'Circle'</span>,[<span class="string">'x'</span>,<span class="string">'y'</span>,<span class="string">'r'</span>])</div></pre></td></tr></table></figure></p>
 <h3 id="deque"><a href="#deque" class="headerlink" title="deque"></a>deque</h3><p>使用list村塾数据时，按索引访问元素很快，但是插入和删除元素就很慢了，因为list是线性存储，数据量大的时候，插入和删除效率很低。deque是为了高效实现插入和删除操作 的双向列表，适合用于队列和栈：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> collections <span class="keyword">import</span> deque</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>q=deque([<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>q.append(<span class="string">'x'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>q.appendleft(<span class="string">'y'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>q</div><div class="line">deque([<span class="string">'y'</span>, <span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>, <span class="string">'x'</span>])</div></pre></td></tr></table></figure></p>
@@ -657,7 +658,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">79</span>
+                <span class="site-state-item-count">83</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -668,7 +669,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -679,7 +680,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">28</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

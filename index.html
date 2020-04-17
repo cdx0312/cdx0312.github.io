@@ -465,179 +465,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/17/heap/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/04/17/heap/" itemprop="url">go源码解读-heap</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-17T19:24:43+08:00">
-                2020-04-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/" itemprop="url" rel="index">
-                    <span itemprop="name">go</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/源码解读/" itemprop="url" rel="index">
-                    <span itemprop="name">源码解读</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="heap"><a href="#heap" class="headerlink" title="heap"></a>heap</h2><ul>
-<li>go中的堆采用小根堆实现</li>
-<li>采用接口形式，也就是需要实现Push,Pop,Len,Less,Swap方法</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Interface <span class="keyword">interface</span> &#123;</div><div class="line">	sort.Interface</div><div class="line">	Push(x <span class="keyword">interface</span>&#123;&#125;) <span class="comment">// add x as element Len()</span></div><div class="line">	Pop() <span class="keyword">interface</span>&#123;&#125;   <span class="comment">// remove and return element Len() - 1.</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="堆的构建"><a href="#堆的构建" class="headerlink" title="堆的构建"></a>堆的构建</h3><ul>
-<li>调用init来完成对于堆的构建</li>
-<li>比较i与<code>2*i+1</code>, <code>2*i+2</code>的大小进行建堆</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Init</span><span class="params">(h Interface)</span></span> &#123;</div><div class="line">	<span class="comment">// heapify</span></div><div class="line">	n := h.Len()</div><div class="line">	<span class="keyword">for</span> i := n/<span class="number">2</span> - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i-- &#123;</div><div class="line">		down(h, i, n)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">down</span><span class="params">(h Interface, i0, n <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	i := i0</div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		j1 := <span class="number">2</span>*i + <span class="number">1</span></div><div class="line">		<span class="keyword">if</span> j1 &gt;= n || j1 &lt; <span class="number">0</span> &#123; <span class="comment">// j1 &lt; 0 after int overflow</span></div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		j := j1 <span class="comment">// left child</span></div><div class="line">		<span class="keyword">if</span> j2 := j1 + <span class="number">1</span>; j2 &lt; n &amp;&amp; h.Less(j2, j1) &#123;</div><div class="line">			j = j2 <span class="comment">// = 2*i + 2  // right child</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> !h.Less(j, i) &#123;</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		h.Swap(i, j)</div><div class="line">		i = j</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> i &gt; i0</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="Push-Pop方法"><a href="#Push-Pop方法" class="headerlink" title="Push, Pop方法"></a>Push, Pop方法</h3><ul>
-<li>Push方法将数据防止在末尾，逐个节点向上调整</li>
-<li>Pop方法将待出堆的节点和末尾节点交换，向下调整根节点</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Push</span><span class="params">(h Interface, x <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	h.Push(x)</div><div class="line">	up(h, h.Len()<span class="number">-1</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Pop is equivalent to Remove(h, 0).</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Pop</span><span class="params">(h Interface)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</div><div class="line">	n := h.Len() - <span class="number">1</span></div><div class="line">	h.Swap(<span class="number">0</span>, n)</div><div class="line">	down(h, <span class="number">0</span>, n)</div><div class="line">	<span class="keyword">return</span> h.Pop()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">up</span><span class="params">(h Interface, j <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		i := (j - <span class="number">1</span>) / <span class="number">2</span> <span class="comment">// parent</span></div><div class="line">		<span class="keyword">if</span> i == j || !h.Less(j, i) &#123;</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		h.Swap(i, j)</div><div class="line">		j = i</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="Fix-Remove方法"><a href="#Fix-Remove方法" class="headerlink" title="Fix, Remove方法"></a>Fix, Remove方法</h3><ul>
-<li>Remove方法移除树第i个节点，并调整堆结构</li>
-<li>Fix方法在数据值便跟时调整堆结构</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Remove</span><span class="params">(h Interface, i <span class="keyword">int</span>)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</div><div class="line">	n := h.Len() - <span class="number">1</span></div><div class="line">	<span class="keyword">if</span> n != i &#123;</div><div class="line">		h.Swap(i, n)</div><div class="line">		<span class="keyword">if</span> !down(h, i, n) &#123;</div><div class="line">			up(h, i)</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> h.Pop()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Fix</span><span class="params">(h Interface, i <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> !down(h, i, h.Len()) &#123;</div><div class="line">		up(h, i)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="示例-优先队列"><a href="#示例-优先队列" class="headerlink" title="示例-优先队列"></a>示例-优先队列</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// An Item is something we manage in a priority queue.</span></div><div class="line"><span class="keyword">type</span> Item <span class="keyword">struct</span> &#123;</div><div class="line">	value    <span class="keyword">string</span> <span class="comment">// The value of the item; arbitrary.</span></div><div class="line">	priority <span class="keyword">int</span>    <span class="comment">// The priority of the item in the queue.</span></div><div class="line">	<span class="comment">// The index is needed by update and is maintained by the heap.Interface methods.</span></div><div class="line">	index <span class="keyword">int</span> <span class="comment">// The index of the item in the heap.</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// A PriorityQueue implements heap.Interface and holds Items.</span></div><div class="line"><span class="keyword">type</span> PriorityQueue []*Item</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq PriorityQueue)</span> <span class="title">Len</span><span class="params">()</span> <span class="title">int</span></span> &#123; <span class="keyword">return</span> <span class="built_in">len</span>(pq) &#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq PriorityQueue)</span> <span class="title">Less</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	<span class="comment">// We want Pop to give us the highest, not lowest, priority so we use greater than here.</span></div><div class="line">	<span class="keyword">return</span> pq[i].priority &gt; pq[j].priority</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq PriorityQueue)</span> <span class="title">Swap</span><span class="params">(i, j <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	pq[i], pq[j] = pq[j], pq[i]</div><div class="line">	pq[i].index = i</div><div class="line">	pq[j].index = j</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq *PriorityQueue)</span> <span class="title">Push</span><span class="params">(x <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	n := <span class="built_in">len</span>(*pq)</div><div class="line">	item := x.(*Item)</div><div class="line">	item.index = n</div><div class="line">	*pq = <span class="built_in">append</span>(*pq, item)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq *PriorityQueue)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</div><div class="line">	old := *pq</div><div class="line">	n := <span class="built_in">len</span>(old)</div><div class="line">	item := old[n<span class="number">-1</span>]</div><div class="line">	item.index = <span class="number">-1</span> <span class="comment">// for safety</span></div><div class="line">	*pq = old[<span class="number">0</span> : n<span class="number">-1</span>]</div><div class="line">	<span class="keyword">return</span> item</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// update modifies the priority and value of an Item in the queue.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq *PriorityQueue)</span> <span class="title">update</span><span class="params">(item *Item, value <span class="keyword">string</span>, priority <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	item.value = value</div><div class="line">	item.priority = priority</div><div class="line">	heap.Fix(pq, item.index)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// This example creates a PriorityQueue with some items, adds and manipulates an item,</span></div><div class="line"><span class="comment">// and then removes the items in priority order.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="comment">// Some items and their priorities.</span></div><div class="line">	items := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>&#123;</div><div class="line">		<span class="string">"banana"</span>: <span class="number">3</span>, <span class="string">"apple"</span>: <span class="number">2</span>, <span class="string">"pear"</span>: <span class="number">4</span>,</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// Create a priority queue, put the items in it, and</span></div><div class="line">	<span class="comment">// establish the priority queue (heap) invariants.</span></div><div class="line">	pq := <span class="built_in">make</span>(PriorityQueue, <span class="built_in">len</span>(items))</div><div class="line">	i := <span class="number">0</span></div><div class="line">	<span class="keyword">for</span> value, priority := <span class="keyword">range</span> items &#123;</div><div class="line">		pq[i] = &amp;Item&#123;</div><div class="line">			value:    value,</div><div class="line">			priority: priority,</div><div class="line">			index:    i,</div><div class="line">		&#125;</div><div class="line">		i++</div><div class="line">	&#125;</div><div class="line">	heap.Init(&amp;pq)</div><div class="line"></div><div class="line">	<span class="comment">// Insert a new item and then modify its priority.</span></div><div class="line">	item := &amp;Item&#123;</div><div class="line">		value:    <span class="string">"orange"</span>,</div><div class="line">		priority: <span class="number">1</span>,</div><div class="line">	&#125;</div><div class="line">	heap.Push(&amp;pq, item)</div><div class="line">	pq.update(item, item.value, <span class="number">5</span>)</div><div class="line"></div><div class="line">	<span class="comment">// Take the items out; they arrive in decreasing priority order.</span></div><div class="line">	<span class="keyword">for</span> pq.Len() &gt; <span class="number">0</span> &#123;</div><div class="line">		item := heap.Pop(&amp;pq).(*Item)</div><div class="line">		fmt.Printf(<span class="string">"%.2d:%s "</span>, item.priority, item.value)</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Output:</span></div><div class="line">	<span class="comment">// 05:orange 04:pear 03:banana 02:apple</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/17/list/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -814,6 +641,179 @@
 <li>PushFrontList方法将other列表插入到l列表root节点之后</li>
 </ul>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">PushBackList</span><span class="params">(other *List)</span></span> &#123;</div><div class="line">	l.lazyInit()</div><div class="line">	<span class="keyword">for</span> i, e := other.Len(), other.Front(); i &gt; <span class="number">0</span>; i, e = i<span class="number">-1</span>, e.Next() &#123;</div><div class="line">		l.insertValue(e.Value, l.root.prev)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">PushFrontList</span><span class="params">(other *List)</span></span> &#123;</div><div class="line">	l.lazyInit()</div><div class="line">	<span class="keyword">for</span> i, e := other.Len(), other.Back(); i &gt; <span class="number">0</span>; i, e = i<span class="number">-1</span>, e.Prev() &#123;</div><div class="line">		l.insertValue(e.Value, &amp;l.root)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/17/heap/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/04/17/heap/" itemprop="url">go源码解读-heap</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-17T19:24:43+08:00">
+                2020-04-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/源码解读/" itemprop="url" rel="index">
+                    <span itemprop="name">源码解读</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="heap"><a href="#heap" class="headerlink" title="heap"></a>heap</h2><ul>
+<li>go中的堆采用小根堆实现</li>
+<li>采用接口形式，也就是需要实现Push,Pop,Len,Less,Swap方法</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Interface <span class="keyword">interface</span> &#123;</div><div class="line">	sort.Interface</div><div class="line">	Push(x <span class="keyword">interface</span>&#123;&#125;) <span class="comment">// add x as element Len()</span></div><div class="line">	Pop() <span class="keyword">interface</span>&#123;&#125;   <span class="comment">// remove and return element Len() - 1.</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="堆的构建"><a href="#堆的构建" class="headerlink" title="堆的构建"></a>堆的构建</h3><ul>
+<li>调用init来完成对于堆的构建</li>
+<li>比较i与<code>2*i+1</code>, <code>2*i+2</code>的大小进行建堆</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Init</span><span class="params">(h Interface)</span></span> &#123;</div><div class="line">	<span class="comment">// heapify</span></div><div class="line">	n := h.Len()</div><div class="line">	<span class="keyword">for</span> i := n/<span class="number">2</span> - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i-- &#123;</div><div class="line">		down(h, i, n)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">down</span><span class="params">(h Interface, i0, n <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	i := i0</div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		j1 := <span class="number">2</span>*i + <span class="number">1</span></div><div class="line">		<span class="keyword">if</span> j1 &gt;= n || j1 &lt; <span class="number">0</span> &#123; <span class="comment">// j1 &lt; 0 after int overflow</span></div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		j := j1 <span class="comment">// left child</span></div><div class="line">		<span class="keyword">if</span> j2 := j1 + <span class="number">1</span>; j2 &lt; n &amp;&amp; h.Less(j2, j1) &#123;</div><div class="line">			j = j2 <span class="comment">// = 2*i + 2  // right child</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> !h.Less(j, i) &#123;</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		h.Swap(i, j)</div><div class="line">		i = j</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> i &gt; i0</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Push-Pop方法"><a href="#Push-Pop方法" class="headerlink" title="Push, Pop方法"></a>Push, Pop方法</h3><ul>
+<li>Push方法将数据防止在末尾，逐个节点向上调整</li>
+<li>Pop方法将待出堆的节点和末尾节点交换，向下调整根节点</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Push</span><span class="params">(h Interface, x <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	h.Push(x)</div><div class="line">	up(h, h.Len()<span class="number">-1</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Pop is equivalent to Remove(h, 0).</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Pop</span><span class="params">(h Interface)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</div><div class="line">	n := h.Len() - <span class="number">1</span></div><div class="line">	h.Swap(<span class="number">0</span>, n)</div><div class="line">	down(h, <span class="number">0</span>, n)</div><div class="line">	<span class="keyword">return</span> h.Pop()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">up</span><span class="params">(h Interface, j <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		i := (j - <span class="number">1</span>) / <span class="number">2</span> <span class="comment">// parent</span></div><div class="line">		<span class="keyword">if</span> i == j || !h.Less(j, i) &#123;</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		h.Swap(i, j)</div><div class="line">		j = i</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Fix-Remove方法"><a href="#Fix-Remove方法" class="headerlink" title="Fix, Remove方法"></a>Fix, Remove方法</h3><ul>
+<li>Remove方法移除树第i个节点，并调整堆结构</li>
+<li>Fix方法在数据值便跟时调整堆结构</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Remove</span><span class="params">(h Interface, i <span class="keyword">int</span>)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</div><div class="line">	n := h.Len() - <span class="number">1</span></div><div class="line">	<span class="keyword">if</span> n != i &#123;</div><div class="line">		h.Swap(i, n)</div><div class="line">		<span class="keyword">if</span> !down(h, i, n) &#123;</div><div class="line">			up(h, i)</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> h.Pop()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Fix</span><span class="params">(h Interface, i <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> !down(h, i, h.Len()) &#123;</div><div class="line">		up(h, i)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="示例-优先队列"><a href="#示例-优先队列" class="headerlink" title="示例-优先队列"></a>示例-优先队列</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// An Item is something we manage in a priority queue.</span></div><div class="line"><span class="keyword">type</span> Item <span class="keyword">struct</span> &#123;</div><div class="line">	value    <span class="keyword">string</span> <span class="comment">// The value of the item; arbitrary.</span></div><div class="line">	priority <span class="keyword">int</span>    <span class="comment">// The priority of the item in the queue.</span></div><div class="line">	<span class="comment">// The index is needed by update and is maintained by the heap.Interface methods.</span></div><div class="line">	index <span class="keyword">int</span> <span class="comment">// The index of the item in the heap.</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// A PriorityQueue implements heap.Interface and holds Items.</span></div><div class="line"><span class="keyword">type</span> PriorityQueue []*Item</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq PriorityQueue)</span> <span class="title">Len</span><span class="params">()</span> <span class="title">int</span></span> &#123; <span class="keyword">return</span> <span class="built_in">len</span>(pq) &#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq PriorityQueue)</span> <span class="title">Less</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	<span class="comment">// We want Pop to give us the highest, not lowest, priority so we use greater than here.</span></div><div class="line">	<span class="keyword">return</span> pq[i].priority &gt; pq[j].priority</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq PriorityQueue)</span> <span class="title">Swap</span><span class="params">(i, j <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	pq[i], pq[j] = pq[j], pq[i]</div><div class="line">	pq[i].index = i</div><div class="line">	pq[j].index = j</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq *PriorityQueue)</span> <span class="title">Push</span><span class="params">(x <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	n := <span class="built_in">len</span>(*pq)</div><div class="line">	item := x.(*Item)</div><div class="line">	item.index = n</div><div class="line">	*pq = <span class="built_in">append</span>(*pq, item)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq *PriorityQueue)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</div><div class="line">	old := *pq</div><div class="line">	n := <span class="built_in">len</span>(old)</div><div class="line">	item := old[n<span class="number">-1</span>]</div><div class="line">	item.index = <span class="number">-1</span> <span class="comment">// for safety</span></div><div class="line">	*pq = old[<span class="number">0</span> : n<span class="number">-1</span>]</div><div class="line">	<span class="keyword">return</span> item</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// update modifies the priority and value of an Item in the queue.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq *PriorityQueue)</span> <span class="title">update</span><span class="params">(item *Item, value <span class="keyword">string</span>, priority <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	item.value = value</div><div class="line">	item.priority = priority</div><div class="line">	heap.Fix(pq, item.index)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// This example creates a PriorityQueue with some items, adds and manipulates an item,</span></div><div class="line"><span class="comment">// and then removes the items in priority order.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="comment">// Some items and their priorities.</span></div><div class="line">	items := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>&#123;</div><div class="line">		<span class="string">"banana"</span>: <span class="number">3</span>, <span class="string">"apple"</span>: <span class="number">2</span>, <span class="string">"pear"</span>: <span class="number">4</span>,</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// Create a priority queue, put the items in it, and</span></div><div class="line">	<span class="comment">// establish the priority queue (heap) invariants.</span></div><div class="line">	pq := <span class="built_in">make</span>(PriorityQueue, <span class="built_in">len</span>(items))</div><div class="line">	i := <span class="number">0</span></div><div class="line">	<span class="keyword">for</span> value, priority := <span class="keyword">range</span> items &#123;</div><div class="line">		pq[i] = &amp;Item&#123;</div><div class="line">			value:    value,</div><div class="line">			priority: priority,</div><div class="line">			index:    i,</div><div class="line">		&#125;</div><div class="line">		i++</div><div class="line">	&#125;</div><div class="line">	heap.Init(&amp;pq)</div><div class="line"></div><div class="line">	<span class="comment">// Insert a new item and then modify its priority.</span></div><div class="line">	item := &amp;Item&#123;</div><div class="line">		value:    <span class="string">"orange"</span>,</div><div class="line">		priority: <span class="number">1</span>,</div><div class="line">	&#125;</div><div class="line">	heap.Push(&amp;pq, item)</div><div class="line">	pq.update(item, item.value, <span class="number">5</span>)</div><div class="line"></div><div class="line">	<span class="comment">// Take the items out; they arrive in decreasing priority order.</span></div><div class="line">	<span class="keyword">for</span> pq.Len() &gt; <span class="number">0</span> &#123;</div><div class="line">		item := heap.Pop(&amp;pq).(*Item)</div><div class="line">		fmt.Printf(<span class="string">"%.2d:%s "</span>, item.priority, item.value)</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Output:</span></div><div class="line">	<span class="comment">// 05:orange 04:pear 03:banana 02:apple</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
           
         
@@ -3808,6 +3808,221 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/设计模式之代理模式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/21/设计模式之代理模式/" itemprop="url">设计模式之代理模式</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/design-patterns/" itemprop="url" rel="index">
+                    <span itemprop="name">design patterns</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>为其他对象提供一种代理，以控制对这个对象的访问。代理对象起到中介作用，可以去掉功能服务或者增加额外的功能服务。</p>
+<h1 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h1><p>代理和被代理对象在代理之前是确定的。他们都是事先相同的接口或者继承相同的抽象类。</p>
+<p><img src="/img/dp-staticProxy.png" alt="Alt text"></p>
+<p>创建一个接口Moveable，Car继承Moveable接口，要求用代理类来记录Car的运行时间。</p>
+<p>Car继承Moveable接口:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public interface Moveable &#123;</div><div class="line">    void move();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Car:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public class Car implements Moveable&#123;</div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        try &#123;</div><div class="line">            Thread.sleep(new Random().nextInt(1000));</div><div class="line">        &#125; catch (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="继承实现静态代理"><a href="#继承实现静态代理" class="headerlink" title="继承实现静态代理"></a>继承实现静态代理</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">public class Car2 extends Car&#123;</div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        System.out.println(startTime);</div><div class="line">        super.move();</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime);</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="聚合实现静态代理"><a href="#聚合实现静态代理" class="headerlink" title="聚合实现静态代理"></a>聚合实现静态代理</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">public class Car3 implements Moveable&#123;</div><div class="line"></div><div class="line">    private Car car;</div><div class="line"></div><div class="line">    public Car3(Car car) &#123;</div><div class="line">        this.car = car;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        System.out.println(startTime);</div><div class="line">        car.move();</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime);</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>考虑到继承方式扩展代理功能的不方便，推荐使用聚合实现静态代理。也就是代理类和实际类实现共同的接口，代理类中包含所实现接口的引用。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">public class CarLogProxy implements Moveable&#123;</div><div class="line"></div><div class="line">    private Moveable moveable;</div><div class="line"></div><div class="line">    public CarLogProxy(Moveable moveable) &#123;</div><div class="line">        this.moveable = moveable;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        System.out.println(&quot;log start&quot;);</div><div class="line">        moveable.move();</div><div class="line">        System.out.println(&quot;log end&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">public class CarTimeProxy implements Moveable&#123;</div><div class="line"></div><div class="line">    private Moveable moveable;</div><div class="line"></div><div class="line">    public CarTimeProxy(Moveable moveable) &#123;</div><div class="line">        this.moveable = moveable;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        System.out.println(startTime);</div><div class="line">        moveable.move();</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime);</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Moveable car = new Car();</div><div class="line">        CarTimeProxy carTimeProxy = new CarTimeProxy(car);</div><div class="line">        CarLogProxy carLogProxy = new CarLogProxy(carTimeProxy);</div><div class="line">        carLogProxy.move();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h1><p>前面实现了Car类的静态代理，为其添加了运行时间记录和日志记录的功能。如果需要为火车或者自行车添加类似的功能，需要重新定义相同的类，类十分臃肿，同时代码重用性不高，因此引入了动态代理，也就是在程序</p>
+<h2 id="jdk动态代理"><a href="#jdk动态代理" class="headerlink" title="jdk动态代理"></a>jdk动态代理</h2><p><img src="/img/dp-dynamicProxy.png" alt="Alt text"></p>
+<ul>
+<li>InvocationHandler接口，接口中定义了一个invoke方法，invoke方法中第一个参数表示代理类，第二个参数指被代理的方法，args指该方法的参数数组。这个抽象方法会在代理类中动态实现。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">public interface InvocationHandler &#123;</div><div class="line">    public Object invoke(Object proxy, Method method, Object[] args)</div><div class="line">        throws Throwable;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Proxy：该类为动态代理类，其中的newProxyInstance方法返回一个代理类实例，返回后的代理类可以被当做代理类使用，可使用被代理类的在接口中声明过的方法。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">public static Object newProxyInstance(ClassLoader loader,</div><div class="line">                                          Class&lt;?&gt;[] interfaces,</div><div class="line">                                          InvocationHandler h)</div><div class="line">        throws IllegalArgumentException</div><div class="line">    &#123;</div><div class="line">        Objects.requireNonNull(h);</div><div class="line"></div><div class="line">        final Class&lt;?&gt;[] intfs = interfaces.clone();</div><div class="line">        final SecurityManager sm = System.getSecurityManager();</div><div class="line">        if (sm != null) &#123;</div><div class="line">            checkProxyAccess(Reflection.getCallerClass(), loader, intfs);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        /*</div><div class="line">         * Look up or generate the designated proxy class.</div><div class="line">         */</div><div class="line">        Class&lt;?&gt; cl = getProxyClass0(loader, intfs);</div><div class="line"></div><div class="line">        /*</div><div class="line">         * Invoke its constructor with the designated invocation handler.</div><div class="line">         */</div><div class="line">        try &#123;</div><div class="line">            if (sm != null) &#123;</div><div class="line">                checkNewProxyPermission(Reflection.getCallerClass(), cl);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            final Constructor&lt;?&gt; cons = cl.getConstructor(constructorParams);</div><div class="line">            final InvocationHandler ih = h;</div><div class="line">            if (!Modifier.isPublic(cl.getModifiers())) &#123;</div><div class="line">                AccessController.doPrivileged(new PrivilegedAction&lt;Void&gt;() &#123;</div><div class="line">                    public Void run() &#123;</div><div class="line">                        cons.setAccessible(true);</div><div class="line">                        return null;</div><div class="line">                    &#125;</div><div class="line">                &#125;);</div><div class="line">            &#125;</div><div class="line">            return cons.newInstance(new Object[]&#123;h&#125;);</div><div class="line">        &#125; catch (IllegalAccessException|InstantiationException e) &#123;</div><div class="line">            throw new InternalError(e.toString(), e);</div><div class="line">        &#125; catch (InvocationTargetException e) &#123;</div><div class="line">            Throwable t = e.getCause();</div><div class="line">            if (t instanceof RuntimeException) &#123;</div><div class="line">                throw (RuntimeException) t;</div><div class="line">            &#125; else &#123;</div><div class="line">                throw new InternalError(t.toString(), t);</div><div class="line">            &#125;</div><div class="line">        &#125; catch (NoSuchMethodException e) &#123;</div><div class="line">            throw new InternalError(e.toString(), e);</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<h2 id="动态代理实现步骤"><a href="#动态代理实现步骤" class="headerlink" title="动态代理实现步骤"></a>动态代理实现步骤</h2><ol>
+<li>创建一个实现接口InvocationHandler的类，实现invoke方法</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">public class TimeHandler implements InvocationHandler&#123;</div><div class="line"></div><div class="line">    private Object target;</div><div class="line"></div><div class="line">    public TimeHandler(Object target) &#123;</div><div class="line">        this.target = target;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     *</div><div class="line">     * @param proxy 被代理的对象</div><div class="line">     * @param method 被代理对象的方法</div><div class="line">     * @param args 被代理对象的方法的参数</div><div class="line">     * @return Object对象，方法的返回值</div><div class="line">     * @throws Throwable</div><div class="line">     */</div><div class="line">    @Override</div><div class="line">    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;</div><div class="line">        System.out.println(&quot;time begin&quot;);</div><div class="line">        method.invoke(target);</div><div class="line">        System.out.println(&quot;time end&quot;);</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li>创建被代理的类以及接口(Car以及Moveable)</li>
+<li>调用Proxy的静态方法，创建一个代理类</li>
+<li>通过代理调用方法</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Car car = new Car();</div><div class="line"></div><div class="line">        InvocationHandler h = new TimeHandler(car);</div><div class="line">        Class&lt;?&gt; cls = car.getClass();</div><div class="line"></div><div class="line">        /**</div><div class="line">         * loader：类加载器</div><div class="line">         * interfaces：实现接口</div><div class="line">         * h ：invocationHandler</div><div class="line">         */</div><div class="line">        Moveable m = (Moveable) Proxy.newProxyInstance(cls.getClassLoader(), cls.getInterfaces(), h);</div><div class="line"></div><div class="line">        m.move();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="JDK动态代理与CGLIB动态代理的区别"><a href="#JDK动态代理与CGLIB动态代理的区别" class="headerlink" title="JDK动态代理与CGLIB动态代理的区别"></a>JDK动态代理与CGLIB动态代理的区别</h2><table>
+<thead>
+<tr>
+<th>jdk动态代理</th>
+<th>CGLIB动态代理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>只能代理实现了接口的类</td>
+<td>针对类来实现代理</td>
+</tr>
+<tr>
+<td>没有实现接口的类不能实现JDK动态代理</td>
+<td>对指定目标类产生一个子类，通过方法拦截技术拦截所有父类方法调用</td>
+</tr>
+<tr>
+<td>JDK动态代理利用反射机制生成一个实现代理接口的匿名类，在调用具体方法前调用InvocationHandler来处理</td>
+<td>cglib是利用asm开源包，对代理对象的class文件加载进来，通过修改其字节码生成子类来处理</td>
+</tr>
+</tbody>
+</table>
+<h2 id="模拟JDK动态代理的实现"><a href="#模拟JDK动态代理的实现" class="headerlink" title="模拟JDK动态代理的实现"></a>模拟JDK动态代理的实现</h2><p>实现功能，通过Proxy的newproxyInstance返回代理对象<br>1、声明一段源码，动态产生代理<br>2、编译源码，产生新的类<br>3、将这个类load到内存中，产生一个新的对象<br>4、return代理对象</p>
+<p>handler:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">package proxy;</div><div class="line"></div><div class="line">import java.lang.reflect.Method;</div><div class="line"></div><div class="line">public interface InvocationHandler &#123;</div><div class="line">    public void invoke(Object o, Method m);</div><div class="line">&#125;</div><div class="line"></div><div class="line">package proxy;</div><div class="line"></div><div class="line">import java.lang.reflect.InvocationTargetException;</div><div class="line">import java.lang.reflect.Method;</div><div class="line"></div><div class="line">public class TimeHandler implements InvocationHandler&#123;</div><div class="line"></div><div class="line">    private Object target;</div><div class="line"></div><div class="line">    public TimeHandler(Object target) &#123;</div><div class="line">        this.target = target;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void invoke(Object o, Method m) &#123;</div><div class="line">        try &#123;</div><div class="line">            long starttime = System.currentTimeMillis();</div><div class="line">            System.out.println(&quot;汽车开始行驶....&quot;);</div><div class="line">            m.invoke(target);</div><div class="line">            long endtime = System.currentTimeMillis();</div><div class="line">            System.out.println(&quot;汽车结束行驶....  汽车行驶时间：&quot;+ (endtime - starttime) + &quot;毫秒！&quot;);</div><div class="line">        &#125; catch (IllegalAccessException | InvocationTargetException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>proxy:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">public class Proxy &#123;</div><div class="line"></div><div class="line">    public static Object newProxyInstance(Class infce, InvocationHandler h) throws IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException &#123;</div><div class="line">        //创建源码</div><div class="line">        String rt = &quot;\r\n&quot;;</div><div class="line">        String methodStr = &quot;&quot;;</div><div class="line">        for(Method m : infce.getMethods())&#123;</div><div class="line">            methodStr += &quot;	@Override&quot; + rt +</div><div class="line">                    &quot;	public void &quot; + m.getName() + &quot;() &#123;&quot; + rt +</div><div class="line">                    &quot;  try&#123;&quot; + rt +</div><div class="line">                    &quot;  Method md = &quot; + infce.getName() + &quot;.class.getMethod(\&quot;&quot;</div><div class="line">                    + m.getName() + &quot;\&quot;);&quot; + rt +</div><div class="line">                    &quot;  h.invoke(this,md);&quot; +rt+</div><div class="line">                    &quot;  &#125;catch(Exception e)&#123; e.printStackTrace();&#125;&quot; + rt +</div><div class="line">                    &quot;	&#125;&quot; ;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        String str =</div><div class="line">                &quot;package proxy;&quot; + rt +</div><div class="line">                        &quot;import java.lang.reflect.Method;&quot; + rt +</div><div class="line">                        &quot;import proxy.InvocationHandler;&quot; +  rt+</div><div class="line">                        &quot;public class $Proxy0 implements &quot; + infce.getName() + &quot; &#123;&quot; + rt +</div><div class="line">                        &quot;	public $Proxy0(InvocationHandler h) &#123;&quot; + rt +</div><div class="line">                        &quot;		this.h = h;&quot; + rt +</div><div class="line">                        &quot;	&#125;&quot; + rt +</div><div class="line">                        &quot;  private InvocationHandler h;&quot; + rt+</div><div class="line">                        methodStr + rt +</div><div class="line">                        &quot;&#125;&quot; ;</div><div class="line">        String fileName = System.getProperty(&quot;user.dir&quot;) + &quot;/out/production/Design_Patterns_new/proxy/$Proxy0.java&quot;;</div><div class="line">        File file = new File(fileName);</div><div class="line">        FileUtils.writeStringToFile(file, str);</div><div class="line"></div><div class="line">        //编译源码</div><div class="line">        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();</div><div class="line">        StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);</div><div class="line">        Iterable units = fileManager.getJavaFileObjects(fileName);</div><div class="line">        //编译任务</div><div class="line">        JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, null, null, null, units);</div><div class="line">        //执行任务</div><div class="line">        task.call();</div><div class="line">        fileManager.close();</div><div class="line"></div><div class="line">        //load到内存</div><div class="line">        ClassLoader loader = ClassLoader.getSystemClassLoader();</div><div class="line">        Class&lt;?&gt; c = loader.loadClass(&quot;proxy.$Proxy0&quot;);</div><div class="line"></div><div class="line">        Constructor constructor = c.getConstructor(InvocationHandler.class);</div><div class="line">        return constructor.newInstance(h);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/设计模式之单例模式与工厂方法/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -4035,221 +4250,6 @@
 </ul>
 </li>
 </ol>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/设计模式之代理模式/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/设计模式之代理模式/" itemprop="url">设计模式之代理模式</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/design-patterns/" itemprop="url" rel="index">
-                    <span itemprop="name">design patterns</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>为其他对象提供一种代理，以控制对这个对象的访问。代理对象起到中介作用，可以去掉功能服务或者增加额外的功能服务。</p>
-<h1 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h1><p>代理和被代理对象在代理之前是确定的。他们都是事先相同的接口或者继承相同的抽象类。</p>
-<p><img src="/img/dp-staticProxy.png" alt="Alt text"></p>
-<p>创建一个接口Moveable，Car继承Moveable接口，要求用代理类来记录Car的运行时间。</p>
-<p>Car继承Moveable接口:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public interface Moveable &#123;</div><div class="line">    void move();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>Car:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public class Car implements Moveable&#123;</div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        try &#123;</div><div class="line">            Thread.sleep(new Random().nextInt(1000));</div><div class="line">        &#125; catch (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="继承实现静态代理"><a href="#继承实现静态代理" class="headerlink" title="继承实现静态代理"></a>继承实现静态代理</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">public class Car2 extends Car&#123;</div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        System.out.println(startTime);</div><div class="line">        super.move();</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime);</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="聚合实现静态代理"><a href="#聚合实现静态代理" class="headerlink" title="聚合实现静态代理"></a>聚合实现静态代理</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">public class Car3 implements Moveable&#123;</div><div class="line"></div><div class="line">    private Car car;</div><div class="line"></div><div class="line">    public Car3(Car car) &#123;</div><div class="line">        this.car = car;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        System.out.println(startTime);</div><div class="line">        car.move();</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime);</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>考虑到继承方式扩展代理功能的不方便，推荐使用聚合实现静态代理。也就是代理类和实际类实现共同的接口，代理类中包含所实现接口的引用。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">public class CarLogProxy implements Moveable&#123;</div><div class="line"></div><div class="line">    private Moveable moveable;</div><div class="line"></div><div class="line">    public CarLogProxy(Moveable moveable) &#123;</div><div class="line">        this.moveable = moveable;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        System.out.println(&quot;log start&quot;);</div><div class="line">        moveable.move();</div><div class="line">        System.out.println(&quot;log end&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">public class CarTimeProxy implements Moveable&#123;</div><div class="line"></div><div class="line">    private Moveable moveable;</div><div class="line"></div><div class="line">    public CarTimeProxy(Moveable moveable) &#123;</div><div class="line">        this.moveable = moveable;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        System.out.println(startTime);</div><div class="line">        moveable.move();</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime);</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Moveable car = new Car();</div><div class="line">        CarTimeProxy carTimeProxy = new CarTimeProxy(car);</div><div class="line">        CarLogProxy carLogProxy = new CarLogProxy(carTimeProxy);</div><div class="line">        carLogProxy.move();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h1><p>前面实现了Car类的静态代理，为其添加了运行时间记录和日志记录的功能。如果需要为火车或者自行车添加类似的功能，需要重新定义相同的类，类十分臃肿，同时代码重用性不高，因此引入了动态代理，也就是在程序</p>
-<h2 id="jdk动态代理"><a href="#jdk动态代理" class="headerlink" title="jdk动态代理"></a>jdk动态代理</h2><p><img src="/img/dp-dynamicProxy.png" alt="Alt text"></p>
-<ul>
-<li>InvocationHandler接口，接口中定义了一个invoke方法，invoke方法中第一个参数表示代理类，第二个参数指被代理的方法，args指该方法的参数数组。这个抽象方法会在代理类中动态实现。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">public interface InvocationHandler &#123;</div><div class="line">    public Object invoke(Object proxy, Method method, Object[] args)</div><div class="line">        throws Throwable;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>Proxy：该类为动态代理类，其中的newProxyInstance方法返回一个代理类实例，返回后的代理类可以被当做代理类使用，可使用被代理类的在接口中声明过的方法。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">public static Object newProxyInstance(ClassLoader loader,</div><div class="line">                                          Class&lt;?&gt;[] interfaces,</div><div class="line">                                          InvocationHandler h)</div><div class="line">        throws IllegalArgumentException</div><div class="line">    &#123;</div><div class="line">        Objects.requireNonNull(h);</div><div class="line"></div><div class="line">        final Class&lt;?&gt;[] intfs = interfaces.clone();</div><div class="line">        final SecurityManager sm = System.getSecurityManager();</div><div class="line">        if (sm != null) &#123;</div><div class="line">            checkProxyAccess(Reflection.getCallerClass(), loader, intfs);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        /*</div><div class="line">         * Look up or generate the designated proxy class.</div><div class="line">         */</div><div class="line">        Class&lt;?&gt; cl = getProxyClass0(loader, intfs);</div><div class="line"></div><div class="line">        /*</div><div class="line">         * Invoke its constructor with the designated invocation handler.</div><div class="line">         */</div><div class="line">        try &#123;</div><div class="line">            if (sm != null) &#123;</div><div class="line">                checkNewProxyPermission(Reflection.getCallerClass(), cl);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            final Constructor&lt;?&gt; cons = cl.getConstructor(constructorParams);</div><div class="line">            final InvocationHandler ih = h;</div><div class="line">            if (!Modifier.isPublic(cl.getModifiers())) &#123;</div><div class="line">                AccessController.doPrivileged(new PrivilegedAction&lt;Void&gt;() &#123;</div><div class="line">                    public Void run() &#123;</div><div class="line">                        cons.setAccessible(true);</div><div class="line">                        return null;</div><div class="line">                    &#125;</div><div class="line">                &#125;);</div><div class="line">            &#125;</div><div class="line">            return cons.newInstance(new Object[]&#123;h&#125;);</div><div class="line">        &#125; catch (IllegalAccessException|InstantiationException e) &#123;</div><div class="line">            throw new InternalError(e.toString(), e);</div><div class="line">        &#125; catch (InvocationTargetException e) &#123;</div><div class="line">            Throwable t = e.getCause();</div><div class="line">            if (t instanceof RuntimeException) &#123;</div><div class="line">                throw (RuntimeException) t;</div><div class="line">            &#125; else &#123;</div><div class="line">                throw new InternalError(t.toString(), t);</div><div class="line">            &#125;</div><div class="line">        &#125; catch (NoSuchMethodException e) &#123;</div><div class="line">            throw new InternalError(e.toString(), e);</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<h2 id="动态代理实现步骤"><a href="#动态代理实现步骤" class="headerlink" title="动态代理实现步骤"></a>动态代理实现步骤</h2><ol>
-<li>创建一个实现接口InvocationHandler的类，实现invoke方法</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">public class TimeHandler implements InvocationHandler&#123;</div><div class="line"></div><div class="line">    private Object target;</div><div class="line"></div><div class="line">    public TimeHandler(Object target) &#123;</div><div class="line">        this.target = target;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     *</div><div class="line">     * @param proxy 被代理的对象</div><div class="line">     * @param method 被代理对象的方法</div><div class="line">     * @param args 被代理对象的方法的参数</div><div class="line">     * @return Object对象，方法的返回值</div><div class="line">     * @throws Throwable</div><div class="line">     */</div><div class="line">    @Override</div><div class="line">    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;</div><div class="line">        System.out.println(&quot;time begin&quot;);</div><div class="line">        method.invoke(target);</div><div class="line">        System.out.println(&quot;time end&quot;);</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ol>
-<li>创建被代理的类以及接口(Car以及Moveable)</li>
-<li>调用Proxy的静态方法，创建一个代理类</li>
-<li>通过代理调用方法</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Car car = new Car();</div><div class="line"></div><div class="line">        InvocationHandler h = new TimeHandler(car);</div><div class="line">        Class&lt;?&gt; cls = car.getClass();</div><div class="line"></div><div class="line">        /**</div><div class="line">         * loader：类加载器</div><div class="line">         * interfaces：实现接口</div><div class="line">         * h ：invocationHandler</div><div class="line">         */</div><div class="line">        Moveable m = (Moveable) Proxy.newProxyInstance(cls.getClassLoader(), cls.getInterfaces(), h);</div><div class="line"></div><div class="line">        m.move();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="JDK动态代理与CGLIB动态代理的区别"><a href="#JDK动态代理与CGLIB动态代理的区别" class="headerlink" title="JDK动态代理与CGLIB动态代理的区别"></a>JDK动态代理与CGLIB动态代理的区别</h2><table>
-<thead>
-<tr>
-<th>jdk动态代理</th>
-<th>CGLIB动态代理</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>只能代理实现了接口的类</td>
-<td>针对类来实现代理</td>
-</tr>
-<tr>
-<td>没有实现接口的类不能实现JDK动态代理</td>
-<td>对指定目标类产生一个子类，通过方法拦截技术拦截所有父类方法调用</td>
-</tr>
-<tr>
-<td>JDK动态代理利用反射机制生成一个实现代理接口的匿名类，在调用具体方法前调用InvocationHandler来处理</td>
-<td>cglib是利用asm开源包，对代理对象的class文件加载进来，通过修改其字节码生成子类来处理</td>
-</tr>
-</tbody>
-</table>
-<h2 id="模拟JDK动态代理的实现"><a href="#模拟JDK动态代理的实现" class="headerlink" title="模拟JDK动态代理的实现"></a>模拟JDK动态代理的实现</h2><p>实现功能，通过Proxy的newproxyInstance返回代理对象<br>1、声明一段源码，动态产生代理<br>2、编译源码，产生新的类<br>3、将这个类load到内存中，产生一个新的对象<br>4、return代理对象</p>
-<p>handler:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">package proxy;</div><div class="line"></div><div class="line">import java.lang.reflect.Method;</div><div class="line"></div><div class="line">public interface InvocationHandler &#123;</div><div class="line">    public void invoke(Object o, Method m);</div><div class="line">&#125;</div><div class="line"></div><div class="line">package proxy;</div><div class="line"></div><div class="line">import java.lang.reflect.InvocationTargetException;</div><div class="line">import java.lang.reflect.Method;</div><div class="line"></div><div class="line">public class TimeHandler implements InvocationHandler&#123;</div><div class="line"></div><div class="line">    private Object target;</div><div class="line"></div><div class="line">    public TimeHandler(Object target) &#123;</div><div class="line">        this.target = target;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void invoke(Object o, Method m) &#123;</div><div class="line">        try &#123;</div><div class="line">            long starttime = System.currentTimeMillis();</div><div class="line">            System.out.println(&quot;汽车开始行驶....&quot;);</div><div class="line">            m.invoke(target);</div><div class="line">            long endtime = System.currentTimeMillis();</div><div class="line">            System.out.println(&quot;汽车结束行驶....  汽车行驶时间：&quot;+ (endtime - starttime) + &quot;毫秒！&quot;);</div><div class="line">        &#125; catch (IllegalAccessException | InvocationTargetException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>proxy:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">public class Proxy &#123;</div><div class="line"></div><div class="line">    public static Object newProxyInstance(Class infce, InvocationHandler h) throws IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException &#123;</div><div class="line">        //创建源码</div><div class="line">        String rt = &quot;\r\n&quot;;</div><div class="line">        String methodStr = &quot;&quot;;</div><div class="line">        for(Method m : infce.getMethods())&#123;</div><div class="line">            methodStr += &quot;	@Override&quot; + rt +</div><div class="line">                    &quot;	public void &quot; + m.getName() + &quot;() &#123;&quot; + rt +</div><div class="line">                    &quot;  try&#123;&quot; + rt +</div><div class="line">                    &quot;  Method md = &quot; + infce.getName() + &quot;.class.getMethod(\&quot;&quot;</div><div class="line">                    + m.getName() + &quot;\&quot;);&quot; + rt +</div><div class="line">                    &quot;  h.invoke(this,md);&quot; +rt+</div><div class="line">                    &quot;  &#125;catch(Exception e)&#123; e.printStackTrace();&#125;&quot; + rt +</div><div class="line">                    &quot;	&#125;&quot; ;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        String str =</div><div class="line">                &quot;package proxy;&quot; + rt +</div><div class="line">                        &quot;import java.lang.reflect.Method;&quot; + rt +</div><div class="line">                        &quot;import proxy.InvocationHandler;&quot; +  rt+</div><div class="line">                        &quot;public class $Proxy0 implements &quot; + infce.getName() + &quot; &#123;&quot; + rt +</div><div class="line">                        &quot;	public $Proxy0(InvocationHandler h) &#123;&quot; + rt +</div><div class="line">                        &quot;		this.h = h;&quot; + rt +</div><div class="line">                        &quot;	&#125;&quot; + rt +</div><div class="line">                        &quot;  private InvocationHandler h;&quot; + rt+</div><div class="line">                        methodStr + rt +</div><div class="line">                        &quot;&#125;&quot; ;</div><div class="line">        String fileName = System.getProperty(&quot;user.dir&quot;) + &quot;/out/production/Design_Patterns_new/proxy/$Proxy0.java&quot;;</div><div class="line">        File file = new File(fileName);</div><div class="line">        FileUtils.writeStringToFile(file, str);</div><div class="line"></div><div class="line">        //编译源码</div><div class="line">        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();</div><div class="line">        StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);</div><div class="line">        Iterable units = fileManager.getJavaFileObjects(fileName);</div><div class="line">        //编译任务</div><div class="line">        JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, null, null, null, units);</div><div class="line">        //执行任务</div><div class="line">        task.call();</div><div class="line">        fileManager.close();</div><div class="line"></div><div class="line">        //load到内存</div><div class="line">        ClassLoader loader = ClassLoader.getSystemClassLoader();</div><div class="line">        Class&lt;?&gt; c = loader.loadClass(&quot;proxy.$Proxy0&quot;);</div><div class="line"></div><div class="line">        Constructor constructor = c.getConstructor(InvocationHandler.class);</div><div class="line">        return constructor.newInstance(h);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
           
         

@@ -277,6 +277,457 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/23/go语言实战-测试/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/04/23/go语言实战-测试/" itemprop="url">go语言实战 - 测试</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-23T10:07:50+08:00">
+                2020-04-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="go语言实战-测试"><a href="#go语言实战-测试" class="headerlink" title="go语言实战 - 测试"></a>go语言实战 - 测试</h1><h2 id="第九章-测试和性能"><a href="#第九章-测试和性能" class="headerlink" title="第九章 测试和性能"></a>第九章 测试和性能</h2><h3 id="单元测试"><a href="#单元测试" class="headerlink" title="单元测试"></a>单元测试</h3><ul>
+<li>单元测试是用来测试包或者程序的一部分代码或者一组代码的函数</li>
+<li>正向路径测试，保证代码不产生错误，正常运行的测试</li>
+<li>负向路径测试，保证代码产生错误，并且是预期的错误</li>
+<li>go中的单元测试<ul>
+<li>基础测试，只用一组参数和结果进行测试</li>
+<li>表组测试，多组参数和结果进行测试</li>
+<li>mock数据来减少外部依赖</li>
+</ul>
+</li>
+</ul>
+<h4 id="基础单元测试"><a href="#基础单元测试" class="headerlink" title="基础单元测试"></a>基础单元测试</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> (</div><div class="line">	checkMark = <span class="string">"\u2713"</span></div><div class="line">	ballotX = <span class="string">"\u2717"</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestDownload</span><span class="params">(t *testing.T)</span></span> &#123;</div><div class="line">	uri := <span class="string">"https://api.weixin.qq.com/cgi-bin/user/info"</span></div><div class="line">	statusCode := <span class="number">200</span></div><div class="line"></div><div class="line">	t.Log(<span class="string">"Given the need to test downloading content"</span>)</div><div class="line">	&#123;</div><div class="line">		t.Logf(<span class="string">"\tWhen checking \"%s\" for status code \"%d\""</span>, uri, statusCode)</div><div class="line">		&#123;</div><div class="line">			resp, err := http.Get(uri)</div><div class="line">			<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">				t.Fatal(<span class="string">"\t\tShould be able to make the Get call"</span>, ballotX, err)</div><div class="line">			&#125;</div><div class="line">			t.Log(<span class="string">"\t\tShould be able to make the Get call"</span>, checkMark)</div><div class="line"></div><div class="line">			<span class="keyword">defer</span> resp.Body.Close()</div><div class="line"></div><div class="line">			<span class="keyword">if</span> resp.StatusCode == statusCode &#123;</div><div class="line">				t.Logf(<span class="string">"\t\tShould reveive a \"%d\" status %v"</span>, statusCode, checkMark)</div><div class="line">			&#125; <span class="keyword">else</span> &#123;</div><div class="line">				t.Logf(<span class="string">"\t\tShould reveive a \"%d\" status %v %v"</span>, statusCode, ballotX, resp.StatusCode)</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"><span class="comment">/*</span></div><div class="line"><span class="comment">=== RUN   TestDownload</span></div><div class="line"><span class="comment">--- PASS: TestDownload (0.27s)</span></div><div class="line"><span class="comment">    01_test.go:17: Given the need to test downloading content</span></div><div class="line"><span class="comment">    01_test.go:19: 	When checking "https://api.weixin.qq.com/cgi-bin/user/info" for status code "200"</span></div><div class="line"><span class="comment">    01_test.go:25: 		Should be able to make the Get call ✓</span></div><div class="line"><span class="comment">    01_test.go:30: 		Should reveive a "200" status ✓</span></div><div class="line"><span class="comment">PASS</span></div><div class="line"><span class="comment">*/</span></div></pre></td></tr></table></figure>
+<ul>
+<li>go语言只认为以_test.go结尾的文件是测试文件</li>
+<li>testing包提供了从测试框架到报告测试的输出和状态的各种测试功能的支持</li>
+<li>测试函数必须是公开的函数，并且以Test开头，函数签名必须接收一个指向testing.T类型的指针，并且不返回任何值</li>
+</ul>
+<h4 id="表组测试"><a href="#表组测试" class="headerlink" title="表组测试"></a>表组测试</h4><ul>
+<li>测试可以接受一组不通的输入并且产生不同的输出的代码，推荐使用表组测试的方法</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestDownload2</span><span class="params">(t *testing.T)</span></span> &#123;</div><div class="line">	<span class="keyword">var</span> urls = []<span class="keyword">struct</span>&#123;</div><div class="line">		url <span class="keyword">string</span></div><div class="line">		statusCode <span class="keyword">int</span></div><div class="line">	&#125; &#123;</div><div class="line">		&#123;</div><div class="line">			url: <span class="string">"https://api.weixin.qq.com/cgi-bin/user/info"</span>,</div><div class="line">			statusCode: <span class="number">200</span>,</div><div class="line">		&#125;,</div><div class="line">		&#123;</div><div class="line">			url: <span class="string">"https://api.weixin.qq.com/cgi-bin/user"</span>,</div><div class="line">			statusCode: http.StatusNotFound,</div><div class="line">		&#125;,</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	t.Log(<span class="string">"Given the need to test downloading content"</span>)</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">for</span> _, u := <span class="keyword">range</span> urls &#123;</div><div class="line">			uri := u.url</div><div class="line">			statusCode := u.statusCode</div><div class="line">			t.Logf(<span class="string">"\tWhen checking \"%s\" for status code \"%d\""</span>, uri, statusCode)</div><div class="line">			&#123;</div><div class="line">				resp, err := http.Get(uri)</div><div class="line">				<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">					t.Fatal(<span class="string">"\t\tShould be able to make the Get call"</span>, ballotX, err)</div><div class="line">				&#125;</div><div class="line">				t.Log(<span class="string">"\t\tShould be able to make the Get call"</span>, checkMark)</div><div class="line"></div><div class="line">				<span class="keyword">defer</span> resp.Body.Close()</div><div class="line"></div><div class="line">				<span class="keyword">if</span> resp.StatusCode == statusCode &#123;</div><div class="line">					t.Logf(<span class="string">"\t\tShould reveive a \"%d\" status %v"</span>, statusCode, checkMark)</div><div class="line">				&#125; <span class="keyword">else</span> &#123;</div><div class="line">					t.Logf(<span class="string">"\t\tShould reveive a \"%d\" status %v %v"</span>, statusCode, ballotX, resp.StatusCode)</div><div class="line">				&#125;</div><div class="line"></div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="Mock调用"><a href="#Mock调用" class="headerlink" title="Mock调用"></a>Mock调用</h4><ul>
+<li>httptest包可以让开发人员模仿基于http的网络调用</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> feed = <span class="string">`&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></div><div class="line"><span class="string">&lt;rss&gt;</span></div><div class="line"><span class="string">&lt;channel&gt;</span></div><div class="line"><span class="string">	&lt;title&gt;Going Go Programming&lt;/title&gt;</span></div><div class="line"><span class="string">	&lt;description&gt;Golang : https://github.com/goinggo&lt;/description&gt;</span></div><div class="line"><span class="string">	&lt;link&gt;http://www.goinggo.net/&lt;/link&gt;</span></div><div class="line"><span class="string">	&lt;item&gt;</span></div><div class="line"><span class="string">		&lt;pubDate&gt;Sun, 15 Mar 2015 15:04:00 +0000&lt;/pubDate&gt;</span></div><div class="line"><span class="string">		&lt;title&gt;Object Oriented Programming Mechanics&lt;/title&gt;</span></div><div class="line"><span class="string">		&lt;description&gt;Go is an object oriented language.&lt;/description&gt;</span></div><div class="line"><span class="string">		&lt;link&gt;http://www.goinggo.net/2015/03/object-oriented&lt;/link&gt;</span></div><div class="line"><span class="string">	&lt;/item&gt;</span></div><div class="line"><span class="string">&lt;/channel&gt;</span></div><div class="line"><span class="string">&lt;/rss&gt;</span></div><div class="line"><span class="string">`</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">mockServer</span><span class="params">()</span> *<span class="title">httptest</span>.<span class="title">Server</span></span> &#123;</div><div class="line">	f := <span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</div><div class="line">		w.WriteHeader(<span class="number">200</span>)</div><div class="line">		w.Header().Set(<span class="string">"Content-Type"</span>, <span class="string">"application/xml"</span>)</div><div class="line">		_, _ = fmt.Fprintln(w, feed)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">return</span> httptest.NewServer(http.HandlerFunc(f))</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestDownload3</span><span class="params">(t *testing.T)</span></span> &#123;</div><div class="line">	statusCode := <span class="number">200</span></div><div class="line"></div><div class="line">	server := mockServer()</div><div class="line">	<span class="keyword">defer</span> server.Close()</div><div class="line"></div><div class="line">	t.Log(<span class="string">"Given the need to test downloading content"</span>)</div><div class="line">	&#123;</div><div class="line">		t.Logf(<span class="string">"\tWhen checking \"%s\" for status code \"%d\""</span>, server.URL, statusCode)</div><div class="line">		&#123;</div><div class="line">			resp, err := http.Get(server.URL)</div><div class="line">			<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">				t.Fatal(<span class="string">"\t\tShould be able to make the Get call"</span>, ballotX, err)</div><div class="line">			&#125;</div><div class="line">			t.Log(<span class="string">"\t\tShould be able to make the Get call"</span>, checkMark)</div><div class="line"></div><div class="line">			<span class="keyword">defer</span> resp.Body.Close()</div><div class="line"></div><div class="line">			<span class="keyword">if</span> resp.StatusCode == statusCode &#123;</div><div class="line">				t.Logf(<span class="string">"\t\tShould reveive a \"%d\" status %v"</span>, statusCode, checkMark)</div><div class="line">			&#125; <span class="keyword">else</span> &#123;</div><div class="line">				t.Logf(<span class="string">"\t\tShould reveive a \"%d\" status %v %v"</span>, statusCode, ballotX, resp.StatusCode)</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><ul>
+<li>开发人员可以创建自己的示例</li>
+<li>函数开头为Example</li>
+<li>示例代码的函数名字必须基于已经存在的公开的函数或者方法</li>
+<li>最好将示例的输出列在下方</li>
+</ul>
+<h3 id="基准测试"><a href="#基准测试" class="headerlink" title="基准测试"></a>基准测试</h3><ul>
+<li>基准测试是测试代码性能的方法</li>
+<li>基准测试必须以Benchmark开头，接受一个执行testing.B类型的指针作为唯一参数</li>
+<li>基准测试默认框架会在持续1s的时间内，反复调用需要测试的函数，测试框架每次调用测试函数时，都会增加b.N的值</li>
+<li>如果只想运行基准测试，而跳过单元测试，则用命令<code>go test -v -run=&quot;none&quot; -bench=&quot;BenchmarkSprintf&quot;</code>即可</li>
+<li><code>-benchtime=3s</code>可以变更基准测试的运行时间，默认为1s</li>
+<li><code>b.ResetTimer</code>用来重置计时器</li>
+<li><code>-benchmem</code>展示每次操作分配内存的次数</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> (</div><div class="line">	<span class="string">"fmt"</span></div><div class="line">	<span class="string">"strconv"</span></div><div class="line">	<span class="string">"testing"</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="comment">// 找出最快的奖整数转换成字符串的方法</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">BenchmarkSprintf</span><span class="params">(b *testing.B)</span></span> &#123;</div><div class="line">	number := <span class="number">10</span></div><div class="line"></div><div class="line">	b.ResetTimer()</div><div class="line"></div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; b.N; i++ &#123;</div><div class="line">		fmt.Sprintf(<span class="string">"%d"</span>, number)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">BenchmarkFormat</span><span class="params">(b *testing.B)</span></span> &#123;</div><div class="line">	number := <span class="keyword">int64</span>(<span class="number">10</span>)</div><div class="line"></div><div class="line">	b.ResetTimer()</div><div class="line"></div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; b.N; i++ &#123;</div><div class="line">		strconv.FormatInt(number, <span class="number">10</span>)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">BenchmarkItoa</span><span class="params">(b *testing.B)</span></span> &#123;</div><div class="line">	number := <span class="number">10</span></div><div class="line"></div><div class="line">	b.ResetTimer()</div><div class="line"></div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; b.N; i++ &#123;</div><div class="line">		strconv.Itoa(number)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"><span class="comment">/*</span></div><div class="line"><span class="comment">goos: darwin</span></div><div class="line"><span class="comment">goarch: amd64</span></div><div class="line"><span class="comment">pkg: api/books/go-in-action/9-testing</span></div><div class="line"><span class="comment">BenchmarkSprintf-12    	20000000	        70.6 ns/op</span></div><div class="line"><span class="comment">BenchmarkFormat-12     	1000000000	         2.56 ns/op</span></div><div class="line"><span class="comment">BenchmarkItoa-12       	1000000000	         2.42 ns/op</span></div><div class="line"><span class="comment">PASS</span></div><div class="line"><span class="comment">*/</span></div></pre></td></tr></table></figure>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><ul>
+<li>测试功能被内置到go语言中，go语言提供了必要的测试工具</li>
+<li>go test工具用来运行测试</li>
+<li>测试文件总是以_test作为文件名的结尾</li>
+<li>表组测试是利用一个测试函数测试多组值的好办法</li>
+<li>表中的实例代码，既能用于测试，也能用于文档</li>
+<li>基准测试提供了探查代码性能的机制</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/21/go语言实战-标准库/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/04/21/go语言实战-标准库/" itemprop="url">go语言实战 - 标准库</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-21T10:27:52+08:00">
+                2020-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="第八章-标准库"><a href="#第八章-标准库" class="headerlink" title="第八章 标准库"></a>第八章 标准库</h2><ul>
+<li>标准库是一组核心包，用于扩展和增强语言的能力<ul>
+<li>每次语言更新都会带有标准库</li>
+<li>标准库会严格遵守哦向后兼容的承诺</li>
+<li>标准库是go语言开发，构建，发布过程的一部分</li>
+<li>标准库由go的构建者们维护和评审</li>
+<li>go语言发布新版本时，标准库都会被测试，并评估性能</li>
+</ul>
+</li>
+<li>开发中尽量使用标准库</li>
+</ul>
+<h3 id="文档与源代码"><a href="#文档与源代码" class="headerlink" title="文档与源代码"></a>文档与源代码</h3><ul>
+<li>作为go发布包的一部分，标准库的源代码是经过预编译的，称为归档文件</li>
+<li>这些文件是go静态库文件，由go的构建工具创建，并在编译和链接最终程序时被使用</li>
+</ul>
+<h3 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h3><h4 id="log包简介"><a href="#log包简介" class="headerlink" title="log包简介"></a>log包简介</h4><ul>
+<li>log包日志项包含前缀、日期时间戳、源文件、行数、日志消息等组成</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> <span class="string">"log"</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</div><div class="line">	log.SetPrefix(<span class="string">"TRACE: "</span>)</div><div class="line">	log.SetFlags(log.Ldate | log.Lmicroseconds | log.Llongfile)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	log.Println(<span class="string">"message"</span>)</div><div class="line"></div><div class="line">	log.Fatalln(<span class="string">"fatal message"</span>)</div><div class="line"></div><div class="line">	log.Panicln(<span class="string">"panic message"</span>)</div><div class="line">&#125;</div><div class="line"><span class="comment">/* 输出结果</span></div><div class="line"><span class="comment">TRACE: 2020/04/21 14:34:16.281971 /Users/dxchang/go/src/api/books/go-in-action/8-pkg/log.go:11: message</span></div><div class="line"><span class="comment">TRACE: 2020/04/21 14:34:16.282102 /Users/dxchang/go/src/api/books/go-in-action/8-pkg/log.go:13: fatal message</span></div><div class="line"><span class="comment">*/</span></div></pre></td></tr></table></figure>
+<ul>
+<li>init函数作为初始化的一部分，会在main函数执行前执行</li>
+<li>SetPrefix()方法进行设置前缀，一般全部大写</li>
+<li>SetFlags设定标志来控制可以写到每个日志项的输出信息，如下</li>
+<li>这样可以用一个字节来存储日志的标志位，<code>log.Ldate | log.Ltime | log.Lmicroseconds | log.Llongfile</code>和传入<code>00001111</code>是等价的</li>
+<li>日志中以ln结尾的函数会换行，以f结尾的函数可以自定义格式化输出</li>
+<li>log包是多线程安全的，多个goroutine同时来调用一个日志记录器的函数，不会存在写冲突</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> (</div><div class="line">	Ldate         = <span class="number">1</span> &lt;&lt; <span class="literal">iota</span>     <span class="comment">// 本地日期: 2009/01/23</span></div><div class="line">	Ltime                         <span class="comment">// 本地时间: 01:23:23</span></div><div class="line">	Lmicroseconds                 <span class="comment">// 时间毫秒数: 01:23:23.123123.</span></div><div class="line">	Llongfile                     <span class="comment">// 日志打印的文件全路径: /a/b/c/d.go:23</span></div><div class="line">	Lshortfile                    <span class="comment">// 日志打印的文件短路径: d.go:23</span></div><div class="line">	LUTC                          <span class="comment">// 使用UTC时区时间</span></div><div class="line">	LstdFlags     = Ldate | Ltime <span class="comment">// 默认日志，打印日期和时间，到秒</span></div><div class="line">)</div></pre></td></tr></table></figure>
+<ul>
+<li>Fatal系列函数来先写消息，然后调用os.Exit方法退出</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Fatal is equivalent to Print() followed by a call to os.Exit(1).</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Fatal</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	std.Output(<span class="number">2</span>, fmt.Sprint(v...))</div><div class="line">	os.Exit(<span class="number">1</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Fatalf is equivalent to Printf() followed by a call to os.Exit(1).</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Fatalf</span><span class="params">(format <span class="keyword">string</span>, v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	std.Output(<span class="number">2</span>, fmt.Sprintf(format, v...))</div><div class="line">	os.Exit(<span class="number">1</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Fatalln is equivalent to Println() followed by a call to os.Exit(1).</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Fatalln</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	std.Output(<span class="number">2</span>, fmt.Sprintln(v...))</div><div class="line">	os.Exit(<span class="number">1</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Panic函数写日志消息，触发panic，打印堆栈然后退出</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Panic is equivalent to Print() followed by a call to panic().</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Panic</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	s := fmt.Sprint(v...)</div><div class="line">	std.Output(<span class="number">2</span>, s)</div><div class="line">	<span class="built_in">panic</span>(s)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Panicf is equivalent to Printf() followed by a call to panic().</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Panicf</span><span class="params">(format <span class="keyword">string</span>, v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	s := fmt.Sprintf(format, v...)</div><div class="line">	std.Output(<span class="number">2</span>, s)</div><div class="line">	<span class="built_in">panic</span>(s)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Panicln is equivalent to Println() followed by a call to panic().</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Panicln</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	s := fmt.Sprintln(v...)</div><div class="line">	std.Output(<span class="number">2</span>, s)</div><div class="line">	<span class="built_in">panic</span>(s)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Print函数是写日志消息的标准方法</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Print calls Output to print to the standard logger.</span></div><div class="line"><span class="comment">// Arguments are handled in the manner of fmt.Print.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Print</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	std.Output(<span class="number">2</span>, fmt.Sprint(v...))</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Printf calls Output to print to the standard logger.</span></div><div class="line"><span class="comment">// Arguments are handled in the manner of fmt.Printf.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Printf</span><span class="params">(format <span class="keyword">string</span>, v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	std.Output(<span class="number">2</span>, fmt.Sprintf(format, v...))</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Println calls Output to print to the standard logger.</span></div><div class="line"><span class="comment">// Arguments are handled in the manner of fmt.Println.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Println</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	std.Output(<span class="number">2</span>, fmt.Sprintln(v...))</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="定制的日志记录器"><a href="#定制的日志记录器" class="headerlink" title="定制的日志记录器"></a>定制的日志记录器</h4><ul>
+<li>创建一个定制的日志记录器，需要创建一个Logger类型值</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> (</div><div class="line">	Trace *log.Logger <span class="comment">// 记录所有日志</span></div><div class="line">	Info *log.Logger <span class="comment">// 重要的信息</span></div><div class="line">	Warning *log.Logger <span class="comment">// 警告</span></div><div class="line">	Error *log.Logger <span class="comment">// 错误</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</div><div class="line">	file, err := os.OpenFile(<span class="string">"errors.txt"</span>, os.O_CREATE | os.O_WRONLY | os.O_APPEND, <span class="number">0666</span>)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		log.Fatalln(<span class="string">"Failed to open error log file:"</span>, err)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	Trace = log.New(ioutil.Discard, <span class="string">"TRACE: "</span>, log.Ldate | log.Ltime | log.Lshortfile)</div><div class="line">	Info = log.New(os.Stdout, <span class="string">"INFO: "</span>, log.Ldate | log.Ltime | log.Lshortfile)</div><div class="line">	Warning = log.New(os.Stdout, <span class="string">"WARNING: "</span>, log.Ldate | log.Ltime | log.Lshortfile)</div><div class="line">	Error = log.New(io.MultiWriter(file, os.Stderr), <span class="string">"TRACE: "</span>, log.Ldate | log.Ltime | log.Lshortfile)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	Trace.Println(<span class="string">"I have something standard to say"</span>)</div><div class="line">	Info.Println(<span class="string">"Special Information"</span>)</div><div class="line">	Warning.Println(<span class="string">"There is something you need to know"</span>)</div><div class="line">	Error.Println(<span class="string">"Something has failed"</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>log包的New()函数完成Logger类型的初始化，设定输出位置，日志前缀，及日志输出内容</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(out io.Writer, prefix <span class="keyword">string</span>, flag <span class="keyword">int</span>)</span> *<span class="title">Logger</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> &amp;Logger&#123;out: out, prefix: prefix, flag: flag&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>ioutil.Discard实现了io.Writer接口，但是并不会发生实际的写入，使用Discard可以禁用这个类型的日志</li>
+<li>os.Stdin、os.Stdout、os.Stderr分别指向标准输入，标准输出，标准错误</li>
+<li>io.MultiWriter()方法可以向多个实现了io.Writer接口的位置写入日志</li>
+</ul>
+<h4 id="log包中的其余函数"><a href="#log包中的其余函数" class="headerlink" title="log包中的其余函数"></a>log包中的其余函数</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Flags</span><span class="params">()</span> <span class="title">int</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> std.Flags()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">SetFlags</span><span class="params">(flag <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	std.SetFlags(flag)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Prefix</span><span class="params">()</span> <span class="title">string</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> std.Prefix()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">SetPrefix</span><span class="params">(prefix <span class="keyword">string</span>)</span></span> &#123;</div><div class="line">	std.SetPrefix(prefix)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// SetOutput sets the output destination for the standard logger.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">SetOutput</span><span class="params">(w io.Writer)</span></span> &#123;</div><div class="line">	std.mu.Lock()</div><div class="line">	<span class="keyword">defer</span> std.mu.Unlock()</div><div class="line">	std.out = w</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Output</span><span class="params">(calldepth <span class="keyword">int</span>, s <span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> std.Output(calldepth+<span class="number">1</span>, s) <span class="comment">// +1 for this frame.</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>logger结构体</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Logger <span class="keyword">struct</span> &#123;</div><div class="line">	mu     sync.Mutex <span class="comment">// 互斥锁，支持原子写入</span></div><div class="line">	prefix <span class="keyword">string</span>     <span class="comment">// 日志前缀</span></div><div class="line">	flag   <span class="keyword">int</span>        <span class="comment">// 日志输出内容标志位</span></div><div class="line">	out    io.Writer  <span class="comment">// 日志输出位置</span></div><div class="line">	buf    []<span class="keyword">byte</span>     <span class="comment">// 要追加的日志内容</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>logger核心方法 Output</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// s为要写入的日志，calldepth目前均为2</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *Logger)</span> <span class="title">Output</span><span class="params">(calldepth <span class="keyword">int</span>, s <span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</div><div class="line">	now := time.Now() <span class="comment">// get this early.</span></div><div class="line">	<span class="keyword">var</span> file <span class="keyword">string</span></div><div class="line">	<span class="keyword">var</span> line <span class="keyword">int</span></div><div class="line">	l.mu.Lock()</div><div class="line">	<span class="keyword">defer</span> l.mu.Unlock()</div><div class="line">	<span class="keyword">if</span> l.flag&amp;(Lshortfile|Llongfile) != <span class="number">0</span> &#123;</div><div class="line">		<span class="comment">// Release lock while getting caller info - it's expensive.</span></div><div class="line">		l.mu.Unlock()</div><div class="line">		<span class="keyword">var</span> ok <span class="keyword">bool</span></div><div class="line">		_, file, line, ok = runtime.Caller(calldepth)</div><div class="line">		<span class="keyword">if</span> !ok &#123;</div><div class="line">			file = <span class="string">"???"</span></div><div class="line">			line = <span class="number">0</span></div><div class="line">		&#125;</div><div class="line">		l.mu.Lock()</div><div class="line">	&#125;</div><div class="line">	l.buf = l.buf[:<span class="number">0</span>]</div><div class="line">	l.formatHeader(&amp;l.buf, now, file, line)</div><div class="line">	l.buf = <span class="built_in">append</span>(l.buf, s...)</div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(s) == <span class="number">0</span> || s[<span class="built_in">len</span>(s)<span class="number">-1</span>] != <span class="string">'\n'</span> &#123;</div><div class="line">		l.buf = <span class="built_in">append</span>(l.buf, <span class="string">'\n'</span>)</div><div class="line">	&#125;</div><div class="line">	_, err := l.out.Write(l.buf)</div><div class="line">	<span class="keyword">return</span> err</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="编码-解码"><a href="#编码-解码" class="headerlink" title="编码/解码"></a>编码/解码</h3><ul>
+<li>xml/json包可以完成json和xml的编码解码</li>
+</ul>
+<h4 id="解码JSON"><a href="#解码JSON" class="headerlink" title="解码JSON"></a>解码JSON</h4><ul>
+<li>使用json包的NewDecode函数和Decode方法来完成json解码</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> gResponse <span class="keyword">struct</span> &#123;</div><div class="line">	ErrCode <span class="keyword">int</span> <span class="string">`json:"errcode"`</span></div><div class="line">	ErrMsg <span class="keyword">string</span> <span class="string">`json:"errmsg"`</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	uri := <span class="string">"https://api.weixin.qq.com/cgi-bin/user/info"</span></div><div class="line">	resp, err := http.Get(uri)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		log.Println(<span class="string">"ERROR: "</span>, err)</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">defer</span> resp.Body.Close()</div><div class="line"></div><div class="line">	<span class="keyword">var</span> gr gResponse</div><div class="line">	err = json.NewDecoder(resp.Body).Decode(&amp;gr)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		log.Println(<span class="string">"ERROR: "</span>, err)</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	fmt.Println(gr)</div><div class="line">&#125;</div><div class="line"><span class="comment">// &#123;41001 access_token missing hints: [xHkBIOLoRa-GmALMa!]&#125;</span></div></pre></td></tr></table></figure>
+<ul>
+<li>json中NewDecoder方法返回Decoder对象</li>
+<li>Decoder结构体从输入流中读取数据并解码成json</li>
+<li>Decode方法完成JSON的解析映射</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewDecoder</span><span class="params">(r io.Reader)</span> *<span class="title">Decoder</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> &amp;Decoder&#123;r: r&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">// A Decoder reads and decodes JSON values from an input stream.</span></div><div class="line"><span class="keyword">type</span> Decoder <span class="keyword">struct</span> &#123;</div><div class="line">	r       io.Reader</div><div class="line">	buf     []<span class="keyword">byte</span></div><div class="line">	d       decodeState</div><div class="line">	scanp   <span class="keyword">int</span>   <span class="comment">// start of unread data in buf</span></div><div class="line">	scanned <span class="keyword">int64</span> <span class="comment">// amount of data already scanned</span></div><div class="line">	scan    scanner</div><div class="line">	err     error</div><div class="line"></div><div class="line">	tokenState <span class="keyword">int</span></div><div class="line">	tokenStack []<span class="keyword">int</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(dec *Decoder)</span> <span class="title">Decode</span><span class="params">(v <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">error</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> dec.err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> dec.err</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">if</span> err := dec.tokenPrepareForDecode(); err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> err</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">if</span> !dec.tokenValueAllowed() &#123;</div><div class="line">		<span class="keyword">return</span> &amp;SyntaxError&#123;msg: <span class="string">"not at beginning of value"</span>, Offset: dec.offset()&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// Read whole value into buffer.</span></div><div class="line">	n, err := dec.readValue()</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> err</div><div class="line">	&#125;</div><div class="line">	dec.d.init(dec.buf[dec.scanp : dec.scanp+n])</div><div class="line">	dec.scanp += n</div><div class="line"></div><div class="line">	err = dec.d.unmarshal(v)</div><div class="line"></div><div class="line">	dec.tokenValueEnd()</div><div class="line"></div><div class="line">	<span class="keyword">return</span> err</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>json文档以string的形式存在，此时使用json.Unmarshal方法完成反序列化处理</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> gResponse <span class="keyword">struct</span> &#123;</div><div class="line">	ErrCode <span class="keyword">int</span> <span class="string">`json:"errcode"`</span></div><div class="line">	ErrMsg <span class="keyword">string</span> <span class="string">`json:"errmsg"`</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	uri := <span class="string">"https://api.weixin.qq.com/cgi-bin/user/info"</span></div><div class="line">	resp, err := http.Get(uri)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		log.Println(<span class="string">"ERROR: "</span>, err)</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">defer</span> resp.Body.Close()</div><div class="line"></div><div class="line">	bytes, err := ioutil.ReadAll(resp.Body)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		log.Println(<span class="string">"ERROR: "</span>, err)</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">var</span> gr gResponse</div><div class="line">	err = json.Unmarshal(bytes, &amp;gr)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		log.Println(<span class="string">"ERROR: "</span>, err)</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	fmt.Println(gr)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="编码JSON"><a href="#编码JSON" class="headerlink" title="编码JSON"></a>编码JSON</h4><ul>
+<li>MarshalIndent方法可以完成map和结构体到json的映射</li>
+</ul>
+<h3 id="输入和输出"><a href="#输入和输出" class="headerlink" title="输入和输出"></a>输入和输出</h3><h4 id="Writer和Reader接口"><a href="#Writer和Reader接口" class="headerlink" title="Writer和Reader接口"></a>Writer和Reader接口</h4><ul>
+<li>io包的核心就是Writer和Reader接口<ul>
+<li>Writer接口<ul>
+<li>Writer接口接收字节切片，返回两个值，写入的字节数和错误输出</li>
+<li>Writer接口从p里向底层的数据流写入len(p)字节的数据</li>
+<li>Writer无论如何也不能改p中的数据</li>
+</ul>
+</li>
+<li>Reader接口<ul>
+<li>Reader接口接收字节切片，返回两个值，读取的字节数和错误输出</li>
+<li>Read最多读入len(p)个字节，保存到p</li>
+<li>可以使用所有的p的空间来存储临时数据</li>
+<li>当字节长度不足len(p)，Read会立刻返回可用的数据，而不是等待更多的数据</li>
+<li>当成功读取了部分字节后，发生错误或者读取完成，Read方法会返回读入的字节数</li>
+<li>即使有错误发生，当读取的字节数&gt;0时，需要先处理读取的数据，再处理错误</li>
+<li>读取的实现，不鼓励返回0个字节并且返回nil值的错误<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Writer <span class="keyword">interface</span> &#123;</div><div class="line">	Write(p []<span class="keyword">byte</span>) (n <span class="keyword">int</span>, err error)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> Reader <span class="keyword">interface</span> &#123;</div><div class="line">	Read(p []<span class="keyword">byte</span>) (n <span class="keyword">int</span>, err error)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="keyword">var</span> b bytes.Buffer</div><div class="line">	b.Write([]<span class="keyword">byte</span>(<span class="string">"Hello "</span>))</div><div class="line"></div><div class="line">	fmt.Fprintf(&amp;b, <span class="string">"World"</span>)</div><div class="line"></div><div class="line">	b.WriteTo(os.Stdout)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Buffe的Write方法</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Write appends the contents of p to the buffer, growing the buffer as</span></div><div class="line"><span class="comment">// needed. The return value n is the length of p; err is always nil. If the</span></div><div class="line"><span class="comment">// buffer becomes too large, Write will panic with ErrTooLarge.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">Write</span><span class="params">(p []<span class="keyword">byte</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	b.lastRead = opInvalid</div><div class="line">	m, ok := b.tryGrowByReslice(<span class="built_in">len</span>(p))</div><div class="line">	<span class="keyword">if</span> !ok &#123;</div><div class="line">		m = b.grow(<span class="built_in">len</span>(p))</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="built_in">copy</span>(b.buf[m:], p), <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="curl"><a href="#curl" class="headerlink" title="curl"></a>curl</h4><ul>
+<li>一个简单的curl,第一个参数指定curl的网站，，第二个参数指定将curl获取的response的body写入的文件名</li>
+<li>defer 打开关闭的资源</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	r, err := http.Get(os.Args[<span class="number">1</span>])</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		log.Fatalln(err)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	file, err := os.Create(os.Args[<span class="number">2</span>])</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		log.Fatalln(err)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">defer</span> file.Close()</div><div class="line"></div><div class="line">	dest := io.MultiWriter(os.Stdout, file)</div><div class="line">	io.Copy(dest, r.Body)</div><div class="line">	<span class="keyword">if</span> err := r.Body.Close(); err != <span class="literal">nil</span> &#123;</div><div class="line">		log.Fatalln(err)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><ul>
+<li>标准库由特殊的保证，并且被社区广泛应用</li>
+<li>使用标准库会让你的代码更易于管理</li>
+<li>接口允许你的代码组合已有的功能</li>
+<li>阅读标准库的代码是熟悉go语言习惯的好方法</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/17/ring/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -417,6 +868,179 @@
 <li>Do方法的参数为一个函数f，对于圆环上的每个元素的值，执行该函数</li>
 </ul>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Ring)</span> <span class="title">Len</span><span class="params">()</span> <span class="title">int</span></span> &#123;</div><div class="line">	n := <span class="number">0</span></div><div class="line">	<span class="keyword">if</span> r != <span class="literal">nil</span> &#123;</div><div class="line">		n = <span class="number">1</span></div><div class="line">		<span class="keyword">for</span> p := r.Next(); p != r; p = p.next &#123;</div><div class="line">			n++</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> n</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Do calls function f on each element of the ring, in forward order.</span></div><div class="line"><span class="comment">// The behavior of Do is undefined if f changes *r.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Ring)</span> <span class="title">Do</span><span class="params">(f <span class="keyword">func</span>(<span class="keyword">interface</span>&#123;&#125;)</span>)</span> &#123;</div><div class="line">	<span class="keyword">if</span> r != <span class="literal">nil</span> &#123;</div><div class="line">		f(r.Value)</div><div class="line">		<span class="keyword">for</span> p := r.Next(); p != r; p = p.next &#123;</div><div class="line">			f(p.Value)</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/17/heap/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/04/17/heap/" itemprop="url">go源码解读-heap</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-17T19:24:43+08:00">
+                2020-04-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/源码解读/" itemprop="url" rel="index">
+                    <span itemprop="name">源码解读</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="heap"><a href="#heap" class="headerlink" title="heap"></a>heap</h2><ul>
+<li>go中的堆采用小根堆实现</li>
+<li>采用接口形式，也就是需要实现Push,Pop,Len,Less,Swap方法</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Interface <span class="keyword">interface</span> &#123;</div><div class="line">	sort.Interface</div><div class="line">	Push(x <span class="keyword">interface</span>&#123;&#125;) <span class="comment">// add x as element Len()</span></div><div class="line">	Pop() <span class="keyword">interface</span>&#123;&#125;   <span class="comment">// remove and return element Len() - 1.</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="堆的构建"><a href="#堆的构建" class="headerlink" title="堆的构建"></a>堆的构建</h3><ul>
+<li>调用init来完成对于堆的构建</li>
+<li>比较i与<code>2*i+1</code>, <code>2*i+2</code>的大小进行建堆</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Init</span><span class="params">(h Interface)</span></span> &#123;</div><div class="line">	<span class="comment">// heapify</span></div><div class="line">	n := h.Len()</div><div class="line">	<span class="keyword">for</span> i := n/<span class="number">2</span> - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i-- &#123;</div><div class="line">		down(h, i, n)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">down</span><span class="params">(h Interface, i0, n <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	i := i0</div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		j1 := <span class="number">2</span>*i + <span class="number">1</span></div><div class="line">		<span class="keyword">if</span> j1 &gt;= n || j1 &lt; <span class="number">0</span> &#123; <span class="comment">// j1 &lt; 0 after int overflow</span></div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		j := j1 <span class="comment">// left child</span></div><div class="line">		<span class="keyword">if</span> j2 := j1 + <span class="number">1</span>; j2 &lt; n &amp;&amp; h.Less(j2, j1) &#123;</div><div class="line">			j = j2 <span class="comment">// = 2*i + 2  // right child</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> !h.Less(j, i) &#123;</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		h.Swap(i, j)</div><div class="line">		i = j</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> i &gt; i0</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Push-Pop方法"><a href="#Push-Pop方法" class="headerlink" title="Push, Pop方法"></a>Push, Pop方法</h3><ul>
+<li>Push方法将数据防止在末尾，逐个节点向上调整</li>
+<li>Pop方法将待出堆的节点和末尾节点交换，向下调整根节点</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Push</span><span class="params">(h Interface, x <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	h.Push(x)</div><div class="line">	up(h, h.Len()<span class="number">-1</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Pop is equivalent to Remove(h, 0).</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Pop</span><span class="params">(h Interface)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</div><div class="line">	n := h.Len() - <span class="number">1</span></div><div class="line">	h.Swap(<span class="number">0</span>, n)</div><div class="line">	down(h, <span class="number">0</span>, n)</div><div class="line">	<span class="keyword">return</span> h.Pop()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">up</span><span class="params">(h Interface, j <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		i := (j - <span class="number">1</span>) / <span class="number">2</span> <span class="comment">// parent</span></div><div class="line">		<span class="keyword">if</span> i == j || !h.Less(j, i) &#123;</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		h.Swap(i, j)</div><div class="line">		j = i</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Fix-Remove方法"><a href="#Fix-Remove方法" class="headerlink" title="Fix, Remove方法"></a>Fix, Remove方法</h3><ul>
+<li>Remove方法移除树第i个节点，并调整堆结构</li>
+<li>Fix方法在数据值便跟时调整堆结构</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Remove</span><span class="params">(h Interface, i <span class="keyword">int</span>)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</div><div class="line">	n := h.Len() - <span class="number">1</span></div><div class="line">	<span class="keyword">if</span> n != i &#123;</div><div class="line">		h.Swap(i, n)</div><div class="line">		<span class="keyword">if</span> !down(h, i, n) &#123;</div><div class="line">			up(h, i)</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> h.Pop()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Fix</span><span class="params">(h Interface, i <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> !down(h, i, h.Len()) &#123;</div><div class="line">		up(h, i)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="示例-优先队列"><a href="#示例-优先队列" class="headerlink" title="示例-优先队列"></a>示例-优先队列</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// An Item is something we manage in a priority queue.</span></div><div class="line"><span class="keyword">type</span> Item <span class="keyword">struct</span> &#123;</div><div class="line">	value    <span class="keyword">string</span> <span class="comment">// The value of the item; arbitrary.</span></div><div class="line">	priority <span class="keyword">int</span>    <span class="comment">// The priority of the item in the queue.</span></div><div class="line">	<span class="comment">// The index is needed by update and is maintained by the heap.Interface methods.</span></div><div class="line">	index <span class="keyword">int</span> <span class="comment">// The index of the item in the heap.</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// A PriorityQueue implements heap.Interface and holds Items.</span></div><div class="line"><span class="keyword">type</span> PriorityQueue []*Item</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq PriorityQueue)</span> <span class="title">Len</span><span class="params">()</span> <span class="title">int</span></span> &#123; <span class="keyword">return</span> <span class="built_in">len</span>(pq) &#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq PriorityQueue)</span> <span class="title">Less</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	<span class="comment">// We want Pop to give us the highest, not lowest, priority so we use greater than here.</span></div><div class="line">	<span class="keyword">return</span> pq[i].priority &gt; pq[j].priority</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq PriorityQueue)</span> <span class="title">Swap</span><span class="params">(i, j <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	pq[i], pq[j] = pq[j], pq[i]</div><div class="line">	pq[i].index = i</div><div class="line">	pq[j].index = j</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq *PriorityQueue)</span> <span class="title">Push</span><span class="params">(x <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	n := <span class="built_in">len</span>(*pq)</div><div class="line">	item := x.(*Item)</div><div class="line">	item.index = n</div><div class="line">	*pq = <span class="built_in">append</span>(*pq, item)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq *PriorityQueue)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</div><div class="line">	old := *pq</div><div class="line">	n := <span class="built_in">len</span>(old)</div><div class="line">	item := old[n<span class="number">-1</span>]</div><div class="line">	item.index = <span class="number">-1</span> <span class="comment">// for safety</span></div><div class="line">	*pq = old[<span class="number">0</span> : n<span class="number">-1</span>]</div><div class="line">	<span class="keyword">return</span> item</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// update modifies the priority and value of an Item in the queue.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq *PriorityQueue)</span> <span class="title">update</span><span class="params">(item *Item, value <span class="keyword">string</span>, priority <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	item.value = value</div><div class="line">	item.priority = priority</div><div class="line">	heap.Fix(pq, item.index)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// This example creates a PriorityQueue with some items, adds and manipulates an item,</span></div><div class="line"><span class="comment">// and then removes the items in priority order.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="comment">// Some items and their priorities.</span></div><div class="line">	items := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>&#123;</div><div class="line">		<span class="string">"banana"</span>: <span class="number">3</span>, <span class="string">"apple"</span>: <span class="number">2</span>, <span class="string">"pear"</span>: <span class="number">4</span>,</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// Create a priority queue, put the items in it, and</span></div><div class="line">	<span class="comment">// establish the priority queue (heap) invariants.</span></div><div class="line">	pq := <span class="built_in">make</span>(PriorityQueue, <span class="built_in">len</span>(items))</div><div class="line">	i := <span class="number">0</span></div><div class="line">	<span class="keyword">for</span> value, priority := <span class="keyword">range</span> items &#123;</div><div class="line">		pq[i] = &amp;Item&#123;</div><div class="line">			value:    value,</div><div class="line">			priority: priority,</div><div class="line">			index:    i,</div><div class="line">		&#125;</div><div class="line">		i++</div><div class="line">	&#125;</div><div class="line">	heap.Init(&amp;pq)</div><div class="line"></div><div class="line">	<span class="comment">// Insert a new item and then modify its priority.</span></div><div class="line">	item := &amp;Item&#123;</div><div class="line">		value:    <span class="string">"orange"</span>,</div><div class="line">		priority: <span class="number">1</span>,</div><div class="line">	&#125;</div><div class="line">	heap.Push(&amp;pq, item)</div><div class="line">	pq.update(item, item.value, <span class="number">5</span>)</div><div class="line"></div><div class="line">	<span class="comment">// Take the items out; they arrive in decreasing priority order.</span></div><div class="line">	<span class="keyword">for</span> pq.Len() &gt; <span class="number">0</span> &#123;</div><div class="line">		item := heap.Pop(&amp;pq).(*Item)</div><div class="line">		fmt.Printf(<span class="string">"%.2d:%s "</span>, item.priority, item.value)</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Output:</span></div><div class="line">	<span class="comment">// 05:orange 04:pear 03:banana 02:apple</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
           
         
@@ -641,179 +1265,6 @@
 <li>PushFrontList方法将other列表插入到l列表root节点之后</li>
 </ul>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">PushBackList</span><span class="params">(other *List)</span></span> &#123;</div><div class="line">	l.lazyInit()</div><div class="line">	<span class="keyword">for</span> i, e := other.Len(), other.Front(); i &gt; <span class="number">0</span>; i, e = i<span class="number">-1</span>, e.Next() &#123;</div><div class="line">		l.insertValue(e.Value, l.root.prev)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">PushFrontList</span><span class="params">(other *List)</span></span> &#123;</div><div class="line">	l.lazyInit()</div><div class="line">	<span class="keyword">for</span> i, e := other.Len(), other.Back(); i &gt; <span class="number">0</span>; i, e = i<span class="number">-1</span>, e.Prev() &#123;</div><div class="line">		l.insertValue(e.Value, &amp;l.root)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/17/heap/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/04/17/heap/" itemprop="url">go源码解读-heap</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-17T19:24:43+08:00">
-                2020-04-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/" itemprop="url" rel="index">
-                    <span itemprop="name">go</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/源码解读/" itemprop="url" rel="index">
-                    <span itemprop="name">源码解读</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="heap"><a href="#heap" class="headerlink" title="heap"></a>heap</h2><ul>
-<li>go中的堆采用小根堆实现</li>
-<li>采用接口形式，也就是需要实现Push,Pop,Len,Less,Swap方法</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Interface <span class="keyword">interface</span> &#123;</div><div class="line">	sort.Interface</div><div class="line">	Push(x <span class="keyword">interface</span>&#123;&#125;) <span class="comment">// add x as element Len()</span></div><div class="line">	Pop() <span class="keyword">interface</span>&#123;&#125;   <span class="comment">// remove and return element Len() - 1.</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="堆的构建"><a href="#堆的构建" class="headerlink" title="堆的构建"></a>堆的构建</h3><ul>
-<li>调用init来完成对于堆的构建</li>
-<li>比较i与<code>2*i+1</code>, <code>2*i+2</code>的大小进行建堆</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Init</span><span class="params">(h Interface)</span></span> &#123;</div><div class="line">	<span class="comment">// heapify</span></div><div class="line">	n := h.Len()</div><div class="line">	<span class="keyword">for</span> i := n/<span class="number">2</span> - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i-- &#123;</div><div class="line">		down(h, i, n)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">down</span><span class="params">(h Interface, i0, n <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	i := i0</div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		j1 := <span class="number">2</span>*i + <span class="number">1</span></div><div class="line">		<span class="keyword">if</span> j1 &gt;= n || j1 &lt; <span class="number">0</span> &#123; <span class="comment">// j1 &lt; 0 after int overflow</span></div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		j := j1 <span class="comment">// left child</span></div><div class="line">		<span class="keyword">if</span> j2 := j1 + <span class="number">1</span>; j2 &lt; n &amp;&amp; h.Less(j2, j1) &#123;</div><div class="line">			j = j2 <span class="comment">// = 2*i + 2  // right child</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> !h.Less(j, i) &#123;</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		h.Swap(i, j)</div><div class="line">		i = j</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> i &gt; i0</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="Push-Pop方法"><a href="#Push-Pop方法" class="headerlink" title="Push, Pop方法"></a>Push, Pop方法</h3><ul>
-<li>Push方法将数据防止在末尾，逐个节点向上调整</li>
-<li>Pop方法将待出堆的节点和末尾节点交换，向下调整根节点</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Push</span><span class="params">(h Interface, x <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	h.Push(x)</div><div class="line">	up(h, h.Len()<span class="number">-1</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Pop is equivalent to Remove(h, 0).</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Pop</span><span class="params">(h Interface)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</div><div class="line">	n := h.Len() - <span class="number">1</span></div><div class="line">	h.Swap(<span class="number">0</span>, n)</div><div class="line">	down(h, <span class="number">0</span>, n)</div><div class="line">	<span class="keyword">return</span> h.Pop()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">up</span><span class="params">(h Interface, j <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		i := (j - <span class="number">1</span>) / <span class="number">2</span> <span class="comment">// parent</span></div><div class="line">		<span class="keyword">if</span> i == j || !h.Less(j, i) &#123;</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		h.Swap(i, j)</div><div class="line">		j = i</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="Fix-Remove方法"><a href="#Fix-Remove方法" class="headerlink" title="Fix, Remove方法"></a>Fix, Remove方法</h3><ul>
-<li>Remove方法移除树第i个节点，并调整堆结构</li>
-<li>Fix方法在数据值便跟时调整堆结构</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Remove</span><span class="params">(h Interface, i <span class="keyword">int</span>)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</div><div class="line">	n := h.Len() - <span class="number">1</span></div><div class="line">	<span class="keyword">if</span> n != i &#123;</div><div class="line">		h.Swap(i, n)</div><div class="line">		<span class="keyword">if</span> !down(h, i, n) &#123;</div><div class="line">			up(h, i)</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> h.Pop()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Fix</span><span class="params">(h Interface, i <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> !down(h, i, h.Len()) &#123;</div><div class="line">		up(h, i)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="示例-优先队列"><a href="#示例-优先队列" class="headerlink" title="示例-优先队列"></a>示例-优先队列</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// An Item is something we manage in a priority queue.</span></div><div class="line"><span class="keyword">type</span> Item <span class="keyword">struct</span> &#123;</div><div class="line">	value    <span class="keyword">string</span> <span class="comment">// The value of the item; arbitrary.</span></div><div class="line">	priority <span class="keyword">int</span>    <span class="comment">// The priority of the item in the queue.</span></div><div class="line">	<span class="comment">// The index is needed by update and is maintained by the heap.Interface methods.</span></div><div class="line">	index <span class="keyword">int</span> <span class="comment">// The index of the item in the heap.</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// A PriorityQueue implements heap.Interface and holds Items.</span></div><div class="line"><span class="keyword">type</span> PriorityQueue []*Item</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq PriorityQueue)</span> <span class="title">Len</span><span class="params">()</span> <span class="title">int</span></span> &#123; <span class="keyword">return</span> <span class="built_in">len</span>(pq) &#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq PriorityQueue)</span> <span class="title">Less</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	<span class="comment">// We want Pop to give us the highest, not lowest, priority so we use greater than here.</span></div><div class="line">	<span class="keyword">return</span> pq[i].priority &gt; pq[j].priority</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq PriorityQueue)</span> <span class="title">Swap</span><span class="params">(i, j <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	pq[i], pq[j] = pq[j], pq[i]</div><div class="line">	pq[i].index = i</div><div class="line">	pq[j].index = j</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq *PriorityQueue)</span> <span class="title">Push</span><span class="params">(x <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	n := <span class="built_in">len</span>(*pq)</div><div class="line">	item := x.(*Item)</div><div class="line">	item.index = n</div><div class="line">	*pq = <span class="built_in">append</span>(*pq, item)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq *PriorityQueue)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</div><div class="line">	old := *pq</div><div class="line">	n := <span class="built_in">len</span>(old)</div><div class="line">	item := old[n<span class="number">-1</span>]</div><div class="line">	item.index = <span class="number">-1</span> <span class="comment">// for safety</span></div><div class="line">	*pq = old[<span class="number">0</span> : n<span class="number">-1</span>]</div><div class="line">	<span class="keyword">return</span> item</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// update modifies the priority and value of an Item in the queue.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq *PriorityQueue)</span> <span class="title">update</span><span class="params">(item *Item, value <span class="keyword">string</span>, priority <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	item.value = value</div><div class="line">	item.priority = priority</div><div class="line">	heap.Fix(pq, item.index)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// This example creates a PriorityQueue with some items, adds and manipulates an item,</span></div><div class="line"><span class="comment">// and then removes the items in priority order.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="comment">// Some items and their priorities.</span></div><div class="line">	items := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>&#123;</div><div class="line">		<span class="string">"banana"</span>: <span class="number">3</span>, <span class="string">"apple"</span>: <span class="number">2</span>, <span class="string">"pear"</span>: <span class="number">4</span>,</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// Create a priority queue, put the items in it, and</span></div><div class="line">	<span class="comment">// establish the priority queue (heap) invariants.</span></div><div class="line">	pq := <span class="built_in">make</span>(PriorityQueue, <span class="built_in">len</span>(items))</div><div class="line">	i := <span class="number">0</span></div><div class="line">	<span class="keyword">for</span> value, priority := <span class="keyword">range</span> items &#123;</div><div class="line">		pq[i] = &amp;Item&#123;</div><div class="line">			value:    value,</div><div class="line">			priority: priority,</div><div class="line">			index:    i,</div><div class="line">		&#125;</div><div class="line">		i++</div><div class="line">	&#125;</div><div class="line">	heap.Init(&amp;pq)</div><div class="line"></div><div class="line">	<span class="comment">// Insert a new item and then modify its priority.</span></div><div class="line">	item := &amp;Item&#123;</div><div class="line">		value:    <span class="string">"orange"</span>,</div><div class="line">		priority: <span class="number">1</span>,</div><div class="line">	&#125;</div><div class="line">	heap.Push(&amp;pq, item)</div><div class="line">	pq.update(item, item.value, <span class="number">5</span>)</div><div class="line"></div><div class="line">	<span class="comment">// Take the items out; they arrive in decreasing priority order.</span></div><div class="line">	<span class="keyword">for</span> pq.Len() &gt; <span class="number">0</span> &#123;</div><div class="line">		item := heap.Pop(&amp;pq).(*Item)</div><div class="line">		fmt.Printf(<span class="string">"%.2d:%s "</span>, item.priority, item.value)</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Output:</span></div><div class="line">	<span class="comment">// 05:orange 04:pear 03:banana 02:apple</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
           
         
@@ -3795,496 +4246,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/设计模式之代理模式/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/设计模式之代理模式/" itemprop="url">设计模式之代理模式</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/design-patterns/" itemprop="url" rel="index">
-                    <span itemprop="name">design patterns</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>为其他对象提供一种代理，以控制对这个对象的访问。代理对象起到中介作用，可以去掉功能服务或者增加额外的功能服务。</p>
-<h1 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h1><p>代理和被代理对象在代理之前是确定的。他们都是事先相同的接口或者继承相同的抽象类。</p>
-<p><img src="/img/dp-staticProxy.png" alt="Alt text"></p>
-<p>创建一个接口Moveable，Car继承Moveable接口，要求用代理类来记录Car的运行时间。</p>
-<p>Car继承Moveable接口:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public interface Moveable &#123;</div><div class="line">    void move();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>Car:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public class Car implements Moveable&#123;</div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        try &#123;</div><div class="line">            Thread.sleep(new Random().nextInt(1000));</div><div class="line">        &#125; catch (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="继承实现静态代理"><a href="#继承实现静态代理" class="headerlink" title="继承实现静态代理"></a>继承实现静态代理</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">public class Car2 extends Car&#123;</div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        System.out.println(startTime);</div><div class="line">        super.move();</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime);</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="聚合实现静态代理"><a href="#聚合实现静态代理" class="headerlink" title="聚合实现静态代理"></a>聚合实现静态代理</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">public class Car3 implements Moveable&#123;</div><div class="line"></div><div class="line">    private Car car;</div><div class="line"></div><div class="line">    public Car3(Car car) &#123;</div><div class="line">        this.car = car;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        System.out.println(startTime);</div><div class="line">        car.move();</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime);</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>考虑到继承方式扩展代理功能的不方便，推荐使用聚合实现静态代理。也就是代理类和实际类实现共同的接口，代理类中包含所实现接口的引用。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">public class CarLogProxy implements Moveable&#123;</div><div class="line"></div><div class="line">    private Moveable moveable;</div><div class="line"></div><div class="line">    public CarLogProxy(Moveable moveable) &#123;</div><div class="line">        this.moveable = moveable;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        System.out.println(&quot;log start&quot;);</div><div class="line">        moveable.move();</div><div class="line">        System.out.println(&quot;log end&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">public class CarTimeProxy implements Moveable&#123;</div><div class="line"></div><div class="line">    private Moveable moveable;</div><div class="line"></div><div class="line">    public CarTimeProxy(Moveable moveable) &#123;</div><div class="line">        this.moveable = moveable;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        System.out.println(startTime);</div><div class="line">        moveable.move();</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime);</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Moveable car = new Car();</div><div class="line">        CarTimeProxy carTimeProxy = new CarTimeProxy(car);</div><div class="line">        CarLogProxy carLogProxy = new CarLogProxy(carTimeProxy);</div><div class="line">        carLogProxy.move();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h1><p>前面实现了Car类的静态代理，为其添加了运行时间记录和日志记录的功能。如果需要为火车或者自行车添加类似的功能，需要重新定义相同的类，类十分臃肿，同时代码重用性不高，因此引入了动态代理，也就是在程序</p>
-<h2 id="jdk动态代理"><a href="#jdk动态代理" class="headerlink" title="jdk动态代理"></a>jdk动态代理</h2><p><img src="/img/dp-dynamicProxy.png" alt="Alt text"></p>
-<ul>
-<li>InvocationHandler接口，接口中定义了一个invoke方法，invoke方法中第一个参数表示代理类，第二个参数指被代理的方法，args指该方法的参数数组。这个抽象方法会在代理类中动态实现。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">public interface InvocationHandler &#123;</div><div class="line">    public Object invoke(Object proxy, Method method, Object[] args)</div><div class="line">        throws Throwable;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>Proxy：该类为动态代理类，其中的newProxyInstance方法返回一个代理类实例，返回后的代理类可以被当做代理类使用，可使用被代理类的在接口中声明过的方法。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">public static Object newProxyInstance(ClassLoader loader,</div><div class="line">                                          Class&lt;?&gt;[] interfaces,</div><div class="line">                                          InvocationHandler h)</div><div class="line">        throws IllegalArgumentException</div><div class="line">    &#123;</div><div class="line">        Objects.requireNonNull(h);</div><div class="line"></div><div class="line">        final Class&lt;?&gt;[] intfs = interfaces.clone();</div><div class="line">        final SecurityManager sm = System.getSecurityManager();</div><div class="line">        if (sm != null) &#123;</div><div class="line">            checkProxyAccess(Reflection.getCallerClass(), loader, intfs);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        /*</div><div class="line">         * Look up or generate the designated proxy class.</div><div class="line">         */</div><div class="line">        Class&lt;?&gt; cl = getProxyClass0(loader, intfs);</div><div class="line"></div><div class="line">        /*</div><div class="line">         * Invoke its constructor with the designated invocation handler.</div><div class="line">         */</div><div class="line">        try &#123;</div><div class="line">            if (sm != null) &#123;</div><div class="line">                checkNewProxyPermission(Reflection.getCallerClass(), cl);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            final Constructor&lt;?&gt; cons = cl.getConstructor(constructorParams);</div><div class="line">            final InvocationHandler ih = h;</div><div class="line">            if (!Modifier.isPublic(cl.getModifiers())) &#123;</div><div class="line">                AccessController.doPrivileged(new PrivilegedAction&lt;Void&gt;() &#123;</div><div class="line">                    public Void run() &#123;</div><div class="line">                        cons.setAccessible(true);</div><div class="line">                        return null;</div><div class="line">                    &#125;</div><div class="line">                &#125;);</div><div class="line">            &#125;</div><div class="line">            return cons.newInstance(new Object[]&#123;h&#125;);</div><div class="line">        &#125; catch (IllegalAccessException|InstantiationException e) &#123;</div><div class="line">            throw new InternalError(e.toString(), e);</div><div class="line">        &#125; catch (InvocationTargetException e) &#123;</div><div class="line">            Throwable t = e.getCause();</div><div class="line">            if (t instanceof RuntimeException) &#123;</div><div class="line">                throw (RuntimeException) t;</div><div class="line">            &#125; else &#123;</div><div class="line">                throw new InternalError(t.toString(), t);</div><div class="line">            &#125;</div><div class="line">        &#125; catch (NoSuchMethodException e) &#123;</div><div class="line">            throw new InternalError(e.toString(), e);</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<h2 id="动态代理实现步骤"><a href="#动态代理实现步骤" class="headerlink" title="动态代理实现步骤"></a>动态代理实现步骤</h2><ol>
-<li>创建一个实现接口InvocationHandler的类，实现invoke方法</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">public class TimeHandler implements InvocationHandler&#123;</div><div class="line"></div><div class="line">    private Object target;</div><div class="line"></div><div class="line">    public TimeHandler(Object target) &#123;</div><div class="line">        this.target = target;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     *</div><div class="line">     * @param proxy 被代理的对象</div><div class="line">     * @param method 被代理对象的方法</div><div class="line">     * @param args 被代理对象的方法的参数</div><div class="line">     * @return Object对象，方法的返回值</div><div class="line">     * @throws Throwable</div><div class="line">     */</div><div class="line">    @Override</div><div class="line">    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;</div><div class="line">        System.out.println(&quot;time begin&quot;);</div><div class="line">        method.invoke(target);</div><div class="line">        System.out.println(&quot;time end&quot;);</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ol>
-<li>创建被代理的类以及接口(Car以及Moveable)</li>
-<li>调用Proxy的静态方法，创建一个代理类</li>
-<li>通过代理调用方法</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Car car = new Car();</div><div class="line"></div><div class="line">        InvocationHandler h = new TimeHandler(car);</div><div class="line">        Class&lt;?&gt; cls = car.getClass();</div><div class="line"></div><div class="line">        /**</div><div class="line">         * loader：类加载器</div><div class="line">         * interfaces：实现接口</div><div class="line">         * h ：invocationHandler</div><div class="line">         */</div><div class="line">        Moveable m = (Moveable) Proxy.newProxyInstance(cls.getClassLoader(), cls.getInterfaces(), h);</div><div class="line"></div><div class="line">        m.move();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="JDK动态代理与CGLIB动态代理的区别"><a href="#JDK动态代理与CGLIB动态代理的区别" class="headerlink" title="JDK动态代理与CGLIB动态代理的区别"></a>JDK动态代理与CGLIB动态代理的区别</h2><table>
-<thead>
-<tr>
-<th>jdk动态代理</th>
-<th>CGLIB动态代理</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>只能代理实现了接口的类</td>
-<td>针对类来实现代理</td>
-</tr>
-<tr>
-<td>没有实现接口的类不能实现JDK动态代理</td>
-<td>对指定目标类产生一个子类，通过方法拦截技术拦截所有父类方法调用</td>
-</tr>
-<tr>
-<td>JDK动态代理利用反射机制生成一个实现代理接口的匿名类，在调用具体方法前调用InvocationHandler来处理</td>
-<td>cglib是利用asm开源包，对代理对象的class文件加载进来，通过修改其字节码生成子类来处理</td>
-</tr>
-</tbody>
-</table>
-<h2 id="模拟JDK动态代理的实现"><a href="#模拟JDK动态代理的实现" class="headerlink" title="模拟JDK动态代理的实现"></a>模拟JDK动态代理的实现</h2><p>实现功能，通过Proxy的newproxyInstance返回代理对象<br>1、声明一段源码，动态产生代理<br>2、编译源码，产生新的类<br>3、将这个类load到内存中，产生一个新的对象<br>4、return代理对象</p>
-<p>handler:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">package proxy;</div><div class="line"></div><div class="line">import java.lang.reflect.Method;</div><div class="line"></div><div class="line">public interface InvocationHandler &#123;</div><div class="line">    public void invoke(Object o, Method m);</div><div class="line">&#125;</div><div class="line"></div><div class="line">package proxy;</div><div class="line"></div><div class="line">import java.lang.reflect.InvocationTargetException;</div><div class="line">import java.lang.reflect.Method;</div><div class="line"></div><div class="line">public class TimeHandler implements InvocationHandler&#123;</div><div class="line"></div><div class="line">    private Object target;</div><div class="line"></div><div class="line">    public TimeHandler(Object target) &#123;</div><div class="line">        this.target = target;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void invoke(Object o, Method m) &#123;</div><div class="line">        try &#123;</div><div class="line">            long starttime = System.currentTimeMillis();</div><div class="line">            System.out.println(&quot;汽车开始行驶....&quot;);</div><div class="line">            m.invoke(target);</div><div class="line">            long endtime = System.currentTimeMillis();</div><div class="line">            System.out.println(&quot;汽车结束行驶....  汽车行驶时间：&quot;+ (endtime - starttime) + &quot;毫秒！&quot;);</div><div class="line">        &#125; catch (IllegalAccessException | InvocationTargetException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>proxy:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">public class Proxy &#123;</div><div class="line"></div><div class="line">    public static Object newProxyInstance(Class infce, InvocationHandler h) throws IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException &#123;</div><div class="line">        //创建源码</div><div class="line">        String rt = &quot;\r\n&quot;;</div><div class="line">        String methodStr = &quot;&quot;;</div><div class="line">        for(Method m : infce.getMethods())&#123;</div><div class="line">            methodStr += &quot;	@Override&quot; + rt +</div><div class="line">                    &quot;	public void &quot; + m.getName() + &quot;() &#123;&quot; + rt +</div><div class="line">                    &quot;  try&#123;&quot; + rt +</div><div class="line">                    &quot;  Method md = &quot; + infce.getName() + &quot;.class.getMethod(\&quot;&quot;</div><div class="line">                    + m.getName() + &quot;\&quot;);&quot; + rt +</div><div class="line">                    &quot;  h.invoke(this,md);&quot; +rt+</div><div class="line">                    &quot;  &#125;catch(Exception e)&#123; e.printStackTrace();&#125;&quot; + rt +</div><div class="line">                    &quot;	&#125;&quot; ;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        String str =</div><div class="line">                &quot;package proxy;&quot; + rt +</div><div class="line">                        &quot;import java.lang.reflect.Method;&quot; + rt +</div><div class="line">                        &quot;import proxy.InvocationHandler;&quot; +  rt+</div><div class="line">                        &quot;public class $Proxy0 implements &quot; + infce.getName() + &quot; &#123;&quot; + rt +</div><div class="line">                        &quot;	public $Proxy0(InvocationHandler h) &#123;&quot; + rt +</div><div class="line">                        &quot;		this.h = h;&quot; + rt +</div><div class="line">                        &quot;	&#125;&quot; + rt +</div><div class="line">                        &quot;  private InvocationHandler h;&quot; + rt+</div><div class="line">                        methodStr + rt +</div><div class="line">                        &quot;&#125;&quot; ;</div><div class="line">        String fileName = System.getProperty(&quot;user.dir&quot;) + &quot;/out/production/Design_Patterns_new/proxy/$Proxy0.java&quot;;</div><div class="line">        File file = new File(fileName);</div><div class="line">        FileUtils.writeStringToFile(file, str);</div><div class="line"></div><div class="line">        //编译源码</div><div class="line">        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();</div><div class="line">        StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);</div><div class="line">        Iterable units = fileManager.getJavaFileObjects(fileName);</div><div class="line">        //编译任务</div><div class="line">        JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, null, null, null, units);</div><div class="line">        //执行任务</div><div class="line">        task.call();</div><div class="line">        fileManager.close();</div><div class="line"></div><div class="line">        //load到内存</div><div class="line">        ClassLoader loader = ClassLoader.getSystemClassLoader();</div><div class="line">        Class&lt;?&gt; c = loader.loadClass(&quot;proxy.$Proxy0&quot;);</div><div class="line"></div><div class="line">        Constructor constructor = c.getConstructor(InvocationHandler.class);</div><div class="line">        return constructor.newInstance(h);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/设计模式之单例模式与工厂方法/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/设计模式之单例模式与工厂方法/" itemprop="url">设计模式之单例模式与工厂方法</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/design-patterns/" itemprop="url" rel="index">
-                    <span itemprop="name">design patterns</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h1><p>  设计模式是一套被反复使用的，多数人知晓的，经过分类编目的，代码设计经验的总结。使用设计模式是为了可重用代码。</p>
-<h1 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h1><ol>
-<li><p>定义：单例模式确保只有一个实例，而且自行实例化并向整个系统提供这个实例。</p>
-</li>
-<li><p>类型：创建类模式</p>
-</li>
-<li><p>组成：私有构造方法则不能通过构造方法来创建类，静态属性在类加载时就创建了一个对象，公有静态方法保证外部类可以直接调用。</p>
-<ul>
-<li>私有的构造方法</li>
-<li>指向自己实例的私有静态引用</li>
-<li>以自己实例为返回值的静态的公有方法</li>
-</ul>
-</li>
-<li><p>实现：</p>
-<ol>
-<li><p>饿汉式单例：单例类被加载时候，就实例化一个对象交个自己引用</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public class Singleton &#123;</div><div class="line">    private Singleton() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static Singleton singleton = new Singleton();</div><div class="line"></div><div class="line">    public static Singleton getInstance() &#123;</div><div class="line">        return singleton;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</li>
-<li><p>懒汉式实例：调用取得方法实例时才会实例化对象</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">public class Singleton1 &#123;</div><div class="line">    private Singleton1()&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static Singleton1 singleton1;</div><div class="line"></div><div class="line">    public static synchronized Singleton1 getInstacne()&#123;</div><div class="line">        if (singleton1 == null)</div><div class="line">            singleton1 = new Singleton1();</div><div class="line">        return singleton1;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</li>
-</ol>
-</li>
-<li><p>优点:</p>
-<ul>
-<li>内存中只有一个对象，节省内存空间</li>
-<li>避免频繁的创建和销毁对象，可以提高性能</li>
-<li>避免对共享资源的多重占用</li>
-<li>可以全局访问</li>
-</ul>
-</li>
-<li><p>应用场景：</p>
-<ul>
-<li>需要频繁实例化然后销毁的对象</li>
-<li>创建对象耗时过多或者消耗资源过多，但又经常用到的对象。</li>
-<li>有状态的工具类对象</li>
-<li>频繁访问数据库或文件的对象</li>
-</ul>
-</li>
-<li><p>注意事项：</p>
-<ul>
-<li>只能使用单例类提供的方法获得单例对象，不要使用反射，否则会实例化一个新对象。</li>
-<li>不要做断开单例类对象与类中静态引用的操作。</li>
-<li>多线程使用单例共享资源时，注意线程安全的问题。</li>
-</ul>
-</li>
-<li><p>相关问题：</p>
-<ul>
-<li><p>单例模式的对象长时间不用会被jvm回收吗？<br>  不会，Hotspot中只要对象和GC Roots之间有可达引用链，也就是单例对象和单例中的引用没有被断开就不会被回收。</p>
-</li>
-<li><p>一个jvm中会出现多个单例吗？<br>  不使用反射的话，在一个jvm中不会出现多个单例。</p>
-</li>
-<li><p>单例模式只有饿汉和懒汉两种吗？<br>  所有可以实现一个实例的类，都是单例模式。</p>
-</li>
-<li><p>单例模式可以被继承吗？<br>  饿汉和懒汉，private方法不可以被继承。</p>
-</li>
-</ul>
-</li>
-</ol>
-<h1 id="工厂方法模式"><a href="#工厂方法模式" class="headerlink" title="工厂方法模式"></a>工厂方法模式</h1><ol>
-<li><p>定义：定义一个用于创建对象的接口，让子类决定实例化哪一个类，工厂方法使一个类的实例化延迟到其子类。</p>
-</li>
-<li><p>类型：创建类模式</p>
-</li>
-<li><p>实现：</p>
-<p>工厂模式根据抽象程度的不同分为三种：</p>
-<ul>
-<li><p>简单工厂模式（静态工厂模式）：创建一个工厂来创建新的对象。</p>
-<p>   <img src="/img/dp-factory-simpleFactory.png" alt="Alt text"></p>
-<p>   工厂类</p>
-   <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public class Factory &#123;</div><div class="line">    public Product createFactory(int type) &#123;</div><div class="line">        if (type == 1)</div><div class="line">            return new Product1();</div><div class="line">        else</div><div class="line">            return new Product2();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>   产品抽象类和具体产品</p>
-   <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public abstract class Product &#123;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Product1 extends Product&#123;</div><div class="line">    public Product1() &#123;</div><div class="line">        System.out.println(&quot;product1&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Product2 extends Product&#123;</div><div class="line">    public Product2() &#123;</div><div class="line">        System.out.println(&quot;product2&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>   消费者</p>
-   <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public class Customer &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Factory factory = new Factory();</div><div class="line">        Product product1 = factory.createFactory(1);</div><div class="line">        Product product2 = factory.createFactory(2);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li><p>组成：</p>
-<ul>
-<li>工厂类：用于创建商品</li>
-<li>抽象产品：具体产品继承的父类或者实现的接口</li>
-<li>具体产品：工厂类创建的对象</li>
-</ul>
-</li>
-<li><p>此时当我们想要添加一种产品时，需要修改工厂类的业务员逻辑，实际中对应很多产品，对于工厂类来说负担太大，因此引入工厂方法模式，也就是讲工厂类定义成接口，增加一个商品，就增加该商品对应的工厂类的实现。</p>
-</li>
-</ul>
-</li>
-<li><p>工厂方法模式</p>
-<p> <img src="/img/dp-factory-factoryMethod.png" alt="Alt text"></p>
-<p> 产品类：</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public interface IProduct &#123;</div><div class="line">    public void productMethod();</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Product implements IProduct&#123;</div><div class="line">    @Override</div><div class="line">    public void productMethod() &#123;</div><div class="line">        System.out.println(&quot;产品&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Product1 implements IProduct&#123;</div><div class="line">    @Override</div><div class="line">    public void productMethod() &#123;</div><div class="line">        System.out.println(&quot;产品1&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p> 工厂类</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public interface IFactory &#123;</div><div class="line">    public IProduct createProduct();</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Factory implements IFactory&#123;</div><div class="line">    @Override</div><div class="line">    public IProduct createProduct() &#123;</div><div class="line">        return new Product();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Factory1 implements IFactory&#123;</div><div class="line">    @Override</div><div class="line">    public IProduct createProduct() &#123;</div><div class="line">        return new Product1();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p> 客户类</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">public class Client &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        IFactory factory = new Factory();</div><div class="line">        IProduct product = factory.createProduct();</div><div class="line">        product.productMethod();</div><div class="line"></div><div class="line">        IFactory factory1 = new Factory1();</div><div class="line">        IProduct product1 = factory1.createProduct();</div><div class="line">        product1.productMethod();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p> 工厂方法模式去掉了简单工厂模式中工厂方法的静态属性，使得它可以被子类继承。这样在简单工厂模式中集中在工厂方法中的压力就转到不同的工厂子类这种去了。</p>
-<ul>
-<li><p>组成：</p>
-<ul>
-<li>抽象工厂：具体工厂必须实现的接口或父类</li>
-<li>具体工厂：含有和具体业务逻辑有关的代码。</li>
-<li>抽象产品：具体产品继承的接口或父类。</li>
-<li>具体产品：创建产品的类。</li>
-</ul>
-</li>
-<li><p>工厂方法模式对对象的创建进行了包装，使得客户程序中仅仅处理抽象产品角色提供的接口。这样的缺点是使得对象的数量成倍增加。</p>
-</li>
-</ul>
-</li>
-<li><p>抽象工厂模式</p>
-<p>产品类</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">public interface IProductA &#123;</div><div class="line">    public void productMethod();</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class ProductA implements IProductA &#123;</div><div class="line">    @Override</div><div class="line">    public void productMethod() &#123;</div><div class="line">        System.out.println(&quot;A产品&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class ProductA1 implements IProductA &#123;</div><div class="line">    @Override</div><div class="line">    public void productMethod() &#123;</div><div class="line">        System.out.println(&quot;A产品1&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public interface IProductB &#123;</div><div class="line">    public void productMethod();</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class ProductB implements IProductB &#123;</div><div class="line">    @Override</div><div class="line">    public void productMethod() &#123;</div><div class="line">        System.out.println(&quot;B产品&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class ProductB1 implements IProductB &#123;</div><div class="line">    @Override</div><div class="line">    public void productMethod() &#123;</div><div class="line">        System.out.println(&quot;B产品1&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>工厂类</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">public interface AbstratFactory &#123;</div><div class="line">    public IProductA createProductA();</div><div class="line"></div><div class="line">    public IProductB createProductB();</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Factory implements AbstratFactory&#123;</div><div class="line">    @Override</div><div class="line">    public IProductA createProductA() &#123;</div><div class="line">        return new ProductA();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public IProductB createProductB() &#123;</div><div class="line">        return new ProductB();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Factory1 implements AbstratFactory&#123;</div><div class="line">    @Override</div><div class="line">    public IProductA createProductA() &#123;</div><div class="line">        return new ProductA1();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public IProductB createProductB() &#123;</div><div class="line">        return new ProductB1();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>客户端</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public class Client &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        //生产产品</div><div class="line">        AbstratFactory factory = new Factory();</div><div class="line">        IProductA productA = factory.createProductA();</div><div class="line">        productA.productMethod();</div><div class="line">        IProductB productB = factory.createProductB();</div><div class="line">        productB.productMethod();</div><div class="line">        //生产产品1</div><div class="line"></div><div class="line">        AbstratFactory factory1 = new Factory1();</div><div class="line">        IProductA productA1 = factory1.createProductA();</div><div class="line">        IProductB productB1 = factory1.createProductB();</div><div class="line">        productA1.productMethod();</div><div class="line">        productB1.productMethod();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>无论是简单工厂模式，工厂方法模式，还是抽象工厂模式，他们都属于工厂模式，在形式和特点上也是极为相似的，他们的最终目的都是为了解耦。在使用时，我们不必去在意这个模式到底工厂方法模式还是抽象工厂模式，因为他们之间的演变常常是令人琢磨不透的。经常你会发现，明明使用的工厂方法模式，当新需求来临，稍加修改，加入了一个新方法后，由于类中的产品构成了不同等级结构中的产品族，它就变成抽象工厂模式了；而对于抽象工厂模式，当减少一个方法使的提供的产品不再构成产品族之后，它就演变成了工厂方法模式。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ol>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -4338,7 +4299,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">83</span>
+                <span class="site-state-item-count">85</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

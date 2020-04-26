@@ -277,6 +277,401 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/设计模式之原型模式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/21/设计模式之原型模式/" itemprop="url">设计模式之原型模式</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/design-patterns/" itemprop="url" rel="index">
+                    <span itemprop="name">design patterns</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>用原型实例指定创建对象的种类，并通过拷贝这些原型创建新的对象。</p>
+<h1 id="模式使用场景"><a href="#模式使用场景" class="headerlink" title="模式使用场景"></a>模式使用场景</h1><ol>
+<li>类初始化需要消耗非常多的资源，这个资源包括数据，硬件资源等，通过原型拷贝避免这些消耗。</li>
+<li>通过new产生一个对象需要非常繁琐的数据准备或访问权限，则可以使用原型模式。</li>
+<li>一个对象需要提供给其他对象访问，而且各个调用者可能都需要修改其值时，可以考虑使用原型模式拷贝多个对象供调用者使用。</li>
+</ol>
+<h1 id="UML图"><a href="#UML图" class="headerlink" title="UML图"></a>UML图</h1><p><img src="/img/dp-factory-prototype.png" alt="Alt text"></p>
+<h2 id="角色描述"><a href="#角色描述" class="headerlink" title="角色描述"></a>角色描述</h2><pre><code>* Client: 客户端用户
+* Prototype：抽象类或接口，声明具备clone能力
+* ConcretePrototype：具体的原型类
+</code></pre><h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>文档拷贝为例。</p>
+<p>Prototype抽象类为java.lang.clone,ConcretePrototype通过重写该方法完成对象的拷贝功能。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div></pre></td><td class="code"><pre><div class="line">package prototype;</div><div class="line"></div><div class="line">import java.util.ArrayList;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/25</div><div class="line"> */</div><div class="line">public class ConcretePrototype implements Cloneable&#123;</div><div class="line">    private String mText;</div><div class="line">    private ArrayList&lt;String&gt; mImages = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    public ConcretePrototype() &#123;</div><div class="line">        System.out.println(&quot;concretePrototype构造函数&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected Object clone() throws CloneNotSupportedException &#123;</div><div class="line">        try &#123;</div><div class="line">            ConcretePrototype concretePrototype = (ConcretePrototype) super.clone();</div><div class="line">            concretePrototype.mText = this.mText;</div><div class="line">            concretePrototype.mImages = this.mImages;</div><div class="line">            return concretePrototype;</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String getmText() &#123;</div><div class="line">        return mText;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setmText(String mText) &#123;</div><div class="line">        this.mText = mText;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public ArrayList&lt;String&gt; getmImages() &#123;</div><div class="line">        return mImages;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setmImages(ArrayList&lt;String&gt; mImages) &#123;</div><div class="line">        this.mImages = mImages;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void addImage(String img) &#123;</div><div class="line">        this.mImages.add(img);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void showContent() &#123;</div><div class="line">        System.out.println(&quot;==========start===========&quot;);</div><div class="line">        System.out.println(&quot;Text:  &quot; + mText);</div><div class="line">        System.out.println(&quot;Images List: &quot;);</div><div class="line">        for (String string : mImages) &#123;</div><div class="line">            System.out.println(&quot;image name : &quot; + string);</div><div class="line">        &#125;</div><div class="line">        System.out.println(&quot;============end==========&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Client:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">package prototype;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/25</div><div class="line"> */</div><div class="line">public class Client &#123;</div><div class="line">    public static void main(String[] args) throws CloneNotSupportedException &#123;</div><div class="line">        //创建对象</div><div class="line">        ConcretePrototype original = new ConcretePrototype();</div><div class="line">        original.setmText(&quot;first&quot;);</div><div class="line">        original.addImage(&quot;pic 1&quot;);</div><div class="line">        original.addImage(&quot;pic 2&quot;);</div><div class="line">        original.addImage(&quot;pic 3&quot;);</div><div class="line">        original.addImage(&quot;pic 4&quot;);</div><div class="line">        original.showContent();</div><div class="line">        //复制对象</div><div class="line">        ConcretePrototype clone = (ConcretePrototype) original.clone();</div><div class="line">        clone.showContent();</div><div class="line">        //修改并展示复制的对象</div><div class="line">        clone.setmText(&quot;clone&quot;);</div><div class="line">        clone.showContent();</div><div class="line">        //展示原型对象</div><div class="line">        original.showContent();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>结果：修改clone之后的对象的值不会印象到原来的值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">concretePrototype构造函数</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  clone</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div></pre></td></tr></table></figure>
+<p>深浅拷贝的区别：引用类型拷贝过程中，只拷贝了其引用，并没有将对象进行复制：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">package prototype;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/25</div><div class="line"> */</div><div class="line">public class Client1 &#123;</div><div class="line">    public static void main(String[] args) throws CloneNotSupportedException &#123;</div><div class="line">        //创建对象</div><div class="line">        ConcretePrototype original = new ConcretePrototype();</div><div class="line">        original.setmText(&quot;first&quot;);</div><div class="line">        original.addImage(&quot;pic 1&quot;);</div><div class="line">        original.addImage(&quot;pic 2&quot;);</div><div class="line">        original.addImage(&quot;pic 3&quot;);</div><div class="line">        original.addImage(&quot;pic 4&quot;);</div><div class="line">        original.showContent();</div><div class="line"></div><div class="line">        ConcretePrototype clone = (ConcretePrototype) original.clone();</div><div class="line">        clone.showContent();</div><div class="line"></div><div class="line">        clone.setmText(&quot;clone1&quot;);</div><div class="line">        clone.addImage(&quot;new pic 5&quot;);</div><div class="line">        clone.showContent();</div><div class="line"></div><div class="line">        original.showContent();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">concretePrototype构造函数</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  clone1</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">image name : new pic 5</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">image name : new pic 5</div><div class="line">============end==========</div></pre></td></tr></table></figure>
+<p>深拷贝过程中需要将引用类型的字段也要进行拷贝，而不是单纯的拷贝引用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 深拷贝</div><div class="line"> * @return</div><div class="line"> * @throws CloneNotSupportedException</div><div class="line"> */</div><div class="line">@Override</div><div class="line">protected Object clone() throws CloneNotSupportedException &#123;</div><div class="line">    try &#123;</div><div class="line">        ConcretePrototype concretePrototype = (ConcretePrototype) super.clone();</div><div class="line">        concretePrototype.mText = this.mText;</div><div class="line">        concretePrototype.mImages = (ArrayList&lt;String&gt;) this.mImages.clone();</div><div class="line">        return concretePrototype;</div><div class="line">    &#125; catch (Exception e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    return null;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="优点和缺点"><a href="#优点和缺点" class="headerlink" title="优点和缺点"></a>优点和缺点</h2><ul>
+<li><p>优点：原型模式是在内存二进制流的拷贝，要比直接new一个对象性能好很多，特别是需要在一个循环体中产生大量对象时。</p>
+</li>
+<li><p>缺点：直接在内存中拷贝，构造方法不会执行，减少了约束，需要注意。</p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/设计模式之代理模式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/21/设计模式之代理模式/" itemprop="url">设计模式之代理模式</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/design-patterns/" itemprop="url" rel="index">
+                    <span itemprop="name">design patterns</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>为其他对象提供一种代理，以控制对这个对象的访问。代理对象起到中介作用，可以去掉功能服务或者增加额外的功能服务。</p>
+<h1 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h1><p>代理和被代理对象在代理之前是确定的。他们都是事先相同的接口或者继承相同的抽象类。</p>
+<p><img src="/img/dp-staticProxy.png" alt="Alt text"></p>
+<p>创建一个接口Moveable，Car继承Moveable接口，要求用代理类来记录Car的运行时间。</p>
+<p>Car继承Moveable接口:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public interface Moveable &#123;</div><div class="line">    void move();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Car:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public class Car implements Moveable&#123;</div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        try &#123;</div><div class="line">            Thread.sleep(new Random().nextInt(1000));</div><div class="line">        &#125; catch (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="继承实现静态代理"><a href="#继承实现静态代理" class="headerlink" title="继承实现静态代理"></a>继承实现静态代理</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">public class Car2 extends Car&#123;</div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        System.out.println(startTime);</div><div class="line">        super.move();</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime);</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="聚合实现静态代理"><a href="#聚合实现静态代理" class="headerlink" title="聚合实现静态代理"></a>聚合实现静态代理</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">public class Car3 implements Moveable&#123;</div><div class="line"></div><div class="line">    private Car car;</div><div class="line"></div><div class="line">    public Car3(Car car) &#123;</div><div class="line">        this.car = car;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        System.out.println(startTime);</div><div class="line">        car.move();</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime);</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>考虑到继承方式扩展代理功能的不方便，推荐使用聚合实现静态代理。也就是代理类和实际类实现共同的接口，代理类中包含所实现接口的引用。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">public class CarLogProxy implements Moveable&#123;</div><div class="line"></div><div class="line">    private Moveable moveable;</div><div class="line"></div><div class="line">    public CarLogProxy(Moveable moveable) &#123;</div><div class="line">        this.moveable = moveable;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        System.out.println(&quot;log start&quot;);</div><div class="line">        moveable.move();</div><div class="line">        System.out.println(&quot;log end&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">public class CarTimeProxy implements Moveable&#123;</div><div class="line"></div><div class="line">    private Moveable moveable;</div><div class="line"></div><div class="line">    public CarTimeProxy(Moveable moveable) &#123;</div><div class="line">        this.moveable = moveable;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        System.out.println(startTime);</div><div class="line">        moveable.move();</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime);</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Moveable car = new Car();</div><div class="line">        CarTimeProxy carTimeProxy = new CarTimeProxy(car);</div><div class="line">        CarLogProxy carLogProxy = new CarLogProxy(carTimeProxy);</div><div class="line">        carLogProxy.move();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h1><p>前面实现了Car类的静态代理，为其添加了运行时间记录和日志记录的功能。如果需要为火车或者自行车添加类似的功能，需要重新定义相同的类，类十分臃肿，同时代码重用性不高，因此引入了动态代理，也就是在程序</p>
+<h2 id="jdk动态代理"><a href="#jdk动态代理" class="headerlink" title="jdk动态代理"></a>jdk动态代理</h2><p><img src="/img/dp-dynamicProxy.png" alt="Alt text"></p>
+<ul>
+<li>InvocationHandler接口，接口中定义了一个invoke方法，invoke方法中第一个参数表示代理类，第二个参数指被代理的方法，args指该方法的参数数组。这个抽象方法会在代理类中动态实现。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">public interface InvocationHandler &#123;</div><div class="line">    public Object invoke(Object proxy, Method method, Object[] args)</div><div class="line">        throws Throwable;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Proxy：该类为动态代理类，其中的newProxyInstance方法返回一个代理类实例，返回后的代理类可以被当做代理类使用，可使用被代理类的在接口中声明过的方法。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">public static Object newProxyInstance(ClassLoader loader,</div><div class="line">                                          Class&lt;?&gt;[] interfaces,</div><div class="line">                                          InvocationHandler h)</div><div class="line">        throws IllegalArgumentException</div><div class="line">    &#123;</div><div class="line">        Objects.requireNonNull(h);</div><div class="line"></div><div class="line">        final Class&lt;?&gt;[] intfs = interfaces.clone();</div><div class="line">        final SecurityManager sm = System.getSecurityManager();</div><div class="line">        if (sm != null) &#123;</div><div class="line">            checkProxyAccess(Reflection.getCallerClass(), loader, intfs);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        /*</div><div class="line">         * Look up or generate the designated proxy class.</div><div class="line">         */</div><div class="line">        Class&lt;?&gt; cl = getProxyClass0(loader, intfs);</div><div class="line"></div><div class="line">        /*</div><div class="line">         * Invoke its constructor with the designated invocation handler.</div><div class="line">         */</div><div class="line">        try &#123;</div><div class="line">            if (sm != null) &#123;</div><div class="line">                checkNewProxyPermission(Reflection.getCallerClass(), cl);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            final Constructor&lt;?&gt; cons = cl.getConstructor(constructorParams);</div><div class="line">            final InvocationHandler ih = h;</div><div class="line">            if (!Modifier.isPublic(cl.getModifiers())) &#123;</div><div class="line">                AccessController.doPrivileged(new PrivilegedAction&lt;Void&gt;() &#123;</div><div class="line">                    public Void run() &#123;</div><div class="line">                        cons.setAccessible(true);</div><div class="line">                        return null;</div><div class="line">                    &#125;</div><div class="line">                &#125;);</div><div class="line">            &#125;</div><div class="line">            return cons.newInstance(new Object[]&#123;h&#125;);</div><div class="line">        &#125; catch (IllegalAccessException|InstantiationException e) &#123;</div><div class="line">            throw new InternalError(e.toString(), e);</div><div class="line">        &#125; catch (InvocationTargetException e) &#123;</div><div class="line">            Throwable t = e.getCause();</div><div class="line">            if (t instanceof RuntimeException) &#123;</div><div class="line">                throw (RuntimeException) t;</div><div class="line">            &#125; else &#123;</div><div class="line">                throw new InternalError(t.toString(), t);</div><div class="line">            &#125;</div><div class="line">        &#125; catch (NoSuchMethodException e) &#123;</div><div class="line">            throw new InternalError(e.toString(), e);</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<h2 id="动态代理实现步骤"><a href="#动态代理实现步骤" class="headerlink" title="动态代理实现步骤"></a>动态代理实现步骤</h2><ol>
+<li>创建一个实现接口InvocationHandler的类，实现invoke方法</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">public class TimeHandler implements InvocationHandler&#123;</div><div class="line"></div><div class="line">    private Object target;</div><div class="line"></div><div class="line">    public TimeHandler(Object target) &#123;</div><div class="line">        this.target = target;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     *</div><div class="line">     * @param proxy 被代理的对象</div><div class="line">     * @param method 被代理对象的方法</div><div class="line">     * @param args 被代理对象的方法的参数</div><div class="line">     * @return Object对象，方法的返回值</div><div class="line">     * @throws Throwable</div><div class="line">     */</div><div class="line">    @Override</div><div class="line">    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;</div><div class="line">        System.out.println(&quot;time begin&quot;);</div><div class="line">        method.invoke(target);</div><div class="line">        System.out.println(&quot;time end&quot;);</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li>创建被代理的类以及接口(Car以及Moveable)</li>
+<li>调用Proxy的静态方法，创建一个代理类</li>
+<li>通过代理调用方法</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Car car = new Car();</div><div class="line"></div><div class="line">        InvocationHandler h = new TimeHandler(car);</div><div class="line">        Class&lt;?&gt; cls = car.getClass();</div><div class="line"></div><div class="line">        /**</div><div class="line">         * loader：类加载器</div><div class="line">         * interfaces：实现接口</div><div class="line">         * h ：invocationHandler</div><div class="line">         */</div><div class="line">        Moveable m = (Moveable) Proxy.newProxyInstance(cls.getClassLoader(), cls.getInterfaces(), h);</div><div class="line"></div><div class="line">        m.move();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="JDK动态代理与CGLIB动态代理的区别"><a href="#JDK动态代理与CGLIB动态代理的区别" class="headerlink" title="JDK动态代理与CGLIB动态代理的区别"></a>JDK动态代理与CGLIB动态代理的区别</h2><table>
+<thead>
+<tr>
+<th>jdk动态代理</th>
+<th>CGLIB动态代理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>只能代理实现了接口的类</td>
+<td>针对类来实现代理</td>
+</tr>
+<tr>
+<td>没有实现接口的类不能实现JDK动态代理</td>
+<td>对指定目标类产生一个子类，通过方法拦截技术拦截所有父类方法调用</td>
+</tr>
+<tr>
+<td>JDK动态代理利用反射机制生成一个实现代理接口的匿名类，在调用具体方法前调用InvocationHandler来处理</td>
+<td>cglib是利用asm开源包，对代理对象的class文件加载进来，通过修改其字节码生成子类来处理</td>
+</tr>
+</tbody>
+</table>
+<h2 id="模拟JDK动态代理的实现"><a href="#模拟JDK动态代理的实现" class="headerlink" title="模拟JDK动态代理的实现"></a>模拟JDK动态代理的实现</h2><p>实现功能，通过Proxy的newproxyInstance返回代理对象<br>1、声明一段源码，动态产生代理<br>2、编译源码，产生新的类<br>3、将这个类load到内存中，产生一个新的对象<br>4、return代理对象</p>
+<p>handler:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">package proxy;</div><div class="line"></div><div class="line">import java.lang.reflect.Method;</div><div class="line"></div><div class="line">public interface InvocationHandler &#123;</div><div class="line">    public void invoke(Object o, Method m);</div><div class="line">&#125;</div><div class="line"></div><div class="line">package proxy;</div><div class="line"></div><div class="line">import java.lang.reflect.InvocationTargetException;</div><div class="line">import java.lang.reflect.Method;</div><div class="line"></div><div class="line">public class TimeHandler implements InvocationHandler&#123;</div><div class="line"></div><div class="line">    private Object target;</div><div class="line"></div><div class="line">    public TimeHandler(Object target) &#123;</div><div class="line">        this.target = target;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void invoke(Object o, Method m) &#123;</div><div class="line">        try &#123;</div><div class="line">            long starttime = System.currentTimeMillis();</div><div class="line">            System.out.println(&quot;汽车开始行驶....&quot;);</div><div class="line">            m.invoke(target);</div><div class="line">            long endtime = System.currentTimeMillis();</div><div class="line">            System.out.println(&quot;汽车结束行驶....  汽车行驶时间：&quot;+ (endtime - starttime) + &quot;毫秒！&quot;);</div><div class="line">        &#125; catch (IllegalAccessException | InvocationTargetException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>proxy:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">public class Proxy &#123;</div><div class="line"></div><div class="line">    public static Object newProxyInstance(Class infce, InvocationHandler h) throws IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException &#123;</div><div class="line">        //创建源码</div><div class="line">        String rt = &quot;\r\n&quot;;</div><div class="line">        String methodStr = &quot;&quot;;</div><div class="line">        for(Method m : infce.getMethods())&#123;</div><div class="line">            methodStr += &quot;	@Override&quot; + rt +</div><div class="line">                    &quot;	public void &quot; + m.getName() + &quot;() &#123;&quot; + rt +</div><div class="line">                    &quot;  try&#123;&quot; + rt +</div><div class="line">                    &quot;  Method md = &quot; + infce.getName() + &quot;.class.getMethod(\&quot;&quot;</div><div class="line">                    + m.getName() + &quot;\&quot;);&quot; + rt +</div><div class="line">                    &quot;  h.invoke(this,md);&quot; +rt+</div><div class="line">                    &quot;  &#125;catch(Exception e)&#123; e.printStackTrace();&#125;&quot; + rt +</div><div class="line">                    &quot;	&#125;&quot; ;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        String str =</div><div class="line">                &quot;package proxy;&quot; + rt +</div><div class="line">                        &quot;import java.lang.reflect.Method;&quot; + rt +</div><div class="line">                        &quot;import proxy.InvocationHandler;&quot; +  rt+</div><div class="line">                        &quot;public class $Proxy0 implements &quot; + infce.getName() + &quot; &#123;&quot; + rt +</div><div class="line">                        &quot;	public $Proxy0(InvocationHandler h) &#123;&quot; + rt +</div><div class="line">                        &quot;		this.h = h;&quot; + rt +</div><div class="line">                        &quot;	&#125;&quot; + rt +</div><div class="line">                        &quot;  private InvocationHandler h;&quot; + rt+</div><div class="line">                        methodStr + rt +</div><div class="line">                        &quot;&#125;&quot; ;</div><div class="line">        String fileName = System.getProperty(&quot;user.dir&quot;) + &quot;/out/production/Design_Patterns_new/proxy/$Proxy0.java&quot;;</div><div class="line">        File file = new File(fileName);</div><div class="line">        FileUtils.writeStringToFile(file, str);</div><div class="line"></div><div class="line">        //编译源码</div><div class="line">        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();</div><div class="line">        StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);</div><div class="line">        Iterable units = fileManager.getJavaFileObjects(fileName);</div><div class="line">        //编译任务</div><div class="line">        JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, null, null, null, units);</div><div class="line">        //执行任务</div><div class="line">        task.call();</div><div class="line">        fileManager.close();</div><div class="line"></div><div class="line">        //load到内存</div><div class="line">        ClassLoader loader = ClassLoader.getSystemClassLoader();</div><div class="line">        Class&lt;?&gt; c = loader.loadClass(&quot;proxy.$Proxy0&quot;);</div><div class="line"></div><div class="line">        Constructor constructor = c.getConstructor(InvocationHandler.class);</div><div class="line">        return constructor.newInstance(h);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/设计模式之单例模式与工厂方法/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -552,7 +947,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/设计模式之代理模式/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/设计模式之七种单例模式/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="cdx">
@@ -571,7 +966,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/04/21/设计模式之代理模式/" itemprop="url">设计模式之代理模式</a></h1>
+                <a class="post-title-link" href="/2019/04/21/设计模式之七种单例模式/" itemprop="url">设计模式之七种单例模式</a></h1>
         
 
         <div class="post-meta">
@@ -656,69 +1051,14 @@
       
         
           
-            <h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>为其他对象提供一种代理，以控制对这个对象的访问。代理对象起到中介作用，可以去掉功能服务或者增加额外的功能服务。</p>
-<h1 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h1><p>代理和被代理对象在代理之前是确定的。他们都是事先相同的接口或者继承相同的抽象类。</p>
-<p><img src="/img/dp-staticProxy.png" alt="Alt text"></p>
-<p>创建一个接口Moveable，Car继承Moveable接口，要求用代理类来记录Car的运行时间。</p>
-<p>Car继承Moveable接口:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public interface Moveable &#123;</div><div class="line">    void move();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>Car:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public class Car implements Moveable&#123;</div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        try &#123;</div><div class="line">            Thread.sleep(new Random().nextInt(1000));</div><div class="line">        &#125; catch (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="继承实现静态代理"><a href="#继承实现静态代理" class="headerlink" title="继承实现静态代理"></a>继承实现静态代理</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">public class Car2 extends Car&#123;</div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        System.out.println(startTime);</div><div class="line">        super.move();</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime);</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="聚合实现静态代理"><a href="#聚合实现静态代理" class="headerlink" title="聚合实现静态代理"></a>聚合实现静态代理</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">public class Car3 implements Moveable&#123;</div><div class="line"></div><div class="line">    private Car car;</div><div class="line"></div><div class="line">    public Car3(Car car) &#123;</div><div class="line">        this.car = car;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        System.out.println(startTime);</div><div class="line">        car.move();</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime);</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>考虑到继承方式扩展代理功能的不方便，推荐使用聚合实现静态代理。也就是代理类和实际类实现共同的接口，代理类中包含所实现接口的引用。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">public class CarLogProxy implements Moveable&#123;</div><div class="line"></div><div class="line">    private Moveable moveable;</div><div class="line"></div><div class="line">    public CarLogProxy(Moveable moveable) &#123;</div><div class="line">        this.moveable = moveable;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        System.out.println(&quot;log start&quot;);</div><div class="line">        moveable.move();</div><div class="line">        System.out.println(&quot;log end&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">public class CarTimeProxy implements Moveable&#123;</div><div class="line"></div><div class="line">    private Moveable moveable;</div><div class="line"></div><div class="line">    public CarTimeProxy(Moveable moveable) &#123;</div><div class="line">        this.moveable = moveable;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void move() &#123;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        System.out.println(startTime);</div><div class="line">        moveable.move();</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime);</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Moveable car = new Car();</div><div class="line">        CarTimeProxy carTimeProxy = new CarTimeProxy(car);</div><div class="line">        CarLogProxy carLogProxy = new CarLogProxy(carTimeProxy);</div><div class="line">        carLogProxy.move();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h1><p>前面实现了Car类的静态代理，为其添加了运行时间记录和日志记录的功能。如果需要为火车或者自行车添加类似的功能，需要重新定义相同的类，类十分臃肿，同时代码重用性不高，因此引入了动态代理，也就是在程序</p>
-<h2 id="jdk动态代理"><a href="#jdk动态代理" class="headerlink" title="jdk动态代理"></a>jdk动态代理</h2><p><img src="/img/dp-dynamicProxy.png" alt="Alt text"></p>
-<ul>
-<li>InvocationHandler接口，接口中定义了一个invoke方法，invoke方法中第一个参数表示代理类，第二个参数指被代理的方法，args指该方法的参数数组。这个抽象方法会在代理类中动态实现。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">public interface InvocationHandler &#123;</div><div class="line">    public Object invoke(Object proxy, Method method, Object[] args)</div><div class="line">        throws Throwable;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>Proxy：该类为动态代理类，其中的newProxyInstance方法返回一个代理类实例，返回后的代理类可以被当做代理类使用，可使用被代理类的在接口中声明过的方法。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">public static Object newProxyInstance(ClassLoader loader,</div><div class="line">                                          Class&lt;?&gt;[] interfaces,</div><div class="line">                                          InvocationHandler h)</div><div class="line">        throws IllegalArgumentException</div><div class="line">    &#123;</div><div class="line">        Objects.requireNonNull(h);</div><div class="line"></div><div class="line">        final Class&lt;?&gt;[] intfs = interfaces.clone();</div><div class="line">        final SecurityManager sm = System.getSecurityManager();</div><div class="line">        if (sm != null) &#123;</div><div class="line">            checkProxyAccess(Reflection.getCallerClass(), loader, intfs);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        /*</div><div class="line">         * Look up or generate the designated proxy class.</div><div class="line">         */</div><div class="line">        Class&lt;?&gt; cl = getProxyClass0(loader, intfs);</div><div class="line"></div><div class="line">        /*</div><div class="line">         * Invoke its constructor with the designated invocation handler.</div><div class="line">         */</div><div class="line">        try &#123;</div><div class="line">            if (sm != null) &#123;</div><div class="line">                checkNewProxyPermission(Reflection.getCallerClass(), cl);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            final Constructor&lt;?&gt; cons = cl.getConstructor(constructorParams);</div><div class="line">            final InvocationHandler ih = h;</div><div class="line">            if (!Modifier.isPublic(cl.getModifiers())) &#123;</div><div class="line">                AccessController.doPrivileged(new PrivilegedAction&lt;Void&gt;() &#123;</div><div class="line">                    public Void run() &#123;</div><div class="line">                        cons.setAccessible(true);</div><div class="line">                        return null;</div><div class="line">                    &#125;</div><div class="line">                &#125;);</div><div class="line">            &#125;</div><div class="line">            return cons.newInstance(new Object[]&#123;h&#125;);</div><div class="line">        &#125; catch (IllegalAccessException|InstantiationException e) &#123;</div><div class="line">            throw new InternalError(e.toString(), e);</div><div class="line">        &#125; catch (InvocationTargetException e) &#123;</div><div class="line">            Throwable t = e.getCause();</div><div class="line">            if (t instanceof RuntimeException) &#123;</div><div class="line">                throw (RuntimeException) t;</div><div class="line">            &#125; else &#123;</div><div class="line">                throw new InternalError(t.toString(), t);</div><div class="line">            &#125;</div><div class="line">        &#125; catch (NoSuchMethodException e) &#123;</div><div class="line">            throw new InternalError(e.toString(), e);</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<h2 id="动态代理实现步骤"><a href="#动态代理实现步骤" class="headerlink" title="动态代理实现步骤"></a>动态代理实现步骤</h2><ol>
-<li>创建一个实现接口InvocationHandler的类，实现invoke方法</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">public class TimeHandler implements InvocationHandler&#123;</div><div class="line"></div><div class="line">    private Object target;</div><div class="line"></div><div class="line">    public TimeHandler(Object target) &#123;</div><div class="line">        this.target = target;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     *</div><div class="line">     * @param proxy 被代理的对象</div><div class="line">     * @param method 被代理对象的方法</div><div class="line">     * @param args 被代理对象的方法的参数</div><div class="line">     * @return Object对象，方法的返回值</div><div class="line">     * @throws Throwable</div><div class="line">     */</div><div class="line">    @Override</div><div class="line">    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;</div><div class="line">        System.out.println(&quot;time begin&quot;);</div><div class="line">        method.invoke(target);</div><div class="line">        System.out.println(&quot;time end&quot;);</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ol>
-<li>创建被代理的类以及接口(Car以及Moveable)</li>
-<li>调用Proxy的静态方法，创建一个代理类</li>
-<li>通过代理调用方法</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Car car = new Car();</div><div class="line"></div><div class="line">        InvocationHandler h = new TimeHandler(car);</div><div class="line">        Class&lt;?&gt; cls = car.getClass();</div><div class="line"></div><div class="line">        /**</div><div class="line">         * loader：类加载器</div><div class="line">         * interfaces：实现接口</div><div class="line">         * h ：invocationHandler</div><div class="line">         */</div><div class="line">        Moveable m = (Moveable) Proxy.newProxyInstance(cls.getClassLoader(), cls.getInterfaces(), h);</div><div class="line"></div><div class="line">        m.move();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="JDK动态代理与CGLIB动态代理的区别"><a href="#JDK动态代理与CGLIB动态代理的区别" class="headerlink" title="JDK动态代理与CGLIB动态代理的区别"></a>JDK动态代理与CGLIB动态代理的区别</h2><table>
-<thead>
-<tr>
-<th>jdk动态代理</th>
-<th>CGLIB动态代理</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>只能代理实现了接口的类</td>
-<td>针对类来实现代理</td>
-</tr>
-<tr>
-<td>没有实现接口的类不能实现JDK动态代理</td>
-<td>对指定目标类产生一个子类，通过方法拦截技术拦截所有父类方法调用</td>
-</tr>
-<tr>
-<td>JDK动态代理利用反射机制生成一个实现代理接口的匿名类，在调用具体方法前调用InvocationHandler来处理</td>
-<td>cglib是利用asm开源包，对代理对象的class文件加载进来，通过修改其字节码生成子类来处理</td>
-</tr>
-</tbody>
-</table>
-<h2 id="模拟JDK动态代理的实现"><a href="#模拟JDK动态代理的实现" class="headerlink" title="模拟JDK动态代理的实现"></a>模拟JDK动态代理的实现</h2><p>实现功能，通过Proxy的newproxyInstance返回代理对象<br>1、声明一段源码，动态产生代理<br>2、编译源码，产生新的类<br>3、将这个类load到内存中，产生一个新的对象<br>4、return代理对象</p>
-<p>handler:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">package proxy;</div><div class="line"></div><div class="line">import java.lang.reflect.Method;</div><div class="line"></div><div class="line">public interface InvocationHandler &#123;</div><div class="line">    public void invoke(Object o, Method m);</div><div class="line">&#125;</div><div class="line"></div><div class="line">package proxy;</div><div class="line"></div><div class="line">import java.lang.reflect.InvocationTargetException;</div><div class="line">import java.lang.reflect.Method;</div><div class="line"></div><div class="line">public class TimeHandler implements InvocationHandler&#123;</div><div class="line"></div><div class="line">    private Object target;</div><div class="line"></div><div class="line">    public TimeHandler(Object target) &#123;</div><div class="line">        this.target = target;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void invoke(Object o, Method m) &#123;</div><div class="line">        try &#123;</div><div class="line">            long starttime = System.currentTimeMillis();</div><div class="line">            System.out.println(&quot;汽车开始行驶....&quot;);</div><div class="line">            m.invoke(target);</div><div class="line">            long endtime = System.currentTimeMillis();</div><div class="line">            System.out.println(&quot;汽车结束行驶....  汽车行驶时间：&quot;+ (endtime - starttime) + &quot;毫秒！&quot;);</div><div class="line">        &#125; catch (IllegalAccessException | InvocationTargetException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>proxy:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">public class Proxy &#123;</div><div class="line"></div><div class="line">    public static Object newProxyInstance(Class infce, InvocationHandler h) throws IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException &#123;</div><div class="line">        //创建源码</div><div class="line">        String rt = &quot;\r\n&quot;;</div><div class="line">        String methodStr = &quot;&quot;;</div><div class="line">        for(Method m : infce.getMethods())&#123;</div><div class="line">            methodStr += &quot;	@Override&quot; + rt +</div><div class="line">                    &quot;	public void &quot; + m.getName() + &quot;() &#123;&quot; + rt +</div><div class="line">                    &quot;  try&#123;&quot; + rt +</div><div class="line">                    &quot;  Method md = &quot; + infce.getName() + &quot;.class.getMethod(\&quot;&quot;</div><div class="line">                    + m.getName() + &quot;\&quot;);&quot; + rt +</div><div class="line">                    &quot;  h.invoke(this,md);&quot; +rt+</div><div class="line">                    &quot;  &#125;catch(Exception e)&#123; e.printStackTrace();&#125;&quot; + rt +</div><div class="line">                    &quot;	&#125;&quot; ;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        String str =</div><div class="line">                &quot;package proxy;&quot; + rt +</div><div class="line">                        &quot;import java.lang.reflect.Method;&quot; + rt +</div><div class="line">                        &quot;import proxy.InvocationHandler;&quot; +  rt+</div><div class="line">                        &quot;public class $Proxy0 implements &quot; + infce.getName() + &quot; &#123;&quot; + rt +</div><div class="line">                        &quot;	public $Proxy0(InvocationHandler h) &#123;&quot; + rt +</div><div class="line">                        &quot;		this.h = h;&quot; + rt +</div><div class="line">                        &quot;	&#125;&quot; + rt +</div><div class="line">                        &quot;  private InvocationHandler h;&quot; + rt+</div><div class="line">                        methodStr + rt +</div><div class="line">                        &quot;&#125;&quot; ;</div><div class="line">        String fileName = System.getProperty(&quot;user.dir&quot;) + &quot;/out/production/Design_Patterns_new/proxy/$Proxy0.java&quot;;</div><div class="line">        File file = new File(fileName);</div><div class="line">        FileUtils.writeStringToFile(file, str);</div><div class="line"></div><div class="line">        //编译源码</div><div class="line">        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();</div><div class="line">        StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);</div><div class="line">        Iterable units = fileManager.getJavaFileObjects(fileName);</div><div class="line">        //编译任务</div><div class="line">        JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, null, null, null, units);</div><div class="line">        //执行任务</div><div class="line">        task.call();</div><div class="line">        fileManager.close();</div><div class="line"></div><div class="line">        //load到内存</div><div class="line">        ClassLoader loader = ClassLoader.getSystemClassLoader();</div><div class="line">        Class&lt;?&gt; c = loader.loadClass(&quot;proxy.$Proxy0&quot;);</div><div class="line"></div><div class="line">        Constructor constructor = c.getConstructor(InvocationHandler.class);</div><div class="line">        return constructor.newInstance(h);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+            <p>对其中单例模式做个总结，以备不时之需。</p>
+<h1 id="饿汉单例模式"><a href="#饿汉单例模式" class="headerlink" title="饿汉单例模式"></a>饿汉单例模式</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">package singleton;</div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/23</div><div class="line"> * 饿汉，基于ClassLoader机制避免了多线程的同步问题，加载过程较慢，获取对象速度较快</div><div class="line"> * 不过instance在类装载时就实例化。虽然大多数情况下调用单例模式的getInstance方法导致类加载，但是也不能确定没有其他</div><div class="line"> * 静态方法导致类被加载，从而没有达到懒加载的效果。</div><div class="line"> */</div><div class="line">public class Singleton &#123;</div><div class="line">    private Singleton() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static Singleton singleton = new Singleton();</div><div class="line"></div><div class="line">    public static Singleton getInstance() &#123;</div><div class="line">        return singleton;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="懒汉（线程不安全）"><a href="#懒汉（线程不安全）" class="headerlink" title="懒汉（线程不安全）"></a>懒汉（线程不安全）</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">package singleton;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/24</div><div class="line"> * 懒汉设计模式，线程安全，但是效率很低，每次调用getInstance方法都需要</div><div class="line"> * 获得锁，而大多数情况下不需要同步</div><div class="line"> */</div><div class="line">public class Singleton1 &#123;</div><div class="line">    private Singleton1()&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static Singleton1 singleton1;</div><div class="line"></div><div class="line">    public static synchronized Singleton1 getInstacne()&#123;</div><div class="line">        if (singleton1 == null)</div><div class="line">            singleton1 = new Singleton1();</div><div class="line">        return singleton1;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="懒汉（线程安全）"><a href="#懒汉（线程安全）" class="headerlink" title="懒汉（线程安全）"></a>懒汉（线程安全）</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">package singleton;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/24</div><div class="line"> * 懒汉设计模式，线程不安全</div><div class="line"> */</div><div class="line">public class Singleton2 &#123;</div><div class="line">    private Singleton2()&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static Singleton2 singleton1;</div><div class="line"></div><div class="line">    public static Singleton2 getInstacne()&#123;</div><div class="line">        if (singleton1 == null)</div><div class="line">            singleton1 = new Singleton2();</div><div class="line">        return singleton1;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="双重检查单例模式"><a href="#双重检查单例模式" class="headerlink" title="双重检查单例模式"></a>双重检查单例模式</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">package singleton;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/30</div><div class="line"> * 双重检查模式，第一次是为了减少不必要的同步，当singleton对象存在时，</div><div class="line"> * 直接返回实例对象，则同步只发生在多个线程同时调用getInstance加载类</div><div class="line"> * 第二次判空是为了singleton为null才创建实例。</div><div class="line"> * DCL优点是资源利用率高，第一次执行getInstance时单例对象才被实例化，效率高。</div><div class="line"> * 缺点是第一次加载速度慢，高并发场景中也会影响其性能，但是也存在DCL失效，</div><div class="line"> * 建议使用静态内部类单例模式来替代DCL</div><div class="line"> */</div><div class="line">public class Singleton3 &#123;</div><div class="line">    private volatile static Singleton3 singleton;</div><div class="line"></div><div class="line">    private Singleton3() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static Singleton3 getInstance() &#123;</div><div class="line">        if (singleton == null) &#123;</div><div class="line">            synchronized (Singleton3.class) &#123;</div><div class="line">                if (singleton == null) &#123;</div><div class="line">                    singleton = new Singleton3();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return singleton;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="静态内部类"><a href="#静态内部类" class="headerlink" title="静态内部类"></a>静态内部类</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">package singleton;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/30</div><div class="line"> * 静态内部类单例：</div><div class="line"> * 第一次加载Singleton类时并不会初始化是Instance，只有第一次调用Singleton</div><div class="line"> * 方法时虚拟机加载SingletonHolder并初始化sInstance，这样不仅能确保线程安</div><div class="line"> * 全也能保证Singleton的唯一性，推荐使用。</div><div class="line"> */</div><div class="line">public class Singleton4 &#123;</div><div class="line">    private Singleton4() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static Singleton4 getInstance() &#123;</div><div class="line">        return SingletonHolder.sInstance;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static class SingletonHolder&#123;</div><div class="line">        private static final Singleton4 sInstance = new Singleton4();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="枚举"><a href="#枚举" class="headerlink" title="枚举"></a>枚举</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">package singleton;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/30</div><div class="line"> * 默认枚举类实例的创建是线程安全的，并且在任何情况下都是单例，上述的几种</div><div class="line"> * 单例在反序列化的情况下会创建对象，将一个单例实例对象写到磁盘再读回来，</div><div class="line"> * 从而获得一个实例。反序列化操作提供了</div><div class="line"> */</div><div class="line">public enum Singleton5 &#123;</div><div class="line">    INSTANCE;</div><div class="line">    public void doSomething() &#123;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="容器实现单例"><a href="#容器实现单例" class="headerlink" title="容器实现单例"></a>容器实现单例</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">package singleton;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line">import java.util.Map;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/30</div><div class="line"> * 使用容器实现单例模式</div><div class="line"> * 用SingletonManager 将多种的单例类统一管理，在使用时根据key获取对象</div><div class="line"> * 对应类型的对象。这种方式使得我们可以管理多种类型的单例，并且在使用</div><div class="line"> * 时可以通过统一的接口进行获取操作，降低了用户的使用成本，也对用户隐</div><div class="line"> * 藏了具体实现，降低了耦合度。</div><div class="line"> */</div><div class="line">public class Singleton6 &#123;</div><div class="line">    private static Map&lt;String, Object&gt; objectMap = new HashMap&lt;&gt;();</div><div class="line">    private Singleton6() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void registerService(String key, Object instance) &#123;</div><div class="line">        if (!objectMap.containsKey(key)) &#123;</div><div class="line">            objectMap.put(key, instance);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static Object getService(String key) &#123;</div><div class="line">        return objectMap.get(key);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
           
         
@@ -938,166 +1278,6 @@
 </ul>
 </li>
 </ol>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/设计模式之七种单例模式/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/设计模式之七种单例模式/" itemprop="url">设计模式之七种单例模式</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/design-patterns/" itemprop="url" rel="index">
-                    <span itemprop="name">design patterns</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>对其中单例模式做个总结，以备不时之需。</p>
-<h1 id="饿汉单例模式"><a href="#饿汉单例模式" class="headerlink" title="饿汉单例模式"></a>饿汉单例模式</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">package singleton;</div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/23</div><div class="line"> * 饿汉，基于ClassLoader机制避免了多线程的同步问题，加载过程较慢，获取对象速度较快</div><div class="line"> * 不过instance在类装载时就实例化。虽然大多数情况下调用单例模式的getInstance方法导致类加载，但是也不能确定没有其他</div><div class="line"> * 静态方法导致类被加载，从而没有达到懒加载的效果。</div><div class="line"> */</div><div class="line">public class Singleton &#123;</div><div class="line">    private Singleton() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static Singleton singleton = new Singleton();</div><div class="line"></div><div class="line">    public static Singleton getInstance() &#123;</div><div class="line">        return singleton;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="懒汉（线程不安全）"><a href="#懒汉（线程不安全）" class="headerlink" title="懒汉（线程不安全）"></a>懒汉（线程不安全）</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">package singleton;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/24</div><div class="line"> * 懒汉设计模式，线程安全，但是效率很低，每次调用getInstance方法都需要</div><div class="line"> * 获得锁，而大多数情况下不需要同步</div><div class="line"> */</div><div class="line">public class Singleton1 &#123;</div><div class="line">    private Singleton1()&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static Singleton1 singleton1;</div><div class="line"></div><div class="line">    public static synchronized Singleton1 getInstacne()&#123;</div><div class="line">        if (singleton1 == null)</div><div class="line">            singleton1 = new Singleton1();</div><div class="line">        return singleton1;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="懒汉（线程安全）"><a href="#懒汉（线程安全）" class="headerlink" title="懒汉（线程安全）"></a>懒汉（线程安全）</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">package singleton;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/24</div><div class="line"> * 懒汉设计模式，线程不安全</div><div class="line"> */</div><div class="line">public class Singleton2 &#123;</div><div class="line">    private Singleton2()&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static Singleton2 singleton1;</div><div class="line"></div><div class="line">    public static Singleton2 getInstacne()&#123;</div><div class="line">        if (singleton1 == null)</div><div class="line">            singleton1 = new Singleton2();</div><div class="line">        return singleton1;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="双重检查单例模式"><a href="#双重检查单例模式" class="headerlink" title="双重检查单例模式"></a>双重检查单例模式</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">package singleton;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/30</div><div class="line"> * 双重检查模式，第一次是为了减少不必要的同步，当singleton对象存在时，</div><div class="line"> * 直接返回实例对象，则同步只发生在多个线程同时调用getInstance加载类</div><div class="line"> * 第二次判空是为了singleton为null才创建实例。</div><div class="line"> * DCL优点是资源利用率高，第一次执行getInstance时单例对象才被实例化，效率高。</div><div class="line"> * 缺点是第一次加载速度慢，高并发场景中也会影响其性能，但是也存在DCL失效，</div><div class="line"> * 建议使用静态内部类单例模式来替代DCL</div><div class="line"> */</div><div class="line">public class Singleton3 &#123;</div><div class="line">    private volatile static Singleton3 singleton;</div><div class="line"></div><div class="line">    private Singleton3() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static Singleton3 getInstance() &#123;</div><div class="line">        if (singleton == null) &#123;</div><div class="line">            synchronized (Singleton3.class) &#123;</div><div class="line">                if (singleton == null) &#123;</div><div class="line">                    singleton = new Singleton3();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return singleton;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="静态内部类"><a href="#静态内部类" class="headerlink" title="静态内部类"></a>静态内部类</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">package singleton;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/30</div><div class="line"> * 静态内部类单例：</div><div class="line"> * 第一次加载Singleton类时并不会初始化是Instance，只有第一次调用Singleton</div><div class="line"> * 方法时虚拟机加载SingletonHolder并初始化sInstance，这样不仅能确保线程安</div><div class="line"> * 全也能保证Singleton的唯一性，推荐使用。</div><div class="line"> */</div><div class="line">public class Singleton4 &#123;</div><div class="line">    private Singleton4() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static Singleton4 getInstance() &#123;</div><div class="line">        return SingletonHolder.sInstance;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static class SingletonHolder&#123;</div><div class="line">        private static final Singleton4 sInstance = new Singleton4();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="枚举"><a href="#枚举" class="headerlink" title="枚举"></a>枚举</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">package singleton;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/30</div><div class="line"> * 默认枚举类实例的创建是线程安全的，并且在任何情况下都是单例，上述的几种</div><div class="line"> * 单例在反序列化的情况下会创建对象，将一个单例实例对象写到磁盘再读回来，</div><div class="line"> * 从而获得一个实例。反序列化操作提供了</div><div class="line"> */</div><div class="line">public enum Singleton5 &#123;</div><div class="line">    INSTANCE;</div><div class="line">    public void doSomething() &#123;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="容器实现单例"><a href="#容器实现单例" class="headerlink" title="容器实现单例"></a>容器实现单例</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">package singleton;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line">import java.util.Map;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/30</div><div class="line"> * 使用容器实现单例模式</div><div class="line"> * 用SingletonManager 将多种的单例类统一管理，在使用时根据key获取对象</div><div class="line"> * 对应类型的对象。这种方式使得我们可以管理多种类型的单例，并且在使用</div><div class="line"> * 时可以通过统一的接口进行获取操作，降低了用户的使用成本，也对用户隐</div><div class="line"> * 藏了具体实现，降低了耦合度。</div><div class="line"> */</div><div class="line">public class Singleton6 &#123;</div><div class="line">    private static Map&lt;String, Object&gt; objectMap = new HashMap&lt;&gt;();</div><div class="line">    private Singleton6() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void registerService(String key, Object instance) &#123;</div><div class="line">        if (!objectMap.containsKey(key)) &#123;</div><div class="line">            objectMap.put(key, instance);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static Object getService(String key) &#123;</div><div class="line">        return objectMap.get(key);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
           
         
@@ -1987,176 +2167,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/算法之堆排序与快速排序/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/算法之堆排序与快速排序/" itemprop="url">算法-堆排序与快速排序</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/algorithms/" itemprop="url" rel="index">
-                    <span itemprop="name">algorithms</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h1><ul>
-<li><p>堆是具有下列性质的完全二叉树：每个结点的值都大于或等于其左右孩子结点的值，称为大顶堆；或者每个结点的值都小于或等于其左右孩子结点的值，称为小顶堆。堆排序很适合在m个数中选择最大的k个数的问题。只需要进行k此调整就可以取出。</p>
-</li>
-<li><p>思路：</p>
-<ul>
-<li>首先需要构成一个大顶堆。</li>
-<li>将堆首元素出堆，将堆尾元素放在堆首，然后对剩下的m-1个数进行成堆。</li>
-</ul>
-</li>
-<li><p>Java实现：</p>
-</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div></pre></td><td class="code"><pre><div class="line">package sort;</div><div class="line"></div><div class="line">import java.util.Arrays;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/28</div><div class="line"> */</div><div class="line">public class HeapSort &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        int[] arr = &#123;53, 23, 45, 86, 12, 33, 10, 90, 36, 70, 43, 88, 60, 29&#125;;</div><div class="line">        System.out.println(&quot;排序之前： &quot; + Arrays.toString(arr));</div><div class="line">        heapSort(arr);</div><div class="line">        System.out.println(&quot;排序之后： &quot; + Arrays.toString(arr));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 堆排序方法</div><div class="line">     * @param arr 待排序的数组</div><div class="line">     */</div><div class="line">    private static void heapSort(int[] arr) &#123;</div><div class="line">        //1、创建大根堆，从第一个非叶子节点向堆首元素进行交换</div><div class="line">        for (int i = arr.length / 2; i &gt;= 0; i--) &#123;</div><div class="line">            heapAdjust(arr, i, arr.length);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        //最后一个节点与root节点交换，然后调整成大根堆，</div><div class="line">        for (int i = arr.length - 1; i &gt; 0; i--) &#123;</div><div class="line">            swap(arr, 0, i);</div><div class="line">            heapAdjust(arr, 0, i);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 构建堆的过程</div><div class="line">     * @param arr 需要排列的数组</div><div class="line">     * @param i 需要构建堆的根节点的序号</div><div class="line">     * @param length 堆元素的个数，随着出堆不断的减少</div><div class="line">     */</div><div class="line">    private static void heapAdjust(int[] arr, int i, int length) &#123;</div><div class="line">        int child;</div><div class="line">        for (int fathre = arr[i]; leftChild(i) &lt; length; i = child) &#123;</div><div class="line">            child = leftChild(i);</div><div class="line">            //选择节点i的较大的孩子节点</div><div class="line">            if (child != length - 1 &amp;&amp; arr[child] &lt; arr[child+1]) &#123;</div><div class="line">                child++;</div><div class="line">            &#125;</div><div class="line">            //如果父节点的值小于其较大的孩子节点，则交换二者的值</div><div class="line">            if (fathre &lt; arr[child]) &#123;</div><div class="line">                swap(arr, i, child);</div><div class="line">            &#125; else &#123;</div><div class="line">                break;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void swap(int[] arr, int i, int j) &#123;</div><div class="line">        int tmp =arr[i];</div><div class="line">        arr[i] = arr[j];</div><div class="line">        arr[j] = tmp;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static int leftChild(int i) &#123;</div><div class="line">        return 2 * i+ 1;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h1><p>快速排序一般基于递归实现：</p>
-<ul>
-<li>选定一个合适的值</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">package sort;</div><div class="line"></div><div class="line">import java.util.Arrays;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/28</div><div class="line"> */</div><div class="line">public class QuickSort &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        int[] arr = &#123;53, 23, 45, 86, 12, 33, 10, 90, 36, 70, 43, 88, 60, 29&#125;;</div><div class="line">        System.out.println(&quot;排序之前： &quot; + Arrays.toString(arr));</div><div class="line">        quickSort(arr);</div><div class="line">        System.out.println(&quot;排序之后： &quot; + Arrays.toString(arr));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void quickSort(int[] arr) &#123;</div><div class="line">        quickSortHelp(arr, 0, arr.length - 1);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void quickSortHelp(int[] arr, int low, int high) &#123;</div><div class="line">        if (low &lt; high) &#123;</div><div class="line">            int pivot = partition(arr, low, high);</div><div class="line">            quickSortHelp(arr, low, pivot - 1);</div><div class="line">            quickSortHelp(arr, pivot + 1, high);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static int partition(int[] arr, int low, int high) &#123;</div><div class="line">        int pivot = arr[low];</div><div class="line">        while (low &lt; high) &#123;</div><div class="line">            while (low &lt; high &amp;&amp; arr[high] &gt;= pivot)</div><div class="line">                high--;</div><div class="line">            arr[low] = arr[high];</div><div class="line">            while (low &lt; high &amp;&amp; arr[low] &lt;= pivot)</div><div class="line">                low++;</div><div class="line">            arr[high] = arr[low];</div><div class="line">        &#125;</div><div class="line">        arr[low] = pivot;</div><div class="line">        return low;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void swap(int[] arr, int low, int high) &#123;</div><div class="line">        int temp = arr[low];</div><div class="line">        arr[low] = arr[high];</div><div class="line">        arr[high] = temp;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2210,7 +2220,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">85</span>
+                <span class="site-state-item-count">86</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

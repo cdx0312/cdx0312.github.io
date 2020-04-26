@@ -277,6 +277,317 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/24/go语言实战-打包和工具链/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/04/24/go语言实战-打包和工具链/" itemprop="url">go语言实战 - 3、4、5</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-24T17:08:09+08:00">
+                2020-04-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="第三章-打包和工具链"><a href="#第三章-打包和工具链" class="headerlink" title="第三章 打包和工具链"></a>第三章 打包和工具链</h2><h3 id="包-package"><a href="#包-package" class="headerlink" title="包 package"></a>包 package</h3><ul>
+<li>go语言的程序会被组织成若干组文件，每组文件都被称为一个包</li>
+<li>不能把多个包放在同一个目录中</li>
+<li>不能把同一个包拆分到多个不同目录中</li>
+<li>一个目录下的.go文件必须声明同一个包名</li>
+<li>包名命名的管理是使用包所在的目录的名字</li>
+<li>包的导入使用全路径，允许名字重复</li>
+<li>导入后的报名默认使用包的名字，但是是可以修改的</li>
+<li>main包会被编译成二进制可执行文件</li>
+<li>main包需要有个main函数作为主函数入口</li>
+<li>go build 命令用于构建可执行程序</li>
+</ul>
+<h3 id="导入-import"><a href="#导入-import" class="headerlink" title="导入 import"></a>导入 import</h3><ul>
+<li>import语句告诉编译器到磁盘的哪里去寻找导入的包</li>
+<li>编译器会使用Go环境变量设置的路径，通过引入的相对路径来查找磁盘上的包</li>
+<li>标准库中的包会在安装Go的位置找到</li>
+<li>Go开发者创建的包会在Gopath的环境变量指定的目录中查找</li>
+<li>go get命令将获取指定URL的包</li>
+<li>包支持命名导入 <code>import nh net/http</code></li>
+<li>导入一个不在代码里使用的包时，会导致编译报错，避免代码变得臃肿</li>
+<li><code>_</code>空白标识符用于抛弃，比如导入的包，抛出的异常，返回的函数都可以被抛弃</li>
+</ul>
+<h3 id="初始函数-init"><a href="#初始函数-init" class="headerlink" title="初始函数 init"></a>初始函数 init</h3><ul>
+<li>每个包可以包含任意多个init函数，这些函数在程序执行开始的时候被调用</li>
+<li>所有被编译器发现的init函数都会在main函数之前执行</li>
+<li>init函数主要用在设置包、初始化变量、或者其他先导设置工作，例如在数据库驱动启动的包中，初始化函数会将自身注册到sql包中，启动之后才可以完成数据库的调用</li>
+<li>空白标识符可以保证导入包的初始化函数正常执行，而不会报错</li>
+</ul>
+<h3 id="go-工具"><a href="#go-工具" class="headerlink" title="go 工具"></a>go 工具</h3><ul>
+<li>go build 执行编译</li>
+<li>go clean 删除编译之后产生的二进制文件</li>
+<li>go run 先编译，后执行</li>
+<li>go vet 帮助开发人员检测代码的常见错误<ul>
+<li>类型匹配错误</li>
+<li>方法签名调用错误</li>
+<li>错误的结构标签</li>
+<li>没有指定字段名的结构字面量</li>
+</ul>
+</li>
+<li>go fmt 将代码布局修改成和go源码类似的风格</li>
+<li>go doc tar可以在命令行打开tar包的相关文档</li>
+<li>godoc -http=:6060可以在web浏览文档</li>
+</ul>
+<h3 id="良好的习惯"><a href="#良好的习惯" class="headerlink" title="良好的习惯"></a>良好的习惯</h3><ul>
+<li>包应该在代码库的根目录</li>
+<li>包可以非常小</li>
+<li>代码需要执行 go fmt</li>
+<li>给代码写文档</li>
+</ul>
+<h2 id="第四章-数组、切片和映射"><a href="#第四章-数组、切片和映射" class="headerlink" title="第四章 数组、切片和映射"></a>第四章 数组、切片和映射</h2><h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><ul>
+<li>数组是一个长度固定的数据类型，用于存储一段具有相同的类型的元素的连续块</li>
+<li>内存时连续分配的</li>
+<li>数组的类型信息可以提供每次访问一个元素时需要在内存中移动的距离</li>
+<li>随机读取速度非常快</li>
+<li>声明 var array [5]int，声明之后数组里存储的数据类型和长度都不能改变了</li>
+<li>声明之后，数组的值默认为零值</li>
+<li>使用数组字面量可以在定义的时候给数组元素赋值 <code>array := [5]int{1,2,3,4,5}</code></li>
+<li>相同类型的数组可以赋值给另一个数组</li>
+<li>数组变量的类型时包含长度和每个元素的类型的，只有两部分都相同的数组，才是同类型的数组，才可以互相赋值</li>
+<li>指针数组赋值，两个数组会指向同一组的字符串</li>
+<li>多维数组 <code>var array [2][2]int</code></li>
+<li>函数之间传递数组的开销比较大，值传递需要复制整个数组，最好只传入指向数组的指针</li>
+</ul>
+<h3 id="切片"><a href="#切片" class="headerlink" title="切片"></a>切片</h3><ul>
+<li>切片的概念类似于动态数组，可以根据需要自动增长和缩小</li>
+<li>切片是一个很小的对象，对底层数组进行了抽象，并提供相关的方法</li>
+<li>前片有3个字段的数据，指向底层数组的指针，切片长度，切片容量</li>
+<li>切片的创建方法<ul>
+<li>make创建<ul>
+<li>只指定长度，长度和容量相等 <code>slice := make([]string, 5)</code></li>
+<li>指定了长度和容量 <code>slice := make([]string, 3, 5)</code></li>
+<li>不允许创建容量小于长度的切片</li>
+</ul>
+</li>
+<li>使用切片字面量来创建<ul>
+<li>长度和容量都是3 <code>slice := []string{&quot;r&quot;, &quot;g&quot;, &quot;b&quot;}</code></li>
+<li>创建长度和容量是100的切片 <code>slice := []string{99: &quot;&quot;}</code></li>
+</ul>
+</li>
+<li>nil 切片 <code>var slice []int</code></li>
+</ul>
+</li>
+<li>空切片，在底层数组中包含0个元素，也没有分配内核的存储空间<ul>
+<li><code>slice := []int{}</code></li>
+<li><code>slice := make([]int, 0)</code></li>
+</ul>
+</li>
+<li>切片索引的赋值和数组完全一致</li>
+<li>切片可以理解为底层数组的一个滑动窗口，类似于视图的概念</li>
+<li>底层数组容量是k的切片<code>slice[i:j]</code>其长度为j-i,容量为k-i</li>
+<li>切片是可以根据需要来增加切片的容量的，go语言内置的append函数会处理其细节</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// The append built-in function appends elements to the end of a slice. If</span></div><div class="line"><span class="comment">// it has sufficient capacity, the destination is resliced to accommodate the</span></div><div class="line"><span class="comment">// new elements. If it does not, a new underlying array will be allocated.</span></div><div class="line"><span class="comment">// Append returns the updated slice. It is therefore necessary to store the</span></div><div class="line"><span class="comment">// result of append, often in the variable holding the slice itself:</span></div><div class="line"><span class="comment">//	slice = append(slice, elem1, elem2)</span></div><div class="line"><span class="comment">//	slice = append(slice, anotherSlice...)</span></div><div class="line"><span class="comment">// As a special case, it is legal to append a string to a byte slice, like this:</span></div><div class="line"><span class="comment">//	slice = append([]byte("hello "), "world"...)</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">append</span><span class="params">(slice []Type, elems ...Type)</span> []<span class="title">Type</span></span></div></pre></td></tr></table></figure>
+<ul>
+<li>切片添加多个数据用<code>...</code>完成</li>
+<li>切片迭代<code>for index, val := range slice</code></li>
+<li>切片也支持多维</li>
+<li>函数内传递切片采用值传递，其本身尺寸很小</li>
+</ul>
+<h3 id="映射"><a href="#映射" class="headerlink" title="映射"></a>映射</h3><ul>
+<li>映射用于存储一组无序的键值对</li>
+<li>查询时间复杂度O(1)</li>
+<li>映射是可以迭代的，但是不保证顺序</li>
+<li>映射的散列表包含一组桶，在存储、删除或者查找键值对的时候，所有操作都需要选择一个桶</li>
+<li>散列函数生成的散列值的低位来选择桶</li>
+<li>创建和初始化<ul>
+<li><code>dict := make(map[string]int)</code></li>
+<li><code>dict := map[string]string{&quot;Red&quot;:&quot;red&quot;}</code></li>
+<li><code>dict := map[int][]string{}</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><ul>
+<li>数组是构造切片和映射的基石</li>
+<li>go语言里切片经常用于处理数据的集合，映射用来处理具有键值对结构的数据</li>
+<li>内置函数make可以创建切片和映射，并制定原始的长度和容量</li>
+<li>切片有容量限制，可以使用append来扩展容量</li>
+<li>映射的增长没有任何限制</li>
+<li>内置函数len可以用来获取切片或者映射的长度</li>
+<li>内置函数cap只能用于切片</li>
+<li>将切片或者映射传递给函数的成本很小，不会复制底层的数据结构</li>
+</ul>
+<h2 id="第五章-Go语言的类型系统"><a href="#第五章-Go语言的类型系统" class="headerlink" title="第五章 Go语言的类型系统"></a>第五章 Go语言的类型系统</h2><ul>
+<li>go语言是一种静态类型的语言，编译器编译时需要知道每个值的类型</li>
+<li>值的类型可以使得编译器知道分配多少内存给这个值，以及这个内存存储什么数据</li>
+</ul>
+<h3 id="用户定义的类型"><a href="#用户定义的类型" class="headerlink" title="用户定义的类型"></a>用户定义的类型</h3><ul>
+<li>当用户声明一个新的类型时，这个声明就给编译器提供一个框架，告知必要的内存大小和表示信息</li>
+<li>自定义类型的方法</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> user <span class="keyword">struct</span> &#123;</div><div class="line">  name <span class="keyword">string</span></div><div class="line">  age <span class="keyword">int</span></div><div class="line">&#125;</div><div class="line"><span class="keyword">var</span> bill user</div></pre></td></tr></table></figure>
+<ul>
+<li>声明变量时，这个变量对应的值总是会被初始化，未指定初始化的值时，各个字段默认取零值<ul>
+<li>数字类型零值为0</li>
+<li>字符串类型零值为””</li>
+<li>bool类型零值为false</li>
+</ul>
+</li>
+</ul>
+<h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><ul>
+<li>方法能给用户定义的类型添加新的行为</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> user <span class="keyword">struct</span> &#123;</div><div class="line">  name <span class="keyword">string</span></div><div class="line">  email <span class="keyword">string</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(u user)</span> <span class="title">notify</span> <span class="params">()</span></span> &#123;</div><div class="line">  fmt.Printf(<span class="string">"Sending User Email To %s&lt;%s&gt; \n"</span>, u.name, u.email)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(u user)</span> <span class="title">changeEmail</span><span class="params">(email <span class="keyword">string</span>)</span></span> &#123;</div><div class="line">  u.email = email</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span> <span class="params">()</span></span> &#123;</div><div class="line">  bill := user &#123;</div><div class="line">    name: <span class="string">"Bill"</span>,</div><div class="line">    email: <span class="string">"bill@email.com"</span>,</div><div class="line">  &#125;</div><div class="line">  bill.notify()</div><div class="line"></div><div class="line">  lisa := &amp;user&#123;<span class="string">"Lisa"</span>, <span class="string">"lisa@email.com"</span>&#125;</div><div class="line">  lisa.notify()</div><div class="line"></div><div class="line">  bill.changeEmail(<span class="string">"bill@new.com"</span>)</div><div class="line">  bill.notify()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>实际上一个函数如果有接收者，这个函数就被称为方法</li>
+</ul>
+<h3 id="类型的本质"><a href="#类型的本质" class="headerlink" title="类型的本质"></a>类型的本质</h3><ul>
+<li><p>内置类型</p>
+<ul>
+<li>对内置类型进行增加或者删除的时候，会创建一个新值，所以函数中内置类型的传递时值传递</li>
+</ul>
+</li>
+<li><p>引用类型</p>
+<ul>
+<li>引用类型包括：切片，映射，通道，接口，函数类型</li>
+<li>创建的变量被称为标头值，函数中使用是指针传递，本质上共享底层数据结构</li>
+</ul>
+</li>
+<li><p>结构类型</p>
+<ul>
+<li>当需要更改类型本身的值时，采用指针传递</li>
+<li>当不需要更改类型本身的值时，用值传递</li>
+</ul>
+</li>
+</ul>
+<h3 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h3><ul>
+<li>多态是指代码可以根据类型的具体实现采用不同行为的能力</li>
+<li>如果一个类型实现了这个接口的所有方法，那么就是实现了这个接口</li>
+<li>接口是用来定义行为的类型</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/23/go语言实战-测试/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -916,179 +1227,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/17/heap/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/04/17/heap/" itemprop="url">go源码解读-heap</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-17T19:24:43+08:00">
-                2020-04-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/" itemprop="url" rel="index">
-                    <span itemprop="name">go</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/源码解读/" itemprop="url" rel="index">
-                    <span itemprop="name">源码解读</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="heap"><a href="#heap" class="headerlink" title="heap"></a>heap</h2><ul>
-<li>go中的堆采用小根堆实现</li>
-<li>采用接口形式，也就是需要实现Push,Pop,Len,Less,Swap方法</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Interface <span class="keyword">interface</span> &#123;</div><div class="line">	sort.Interface</div><div class="line">	Push(x <span class="keyword">interface</span>&#123;&#125;) <span class="comment">// add x as element Len()</span></div><div class="line">	Pop() <span class="keyword">interface</span>&#123;&#125;   <span class="comment">// remove and return element Len() - 1.</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="堆的构建"><a href="#堆的构建" class="headerlink" title="堆的构建"></a>堆的构建</h3><ul>
-<li>调用init来完成对于堆的构建</li>
-<li>比较i与<code>2*i+1</code>, <code>2*i+2</code>的大小进行建堆</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Init</span><span class="params">(h Interface)</span></span> &#123;</div><div class="line">	<span class="comment">// heapify</span></div><div class="line">	n := h.Len()</div><div class="line">	<span class="keyword">for</span> i := n/<span class="number">2</span> - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i-- &#123;</div><div class="line">		down(h, i, n)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">down</span><span class="params">(h Interface, i0, n <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	i := i0</div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		j1 := <span class="number">2</span>*i + <span class="number">1</span></div><div class="line">		<span class="keyword">if</span> j1 &gt;= n || j1 &lt; <span class="number">0</span> &#123; <span class="comment">// j1 &lt; 0 after int overflow</span></div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		j := j1 <span class="comment">// left child</span></div><div class="line">		<span class="keyword">if</span> j2 := j1 + <span class="number">1</span>; j2 &lt; n &amp;&amp; h.Less(j2, j1) &#123;</div><div class="line">			j = j2 <span class="comment">// = 2*i + 2  // right child</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> !h.Less(j, i) &#123;</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		h.Swap(i, j)</div><div class="line">		i = j</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> i &gt; i0</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="Push-Pop方法"><a href="#Push-Pop方法" class="headerlink" title="Push, Pop方法"></a>Push, Pop方法</h3><ul>
-<li>Push方法将数据防止在末尾，逐个节点向上调整</li>
-<li>Pop方法将待出堆的节点和末尾节点交换，向下调整根节点</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Push</span><span class="params">(h Interface, x <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	h.Push(x)</div><div class="line">	up(h, h.Len()<span class="number">-1</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Pop is equivalent to Remove(h, 0).</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Pop</span><span class="params">(h Interface)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</div><div class="line">	n := h.Len() - <span class="number">1</span></div><div class="line">	h.Swap(<span class="number">0</span>, n)</div><div class="line">	down(h, <span class="number">0</span>, n)</div><div class="line">	<span class="keyword">return</span> h.Pop()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">up</span><span class="params">(h Interface, j <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		i := (j - <span class="number">1</span>) / <span class="number">2</span> <span class="comment">// parent</span></div><div class="line">		<span class="keyword">if</span> i == j || !h.Less(j, i) &#123;</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		h.Swap(i, j)</div><div class="line">		j = i</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="Fix-Remove方法"><a href="#Fix-Remove方法" class="headerlink" title="Fix, Remove方法"></a>Fix, Remove方法</h3><ul>
-<li>Remove方法移除树第i个节点，并调整堆结构</li>
-<li>Fix方法在数据值便跟时调整堆结构</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Remove</span><span class="params">(h Interface, i <span class="keyword">int</span>)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</div><div class="line">	n := h.Len() - <span class="number">1</span></div><div class="line">	<span class="keyword">if</span> n != i &#123;</div><div class="line">		h.Swap(i, n)</div><div class="line">		<span class="keyword">if</span> !down(h, i, n) &#123;</div><div class="line">			up(h, i)</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> h.Pop()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Fix</span><span class="params">(h Interface, i <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> !down(h, i, h.Len()) &#123;</div><div class="line">		up(h, i)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="示例-优先队列"><a href="#示例-优先队列" class="headerlink" title="示例-优先队列"></a>示例-优先队列</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// An Item is something we manage in a priority queue.</span></div><div class="line"><span class="keyword">type</span> Item <span class="keyword">struct</span> &#123;</div><div class="line">	value    <span class="keyword">string</span> <span class="comment">// The value of the item; arbitrary.</span></div><div class="line">	priority <span class="keyword">int</span>    <span class="comment">// The priority of the item in the queue.</span></div><div class="line">	<span class="comment">// The index is needed by update and is maintained by the heap.Interface methods.</span></div><div class="line">	index <span class="keyword">int</span> <span class="comment">// The index of the item in the heap.</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// A PriorityQueue implements heap.Interface and holds Items.</span></div><div class="line"><span class="keyword">type</span> PriorityQueue []*Item</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq PriorityQueue)</span> <span class="title">Len</span><span class="params">()</span> <span class="title">int</span></span> &#123; <span class="keyword">return</span> <span class="built_in">len</span>(pq) &#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq PriorityQueue)</span> <span class="title">Less</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	<span class="comment">// We want Pop to give us the highest, not lowest, priority so we use greater than here.</span></div><div class="line">	<span class="keyword">return</span> pq[i].priority &gt; pq[j].priority</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq PriorityQueue)</span> <span class="title">Swap</span><span class="params">(i, j <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	pq[i], pq[j] = pq[j], pq[i]</div><div class="line">	pq[i].index = i</div><div class="line">	pq[j].index = j</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq *PriorityQueue)</span> <span class="title">Push</span><span class="params">(x <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	n := <span class="built_in">len</span>(*pq)</div><div class="line">	item := x.(*Item)</div><div class="line">	item.index = n</div><div class="line">	*pq = <span class="built_in">append</span>(*pq, item)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq *PriorityQueue)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</div><div class="line">	old := *pq</div><div class="line">	n := <span class="built_in">len</span>(old)</div><div class="line">	item := old[n<span class="number">-1</span>]</div><div class="line">	item.index = <span class="number">-1</span> <span class="comment">// for safety</span></div><div class="line">	*pq = old[<span class="number">0</span> : n<span class="number">-1</span>]</div><div class="line">	<span class="keyword">return</span> item</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// update modifies the priority and value of an Item in the queue.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq *PriorityQueue)</span> <span class="title">update</span><span class="params">(item *Item, value <span class="keyword">string</span>, priority <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	item.value = value</div><div class="line">	item.priority = priority</div><div class="line">	heap.Fix(pq, item.index)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// This example creates a PriorityQueue with some items, adds and manipulates an item,</span></div><div class="line"><span class="comment">// and then removes the items in priority order.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="comment">// Some items and their priorities.</span></div><div class="line">	items := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>&#123;</div><div class="line">		<span class="string">"banana"</span>: <span class="number">3</span>, <span class="string">"apple"</span>: <span class="number">2</span>, <span class="string">"pear"</span>: <span class="number">4</span>,</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// Create a priority queue, put the items in it, and</span></div><div class="line">	<span class="comment">// establish the priority queue (heap) invariants.</span></div><div class="line">	pq := <span class="built_in">make</span>(PriorityQueue, <span class="built_in">len</span>(items))</div><div class="line">	i := <span class="number">0</span></div><div class="line">	<span class="keyword">for</span> value, priority := <span class="keyword">range</span> items &#123;</div><div class="line">		pq[i] = &amp;Item&#123;</div><div class="line">			value:    value,</div><div class="line">			priority: priority,</div><div class="line">			index:    i,</div><div class="line">		&#125;</div><div class="line">		i++</div><div class="line">	&#125;</div><div class="line">	heap.Init(&amp;pq)</div><div class="line"></div><div class="line">	<span class="comment">// Insert a new item and then modify its priority.</span></div><div class="line">	item := &amp;Item&#123;</div><div class="line">		value:    <span class="string">"orange"</span>,</div><div class="line">		priority: <span class="number">1</span>,</div><div class="line">	&#125;</div><div class="line">	heap.Push(&amp;pq, item)</div><div class="line">	pq.update(item, item.value, <span class="number">5</span>)</div><div class="line"></div><div class="line">	<span class="comment">// Take the items out; they arrive in decreasing priority order.</span></div><div class="line">	<span class="keyword">for</span> pq.Len() &gt; <span class="number">0</span> &#123;</div><div class="line">		item := heap.Pop(&amp;pq).(*Item)</div><div class="line">		fmt.Printf(<span class="string">"%.2d:%s "</span>, item.priority, item.value)</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Output:</span></div><div class="line">	<span class="comment">// 05:orange 04:pear 03:banana 02:apple</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/17/list/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1265,6 +1403,179 @@
 <li>PushFrontList方法将other列表插入到l列表root节点之后</li>
 </ul>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">PushBackList</span><span class="params">(other *List)</span></span> &#123;</div><div class="line">	l.lazyInit()</div><div class="line">	<span class="keyword">for</span> i, e := other.Len(), other.Front(); i &gt; <span class="number">0</span>; i, e = i<span class="number">-1</span>, e.Next() &#123;</div><div class="line">		l.insertValue(e.Value, l.root.prev)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">PushFrontList</span><span class="params">(other *List)</span></span> &#123;</div><div class="line">	l.lazyInit()</div><div class="line">	<span class="keyword">for</span> i, e := other.Len(), other.Back(); i &gt; <span class="number">0</span>; i, e = i<span class="number">-1</span>, e.Prev() &#123;</div><div class="line">		l.insertValue(e.Value, &amp;l.root)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/17/heap/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/04/17/heap/" itemprop="url">go源码解读-heap</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-17T19:24:43+08:00">
+                2020-04-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/源码解读/" itemprop="url" rel="index">
+                    <span itemprop="name">源码解读</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="heap"><a href="#heap" class="headerlink" title="heap"></a>heap</h2><ul>
+<li>go中的堆采用小根堆实现</li>
+<li>采用接口形式，也就是需要实现Push,Pop,Len,Less,Swap方法</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Interface <span class="keyword">interface</span> &#123;</div><div class="line">	sort.Interface</div><div class="line">	Push(x <span class="keyword">interface</span>&#123;&#125;) <span class="comment">// add x as element Len()</span></div><div class="line">	Pop() <span class="keyword">interface</span>&#123;&#125;   <span class="comment">// remove and return element Len() - 1.</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="堆的构建"><a href="#堆的构建" class="headerlink" title="堆的构建"></a>堆的构建</h3><ul>
+<li>调用init来完成对于堆的构建</li>
+<li>比较i与<code>2*i+1</code>, <code>2*i+2</code>的大小进行建堆</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Init</span><span class="params">(h Interface)</span></span> &#123;</div><div class="line">	<span class="comment">// heapify</span></div><div class="line">	n := h.Len()</div><div class="line">	<span class="keyword">for</span> i := n/<span class="number">2</span> - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i-- &#123;</div><div class="line">		down(h, i, n)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">down</span><span class="params">(h Interface, i0, n <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	i := i0</div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		j1 := <span class="number">2</span>*i + <span class="number">1</span></div><div class="line">		<span class="keyword">if</span> j1 &gt;= n || j1 &lt; <span class="number">0</span> &#123; <span class="comment">// j1 &lt; 0 after int overflow</span></div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		j := j1 <span class="comment">// left child</span></div><div class="line">		<span class="keyword">if</span> j2 := j1 + <span class="number">1</span>; j2 &lt; n &amp;&amp; h.Less(j2, j1) &#123;</div><div class="line">			j = j2 <span class="comment">// = 2*i + 2  // right child</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> !h.Less(j, i) &#123;</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		h.Swap(i, j)</div><div class="line">		i = j</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> i &gt; i0</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Push-Pop方法"><a href="#Push-Pop方法" class="headerlink" title="Push, Pop方法"></a>Push, Pop方法</h3><ul>
+<li>Push方法将数据防止在末尾，逐个节点向上调整</li>
+<li>Pop方法将待出堆的节点和末尾节点交换，向下调整根节点</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Push</span><span class="params">(h Interface, x <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	h.Push(x)</div><div class="line">	up(h, h.Len()<span class="number">-1</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Pop is equivalent to Remove(h, 0).</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Pop</span><span class="params">(h Interface)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</div><div class="line">	n := h.Len() - <span class="number">1</span></div><div class="line">	h.Swap(<span class="number">0</span>, n)</div><div class="line">	down(h, <span class="number">0</span>, n)</div><div class="line">	<span class="keyword">return</span> h.Pop()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">up</span><span class="params">(h Interface, j <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		i := (j - <span class="number">1</span>) / <span class="number">2</span> <span class="comment">// parent</span></div><div class="line">		<span class="keyword">if</span> i == j || !h.Less(j, i) &#123;</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		h.Swap(i, j)</div><div class="line">		j = i</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Fix-Remove方法"><a href="#Fix-Remove方法" class="headerlink" title="Fix, Remove方法"></a>Fix, Remove方法</h3><ul>
+<li>Remove方法移除树第i个节点，并调整堆结构</li>
+<li>Fix方法在数据值便跟时调整堆结构</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Remove</span><span class="params">(h Interface, i <span class="keyword">int</span>)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</div><div class="line">	n := h.Len() - <span class="number">1</span></div><div class="line">	<span class="keyword">if</span> n != i &#123;</div><div class="line">		h.Swap(i, n)</div><div class="line">		<span class="keyword">if</span> !down(h, i, n) &#123;</div><div class="line">			up(h, i)</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> h.Pop()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Fix</span><span class="params">(h Interface, i <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> !down(h, i, h.Len()) &#123;</div><div class="line">		up(h, i)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="示例-优先队列"><a href="#示例-优先队列" class="headerlink" title="示例-优先队列"></a>示例-优先队列</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// An Item is something we manage in a priority queue.</span></div><div class="line"><span class="keyword">type</span> Item <span class="keyword">struct</span> &#123;</div><div class="line">	value    <span class="keyword">string</span> <span class="comment">// The value of the item; arbitrary.</span></div><div class="line">	priority <span class="keyword">int</span>    <span class="comment">// The priority of the item in the queue.</span></div><div class="line">	<span class="comment">// The index is needed by update and is maintained by the heap.Interface methods.</span></div><div class="line">	index <span class="keyword">int</span> <span class="comment">// The index of the item in the heap.</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// A PriorityQueue implements heap.Interface and holds Items.</span></div><div class="line"><span class="keyword">type</span> PriorityQueue []*Item</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq PriorityQueue)</span> <span class="title">Len</span><span class="params">()</span> <span class="title">int</span></span> &#123; <span class="keyword">return</span> <span class="built_in">len</span>(pq) &#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq PriorityQueue)</span> <span class="title">Less</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	<span class="comment">// We want Pop to give us the highest, not lowest, priority so we use greater than here.</span></div><div class="line">	<span class="keyword">return</span> pq[i].priority &gt; pq[j].priority</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq PriorityQueue)</span> <span class="title">Swap</span><span class="params">(i, j <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	pq[i], pq[j] = pq[j], pq[i]</div><div class="line">	pq[i].index = i</div><div class="line">	pq[j].index = j</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq *PriorityQueue)</span> <span class="title">Push</span><span class="params">(x <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	n := <span class="built_in">len</span>(*pq)</div><div class="line">	item := x.(*Item)</div><div class="line">	item.index = n</div><div class="line">	*pq = <span class="built_in">append</span>(*pq, item)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq *PriorityQueue)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</div><div class="line">	old := *pq</div><div class="line">	n := <span class="built_in">len</span>(old)</div><div class="line">	item := old[n<span class="number">-1</span>]</div><div class="line">	item.index = <span class="number">-1</span> <span class="comment">// for safety</span></div><div class="line">	*pq = old[<span class="number">0</span> : n<span class="number">-1</span>]</div><div class="line">	<span class="keyword">return</span> item</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// update modifies the priority and value of an Item in the queue.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pq *PriorityQueue)</span> <span class="title">update</span><span class="params">(item *Item, value <span class="keyword">string</span>, priority <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	item.value = value</div><div class="line">	item.priority = priority</div><div class="line">	heap.Fix(pq, item.index)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// This example creates a PriorityQueue with some items, adds and manipulates an item,</span></div><div class="line"><span class="comment">// and then removes the items in priority order.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="comment">// Some items and their priorities.</span></div><div class="line">	items := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>&#123;</div><div class="line">		<span class="string">"banana"</span>: <span class="number">3</span>, <span class="string">"apple"</span>: <span class="number">2</span>, <span class="string">"pear"</span>: <span class="number">4</span>,</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// Create a priority queue, put the items in it, and</span></div><div class="line">	<span class="comment">// establish the priority queue (heap) invariants.</span></div><div class="line">	pq := <span class="built_in">make</span>(PriorityQueue, <span class="built_in">len</span>(items))</div><div class="line">	i := <span class="number">0</span></div><div class="line">	<span class="keyword">for</span> value, priority := <span class="keyword">range</span> items &#123;</div><div class="line">		pq[i] = &amp;Item&#123;</div><div class="line">			value:    value,</div><div class="line">			priority: priority,</div><div class="line">			index:    i,</div><div class="line">		&#125;</div><div class="line">		i++</div><div class="line">	&#125;</div><div class="line">	heap.Init(&amp;pq)</div><div class="line"></div><div class="line">	<span class="comment">// Insert a new item and then modify its priority.</span></div><div class="line">	item := &amp;Item&#123;</div><div class="line">		value:    <span class="string">"orange"</span>,</div><div class="line">		priority: <span class="number">1</span>,</div><div class="line">	&#125;</div><div class="line">	heap.Push(&amp;pq, item)</div><div class="line">	pq.update(item, item.value, <span class="number">5</span>)</div><div class="line"></div><div class="line">	<span class="comment">// Take the items out; they arrive in decreasing priority order.</span></div><div class="line">	<span class="keyword">for</span> pq.Len() &gt; <span class="number">0</span> &#123;</div><div class="line">		item := heap.Pop(&amp;pq).(*Item)</div><div class="line">		fmt.Printf(<span class="string">"%.2d:%s "</span>, item.priority, item.value)</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Output:</span></div><div class="line">	<span class="comment">// 05:orange 04:pear 03:banana 02:apple</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
           
         
@@ -4066,186 +4377,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/设计模式之原型模式/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/设计模式之原型模式/" itemprop="url">设计模式之原型模式</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/design-patterns/" itemprop="url" rel="index">
-                    <span itemprop="name">design patterns</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>用原型实例指定创建对象的种类，并通过拷贝这些原型创建新的对象。</p>
-<h1 id="模式使用场景"><a href="#模式使用场景" class="headerlink" title="模式使用场景"></a>模式使用场景</h1><ol>
-<li>类初始化需要消耗非常多的资源，这个资源包括数据，硬件资源等，通过原型拷贝避免这些消耗。</li>
-<li>通过new产生一个对象需要非常繁琐的数据准备或访问权限，则可以使用原型模式。</li>
-<li>一个对象需要提供给其他对象访问，而且各个调用者可能都需要修改其值时，可以考虑使用原型模式拷贝多个对象供调用者使用。</li>
-</ol>
-<h1 id="UML图"><a href="#UML图" class="headerlink" title="UML图"></a>UML图</h1><p><img src="/img/dp-factory-prototype.png" alt="Alt text"></p>
-<h2 id="角色描述"><a href="#角色描述" class="headerlink" title="角色描述"></a>角色描述</h2><pre><code>* Client: 客户端用户
-* Prototype：抽象类或接口，声明具备clone能力
-* ConcretePrototype：具体的原型类
-</code></pre><h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>文档拷贝为例。</p>
-<p>Prototype抽象类为java.lang.clone,ConcretePrototype通过重写该方法完成对象的拷贝功能。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div></pre></td><td class="code"><pre><div class="line">package prototype;</div><div class="line"></div><div class="line">import java.util.ArrayList;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/25</div><div class="line"> */</div><div class="line">public class ConcretePrototype implements Cloneable&#123;</div><div class="line">    private String mText;</div><div class="line">    private ArrayList&lt;String&gt; mImages = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    public ConcretePrototype() &#123;</div><div class="line">        System.out.println(&quot;concretePrototype构造函数&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected Object clone() throws CloneNotSupportedException &#123;</div><div class="line">        try &#123;</div><div class="line">            ConcretePrototype concretePrototype = (ConcretePrototype) super.clone();</div><div class="line">            concretePrototype.mText = this.mText;</div><div class="line">            concretePrototype.mImages = this.mImages;</div><div class="line">            return concretePrototype;</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String getmText() &#123;</div><div class="line">        return mText;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setmText(String mText) &#123;</div><div class="line">        this.mText = mText;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public ArrayList&lt;String&gt; getmImages() &#123;</div><div class="line">        return mImages;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setmImages(ArrayList&lt;String&gt; mImages) &#123;</div><div class="line">        this.mImages = mImages;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void addImage(String img) &#123;</div><div class="line">        this.mImages.add(img);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void showContent() &#123;</div><div class="line">        System.out.println(&quot;==========start===========&quot;);</div><div class="line">        System.out.println(&quot;Text:  &quot; + mText);</div><div class="line">        System.out.println(&quot;Images List: &quot;);</div><div class="line">        for (String string : mImages) &#123;</div><div class="line">            System.out.println(&quot;image name : &quot; + string);</div><div class="line">        &#125;</div><div class="line">        System.out.println(&quot;============end==========&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>Client:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">package prototype;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/25</div><div class="line"> */</div><div class="line">public class Client &#123;</div><div class="line">    public static void main(String[] args) throws CloneNotSupportedException &#123;</div><div class="line">        //创建对象</div><div class="line">        ConcretePrototype original = new ConcretePrototype();</div><div class="line">        original.setmText(&quot;first&quot;);</div><div class="line">        original.addImage(&quot;pic 1&quot;);</div><div class="line">        original.addImage(&quot;pic 2&quot;);</div><div class="line">        original.addImage(&quot;pic 3&quot;);</div><div class="line">        original.addImage(&quot;pic 4&quot;);</div><div class="line">        original.showContent();</div><div class="line">        //复制对象</div><div class="line">        ConcretePrototype clone = (ConcretePrototype) original.clone();</div><div class="line">        clone.showContent();</div><div class="line">        //修改并展示复制的对象</div><div class="line">        clone.setmText(&quot;clone&quot;);</div><div class="line">        clone.showContent();</div><div class="line">        //展示原型对象</div><div class="line">        original.showContent();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>结果：修改clone之后的对象的值不会印象到原来的值。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">concretePrototype构造函数</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  clone</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div></pre></td></tr></table></figure>
-<p>深浅拷贝的区别：引用类型拷贝过程中，只拷贝了其引用，并没有将对象进行复制：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">package prototype;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/25</div><div class="line"> */</div><div class="line">public class Client1 &#123;</div><div class="line">    public static void main(String[] args) throws CloneNotSupportedException &#123;</div><div class="line">        //创建对象</div><div class="line">        ConcretePrototype original = new ConcretePrototype();</div><div class="line">        original.setmText(&quot;first&quot;);</div><div class="line">        original.addImage(&quot;pic 1&quot;);</div><div class="line">        original.addImage(&quot;pic 2&quot;);</div><div class="line">        original.addImage(&quot;pic 3&quot;);</div><div class="line">        original.addImage(&quot;pic 4&quot;);</div><div class="line">        original.showContent();</div><div class="line"></div><div class="line">        ConcretePrototype clone = (ConcretePrototype) original.clone();</div><div class="line">        clone.showContent();</div><div class="line"></div><div class="line">        clone.setmText(&quot;clone1&quot;);</div><div class="line">        clone.addImage(&quot;new pic 5&quot;);</div><div class="line">        clone.showContent();</div><div class="line"></div><div class="line">        original.showContent();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">concretePrototype构造函数</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  clone1</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">image name : new pic 5</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">image name : new pic 5</div><div class="line">============end==========</div></pre></td></tr></table></figure>
-<p>深拷贝过程中需要将引用类型的字段也要进行拷贝，而不是单纯的拷贝引用：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 深拷贝</div><div class="line"> * @return</div><div class="line"> * @throws CloneNotSupportedException</div><div class="line"> */</div><div class="line">@Override</div><div class="line">protected Object clone() throws CloneNotSupportedException &#123;</div><div class="line">    try &#123;</div><div class="line">        ConcretePrototype concretePrototype = (ConcretePrototype) super.clone();</div><div class="line">        concretePrototype.mText = this.mText;</div><div class="line">        concretePrototype.mImages = (ArrayList&lt;String&gt;) this.mImages.clone();</div><div class="line">        return concretePrototype;</div><div class="line">    &#125; catch (Exception e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    return null;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="优点和缺点"><a href="#优点和缺点" class="headerlink" title="优点和缺点"></a>优点和缺点</h2><ul>
-<li><p>优点：原型模式是在内存二进制流的拷贝，要比直接new一个对象性能好很多，特别是需要在一个循环体中产生大量对象时。</p>
-</li>
-<li><p>缺点：直接在内存中拷贝，构造方法不会执行，减少了约束，需要注意。</p>
-</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -4299,7 +4430,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">85</span>
+                <span class="site-state-item-count">86</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

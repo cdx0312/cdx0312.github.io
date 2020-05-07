@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Python基础," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="高级特性掌握了Python的数据类型，语句和函数，基本上就可以编出很多有用的程序了，比如构造一个1,3,5,...,99的列表，可以通过循环实现：
+12345678&amp;gt;&amp;gt;&amp;gt; L=[]&amp;gt;&amp;gt;&amp;gt; n=1&amp;gt;&amp;gt;&amp;gt; while n&amp;lt;=99:...     L.append(n)...     n=n+2...&amp;gt;&amp;gt;&amp;gt; print(L)[">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2.高级特性">
+<meta property="og:url" content="http://yoursite.com/2019/04/21/python/2.高级特性/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="高级特性掌握了Python的数据类型，语句和函数，基本上就可以编出很多有用的程序了，比如构造一个1,3,5,...,99的列表，可以通过循环实现：
+12345678&amp;gt;&amp;gt;&amp;gt; L=[]&amp;gt;&amp;gt;&amp;gt; n=1&amp;gt;&amp;gt;&amp;gt; while n&amp;lt;=99:...     L.append(n)...     n=n+2...&amp;gt;&amp;gt;&amp;gt; print(L)[">
+<meta property="og:updated_time" content="2017-09-09T09:48:04.851Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2.高级特性">
+<meta name="twitter:description" content="高级特性掌握了Python的数据类型，语句和函数，基本上就可以编出很多有用的程序了，比如构造一个1,3,5,...,99的列表，可以通过循环实现：
+12345678&amp;gt;&amp;gt;&amp;gt; L=[]&amp;gt;&amp;gt;&amp;gt; n=1&amp;gt;&amp;gt;&amp;gt; while n&amp;lt;=99:...     L.append(n)...     n=n+2...&amp;gt;&amp;gt;&amp;gt; print(L)[">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/21/python/2.高级特性/"/>
+
+
+
+
+
+  <title>2.高级特性 | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/python/2.高级特性/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2.高级特性</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="高级特性"><a href="#高级特性" class="headerlink" title="高级特性"></a>高级特性</h1><p>掌握了Python的数据类型，语句和函数，基本上就可以编出很多有用的程序了，比如构造一个<code>1,3,5,...,99</code>的列表，可以通过循环实现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>L=[]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>n=<span class="number">1</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">while</span> n&lt;=<span class="number">99</span>:</div><div class="line"><span class="meta">... </span>    L.append(n)</div><div class="line"><span class="meta">... </span>    n=n+<span class="number">2</span></div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(L)</div><div class="line">[<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">9</span>, <span class="number">11</span>, <span class="number">13</span>, <span class="number">15</span>, <span class="number">17</span>, <span class="number">19</span>, <span class="number">21</span>, <span class="number">23</span>, <span class="number">25</span>, <span class="number">27</span>, <span class="number">29</span>, <span class="number">31</span>, <span class="number">33</span>, <span class="number">35</span>, <span class="number">37</span>, <span class="number">39</span>, <span class="number">41</span>, <span class="number">43</span>, <span class="number">45</span>, <span class="number">47</span>, <span class="number">49</span>, <span class="number">51</span>, <span class="number">53</span>, <span class="number">55</span>, <span class="number">57</span>, <span class="number">59</span>, <span class="number">61</span>, <span class="number">63</span>, <span class="number">65</span>, <span class="number">67</span>, <span class="number">69</span>, <span class="number">71</span>, <span class="number">73</span>, <span class="number">75</span>, <span class="number">77</span>, <span class="number">79</span>, <span class="number">81</span>, <span class="number">83</span>, <span class="number">85</span>, <span class="number">87</span>, <span class="number">89</span>, <span class="number">91</span>, <span class="number">93</span>, <span class="number">95</span>, <span class="number">97</span>, <span class="number">99</span>]</div></pre></td></tr></table></figure>
+<p>取list的前一半元素，也可以通过循环实现。</p>
+<p>但是Python中，代码不是越多越好，而是越少越好。代码不是越复杂越好，而是越简单越好。</p>
+<p>基于这一思想，我们开始介绍Python中非常有用的高级特性，1行代码能实现的功能，绝对不用五行代码。</p>
+<hr>
+<p>[TOC]</p>
+<hr>
+<h2 id="切片"><a href="#切片" class="headerlink" title="切片"></a>切片</h2><p>取一个list或者tuple的部分元素是非常常见的操作，比如，一个list如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">L=[<span class="string">'Michael'</span>,<span class="string">'Sarah'</span>,<span class="string">'Tracy'</span>,<span class="string">'Bob'</span>,<span class="string">'Jack'</span>]</div></pre></td></tr></table></figure>
+<p>取前三个元素，应该怎么办？</p>
+<p>笨方法：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"> Q=[L[<span class="number">0</span>],L[<span class="number">1</span>],L[<span class="number">2</span>]]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(Q)</div><div class="line">[<span class="string">'Michael'</span>, <span class="string">'Sarah'</span>, <span class="string">'Tracy'</span>]</div></pre></td></tr></table></figure></p>
+<p>该方法如果扩展之后让去N个元素就没有办法了。取N个元素，也就是取序号为0-N-1的元素，可以用循环：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>r=[]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>n=<span class="number">3</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>i=<span class="number">0</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">while</span> i&lt;n:</div><div class="line"><span class="meta">... </span>    r.append(L[i])</div><div class="line"><span class="meta">... </span>    i=i+<span class="number">1</span></div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(r)</div><div class="line">[<span class="string">'Michael'</span>, <span class="string">'Sarah'</span>, <span class="string">'Tracy'</span>]</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
+<p> 或者：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>r=[]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>n=<span class="number">3</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> i <span class="keyword">in</span> range(n):</div><div class="line"><span class="meta">... </span>    r.append(L[i])</div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>r</div><div class="line">[<span class="string">'Michael'</span>, <span class="string">'Sarah'</span>, <span class="string">'Tracy'</span>]</div></pre></td></tr></table></figure>
+<p>对这种经常取指定索引范围的操作，用循环身份繁琐，因此，Python提供了切片（slice）操作符，能大大简化这种操作。</p>
+<p>对应上面的问题，取前三个元素，用一行代码就可以搞定：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>L[<span class="number">0</span>:<span class="number">3</span>]</div><div class="line">[<span class="string">'Michael'</span>, <span class="string">'Sarah'</span>, <span class="string">'Tracy'</span>]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>L[<span class="number">1</span>:<span class="number">3</span>]</div><div class="line">[<span class="string">'Sarah'</span>, <span class="string">'Tracy'</span>]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>L[:<span class="number">3</span>]</div><div class="line">[<span class="string">'Michael'</span>, <span class="string">'Sarah'</span>, <span class="string">'Tracy'</span>]</div></pre></td></tr></table></figure>
+<p><code>L[0:3]</code>表示，从索引0开始取，取到索引3为止，但不包括3.即索引取0,1,2，正好是三个元素。如果第一个索引是0，还可以省略，也可以从索引1开始，取出两个元素。</p>
+<p>类似的，既然Python支持<code>L[-1]</code>取出倒数第一个元素，那么他同样支持倒数切片：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>L[<span class="number">-3</span>:<span class="number">-1</span>]</div><div class="line">[<span class="string">'Tracy'</span>, <span class="string">'Bob'</span>]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>L[<span class="number">-5</span>:]</div><div class="line">[<span class="string">'Michael'</span>, <span class="string">'Sarah'</span>, <span class="string">'Tracy'</span>, <span class="string">'Bob'</span>, <span class="string">'Jack'</span>]</div></pre></td></tr></table></figure>
+<p>切片操作十分有用。我们先创建一个0-99的数列：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>L=list(range(<span class="number">100</span>))</div></pre></td></tr></table></figure>
+<p>可以通过切片取出某一段数列，比如前十个，后十个，11-20等：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>L[:<span class="number">10</span>]</div><div class="line">[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>L[<span class="number">-10</span>:]</div><div class="line">[<span class="number">90</span>, <span class="number">91</span>, <span class="number">92</span>, <span class="number">93</span>, <span class="number">94</span>, <span class="number">95</span>, <span class="number">96</span>, <span class="number">97</span>, <span class="number">98</span>, <span class="number">99</span>]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>L[<span class="number">10</span>:<span class="number">20</span>]</div><div class="line">[<span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>, <span class="number">16</span>, <span class="number">17</span>, <span class="number">18</span>, <span class="number">19</span>]</div></pre></td></tr></table></figure></p>
+<p>前十个数，每两个去一个：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>L[:<span class="number">10</span>:<span class="number">2</span>]</div><div class="line">[<span class="number">0</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">8</span>]</div></pre></td></tr></table></figure></p>
+<p>所有数，每五个取一个：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>L[::<span class="number">5</span>]</div><div class="line">[<span class="number">0</span>, <span class="number">5</span>, <span class="number">10</span>, <span class="number">15</span>, <span class="number">20</span>, <span class="number">25</span>, <span class="number">30</span>, <span class="number">35</span>, <span class="number">40</span>, <span class="number">45</span>, <span class="number">50</span>, <span class="number">55</span>, <span class="number">60</span>, <span class="number">65</span>, <span class="number">70</span>, <span class="number">75</span>, <span class="number">80</span>, <span class="number">85</span>, <span class="number">90</span>, <span class="number">95</span>]</div></pre></td></tr></table></figure></p>
+<p>如果什么都不写，只写<code>[:]</code>就可以复制一个list。</p>
+<p>tuple也是list的一种，唯一区别是tuple不可变。因此tuple也可以用切片操作，操作的结果仍然是tuple：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>t=tuple(range(<span class="number">20</span>))</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>t</div><div class="line">(<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>, <span class="number">16</span>, <span class="number">17</span>, <span class="number">18</span>, <span class="number">19</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>t[:<span class="number">3</span>]</div><div class="line">(<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>t[<span class="number">-12</span>:<span class="number">-3</span>]</div><div class="line">(<span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>, <span class="number">16</span>)</div></pre></td></tr></table></figure>
+<p>字符串<code>xxx</code>也可以看成是一种list，每一个元素就是一个字符。因此，字符串也可以用切片操作，只是操作结果仍然是字符串：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>h=<span class="string">'abcdefghi'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>h[:<span class="number">4</span>]</div><div class="line"><span class="string">'abcd'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>h[<span class="number">2</span>:<span class="number">8</span>:<span class="number">2</span>]</div><div class="line"><span class="string">'ceg'</span></div></pre></td></tr></table></figure>
+<p>在许多编程语言中，针对字符串提供了很多种截取函数，如substring，其实目的就是对字符串进行切片。Python没有针对字符串的截取函数，只需要切片一个操作就可以完成，非常简单。</p>
+<blockquote>
+<p>小结<br>有了切片操作，很多地方循环就不需要了。Python的切片非常灵活，一行代码就可以实现多行循环才能完成的操作</p>
+</blockquote>
+<h2 id="迭代"><a href="#迭代" class="headerlink" title="迭代"></a>迭代</h2><p>如果给定一个list或者tuple，我们可以通过<code>for</code>循环来遍历这个list或者tuple，这种遍历我们称为迭代（iteration）。</p>
+<p>在Python中，迭代是通过<code>for...in</code>来完成的，而很多语言如Java，迭代是通过下标完成的，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;list.length;i++)&#123;</div><div class="line">	n=list[i]</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<p>可以看出，Python的<code>for</code>循环抽象程度要高于Java的<code>for</code>循环，因为Python的for循环不仅可以用于list或tuple上，还可以用于其他可迭代对象上，list这种数据类型虽然有下标，但很多其他数据类型是没有下标的。只要是可迭代对象，无论有无下标，都可以迭代，比如dict就可以迭代：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>d=&#123;<span class="string">'a'</span>:<span class="number">1</span>,<span class="string">'b'</span>:<span class="number">2</span>,<span class="string">'c'</span>:<span class="number">3</span>&#125;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> key <span class="keyword">in</span> d:</div><div class="line"><span class="meta">... </span>    print(key)</div><div class="line">...</div><div class="line">c</div><div class="line">a</div><div class="line">b</div></pre></td></tr></table></figure>
+<p>其中因为dict的存储不是按照list的方式顺序排列，所以迭代出来的顺序很可能不一样。默认情况下，dict迭代的是key。如果要迭代value，可以用<code>for value in d.values()</code>，如果要同时迭代key和value，可以用<code>for k,v in d.items()</code>。</p>
+<p>由于字符串也是可迭代对象，因此，也可以用作<code>for</code>循环：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> ch <span class="keyword">in</span> <span class="string">'abcdnf'</span>:</div><div class="line"><span class="meta">... </span>    print(ch)</div><div class="line">...</div><div class="line">a</div><div class="line">b</div><div class="line">c</div><div class="line">d</div><div class="line">n</div><div class="line">f</div></pre></td></tr></table></figure>
+<p>所以，当我们使用<code>for</code>循环时，只要作用于一个可迭代对象，<code>for</code>循环就可以正常运行，而我们不太关心该对象是list还是其他的数据类型。</p>
+<p>如何判断一个对象是可迭代对象呢？方法是通过collections模块的Iterable类型判断：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; from collections import Iterable</div><div class="line">&gt;&gt;&gt; isinstance(&apos;abc&apos;,Iterable) #str是否可迭代</div><div class="line">True</div><div class="line">&gt;&gt;&gt; isinstance([1,2,3,4],Iterable) #str是否可迭代</div><div class="line">True</div><div class="line">&gt;&gt;&gt; isinstance(123,Iterable) #str是否可迭代</div><div class="line">False</div></pre></td></tr></table></figure>
+<p>如果对list实现类似Java那样的下标循环怎么办？Python中内置的<code>enumerate</code>函数可以把一个list编程索引-元素对，这样就可以在<code>for</code>循环中同事迭代索引和元素本身：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; for i, value in enumerate([&apos;a&apos;,&apos;b&apos;,&apos;c&apos;,&apos;d&apos;,&apos;e&apos;]):</div><div class="line">...     print(i,value)</div><div class="line">...</div><div class="line">0 a</div><div class="line">1 b</div><div class="line">2 c</div><div class="line">3 d</div><div class="line">4 e</div></pre></td></tr></table></figure>
+<p>上面的<code>for</code>循环里，同时引用了两个变量，在Python里面是很常见的:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; for x,y in [(1,2),(3,4),(5,6),(7,8)]:</div><div class="line">...     print(x,y)</div><div class="line">...</div><div class="line">1 2</div><div class="line">3 4</div><div class="line">5 6</div><div class="line">7 8</div></pre></td></tr></table></figure>
+<blockquote>
+<p>小结<br>任何可迭代对象都可以作用于<code>for</code>循环，包括我们自定义的数据类型，只要符合迭代条件，就可以使用<code>for</code>循环。</p>
+</blockquote>
+<hr>
+<h2 id="列表生成式"><a href="#列表生成式" class="headerlink" title="列表生成式"></a>列表生成式</h2><p>列表生成式即List Comprehensions，是Python内置的非常简单却强大的可以用来创建list的生成式，如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>list(range(<span class="number">1</span>,<span class="number">11</span>))</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</div></pre></td></tr></table></figure>
+<p>但是如果要生成<code>[1*1,2*2,3*3,...,10*10]</code>，方法一是循环：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>L=[]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">11</span>):</div><div class="line"><span class="meta">... </span>    L.append(x*x)</div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>L</div><div class="line">[<span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, <span class="number">16</span>, <span class="number">25</span>, <span class="number">36</span>, <span class="number">49</span>, <span class="number">64</span>, <span class="number">81</span>, <span class="number">100</span>]</div></pre></td></tr></table></figure>
+<p>但是循环太繁琐，而列表生成式则可以用一行语句代替循环生成上面的list：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>[x*x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">11</span>)]</div><div class="line">[<span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, <span class="number">16</span>, <span class="number">25</span>, <span class="number">36</span>, <span class="number">49</span>, <span class="number">64</span>, <span class="number">81</span>, <span class="number">100</span>]</div></pre></td></tr></table></figure>
+<p>写列表生成式时，把要生成的元素<code>x*x</code>放在前面，后面跟上<code>for</code>循环，就可以把list创建出来。</p>
+<p>for循环后面还可以加上if判断，这样我们局可以筛选出仅偶数的平方：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>[x*x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">11</span>) <span class="keyword">if</span> x%<span class="number">2</span>==<span class="number">0</span>]</div><div class="line">[<span class="number">4</span>, <span class="number">16</span>, <span class="number">36</span>, <span class="number">64</span>, <span class="number">100</span>]</div></pre></td></tr></table></figure>
+<p>还可以使用两层循环，可以生成全排列：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>[x+y <span class="keyword">for</span> x <span class="keyword">in</span> <span class="string">'abcd'</span> <span class="keyword">for</span> y <span class="keyword">in</span> <span class="string">'ABCD'</span>]</div><div class="line">[<span class="string">'aA'</span>, <span class="string">'aB'</span>, <span class="string">'aC'</span>, <span class="string">'aD'</span>, <span class="string">'bA'</span>, <span class="string">'bB'</span>, <span class="string">'bC'</span>, <span class="string">'bD'</span>, <span class="string">'cA'</span>, <span class="string">'cB'</span>, <span class="string">'cC'</span>, <span class="string">'cD'</span>, <span class="string">'dA'</span>, <span class="string">'dB'</span>, <span class="string">'dC'</span>, <span class="string">'dD'</span>]</div></pre></td></tr></table></figure>
+<p>三层和三层以上的循环就很少用了。</p>
+<p>运用列表生成式可以写出非常简洁的代码。例如，列出当前目录下的所有文件和目录名，可以通过一行代码实现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; <span class="keyword">import</span> os</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>[d <span class="keyword">for</span> d <span class="keyword">in</span> os.listdir(<span class="string">'.'</span>)]</div><div class="line">[<span class="string">'3D Objects'</span>, <span class="string">'AppData'</span>, <span class="string">'Application Data'</span>, <span class="string">'Contacts'</span>, <span class="string">'Cookies'</span>, <span class="string">'Desktop'</span>, <span class="string">'Documents'</span>, <span class="string">'Downloads'</span>, <span class="string">'Favorites'</span>, <span class="string">'IntelGraphicsProfiles'</span>, <span class="string">'Links'</span>, <span class="string">'Local Settings'</span>, <span class="string">'Music'</span>, <span class="string">'My Documents'</span>, <span class="string">'NetHood'</span>, <span class="string">'NTUSER.DAT'</span>, <span class="string">'ntuser.dat.LOG1'</span>, <span class="string">'ntuser.dat.LOG2'</span>, <span class="string">'NTUSER.DAT&#123;eccc1a56-42ca-11e6-9cd4-bf9ec156b7db&#125;.TM.blf'</span>, <span class="string">'NTUSER.DAT&#123;eccc1a56-42ca-11e6-9cd4-bf9ec156b7db&#125;.TMContainer00000000000000000001.regtrans-ms'</span>, <span class="string">'NTUSER.DAT&#123;eccc1a56-42ca-11e6-9cd4-bf9ec156b7db&#125;.TMContainer00000000000000000002.regtrans-ms'</span>, <span class="string">'ntuser.ini'</span>, <span class="string">'OneDrive'</span>, <span class="string">'Pictures'</span>, <span class="string">'PrintHood'</span>, <span class="string">'Recent'</span>, <span class="string">'Saved Games'</span>, <span class="string">'Searches'</span>, <span class="string">'SendTo'</span>, <span class="string">'Templates'</span>, <span class="string">'Videos'</span>, <span class="string">'「开始」菜单'</span>]</div></pre></td></tr></table></figure>
+<p><code>for</code>循环其实可以同时使用两个甚至多个变量，如<code>dict</code>的<code>items()</code>可以同时迭代key和value：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> k,v <span class="keyword">in</span> d.items():</div><div class="line"><span class="meta">... </span>    print(k,<span class="string">'='</span>,v)</div><div class="line">...</div><div class="line">c = <span class="number">3</span></div><div class="line">a = <span class="number">1</span></div><div class="line">b = <span class="number">2</span></div></pre></td></tr></table></figure>
+<p>因此列表生成式也可以使用两个变量来生成list：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>d=&#123;<span class="string">'a'</span>:<span class="string">'b'</span>,<span class="string">'c'</span>:<span class="string">'v'</span>,<span class="string">'d'</span>:<span class="string">'g'</span>&#125;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>[k + <span class="string">'='</span> + v <span class="keyword">for</span> k,v <span class="keyword">in</span> d.items()]</div><div class="line">[<span class="string">'d=g'</span>, <span class="string">'c=v'</span>, <span class="string">'a=b'</span>]</div></pre></td></tr></table></figure>
+<p>最后把一个list中的所有字符串变为小写：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>L=[<span class="string">'Hello'</span>,<span class="string">'DSFA'</span>,<span class="string">'DFAC'</span>]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>[s.lower() <span class="keyword">for</span> s <span class="keyword">in</span> L]</div><div class="line">[<span class="string">'hello'</span>, <span class="string">'dsfa'</span>, <span class="string">'dfac'</span>]</div></pre></td></tr></table></figure>
+<h3 id="练习"><a href="#练习" class="headerlink" title="练习"></a>练习</h3><p> L1=[‘Hello’,’World’,18,’Apple’,None]，添加if语句，期待L2=[‘hello’, ‘world’, ‘apple’]</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>L2=[s.lower() <span class="keyword">for</span> s <span class="keyword">in</span> L1 <span class="keyword">if</span> isinstance(s,str)]</div><div class="line">&gt;&gt;&gt;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>L2</div><div class="line">[<span class="string">'hello'</span>, <span class="string">'world'</span>, <span class="string">'apple'</span>]</div></pre></td></tr></table></figure>
+<hr>
+<h2 id="生成器"><a href="#生成器" class="headerlink" title="生成器"></a>生成器</h2><p>通过列表生成式，我们可以直接创建一个列表。但是受到内存的限制，列表容量肯定是有限的。而且，创建一个包含100万个元素的列表，不仅占用很大的空间，如果我们仅仅需要访问前面几个元素，后面的绝大多数元素占用的空间就被白白浪费了。</p>
+<p>所以，如果列表元素可以按照某种算法推算出来，那我们是否可以在循环过程中不断推算出后面的元素呢？这样就不必创建完整的list，从而节省大量的空间。在Python中，这种一边循环一边计算的机制，称为生成器：generator。</p>
+<p>要创建一个generator，有很多中方法。第一种很简答，只要把一个列表生成式的<code>[]</code> 改为<code>()</code>，就创建了一个generator：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>L</div><div class="line">[<span class="number">0</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, <span class="number">16</span>, <span class="number">25</span>, <span class="number">36</span>, <span class="number">49</span>, <span class="number">64</span>, <span class="number">81</span>]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>g=(x*x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">10</span>))</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>g</div><div class="line">&lt;generator object &lt;genexpr&gt; at <span class="number">0x0000020E84788E60</span>&gt;</div></pre></td></tr></table></figure>
+<p>可以看出创建<code>L</code>和<code>g</code>的区别仅在于最外层是<code>[]</code>还是<code>()</code>，<code>L</code>是一个list，而g是一个generator。我们可以直接打出list的么一个元素，但是我们怎么打出generator的每一个元素呢，如果要一个一个打，可以通过<code>next()</code>函数来获得generator的下一个返回值：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>next(g)</div><div class="line"><span class="number">0</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>next(g)</div><div class="line"><span class="number">1</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>next(g)</div><div class="line"><span class="number">4</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>next(g)</div><div class="line"><span class="number">9</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>next(g)</div><div class="line"><span class="number">16</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>next(g)</div><div class="line"><span class="number">25</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>next(g)</div><div class="line"><span class="number">36</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>next(g)</div><div class="line"><span class="number">49</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>next(g)</div><div class="line"><span class="number">64</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>next(g)</div><div class="line"><span class="number">81</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>next(g)</div></pre></td></tr></table></figure>
+<p>我们前面讲过，generator保存的是算法，每次调用<code>next(g)</code>，就计算出下一个<code>g</code>的值，直到计算到最后一个元素，没有更多的元素时，抛出<code>stopiteration</code>的错误。generator非常强大，如果推算的算法比较复杂，用类似列表生成式的<code>for</code>循环无法实现的时候，还可以用函数来实现。比如著名的斐波拉契数列（Fibonacci），除了第一个和第二个数外，任意一个数可由前面两个数相加得到：<br>1,1,2,3,5,8,13,21,34…</p>
+<p>斐波拉契数列用列表生成式写不出来，但是，用函数可以把它打印出来：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">fib</span><span class="params">(max)</span>:</span></div><div class="line"><span class="meta">... </span>    n,a,b=<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">while</span> n&lt;max:</div><div class="line"><span class="meta">... </span>            print(b)</div><div class="line"><span class="meta">... </span>            a,b=b,a+b</div><div class="line"><span class="meta">... </span>            n=n+<span class="number">1</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">return</span> <span class="string">'done'</span></div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>fib(<span class="number">10</span>)</div><div class="line"><span class="number">1</span></div><div class="line"><span class="number">1</span></div><div class="line"><span class="number">2</span></div><div class="line"><span class="number">3</span></div><div class="line"><span class="number">5</span></div><div class="line"><span class="number">8</span></div><div class="line"><span class="number">13</span></div><div class="line"><span class="number">21</span></div><div class="line"><span class="number">34</span></div><div class="line"><span class="number">55</span></div><div class="line"><span class="string">'done'</span></div></pre></td></tr></table></figure>
+<p>仔细看，<code>fib</code>函数实际上是定义了斐波拉契数列的推算规则，可以从第一个元素开始，推算出后续任意的元素，这种逻辑非常类似generator。也就是说，上面个的函数和generator只有一步之遥。要把<code>fib</code>变为generator，只需要把<code>print(b)</code>改为<code>yield b</code>就可以了：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">fib</span><span class="params">(max)</span>:</span></div><div class="line"><span class="meta">... </span>    n,a,b=<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">while</span> n&lt;max:</div><div class="line"><span class="meta">... </span>            <span class="keyword">yield</span> b</div><div class="line"><span class="meta">... </span>            a,b=b,a+b</div><div class="line"><span class="meta">... </span>            n=n+<span class="number">1</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">return</span> <span class="string">'done'</span></div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>fib(<span class="number">10</span>)</div><div class="line">&lt;generator object fib at <span class="number">0x0000020E84788BA0</span>&gt;</div></pre></td></tr></table></figure>
+<p>这就是定义generator的另一种方法。如果一个函数定义包含关键字<code>yield</code>，那么这个函数就不再是一个普通的函数，而是一个generator。</p>
+<p>这里最难理解的是generator和函数的执行流程不一样。函数是顺序执行的，遇到return语句或者最后一行函数语句就返回。而变为generator的函数，在每次调用<code>next()</code>的时候执行，遇到<code>yield</code>语句返回，再次执行时从上次返回的yield语句出继续执行。</p>
+<p>举个例子，定义一个generator，一次返回数字1,3,5：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">odd</span><span class="params">()</span>:</span></div><div class="line"><span class="meta">... </span>    print(<span class="string">'step1'</span>)</div><div class="line"><span class="meta">... </span>    <span class="keyword">yield</span> <span class="number">1</span></div><div class="line"><span class="meta">... </span>    print(<span class="string">'step2'</span>)</div><div class="line"><span class="meta">... </span>    <span class="keyword">yield</span> (<span class="number">3</span>)</div><div class="line"><span class="meta">... </span>    print(<span class="string">'step3'</span>)</div><div class="line"><span class="meta">... </span>    <span class="keyword">yield</span> (<span class="number">5</span>)</div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>o=odd()</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>next(o)</div><div class="line">step1</div><div class="line"><span class="number">1</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>next(o)</div><div class="line">step2</div><div class="line"><span class="number">3</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>next(o)</div><div class="line">step3</div><div class="line"><span class="number">5</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>next(o)</div><div class="line">Traceback (most recent call last):</div><div class="line">  File <span class="string">"&lt;stdin&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</div><div class="line">StopIteration</div></pre></td></tr></table></figure>
+<p>可以看出，<code>odd()</code>不是普通函数，而是generator，在执行过程中，遇到yield就会中断，下次又继续执行。执行3次之后，没有<code>yield</code>可以执行了，所以第四次调用<code>next(o)</code>就报错。回到<code>fib</code>的例子，我们在循环过程中不断用<code>yield</code>，就会不断中断。当然要给循环设置一个条件来跳出循环，不然就会产生一个无限数列出来。同样的，把函数改为generator之后，我们基本上从来不会用<code>next()</code>来获取下一个返回值，而是直接使用<code>for</code>循环来迭代。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span>  n <span class="keyword">in</span> fib(<span class="number">10</span>):</div><div class="line"><span class="meta">... </span>    print(n)</div><div class="line">...</div><div class="line"><span class="number">1</span></div><div class="line"><span class="number">1</span></div><div class="line"><span class="number">2</span></div><div class="line"><span class="number">3</span></div><div class="line"><span class="number">5</span></div><div class="line"><span class="number">8</span></div><div class="line"><span class="number">13</span></div><div class="line"><span class="number">21</span></div><div class="line"><span class="number">34</span></div><div class="line"><span class="number">55</span></div></pre></td></tr></table></figure>
+<p>但是使用<code>for</code>循环时，发现拿不到generator的<code>return</code>语句的返回值。如果想要拿到返回值，必须捕获<code>StopIteration</code>错误，返回值包含在<code>StopIteration</code>的<code>value</code>中：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=fib(<span class="number">6</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line"><span class="meta">... </span>    <span class="keyword">try</span>:</div><div class="line"><span class="meta">... </span>            x=next(f)</div><div class="line"><span class="meta">... </span>            print(<span class="string">'g'</span>,x)</div><div class="line"><span class="meta">... </span>    <span class="keyword">except</span> StopIteration <span class="keyword">as</span> e:</div><div class="line"><span class="meta">... </span>            print(<span class="string">'Generator return value:'</span>,e.value)</div><div class="line"><span class="meta">... </span>            <span class="keyword">break</span></div><div class="line">...</div><div class="line">g <span class="number">1</span></div><div class="line">g <span class="number">1</span></div><div class="line">g <span class="number">2</span></div><div class="line">g <span class="number">3</span></div><div class="line">g <span class="number">5</span></div><div class="line">g <span class="number">8</span></div><div class="line">Generator <span class="keyword">return</span> value: done</div></pre></td></tr></table></figure>
+<blockquote>
+<p>练习<br>杨辉三角，把每一行看做一个list，试着写一个generator，不断输出下一行的list：</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">tri</span><span class="params">()</span>:</span></div><div class="line"><span class="meta">... </span>    L=[<span class="number">1</span>]</div><div class="line"><span class="meta">... </span>    <span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line"><span class="meta">... </span>            <span class="keyword">yield</span> L</div><div class="line"><span class="meta">... </span>            L=[L[x]+L[x+<span class="number">1</span>] <span class="keyword">for</span> x <span class="keyword">in</span> range(len(L)<span class="number">-1</span>)]</div><div class="line"><span class="meta">... </span>            L.insert(<span class="number">0</span>,<span class="number">1</span>)</div><div class="line"><span class="meta">... </span>            L.append(<span class="number">1</span>)</div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>n=<span class="number">0</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> t <span class="keyword">in</span> tri():</div><div class="line"><span class="meta">... </span>    print(t)</div><div class="line"><span class="meta">... </span>    n=n+<span class="number">1</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">if</span> n==<span class="number">10</span>:</div><div class="line"><span class="meta">... </span>            <span class="keyword">break</span></div><div class="line">...</div><div class="line">[<span class="number">1</span>]</div><div class="line">[<span class="number">1</span>, <span class="number">1</span>]</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>]</div><div class="line">[<span class="number">1</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">1</span>]</div><div class="line">[<span class="number">1</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">4</span>, <span class="number">1</span>]</div><div class="line">[<span class="number">1</span>, <span class="number">5</span>, <span class="number">10</span>, <span class="number">10</span>, <span class="number">5</span>, <span class="number">1</span>]</div><div class="line">[<span class="number">1</span>, <span class="number">6</span>, <span class="number">15</span>, <span class="number">20</span>, <span class="number">15</span>, <span class="number">6</span>, <span class="number">1</span>]</div><div class="line">[<span class="number">1</span>, <span class="number">7</span>, <span class="number">21</span>, <span class="number">35</span>, <span class="number">35</span>, <span class="number">21</span>, <span class="number">7</span>, <span class="number">1</span>]</div><div class="line">[<span class="number">1</span>, <span class="number">8</span>, <span class="number">28</span>, <span class="number">56</span>, <span class="number">70</span>, <span class="number">56</span>, <span class="number">28</span>, <span class="number">8</span>, <span class="number">1</span>]</div><div class="line">[<span class="number">1</span>, <span class="number">9</span>, <span class="number">36</span>, <span class="number">84</span>, <span class="number">126</span>, <span class="number">126</span>, <span class="number">84</span>, <span class="number">36</span>, <span class="number">9</span>, <span class="number">1</span>]</div></pre></td></tr></table></figure>
+<blockquote>
+<p>小结<br>generator是非常强大的工具，在Python中，可以简单的把列表生成式改为generator。要理解generator的工作原理，他是在<code>for</code>循环的过程中不断计算出下一个元素，并在适当的条件结束循环。对于函数改成的generator来说，遇到<code>return</code>语句或者执行到函数体最后一行语句，就要结束generator的指令，<code>for</code>循环随之结束。</p>
+</blockquote>
+<p>请注意区分普通函数和generator函数，普通函数调用直接返回结果，generator函数调用实际返回一个generator对象。</p>
+<hr>
+<h2 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h2><p>我们已经知道，可以直接作用关于<code>for</code>循环的数据类型有以下几种：一类是集合数据类型，如<code>list</code>,<code>tuple</code>,<code>dict</code>,<code>set</code>,<code>str</code>等；一类是<code>generator</code>，包括生成器和带<code>yield</code>的generator function。这些可以直接作用于<code>for</code>循环的对象统称为可迭代对象：<code>Iterable</code>。可以使用<code>isinstance()</code>来判断一个对象是否是<code>Iterable</code>对象：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>isinstance([],Iterable)</div><div class="line"><span class="keyword">True</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>isinstance(&#123;&#125;,Iterable)</div><div class="line"><span class="keyword">True</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>isinstance(<span class="string">'abc'</span>,Iterable)</div><div class="line"><span class="keyword">True</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>isinstance((x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">10</span>)),Iterable)</div><div class="line"><span class="keyword">True</span></div></pre></td></tr></table></figure>
+<p>而生成器不但可以作用于<code>for</code>循环，还可以被<code>next()</code>函数不断调用并返回下一个值，直到最后抛出<code>StopIteration</code>错误表示无法继续返回下一个值了。可以被<code>next()</code>函数调用并不断返回下一个值的对象称为迭代器：<code>Iterator</code>。</p>
+<p>可以用<code>isinstance()</code>来判断一个对象是否是<code>Iterator</code>对象：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> collections <span class="keyword">import</span> Iterator</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>isinstance((x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">10</span>)),Iterator)</div><div class="line"><span class="keyword">True</span></div><div class="line"><span class="keyword">False</span></div></pre></td></tr></table></figure>
+<p>生成器都是<code>Iterator</code>对象，但是<code>list</code>,<code>dict</code>,<code>str</code>却不是。把这些<code>Iterable</code>变为<code>Iterator</code>可以使用<code>iter()</code>函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>isinstance(iter([]),Iterator)</div><div class="line"><span class="keyword">True</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>isinstance(iter(<span class="string">'adsaf'</span>),Iterator)</div><div class="line"><span class="keyword">True</span></div></pre></td></tr></table></figure>
+<p>为什么<code>list</code>,<code>dict</code>,<code>str</code>不是<code>Iterator</code>？？？</p>
+<p>这是因为Python的<code>Iterator</code>对象表示一个数据流，<code>Iterator</code>对象可以被<code>next()</code>函数调用并不断返回下一个数据，直到没有数据时抛出<code>StopIteration</code>错误。可以把这个数据流看做是一个有序的序列，但是我们却不能提前得知序列的长度，只能不断通过<code>next()</code>函数实现按需计算的下一个数据，所以<code>Iterator</code>的计算时惰性的，只有在需要的时候才会计算。<code>Iterator</code>甚至可以表示一个无限大的数据流，例如全体自然数，但是list是永远不可能存储全体的自然数的。</p>
+<blockquote>
+<p>小结<br>凡是可以用作<code>for</code>循环的对象都是<code>Iterable</code>类型；<br>凡是可作用关于<code>next()</code>函数的对象都是<code>Iterator</code>类型，他们表示一个惰性计算的序列；<br>集合数据类型如<code>list</code>，<code>dict</code>，<code>str</code>等都是<code>Iterable</code>,但是不是<code>Iterator</code>，不过可以通过<code>iter()</code>获得一个<code>Iterator</code>对象。</p>
+<p>·Python上的<code>for</code>循环本质上是通过不断调用<code>next()</code>函数来实现的：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> x <span class="keyword">in</span> [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>]:</div><div class="line"><span class="meta">... </span>    <span class="keyword">pass</span></div><div class="line"><span class="meta">... </span>                <span class="comment">#等价的</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>it=iter([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line"><span class="meta">... </span>    <span class="keyword">try</span>:</div><div class="line"><span class="meta">... </span>            x=next(it)</div><div class="line"><span class="meta">... </span>    <span class="keyword">except</span> StopIteration:</div><div class="line"><span class="meta">... </span>            <span class="keyword">break</span></div><div class="line">...</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure></p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Python基础/" rel="tag"># Python基础</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/21/python/1_函数/" rel="next" title="1. 函数">
+                <i class="fa fa-chevron-left"></i> 1. 函数
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/21/python/4.模块/" rel="prev" title="4. 模块">
+                4. 模块 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#高级特性"><span class="nav-number">1.</span> <span class="nav-text">高级特性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#切片"><span class="nav-number">1.1.</span> <span class="nav-text">切片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#迭代"><span class="nav-number">1.2.</span> <span class="nav-text">迭代</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#列表生成式"><span class="nav-number">1.3.</span> <span class="nav-text">列表生成式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#练习"><span class="nav-number">1.3.1.</span> <span class="nav-text">练习</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#生成器"><span class="nav-number">1.4.</span> <span class="nav-text">生成器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#迭代器"><span class="nav-number">1.5.</span> <span class="nav-text">迭代器</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

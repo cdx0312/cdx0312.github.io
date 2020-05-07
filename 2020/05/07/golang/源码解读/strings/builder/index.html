@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="go,源码解读," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="builder
+Builder是效率最高，内存使用最少的创建一个字符串的方法
+Builder结构体包含两个参数
+addr 字符串的地址
+buf 字节数组
+
+
+
+1234567// A Builder is used to efficiently build a string using Write methods.// It minimizes memory copying. The zero v">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go源码解读-strings.Builder">
+<meta property="og:url" content="http://yoursite.com/2020/05/07/golang/源码解读/strings/builder/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="builder
+Builder是效率最高，内存使用最少的创建一个字符串的方法
+Builder结构体包含两个参数
+addr 字符串的地址
+buf 字节数组
+
+
+
+1234567// A Builder is used to efficiently build a string using Write methods.// It minimizes memory copying. The zero v">
+<meta property="og:updated_time" content="2020-05-07T09:28:09.885Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="go源码解读-strings.Builder">
+<meta name="twitter:description" content="builder
+Builder是效率最高，内存使用最少的创建一个字符串的方法
+Builder结构体包含两个参数
+addr 字符串的地址
+buf 字节数组
+
+
+
+1234567// A Builder is used to efficiently build a string using Write methods.// It minimizes memory copying. The zero v">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/05/07/golang/源码解读/strings/builder/"/>
+
+
+
+
+
+  <title>go源码解读-strings.Builder | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/07/golang/源码解读/strings/builder/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">go源码解读-strings.Builder</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-07T17:26:49+08:00">
+                2020-05-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/源码解读/" itemprop="url" rel="index">
+                    <span itemprop="name">源码解读</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="builder"><a href="#builder" class="headerlink" title="builder"></a>builder</h2><ul>
+<li>Builder是效率最高，内存使用最少的创建一个字符串的方法</li>
+<li>Builder结构体包含两个参数<ul>
+<li>addr 字符串的地址</li>
+<li>buf 字节数组</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// A Builder is used to efficiently build a string using Write methods.</span></div><div class="line"><span class="comment">// It minimizes memory copying. The zero value is ready to use.</span></div><div class="line"><span class="comment">// Do not copy a non-zero Builder.</span></div><div class="line"><span class="keyword">type</span> Builder <span class="keyword">struct</span> &#123;</div><div class="line">	addr *Builder <span class="comment">// of receiver, to detect copies by value</span></div><div class="line">	buf  []<span class="keyword">byte</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h3><ul>
+<li>String方法返回Builder构建的数据</li>
+<li>Len方法返回字节数组占据的字节数，1个汉字三个字节</li>
+<li>Cap方法返回字节数组分配的内存空间大小</li>
+<li>Reset方法将Builder重置为初始状态</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// String returns the accumulated string.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span> <span class="title">String</span><span class="params">()</span> <span class="title">string</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> *(*<span class="keyword">string</span>)(unsafe.Pointer(&amp;b.buf))</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Len returns the number of accumulated bytes; b.Len() == len(b.String()).</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span> <span class="title">Len</span><span class="params">()</span> <span class="title">int</span></span> &#123; <span class="keyword">return</span> <span class="built_in">len</span>(b.buf) &#125;</div><div class="line"></div><div class="line"><span class="comment">// Cap returns the capacity of the builder's underlying byte slice. It is the</span></div><div class="line"><span class="comment">// total space allocated for the string being built and includes any bytes</span></div><div class="line"><span class="comment">// already written.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span> <span class="title">Cap</span><span class="params">()</span> <span class="title">int</span></span> &#123; <span class="keyword">return</span> <span class="built_in">cap</span>(b.buf) &#125;</div><div class="line"></div><div class="line"><span class="comment">// Reset resets the Builder to be empty.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span> <span class="title">Reset</span><span class="params">()</span></span> &#123;</div><div class="line">	b.addr = <span class="literal">nil</span></div><div class="line">	b.buf = <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Grow方法"><a href="#Grow方法" class="headerlink" title="Grow方法"></a>Grow方法</h3><ul>
+<li>Grow方法来扩展buf数组的分配内存的大小</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// grow copies the buffer to a new, larger buffer so that there are at least n</span></div><div class="line"><span class="comment">// bytes of capacity beyond len(b.buf).</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span> <span class="title">grow</span><span class="params">(n <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	buf := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="built_in">len</span>(b.buf), <span class="number">2</span>*<span class="built_in">cap</span>(b.buf)+n)</div><div class="line">	<span class="built_in">copy</span>(buf, b.buf)</div><div class="line">	b.buf = buf</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Grow grows b's capacity, if necessary, to guarantee space for</span></div><div class="line"><span class="comment">// another n bytes. After Grow(n), at least n bytes can be written to b</span></div><div class="line"><span class="comment">// without another allocation. If n is negative, Grow panics.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span> <span class="title">Grow</span><span class="params">(n <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	b.copyCheck()</div><div class="line">	<span class="keyword">if</span> n &lt; <span class="number">0</span> &#123;</div><div class="line">		<span class="built_in">panic</span>(<span class="string">"strings.Builder.Grow: negative count"</span>)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> <span class="built_in">cap</span>(b.buf)-<span class="built_in">len</span>(b.buf) &lt; n &#123;</div><div class="line">		b.grow(n)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span> <span class="title">copyCheck</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> b.addr == <span class="literal">nil</span> &#123;</div><div class="line">		<span class="comment">// This hack works around a failing of Go's escape analysis</span></div><div class="line">		<span class="comment">// that was causing b to escape and be heap allocated.</span></div><div class="line">		<span class="comment">// See issue 23382.</span></div><div class="line">		<span class="comment">// <span class="doctag">TODO:</span> once issue 7921 is fixed, this should be reverted to</span></div><div class="line">		<span class="comment">// just "b.addr = b".</span></div><div class="line">		b.addr = (*Builder)(noescape(unsafe.Pointer(b)))</div><div class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> b.addr != b &#123;</div><div class="line">		<span class="built_in">panic</span>(<span class="string">"strings: illegal use of non-zero Builder copied by value"</span>)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">noescape</span><span class="params">(p unsafe.Pointer)</span> <span class="title">unsafe</span>.<span class="title">Pointer</span></span> &#123;</div><div class="line">	x := <span class="keyword">uintptr</span>(p)</div><div class="line">	<span class="keyword">return</span> unsafe.Pointer(x ^ <span class="number">0</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Write相关方法"><a href="#Write相关方法" class="headerlink" title="Write相关方法"></a>Write相关方法</h3><ul>
+<li>Write方法将字节数组加添加到buf数组后面</li>
+<li>WriteByte将字节c添加到buf数组后边</li>
+<li>WriteRune将rune字符添加到buf数组后面</li>
+<li>WriteString将字符串添加到buf数组后面</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Write appends the contents of p to b's buffer.</span></div><div class="line"><span class="comment">// Write always returns len(p), nil.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span> <span class="title">Write</span><span class="params">(p []<span class="keyword">byte</span>)</span> <span class="params">(<span class="keyword">int</span>, error)</span></span> &#123;</div><div class="line">	b.copyCheck()</div><div class="line">	b.buf = <span class="built_in">append</span>(b.buf, p...)</div><div class="line">	<span class="keyword">return</span> <span class="built_in">len</span>(p), <span class="literal">nil</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// WriteByte appends the byte c to b's buffer.</span></div><div class="line"><span class="comment">// The returned error is always nil.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span> <span class="title">WriteByte</span><span class="params">(c <span class="keyword">byte</span>)</span> <span class="title">error</span></span> &#123;</div><div class="line">	b.copyCheck()</div><div class="line">	b.buf = <span class="built_in">append</span>(b.buf, c)</div><div class="line">	<span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// WriteRune appends the UTF-8 encoding of Unicode code point r to b's buffer.</span></div><div class="line"><span class="comment">// It returns the length of r and a nil error.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span> <span class="title">WriteRune</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="params">(<span class="keyword">int</span>, error)</span></span> &#123;</div><div class="line">	b.copyCheck()</div><div class="line">	<span class="keyword">if</span> r &lt; utf8.RuneSelf &#123;</div><div class="line">		b.buf = <span class="built_in">append</span>(b.buf, <span class="keyword">byte</span>(r))</div><div class="line">		<span class="keyword">return</span> <span class="number">1</span>, <span class="literal">nil</span></div><div class="line">	&#125;</div><div class="line">	l := <span class="built_in">len</span>(b.buf)</div><div class="line">	<span class="keyword">if</span> <span class="built_in">cap</span>(b.buf)-l &lt; utf8.UTFMax &#123;</div><div class="line">		b.grow(utf8.UTFMax)</div><div class="line">	&#125;</div><div class="line">	n := utf8.EncodeRune(b.buf[l:l+utf8.UTFMax], r)</div><div class="line">	b.buf = b.buf[:l+n]</div><div class="line">	<span class="keyword">return</span> n, <span class="literal">nil</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// WriteString appends the contents of s to b's buffer.</span></div><div class="line"><span class="comment">// It returns the length of s and a nil error.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span> <span class="title">WriteString</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">int</span>, error)</span></span> &#123;</div><div class="line">	b.copyCheck()</div><div class="line">	b.buf = <span class="built_in">append</span>(b.buf, s...)</div><div class="line">	<span class="keyword">return</span> <span class="built_in">len</span>(s), <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/go/" rel="tag"># go</a>
+          
+            <a href="/tags/源码解读/" rel="tag"># 源码解读</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/07/golang/源码解读/bytes/reader/" rel="next" title="go源码解读-bytes.Reader">
+                <i class="fa fa-chevron-left"></i> go源码解读-bytes.Reader
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/07/golang/源码解读/bytes/buffer/" rel="prev" title="go源码解读-bytes.Buffer">
+                go源码解读-bytes.Buffer <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#builder"><span class="nav-number">1.</span> <span class="nav-text">builder</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#常用方法"><span class="nav-number">1.1.</span> <span class="nav-text">常用方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Grow方法"><span class="nav-number">1.2.</span> <span class="nav-text">Grow方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Write相关方法"><span class="nav-number">1.3.</span> <span class="nav-text">Write相关方法</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

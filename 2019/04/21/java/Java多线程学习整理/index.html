@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java,Multi-Thread," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="进程与线程的区别
+进程是资源分配的最小单位，线程是程序执行的最小单位
+进程有自己的独立地址空间，每启动一个进程，系统就会为它分配地址空间，建立数据表来维护代码段，堆栈段和数据段。线程是共享进程中的数据的，使用相同的地址空间，CPU切换一个线程的花费远小于切换一个进程的花费，创建一个线程的开销也远小于进程。
+线程之间通信更加方便，同一进程下的线程共享全局变量，静态变量等数据，而进程之间的通信需要以通">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java多线程基础">
+<meta property="og:url" content="http://yoursite.com/2019/04/21/java/Java多线程学习整理/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="进程与线程的区别
+进程是资源分配的最小单位，线程是程序执行的最小单位
+进程有自己的独立地址空间，每启动一个进程，系统就会为它分配地址空间，建立数据表来维护代码段，堆栈段和数据段。线程是共享进程中的数据的，使用相同的地址空间，CPU切换一个线程的花费远小于切换一个进程的花费，创建一个线程的开销也远小于进程。
+线程之间通信更加方便，同一进程下的线程共享全局变量，静态变量等数据，而进程之间的通信需要以通">
+<meta property="og:image" content="http://yoursite.com/img/markdown-img-paste-20180902173821670.png">
+<meta property="og:updated_time" content="2018-09-02T13:46:48.704Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java多线程基础">
+<meta name="twitter:description" content="进程与线程的区别
+进程是资源分配的最小单位，线程是程序执行的最小单位
+进程有自己的独立地址空间，每启动一个进程，系统就会为它分配地址空间，建立数据表来维护代码段，堆栈段和数据段。线程是共享进程中的数据的，使用相同的地址空间，CPU切换一个线程的花费远小于切换一个进程的花费，创建一个线程的开销也远小于进程。
+线程之间通信更加方便，同一进程下的线程共享全局变量，静态变量等数据，而进程之间的通信需要以通">
+<meta name="twitter:image" content="http://yoursite.com/img/markdown-img-paste-20180902173821670.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/21/java/Java多线程学习整理/"/>
+
+
+
+
+
+  <title>Java多线程基础 | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/java/Java多线程学习整理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java多线程基础</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/Multi-Thread/" itemprop="url" rel="index">
+                    <span itemprop="name">Multi-Thread</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="进程与线程的区别"><a href="#进程与线程的区别" class="headerlink" title="进程与线程的区别"></a>进程与线程的区别</h1><ol>
+<li>进程是资源分配的最小单位，线程是程序执行的最小单位</li>
+<li>进程有自己的独立地址空间，每启动一个进程，系统就会为它分配地址空间，建立数据表来维护代码段，堆栈段和数据段。线程是共享进程中的数据的，使用相同的地址空间，CPU切换一个线程的花费远小于切换一个进程的花费，创建一个线程的开销也远小于进程。</li>
+<li>线程之间通信更加方便，同一进程下的线程共享全局变量，静态变量等数据，而进程之间的通信需要以通信的方式进行。</li>
+<li>多进程程序更加健壮，多线程只要一个线程死掉，整个进程挂掉。</li>
+<li>一个程序至少有一个进程，一个进程至少有一个线程。</li>
+</ol>
+<h1 id="Java实现多线程"><a href="#Java实现多线程" class="headerlink" title="Java实现多线程"></a>Java实现多线程</h1><ul>
+<li>Java中可以通过三种方式实现多线程<ul>
+<li>继承Thread类</li>
+<li>实现Runable接口</li>
+<li>实现Callable接口</li>
+</ul>
+</li>
+</ul>
+<h2 id="继承Thread类"><a href="#继承Thread类" class="headerlink" title="继承Thread类"></a>继承Thread类</h2><ul>
+<li><p>实例:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * <span class="doctag">@program</span>: 02_Basic</span></div><div class="line"><span class="comment"> * <span class="doctag">@author</span>: cdx</span></div><div class="line"><span class="comment"> * <span class="doctag">@create</span>: 2018-09-02 16:23</span></div><div class="line"><span class="comment"> **/</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CreateThreadByExtendsThread</span> <span class="keyword">extends</span> <span class="title">Thread</span></span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CreateThreadByExtendsThread</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++)</div><div class="line">            System.out.println(<span class="keyword">this</span>.name + <span class="string">" create thread by extends Thread!"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        Thread threadA = <span class="keyword">new</span> CreateThreadByExtendsThread(<span class="string">"A"</span>);</div><div class="line">        Thread threadB = <span class="keyword">new</span> CreateThreadByExtendsThread(<span class="string">"B"</span>);</div><div class="line">        threadA.start();</div><div class="line">        threadB.start();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>运行结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">B create thread by extends Thread!</div><div class="line">A create thread by extends Thread!</div><div class="line">B create thread by extends Thread!</div><div class="line">A create thread by extends Thread!</div><div class="line">A create thread by extends Thread!</div><div class="line">B create thread by extends Thread!</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="实现Runable接口"><a href="#实现Runable接口" class="headerlink" title="实现Runable接口"></a>实现Runable接口</h2><ul>
+<li>实例</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * <span class="doctag">@program</span>: 02_Basic</span></div><div class="line"><span class="comment"> * <span class="doctag">@author</span>: cdx</span></div><div class="line"><span class="comment"> * <span class="doctag">@create</span>: 2018-09-02 16:39</span></div><div class="line"><span class="comment"> **/</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CreateThreadByImplRunable</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CreateThreadByImplRunable</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++) &#123;</div><div class="line">            System.out.println(<span class="keyword">this</span>.name + <span class="string">" create thread by implements Runable!"</span>);</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                Thread.sleep(<span class="number">100</span>);</div><div class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        Runnable threadA = <span class="keyword">new</span> CreateThreadByImplRunable(<span class="string">"A"</span>);</div><div class="line">        Runnable threadB = <span class="keyword">new</span> CreateThreadByImplRunable(<span class="string">"B"</span>);</div><div class="line">        threadA.run();</div><div class="line">        threadB.run();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><p>运行结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">A create thread by implements Runable!</div><div class="line">A create thread by implements Runable!</div><div class="line">A create thread by implements Runable!</div><div class="line">B create thread by implements Runable!</div><div class="line">B create thread by implements Runable!</div><div class="line">B create thread by implements Runable!</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="实现Callable接口"><a href="#实现Callable接口" class="headerlink" title="实现Callable接口"></a>实现Callable接口</h2><ul>
+<li><p>实例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.concurrent.Callable;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * <span class="doctag">@program</span>: 02_Basic</span></div><div class="line"><span class="comment"> * <span class="doctag">@author</span>: cdx</span></div><div class="line"><span class="comment"> * <span class="doctag">@create</span>: 2018-09-02 16:45</span></div><div class="line"><span class="comment"> **/</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CreateThreadByImplCallable</span> <span class="keyword">implements</span> <span class="title">Callable</span>&lt;<span class="title">String</span>&gt; </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CreateThreadByImplCallable</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++) &#123;</div><div class="line">            System.out.println(<span class="keyword">this</span>.name + <span class="string">" create thread by implements Calable!"</span>);</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                Thread.sleep(<span class="number">1000</span>);</div><div class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        Callable&lt;String&gt; threadA = <span class="keyword">new</span> CreateThreadByImplCallable(<span class="string">"A"</span>);</div><div class="line">        Callable&lt;String&gt; threadB = <span class="keyword">new</span> CreateThreadByImplCallable(<span class="string">"B"</span>);</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            System.out.println(<span class="string">"the result of threadA: "</span> + threadA.call());</div><div class="line">            System.out.println(<span class="string">"the result of threadB: "</span> + threadB.call());</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>运行结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">A create thread by implements Calable!</div><div class="line">A create thread by implements Calable!</div><div class="line">the result of threadA: A</div><div class="line">B create thread by implements Calable!</div><div class="line">B create thread by implements Calable!</div><div class="line">B create thread by implements Calable!</div><div class="line">the result of threadB: B</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="Thread和Runnable的区别"><a href="#Thread和Runnable的区别" class="headerlink" title="Thread和Runnable的区别"></a>Thread和Runnable的区别</h2><ol>
+<li>Runable适合多个相同的程序代码的线程去处理同一个资源</li>
+<li>Runnable可以避免Java中单继承的限制</li>
+<li>Runable增加程序的健壮性，代码可以被多个线程共享，代码和数据独立</li>
+<li><p>线程池只能放入实现Runable或Callable接口的类线程，不能直接放入继承Thread的类</p>
+<blockquote>
+<ul>
+<li>main方法本身是一个线程，Java中所有线程都是同时启动的，执行取决于对CPU资源的竞争</li>
+<li>Java中每个程序至少运行两个线程, main和jvm。</li>
+</ul>
+</blockquote>
+</li>
+</ol>
+<h2 id="Runable和Callable的区别"><a href="#Runable和Callable的区别" class="headerlink" title="Runable和Callable的区别"></a>Runable和Callable的区别</h2><ol>
+<li>Callable规定的方法为call，Runable规定的方法为run</li>
+<li>call方法可以抛出异常，run方法不可以抛出异常</li>
+<li>Callable的任务执行后可返回值，运行Callable任务可以拿到一个Future对象，而Runable是不能返回值的。</li>
+<li><p>Callable缺点在于繁琐，实现Callable对象+实现call方法+ExecotorService获取Future对象</p>
+<blockquote>
+<ul>
+<li>Future表示异步计算的结果，提供了检查计算是否完成的方法，以等待计算的完成并检查结果。</li>
+<li>通过Future对象可以了解任务的执行情况，可以取消任务的执行，可以获取任务的执行结果</li>
+</ul>
+</blockquote>
+</li>
+</ol>
+<h1 id="线程状态切换"><a href="#线程状态切换" class="headerlink" title="线程状态切换"></a>线程状态切换</h1><p><img src="/img/markdown-img-paste-20180902173821670.png" alt="线程状态切换"></p>
+<ol>
+<li>新建状态(New):使用new关键字新建一个线程对象</li>
+<li>就绪状态(Runable):线程对象创建之后，其他线程调用了该对象的start()方法，该状态的线程位于可运行线程池中，变的可运行，需要竞争获取CPU时间片。</li>
+<li>运行状态(Running):就绪状态的线程获取了CPU的时间片，执行程序代码。</li>
+<li>阻塞状态(Blocking):阻塞状态是因为线程因为某种原因，暂时停止运行，知道线程进入就绪状态，才有机会转换到运行状态，。阻塞状态分为三种情况：<ol>
+<li>等待阻塞:运行的线程执行wait()方法，JVM会把该线程放入等待池中，会释放持有的锁。</li>
+<li>同步阻塞:运行的线程在获取对象的同步锁时，若该同步锁被别的线程占用，则JVM会把该线程放入锁池中。</li>
+<li>其他阻塞:运行的线程执行sleep()或join()方法，或者发出了IO请求时，JVM会把该线程晋升为阻塞状态，当sleep状态超时，join等待线程终止或者超时时，或者IO处理完毕，线程重新转入就绪状态。sleep不会释放所持有的锁。</li>
+</ol>
+</li>
+<li>死亡状态(Dead):线程执行完毕或者因异常退出了run()方法，该线程结束生命周期。</li>
+</ol>
+<h1 id="线程调度"><a href="#线程调度" class="headerlink" title="线程调度"></a>线程调度</h1><ol>
+<li><p>线程优先级</p>
+<ul>
+<li>Java中线程存在优先级，优先级别高的线程会获得更多的运行机会。</li>
+<li><p>Java中优先级取值范围为1-10，Thread类中的优先级</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * The minimum priority that a thread can have.</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">int</span> MIN_PRIORITY = <span class="number">1</span>;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * The default priority that is assigned to a thread.</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">int</span> NORM_PRIORITY = <span class="number">5</span>;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * The maximum priority that a thread can have.</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">int</span> MAX_PRIORITY = <span class="number">10</span>;</div></pre></td></tr></table></figure>
+</li>
+<li><p>Thread类的setPriority和getPriority可以设置和获取线程的优先级</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * Changes the priority of this thread.</span></div><div class="line"><span class="comment"> * &lt;p&gt;</span></div><div class="line"><span class="comment"> * First the &lt;code&gt;checkAccess&lt;/code&gt; method of this thread is called</span></div><div class="line"><span class="comment"> * with no arguments. This may result in throwing a</span></div><div class="line"><span class="comment"> * &lt;code&gt;SecurityException&lt;/code&gt;.</span></div><div class="line"><span class="comment"> * &lt;p&gt;</span></div><div class="line"><span class="comment"> * Otherwise, the priority of this thread is set to the smaller of</span></div><div class="line"><span class="comment"> * the specified &lt;code&gt;newPriority&lt;/code&gt; and the maximum permitted</span></div><div class="line"><span class="comment"> * priority of the thread's thread group.</span></div><div class="line"><span class="comment"> *</span></div><div class="line"><span class="comment"> * <span class="doctag">@param</span> newPriority priority to set this thread to</span></div><div class="line"><span class="comment"> * <span class="doctag">@exception</span>  IllegalArgumentException  If the priority is not in the</span></div><div class="line"><span class="comment"> *               range &lt;code&gt;MIN_PRIORITY&lt;/code&gt; to</span></div><div class="line"><span class="comment"> *               &lt;code&gt;MAX_PRIORITY&lt;/code&gt;.</span></div><div class="line"><span class="comment"> * <span class="doctag">@exception</span>  SecurityException  if the current thread cannot modify</span></div><div class="line"><span class="comment"> *               this thread.</span></div><div class="line"><span class="comment"> * <span class="doctag">@see</span>        #getPriority</span></div><div class="line"><span class="comment"> * <span class="doctag">@see</span>        #checkAccess()</span></div><div class="line"><span class="comment"> * <span class="doctag">@see</span>        #getThreadGroup()</span></div><div class="line"><span class="comment"> * <span class="doctag">@see</span>        #MAX_PRIORITY</span></div><div class="line"><span class="comment"> * <span class="doctag">@see</span>        #MIN_PRIORITY</span></div><div class="line"><span class="comment"> * <span class="doctag">@see</span>        ThreadGroup#getMaxPriority()</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">setPriority</span><span class="params">(<span class="keyword">int</span> newPriority)</span> </span>&#123;</div><div class="line">    ThreadGroup g;</div><div class="line">    checkAccess();</div><div class="line">    <span class="keyword">if</span> (newPriority &gt; MAX_PRIORITY || newPriority &lt; MIN_PRIORITY) &#123;</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException();</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span>((g = getThreadGroup()) != <span class="keyword">null</span>) &#123;</div><div class="line">        <span class="keyword">if</span> (newPriority &gt; g.getMaxPriority()) &#123;</div><div class="line">            newPriority = g.getMaxPriority();</div><div class="line">        &#125;</div><div class="line">        setPriority0(priority = newPriority);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * Returns this thread's priority.</span></div><div class="line"><span class="comment"> *</span></div><div class="line"><span class="comment"> * <span class="doctag">@return</span>  this thread's priority.</span></div><div class="line"><span class="comment"> * <span class="doctag">@see</span>     #setPriority</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getPriority</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> priority;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>每个线程都有默认的优先级，主线程的默认的优先级为NORMAL</p>
+</li>
+<li>线程的优先级具有继承关系</li>
+<li>一般使用三个静态常量作为优先级来完成与操作系统的线程优先级的映射</li>
+</ul>
+</li>
+<li><p>线程睡眠</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * Causes the currently executing thread to sleep (temporarily cease</span></div><div class="line"><span class="comment"> * execution) for the specified number of milliseconds plus the specified</span></div><div class="line"><span class="comment"> * number of nanoseconds, subject to the precision and accuracy of system</span></div><div class="line"><span class="comment"> * timers and schedulers. The thread does not lose ownership of any</span></div><div class="line"><span class="comment"> * monitors.</span></div><div class="line"><span class="comment"> *</span></div><div class="line"><span class="comment"> * <span class="doctag">@param</span>  millis</span></div><div class="line"><span class="comment"> *         the length of time to sleep in milliseconds</span></div><div class="line"><span class="comment"> *</span></div><div class="line"><span class="comment"> * <span class="doctag">@param</span>  nanos</span></div><div class="line"><span class="comment"> *         &#123;<span class="doctag">@code</span> 0-999999&#125; additional nanoseconds to sleep</span></div><div class="line"><span class="comment"> *</span></div><div class="line"><span class="comment"> * <span class="doctag">@throws</span>  IllegalArgumentException</span></div><div class="line"><span class="comment"> *          if the value of &#123;<span class="doctag">@code</span> millis&#125; is negative, or the value of</span></div><div class="line"><span class="comment"> *          &#123;<span class="doctag">@code</span> nanos&#125; is not in the range &#123;<span class="doctag">@code</span> 0-999999&#125;</span></div><div class="line"><span class="comment"> *</span></div><div class="line"><span class="comment"> * <span class="doctag">@throws</span>  InterruptedException</span></div><div class="line"><span class="comment"> *          if any thread has interrupted the current thread. The</span></div><div class="line"><span class="comment"> *          &lt;i&gt;interrupted status&lt;/i&gt; of the current thread is</span></div><div class="line"><span class="comment"> *          cleared when this exception is thrown.</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sleep</span><span class="params">(<span class="keyword">long</span> millis, <span class="keyword">int</span> nanos)</span></span></div><div class="line"><span class="function"><span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">    <span class="keyword">if</span> (millis &lt; <span class="number">0</span>) &#123;</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"timeout value is negative"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (nanos &lt; <span class="number">0</span> || nanos &gt; <span class="number">999999</span>) &#123;</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(</div><div class="line">                            <span class="string">"nanosecond timeout value out of range"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (nanos &gt;= <span class="number">500000</span> || (nanos != <span class="number">0</span> &amp;&amp; millis == <span class="number">0</span>)) &#123;</div><div class="line">        millis++;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    sleep(millis);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>sleep方法使线程转到阻塞状态，以毫秒为单位，当睡眠结束后，就转为Runnable状态，平台移植性比较好，睡眠过程中不会释放持有的锁。</li>
+</ul>
+</li>
+<li><p>线程等待</p>
+<ul>
+<li><p>Object类的wait()方法，导致当前的线程等待，直到其他线程调用此对象的notify()方法或者notifyAll()唤醒方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * Causes the current thread to wait until another thread invokes the</span></div><div class="line"><span class="comment"> * This method should only be called by a thread that is the owner</span></div><div class="line"><span class="comment"> * of this object's monitor. See the &#123;<span class="doctag">@code</span> notify&#125; method for a</span></div><div class="line"><span class="comment"> * description of the ways in which a thread can become the owner of</span></div><div class="line"><span class="comment"> * a monitor.</span></div><div class="line"><span class="comment"> *</span></div><div class="line"><span class="comment"> * <span class="doctag">@throws</span>  IllegalMonitorStateException  if the current thread is not</span></div><div class="line"><span class="comment"> *               the owner of the object's monitor.</span></div><div class="line"><span class="comment"> * <span class="doctag">@throws</span>  InterruptedException if any thread interrupted the</span></div><div class="line"><span class="comment"> *             current thread before or while the current thread</span></div><div class="line"><span class="comment"> *             was waiting for a notification.  The &lt;i&gt;interrupted</span></div><div class="line"><span class="comment"> *             status&lt;/i&gt; of the current thread is cleared when</span></div><div class="line"><span class="comment"> *             this exception is thrown.</span></div><div class="line"><span class="comment"> * <span class="doctag">@see</span>        java.lang.Object#notify()</span></div><div class="line"><span class="comment"> * <span class="doctag">@see</span>        java.lang.Object#notifyAll()</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">wait</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">    wait(<span class="number">0</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * Wakes up a single thread that is waiting on this object's</span></div><div class="line"><span class="comment"> * <span class="doctag">@throws</span>  IllegalMonitorStateException  if the current thread is not</span></div><div class="line"><span class="comment"> *               the owner of this object's monitor.</span></div><div class="line"><span class="comment"> * <span class="doctag">@see</span>        java.lang.Object#notifyAll()</span></div><div class="line"><span class="comment"> * <span class="doctag">@see</span>        java.lang.Object#wait()</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">notify</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * Wakes up all threads that are waiting on this object's monitor</span></div><div class="line"><span class="comment"> * <span class="doctag">@throws</span>  IllegalMonitorStateException  if the current thread is not</span></div><div class="line"><span class="comment"> *               the owner of this object's monitor.</span></div><div class="line"><span class="comment"> * <span class="doctag">@see</span>        java.lang.Object#notify()</span></div><div class="line"><span class="comment"> * <span class="doctag">@see</span>        java.lang.Object#wait()</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">notifyAll</span><span class="params">()</span></span>;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<blockquote>
+<ul>
+<li>Obj.wait()与Obj.notify()必须要与synchronized(Obj)一起使用，也就是wait,与notify是针对已经获取了Obj锁进行操作，从语法角度来说就是Obj.wait(),Obj.notify必须在synchronized(Obj){…}语句块内。从功能上来说wait就是说线程在获取对象锁后，主动释放对象锁，同时本线程休眠。直到有其它线程调用对象的notify()唤醒该线程，才能继续获取对象锁，并继续执行。</li>
+<li>相应的notify()就是对对象锁的唤醒操作。但有一点需要注意的是notify()调用后，并不是马上就释放对象锁的，而是在相应的synchronized(){}语句块执行结束，自动释放锁后，JVM会在wait()对象锁的线程中随机选取一线程，赋予其对象锁，唤醒线程，继续执行。这样就提供了在线程间同步、唤醒的操作。</li>
+<li>Thread.sleep()与Object.wait()二者都可以暂停当前线程，释放CPU控制权，主要的区别在于Object.wait()在释放CPU同时，释放了对象锁的控制</li>
+</ul>
+</blockquote>
+<ul>
+<li><p>实例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleWaitAndNotify</span> </span>&#123;</div><div class="line">    <span class="keyword">final</span> <span class="keyword">static</span> Object object = <span class="keyword">new</span> Object();</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">T1</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">            <span class="keyword">synchronized</span> (object) &#123;</div><div class="line">                System.out.println(System.currentTimeMillis() + <span class="string">":T1 start! "</span>);</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    System.out.println(System.currentTimeMillis() + <span class="string">":T1 wait for object"</span>);</div><div class="line">                    object.wait();</div><div class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                    e.printStackTrace();</div><div class="line">                &#125;</div><div class="line">                System.out.println(System.currentTimeMillis() + <span class="string">":T1 end!"</span>);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">T2</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">            <span class="keyword">synchronized</span> (object) &#123;</div><div class="line">                System.out.println(System.currentTimeMillis() + <span class="string">":T2 start! notify ont thread"</span>);</div><div class="line">                object.notify();</div><div class="line">                System.out.println(System.currentTimeMillis() + <span class="string">":T2 end!"</span>);</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    Thread.sleep(<span class="number">2000</span>);</div><div class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                    e.printStackTrace();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        Thread thread1 = <span class="keyword">new</span> T1();</div><div class="line">        Thread thread2 = <span class="keyword">new</span> T2();</div><div class="line">        thread1.start();</div><div class="line">        thread2.start();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div><div class="line"><span class="comment">/*</span></div><div class="line"><span class="comment">1535885737176:T1 start!</span></div><div class="line"><span class="comment">1535885737176:T1 wait for object</span></div><div class="line"><span class="comment">1535885737176:T2 start! notify ont thread</span></div><div class="line"><span class="comment">1535885737176:T2 end!</span></div><div class="line"><span class="comment">1535885739177:T1 end!</span></div><div class="line"><span class="comment">*/</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>wait()和sleep()区别</p>
+<ul>
+<li>共同点<ol>
+<li>多线程环境中，都可以在程序中调用阻塞当前线程指定的毫秒数</li>
+<li>wait()和sleep()都可以通过interrupt()方法打断线程的暂停状态，从而使线程立刻抛出异常。</li>
+</ol>
+</li>
+<li>不同点<ol>
+<li>sleep是Thread类的方法，wait是Object类的方法</li>
+<li>每个对象都有一个锁来控制同步访问。synchronize关键字可以和对象的锁交互，实现线程的同步。sleep方法没有释放锁，wait方法释放了锁。</li>
+<li>wait，notify，notifyAll只能在同步控制方法或者同步控制块中使用，sleep可以在任意地方使用。</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<ol>
+<li><p>线程让步</p>
+<ul>
+<li>Thread.yield()方法，导致当前正在执行的线程对象，将执行机会让给相同或者更高优先级的线程。</li>
+<li>使用目的为让相同优先级的线程之间进行适当的轮转执行，实际中yield让出时间片的线程有可能获得时间片继续执行。</li>
+<li>yield不会导致线程转入等待、睡眠、阻塞状态。大多数情况下，yield将导致线程从运行状态转入就绪状态，也可能没有效果。</li>
+</ul>
+<blockquote>
+<ul>
+<li>sleep和yield的区别<ol>
+<li>sleep使得当前线程进入阻塞状态，执行sleep的线程在指定的时间内肯定不会被执行，yield只是使当前的线程进入就绪状态，执行yield之后该线程有可能竞争到时间片从而马上执行。</li>
+<li>方法使当前运行中的线程休眠一段时间，进入阻塞状态，这段时间的长短是由程序设定的。yield方法使当前程序让出CPU占有权，让出时间无法控制。</li>
+<li>sleep允许较低优先级的线程获得运行机会，yield只会将执行机会让给同级的或者高级的线程。</li>
+</ol>
+</li>
+</ul>
+</blockquote>
+</li>
+<li><p>线程加入</p>
+<ul>
+<li><p>Thread.join()方法，等待其他线程终止。在当前的线程中调用另一个线程的join()方法，则当前线程转入阻塞状态，直到另一个线程运行结束，当前线程由阻塞状态转为就绪状态。</p>
+</li>
+<li><p>当主线程需要子线程的计算结果进行后续计算时，使用join，否则当子线程耗时较长时，主线程会先结束。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JoinMain</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">volatile</span> <span class="keyword">static</span> <span class="keyword">int</span> i = <span class="number">0</span>;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">AddThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">            i = <span class="number">0</span>;</div><div class="line">            <span class="keyword">while</span> (i &lt; <span class="number">1000000</span>) &#123;</div><div class="line">                i++;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">        AddThread addThread = <span class="keyword">new</span> AddThread();</div><div class="line">        addThread.start();</div><div class="line">        addThread.join();</div><div class="line">        System.out.println(i);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="comment">// 1000000</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>线程唤醒</p>
+<ul>
+<li>notify():唤醒在此对象监视器上等待的单个线程，如果多个线程等待，则随机唤醒一个线程。</li>
+<li>线程通过调用该对象的wait方法进入对象的监视器上处于等待状态</li>
+<li>notifyAll():唤醒所有等待线程</li>
+</ul>
+</li>
+</ol>
+<h1 id="线程同步"><a href="#线程同步" class="headerlink" title="线程同步"></a>线程同步</h1><h2 id="synchronized关键字"><a href="#synchronized关键字" class="headerlink" title="synchronized关键字"></a>synchronized关键字</h2><ol>
+<li><p>对象锁</p>
+<ul>
+<li>某个对象实例内，synchronized a method可以防止多个线程同时访问这个对象的synchronized方法。</li>
+<li>如果一个对象有多个synchronized方法，只要一个线程访问了其中的一个synchronized方法，则其他线程就不能访问这个对象的任何一个synchronized方法</li>
+<li>不同对象实例的synchronized方法是互不干扰的，其他线程可以统统是访问相同类的另一个对象中的synchronized方法。</li>
+<li>synchronized关键字在方法中的某个代码块上，同样表示对该对象加锁。</li>
+</ul>
+</li>
+<li><p>类锁</p>
+<ul>
+<li>synchronized static aMethod{} 防止多个线程同时访问这个类的synchronized static方法。其对类的所有对象实例起作用。</li>
+</ul>
+</li>
+<li><p>synchronized关键字是不能继承的，父类中的synchronized方法在继承类中不是自动创建为synchronized方法，需要显示指定。</p>
+</li>
+<li><p>synchronized关键字可有作用在instance变量，object引用，static函数和类名称字面常量上。</p>
+</li>
+</ol>
+<blockquote>
+<ul>
+<li>synchronized关键字加在方法上还是对象上，它取得的锁都是对象，而不是把一段代码或函数当做锁</li>
+<li>每个对象只有一个锁与之相关</li>
+<li>实现同步需要很大的系统开销作为代价，甚至可能造成死锁，尽量避免无谓的同步控制。</li>
+</ul>
+</blockquote>
+<ol>
+<li><p>总结</p>
+<ul>
+<li>线程同步的目的是为了保护多个线程反问一个资源时对资源的破坏。</li>
+<li>线程同步方法是通过锁来实现，每个对象都有切仅有一个锁，这个锁与一个特定的对象关联，线程一旦获取了对象锁，其他访问该对象的线程就无法再访问该对象的其他非同步方法</li>
+<li>对于静态同步方法，锁是针对这个类的，锁对象是该类的Class对象。静态和非静态方法的锁互不干预。一个线程获得锁，当在一个同步方法中访问另外对象上的同步方法时，会获取这两个对象锁。</li>
+<li>对于同步，要时刻清醒在哪个对象上同步，这是关键。</li>
+<li>编写线程安全的类，需要时刻注意对多个线程竞争访问资源的逻辑和安全做出正确的判断，对“原子”操作做出分析，并保证原子操作期间别的线程无法访问竞争资源。</li>
+<li>当多个线程等待一个对象锁时，没有获取到锁的线程将发生阻塞。</li>
+<li>死锁是线程间相互等待锁锁造成的，在实际中发生的概率非常的小，一旦程序发生死锁，程序将死掉。</li>
+</ul>
+</li>
+</ol>
+<h1 id="线程数据传递"><a href="#线程数据传递" class="headerlink" title="线程数据传递"></a>线程数据传递</h1><p>传统开发模式中，当我们调用一个函数时，通过这个函数的参数将数据传入，并通过这个函数的返回值来返回最终的计算结果。但是在多线程的异步开发模式下，数据的传递和返回和同步开发模式有很大区别。由于线程的运行和结束都是不可预料的，因此，在传递和返回函数时无法像函数一样通过函数参数和return语句来返回数据。线程之间的数据传递可以通过构造方法，变量和方法，回调函数来完成。</p>
+<h2 id="通过构造方法来传递数据"><a href="#通过构造方法来传递数据" class="headerlink" title="通过构造方法来传递数据"></a>通过构造方法来传递数据</h2><p>在线程的构建方法中传入数据，线程运行之前数据就已经确定，不会造成数据在线程运行之后才传入的线性。但是传递的数据比较多时，成本很高。同时由于Java没有默认参数，因此需要使用重载，使得构造方法本身很复杂，同时数量很多。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * <span class="doctag">@program</span>: 02_Basic</span></div><div class="line"><span class="comment"> * <span class="doctag">@author</span>: cdx</span></div><div class="line"><span class="comment"> * <span class="doctag">@create</span>: 2018-09-02 16:23</span></div><div class="line"><span class="comment"> **/</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CreateThreadByExtendsThread</span> <span class="keyword">extends</span> <span class="title">Thread</span></span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CreateThreadByExtendsThread</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++)</div><div class="line">            System.out.println(<span class="keyword">this</span>.name + <span class="string">" create thread by extends Thread!"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        Thread threadA = <span class="keyword">new</span> CreateThreadByExtendsThread(<span class="string">"A"</span>);</div><div class="line">        Thread threadB = <span class="keyword">new</span> CreateThreadByExtendsThread(<span class="string">"B"</span>);</div><div class="line">        threadA.start();</div><div class="line">        threadB.start();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="通过变量和方法"><a href="#通过变量和方法" class="headerlink" title="通过变量和方法"></a>通过变量和方法</h2><p>向对象中传入数据一般有两次机会，第一次是在建立对象时时通过构造方法将数据传入，第二次是在类中定义一些列的public的方法和变量。然后再建立完对象之后，通过对象实例逐个赋值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * <span class="doctag">@program</span>: 02_Basic</span></div><div class="line"><span class="comment"> * <span class="doctag">@author</span>: cdx</span></div><div class="line"><span class="comment"> * <span class="doctag">@create</span>: 2018-09-02 16:23</span></div><div class="line"><span class="comment"> **/</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CreateThreadByExtendsThread</span> <span class="keyword">extends</span> <span class="title">Thread</span></span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CreateThreadByExtendsThread</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CreateThreadByExtendsThread</span><span class="params">()</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++)</div><div class="line">            System.out.println(<span class="keyword">this</span>.name + <span class="string">" create thread by extends Thread!"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        Thread threadA = <span class="keyword">new</span> CreateThreadByExtendsThread();</div><div class="line">        Thread threadB = <span class="keyword">new</span> CreateThreadByExtendsThread();</div><div class="line">        ((CreateThreadByExtendsThread) threadA).writeName(<span class="string">"A"</span>);</div><div class="line">        ((CreateThreadByExtendsThread) threadB).writeName(<span class="string">"B"</span>);</div><div class="line">        threadA.start();</div><div class="line">        threadB.start();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="通过回调函数传递数据"><a href="#通过回调函数传递数据" class="headerlink" title="通过回调函数传递数据"></a>通过回调函数传递数据</h2><p>前两种都是main方法中向线程类中传递数据，实际中，有些数据需要从线程类传递到main函数中，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.Arrays;</div><div class="line"><span class="keyword">import</span> java.util.Random;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment">* <span class="doctag">@program</span>: 02_Basic</span></div><div class="line"><span class="comment">* <span class="doctag">@author</span>: cdx</span></div><div class="line"><span class="comment">* <span class="doctag">@create</span>: 2018-09-02 21:26</span></div><div class="line"><span class="comment">**/</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadDataTransferByCallback</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</div><div class="line">   <span class="keyword">private</span> Work work;</div><div class="line"></div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="title">ThreadDataTransferByCallback</span><span class="params">(Work work)</span> </span>&#123;</div><div class="line">       <span class="keyword">this</span>.work = work;</div><div class="line">   &#125;</div><div class="line"></div><div class="line"></div><div class="line">   <span class="meta">@Override</span></div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">       Random random = <span class="keyword">new</span> Random();</div><div class="line">       Data data = <span class="keyword">new</span> Data();</div><div class="line">       <span class="keyword">int</span> n1 = random.nextInt(<span class="number">1000</span>);</div><div class="line">       <span class="keyword">int</span> n2 = random.nextInt(<span class="number">1000</span>);</div><div class="line">       <span class="keyword">int</span> n3 = random.nextInt(<span class="number">1000</span>);</div><div class="line"></div><div class="line">       work.process(data, <span class="keyword">new</span> Integer[]&#123;n1, n2, n3&#125;);</div><div class="line">       System.out.printf(<span class="string">"n1 is %d, n2 is %d, n3 is %d,sum is %d\n"</span>, n1, n2, n3, data.value);</div><div class="line">   &#125;</div><div class="line"></div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">       <span class="keyword">new</span> ThreadDataTransferByCallback(<span class="keyword">new</span> Work()).run();</div><div class="line">   &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Data</span> </span>&#123;</div><div class="line">   <span class="keyword">int</span> value = <span class="number">0</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Work</span> </span>&#123;</div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">process</span><span class="params">(Data data, Integer[] numbers)</span> </span>&#123;</div><div class="line">       <span class="keyword">for</span> (Integer i : numbers)</div><div class="line">           data.value += i;</div><div class="line">   &#125;</div><div class="line">&#125;</div><div class="line"><span class="comment">// n1 is 540, n2 is 982, n3 is 945,sum is 2467</span></div></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/Multi-Thread/" rel="tag"># Multi-Thread</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/21/java/Java多线程-锁机制/" rel="next" title="Java多线程-锁机制">
+                <i class="fa fa-chevron-left"></i> Java多线程-锁机制
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/21/java/Java网络编程/" rel="prev" title="Java网络编程">
+                Java网络编程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#进程与线程的区别"><span class="nav-number">1.</span> <span class="nav-text">进程与线程的区别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Java实现多线程"><span class="nav-number">2.</span> <span class="nav-text">Java实现多线程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#继承Thread类"><span class="nav-number">2.1.</span> <span class="nav-text">继承Thread类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现Runable接口"><span class="nav-number">2.2.</span> <span class="nav-text">实现Runable接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现Callable接口"><span class="nav-number">2.3.</span> <span class="nav-text">实现Callable接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Thread和Runnable的区别"><span class="nav-number">2.4.</span> <span class="nav-text">Thread和Runnable的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Runable和Callable的区别"><span class="nav-number">2.5.</span> <span class="nav-text">Runable和Callable的区别</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线程状态切换"><span class="nav-number">3.</span> <span class="nav-text">线程状态切换</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线程调度"><span class="nav-number">4.</span> <span class="nav-text">线程调度</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线程同步"><span class="nav-number">5.</span> <span class="nav-text">线程同步</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#synchronized关键字"><span class="nav-number">5.1.</span> <span class="nav-text">synchronized关键字</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线程数据传递"><span class="nav-number">6.</span> <span class="nav-text">线程数据传递</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#通过构造方法来传递数据"><span class="nav-number">6.1.</span> <span class="nav-text">通过构造方法来传递数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通过变量和方法"><span class="nav-number">6.2.</span> <span class="nav-text">通过变量和方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通过回调函数传递数据"><span class="nav-number">6.3.</span> <span class="nav-text">通过回调函数传递数据</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

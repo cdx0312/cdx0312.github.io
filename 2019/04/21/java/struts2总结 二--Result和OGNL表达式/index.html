@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java,Struts2," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="4 ResultResult是Action执行结束之后返回的结果，result包含name和type属性，前者是返回的字符串，后者指定跳转的类型，默认为dispatcher。
+4.1 Result常用的四中类型
+dispatcher， 从一个Action里面服务器内部跳转到一个页面中, r1–&amp;gt;r1.jsp
+chain， 从一个Action里面服务器内部跳转到另一个Action中,r2–&amp;g">
+<meta property="og:type" content="article">
+<meta property="og:title" content="struts2总结（二）--Result和OGNL表达式">
+<meta property="og:url" content="http://yoursite.com/2019/04/21/java/struts2总结 二--Result和OGNL表达式/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="4 ResultResult是Action执行结束之后返回的结果，result包含name和type属性，前者是返回的字符串，后者指定跳转的类型，默认为dispatcher。
+4.1 Result常用的四中类型
+dispatcher， 从一个Action里面服务器内部跳转到一个页面中, r1–&amp;gt;r1.jsp
+chain， 从一个Action里面服务器内部跳转到另一个Action中,r2–&amp;g">
+<meta property="og:updated_time" content="2017-09-08T08:15:38.627Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="struts2总结（二）--Result和OGNL表达式">
+<meta name="twitter:description" content="4 ResultResult是Action执行结束之后返回的结果，result包含name和type属性，前者是返回的字符串，后者指定跳转的类型，默认为dispatcher。
+4.1 Result常用的四中类型
+dispatcher， 从一个Action里面服务器内部跳转到一个页面中, r1–&amp;gt;r1.jsp
+chain， 从一个Action里面服务器内部跳转到另一个Action中,r2–&amp;g">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/21/java/struts2总结 二--Result和OGNL表达式/"/>
+
+
+
+
+
+  <title>struts2总结（二）--Result和OGNL表达式 | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/java/struts2总结 二--Result和OGNL表达式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">struts2总结（二）--Result和OGNL表达式</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/Struts2/" itemprop="url" rel="index">
+                    <span itemprop="name">Struts2</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="4-Result"><a href="#4-Result" class="headerlink" title="4 Result"></a>4 Result</h2><p>Result是Action执行结束之后返回的结果，result包含name和type属性，前者是返回的字符串，后者指定跳转的类型，默认为dispatcher。</p>
+<h3 id="4-1-Result常用的四中类型"><a href="#4-1-Result常用的四中类型" class="headerlink" title="4.1 Result常用的四中类型"></a>4.1 Result常用的四中类型</h3><ol>
+<li>dispatcher， 从一个Action里面服务器内部跳转到一个页面中, r1–&gt;r1.jsp</li>
+<li>chain， 从一个Action里面服务器内部跳转到另一个Action中,r2–&gt;r2.jsp</li>
+<li>redirect， 从一个Action里面客户端重定向到一个页面中, r3-&gt;r1-&gt;r1.jsp</li>
+<li>redirectAction， 从一个Action里面客户端重定向到另一个Action中, r4-&gt;r2-&gt;r2.jsp<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">&lt;struts&gt;</div><div class="line">    &lt;constant name=&quot;struts.devMode&quot; value=&quot;true&quot; /&gt;</div><div class="line">    &lt;package name=&quot;resultTypes&quot; namespace=&quot;/r&quot; extends=&quot;struts-default&quot;&gt;</div><div class="line">	    &lt;action name=&quot;r1&quot;&gt;</div><div class="line">	    	&lt;result type=&quot;dispatcher&quot;&gt;/r1.jsp&lt;/result&gt;</div><div class="line">	    &lt;/action&gt;</div><div class="line"></div><div class="line">	    &lt;action name=&quot;r2&quot;&gt;</div><div class="line">	    	&lt;result type=&quot;redirect&quot;&gt;/r2.jsp&lt;/result&gt;</div><div class="line">	    &lt;/action&gt;</div><div class="line"></div><div class="line">	    &lt;action name=&quot;r3&quot;&gt;</div><div class="line">	    	&lt;result type=&quot;chain&quot;&gt;r1&lt;/result&gt;</div><div class="line">	    &lt;/action&gt;</div><div class="line"></div><div class="line">	    &lt;action name=&quot;r4&quot;&gt;</div><div class="line">	    	&lt;result type=&quot;redirectAction&quot;&gt;r2&lt;/result&gt;</div><div class="line">	    &lt;/action&gt;</div><div class="line"></div><div class="line">    &lt;/package&gt;</div><div class="line">&lt;/struts&gt;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="4-2-全局结果集"><a href="#4-2-全局结果集" class="headerlink" title="4.2 全局结果集"></a>4.2 全局结果集</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;global-results&gt;</div><div class="line">    		&lt;result name=&quot;mainpage&quot;&gt;/main.jsp&lt;/result&gt;</div><div class="line">&lt;/global-results&gt;</div></pre></td></tr></table></figure>
+<p>在其他任何Action中，不需要单独设置，所有返回mainpage字符串的Action会跳转到main.jsp页面。但是如果在某一个Action定义了mainpage字符串的跳转，全局跳转对这个acting失效。action结果集的优先级高于全局结果集。</p>
+<h3 id="4-3-动态结果（了解）"><a href="#4-3-动态结果（了解）" class="headerlink" title="4.3 动态结果（了解）"></a>4.3 动态结果（了解）</h3><p>动态结果集表示在struts配置的时候，Action根据类型的不同，动态的决定返回的页面。首先需要在Action中定义两个成员变量，type和r, 其中type用于接收页面传入的参数，r用于保存Action传出的结果。<br>struts.xml为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&lt;struts&gt;</div><div class="line">    &lt;constant name=&quot;struts.devMode&quot; value=&quot;true&quot; /&gt;</div><div class="line">    &lt;package name=&quot;user&quot; namespace=&quot;/user&quot; extends=&quot;struts-default&quot;&gt;</div><div class="line"></div><div class="line">	    &lt;action name=&quot;user&quot; class=&quot;com.bjsxt.struts2.user.action.UserAction&quot;&gt;</div><div class="line">	    	&lt;result&gt;$&#123;r&#125;&lt;/result&gt;</div><div class="line">	    &lt;/action&gt;	    </div><div class="line">    &lt;/package&gt;</div><div class="line"></div><div class="line">&lt;/struts&gt;</div></pre></td></tr></table></figure>
+<p>index.jsp:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;body&gt;</div><div class="line">动态结果</div><div class="line">一定不要忘了为动态结果的保存值设置set get方法</div><div class="line">&lt;ol&gt;</div><div class="line">	&lt;li&gt;&lt;a href=&quot;user/user?type=1&quot;&gt;返回success&lt;/a&gt;&lt;/li&gt;</div><div class="line">	&lt;li&gt;&lt;a href=&quot;user/user?type=2&quot;&gt;返回error&lt;/a&gt;&lt;/li&gt;</div><div class="line">&lt;/ol&gt;</div><div class="line"></div><div class="line">&lt;/body&gt;</div></pre></td></tr></table></figure>
+<p>UserAction：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">public class UserAction extends ActionSupport &#123;</div><div class="line">	private int type;</div><div class="line"></div><div class="line">	private String r;</div><div class="line"></div><div class="line">	public String getR() &#123;</div><div class="line">		return r;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	public void setR(String r) &#123;</div><div class="line">		this.r = r;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	public int getType() &#123;</div><div class="line">		return type;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	public void setType(int type) &#123;</div><div class="line">		this.type = type;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public String execute() throws Exception &#123;</div><div class="line">		if(type == 1) r=&quot;/user_success.jsp&quot;;</div><div class="line">		else if (type == 2) r=&quot;/user_error.jsp&quot;;</div><div class="line">		return &quot;success&quot;;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="4-4-传递参数"><a href="#4-4-传递参数" class="headerlink" title="4.4 传递参数"></a>4.4 传递参数</h3><p>除了request，session，application来向页面传值之外，还可以通过ValueStack和ActionContext。</p>
+<ul>
+<li>ValueStack是一个接口， <code>ValueStack vs = context.getValueStack()</code>将值从Action传到页面，ActionContext是一个类，<code>ActionContext context = ActionContext.getContext()</code>来传值，在页面中农需要<code>&lt;s:debug /&gt;</code>标签来查看结果。</li>
+<li>当Action进行跳转的时候，struts2框架会自动的把这个Action对象本身分别放到ValueStack和ActionContext中去。然后struts2将这两个对象传递给页面，在页面中可以通过这两个对象来拿到之前放进去的值。也可以在Action中拿到这两个对象手动放值:<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">ActionContext ac = ActionContext.getContext();</div><div class="line">ValueStack vs = ac.getValueStack();</div><div class="line">ac.put(&quot;ac&quot;,&quot;ac&quot;);</div><div class="line">User user = new User()；</div><div class="line">vs.push(user);</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="4-4-1-ValueStack"><a href="#4-4-1-ValueStack" class="headerlink" title="4.4.1 ValueStack"></a>4.4.1 ValueStack</h4><ol>
+<li>把一个对象放到值栈之后，文名从这个值栈中是拿不到这个对象的，但是文名可以直接拿到这个对象的属性及其属性值。</li>
+<li>从值栈中拿值的时候，是从值栈的property name这一列来拿的，拿到的是property value之一列的值。</li>
+<li>所以通过值栈来传递参数到页面需要将参数封装到一个对象中，将这个对象放到值栈中。</li>
+<li>生命周期为request</li>
+<li>创建一个新的值栈对象后，都会把这个对象放到ActionCon中去。</li>
+</ol>
+<h4 id="4-4-2-ActionContext"><a href="#4-4-2-ActionContext" class="headerlink" title="4.4.2 ActionContext"></a>4.4.2 ActionContext</h4><ol>
+<li>向ActionContext中放值的时候是通过k-v的形式存放的，String-Object键值对，取值同样是通过key拿到value。</li>
+<li>struts2框架默认向这个对象里面存放的对象很多，包括request，session，application，ValueStack，parameter等</li>
+<li>每次请求都会创建一个新的ActionContext对象</li>
+</ol>
+<h4 id="4-4-3-取值方式"><a href="#4-4-3-取值方式" class="headerlink" title="4.4.3 取值方式"></a>4.4.3 取值方式</h4><ol>
+<li><p>jsp内置对象取值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;%=request.getAttribute(&quot;name&quot;) %&gt;&lt;br&gt;</div><div class="line">&lt;%=session.getAttribute(&quot;name&quot;) %&gt;&lt;br&gt;</div><div class="line">&lt;%=application.getAttribute(&quot;name&quot;) %&gt;&lt;br&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>jstl标签+EL表达式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$&#123;requestScope.MyName &#125;&lt;br&gt;</div><div class="line"> $&#123;requestScope.name &#125;  &lt;br&gt;</div><div class="line"> $&#123;sessionScope.MyName &#125;  &lt;br&gt;</div><div class="line"> $&#123;applicationScope.MyName &#125;  &lt;br&gt;</div><div class="line"> $&#123;MyName &#125;  &lt;br&gt;</div><div class="line"> $&#123;name &#125;  &lt;br&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>struts2标签+OGNL表达式<code>&lt;s:property value=&quot;OGNL&quot;</code></p>
+</li>
+</ol>
+<blockquote>
+<ul>
+<li><p>从ValueStack中取值：这个value属性的值name,是一个OGNL表达式，表示取一个名字为name的property的值。从ValueStack中取值，如果存在重名的，默认取最上面的值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;s:property value=&quot;name&quot;/&gt;</div><div class="line">&lt;s:property value=&quot;user&quot;/&gt;</div><div class="line">&lt;s:property value=&quot;user.id&quot;/&gt;</div><div class="line">&lt;s:property value=&quot;user.name&quot;/&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>从ActionContext中取值  #</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;s:property value=&quot;#action.name&quot;/&gt;&lt;br&gt;</div><div class="line"> &lt;s:property value=&quot;#msg&quot;/&gt;&lt;br&gt;</div><div class="line"> &lt;s:property value=&quot;#user&quot;/&gt;&lt;br&gt;</div><div class="line"> &lt;s:property value=&quot;#user.id&quot;/&gt;&lt;br&gt;</div><div class="line"> &lt;s:property value=&quot;#user.name&quot;/&gt;&lt;br&gt;</div><div class="line"> &lt;s:property value=&quot;#user.age&quot;/&gt;&lt;br&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</blockquote>
+<h2 id="5-OGNL表达式"><a href="#5-OGNL表达式" class="headerlink" title="5 OGNL表达式"></a>5 OGNL表达式</h2><p>OGNL:Object-Graph Navigation Language，图对象导航语言，是struts2中默认的表达式语言。</p>
+<h3 id="5-1-访问普通方法、属性、构造方法"><a href="#5-1-访问普通方法、属性、构造方法" class="headerlink" title="5.1 访问普通方法、属性、构造方法"></a>5.1 访问普通方法、属性、构造方法</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;li&gt;访问值栈中的action的普通属性: username = &lt;s:property value=&quot;username&quot;/&gt; &lt;/li&gt;</div><div class="line">&lt;li&gt;访问值栈中对象的普通属性(get set方法)：&lt;s:property value=&quot;user.age&quot;/&gt; | &lt;s:property value=&quot;user[&apos;age&apos;]&quot;/&gt; | &lt;s:property value=&quot;user[\&quot;age\&quot;]&quot;/&gt; | wrong: &lt;%--&lt;s:property value=&quot;user[age]&quot;/&gt;--%&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;访问值栈中对象的普通属性(get set方法): &lt;s:property value=&quot;cat.friend.name&quot;/&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;访问值栈中对象的普通方法：&lt;s:property value=&quot;password.length()&quot;/&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;访问值栈中对象的普通方法：&lt;s:property value=&quot;cat.miaomiao()&quot; /&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;访问值栈中action的普通方法：&lt;s:property value=&quot;m()&quot; /&gt;&lt;/li&gt;</div><div class="line">&lt;hr /&gt;</div><div class="line">&lt;li&gt;访问普通类的构造方法：&lt;s:property value=&quot;new com.struts2.ognl.User(8)&quot;/&gt;&lt;/li&gt;</div><div class="line">&lt;hr /&gt;</div></pre></td></tr></table></figure>
+<h3 id="5-2-访问静态方法、属性"><a href="#5-2-访问静态方法、属性" class="headerlink" title="5.2 访问静态方法、属性"></a>5.2 访问静态方法、属性</h3><p>struts2默认的<code>&lt;constant name=&quot;struts.ognl.allowStaticMethodAccess&quot; value=&quot;true&quot;&gt;&lt;/constant&gt;</code>为false，需要配置成true才可以访问静态方法、属性</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;li&gt;访问静态方法：&lt;s:property value=&quot;@com.struts2.ognl.S@s()&quot;/&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;访问静态属性：&lt;s:property value=&quot;@com.struts2.ognl.S@STR&quot;/&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;访问Math类的静态方法：&lt;s:property value=&quot;@@max(2,3)&quot; /&gt;&lt;/li&gt;</div></pre></td></tr></table></figure>
+<h3 id="5-3-访问集合元素："><a href="#5-3-访问集合元素：" class="headerlink" title="5.3 访问集合元素："></a>5.3 访问集合元素：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&lt;li&gt;访问List:&lt;s:property value=&quot;users&quot;/&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;访问List中某个元素:&lt;s:property value=&quot;users[1]&quot;/&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;访问List中元素某个属性的集合:&lt;s:property value=&quot;users.&#123;age&#125;&quot;/&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;访问List中元素某个属性的集合中的特定值:&lt;s:property value=&quot;users.&#123;age&#125;[0]&quot;/&gt; | &lt;s:property value=&quot;users[0].age&quot;/&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;访问Set:&lt;s:property value=&quot;dogs&quot;/&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;访问Set中某个元素:&lt;s:property value=&quot;dogs[1]&quot;/&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;访问Map:&lt;s:property value=&quot;dogMap&quot;/&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;访问Map中某个元素:&lt;s:property value=&quot;dogMap.dog101&quot;/&gt; | &lt;s:property value=&quot;dogMap[&apos;dog101&apos;]&quot;/&gt; | &lt;s:property value=&quot;dogMap[\&quot;dog101\&quot;]&quot;/&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;访问Map中所有的key:&lt;s:property value=&quot;dogMap.keys&quot;/&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;访问Map中所有的value:&lt;s:property value=&quot;dogMap.values&quot;/&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;访问容器的大小：&lt;s:property value=&quot;dogMap.size()&quot;/&gt; | &lt;s:property value=&quot;users.size&quot;/&gt; &lt;/li&gt;</div></pre></td></tr></table></figure>
+<h3 id="5-4-投影和过滤"><a href="#5-4-投影和过滤" class="headerlink" title="5.4 投影和过滤"></a>5.4 投影和过滤</h3><ul>
+<li>“?#”：过滤所有符合条件的集合</li>
+<li>“^#”：过滤第一个符合条件的元素</li>
+<li>“$#”：过滤最后一个符合条件的元素</li>
+<li>返回的是一个集合，可以使用索引取得集合中指定的元素。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;li&gt;投影(过滤)：&lt;s:property value=&quot;users.&#123;?#this.age==1&#125;[0]&quot;/&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;投影：&lt;s:property value=&quot;users.&#123;^#this.age&gt;1&#125;.&#123;age&#125;&quot;/&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;投影：&lt;s:property value=&quot;users.&#123;$#this.age&gt;1&#125;.&#123;age&#125;&quot;/&gt;&lt;/li&gt;</div><div class="line">&lt;li&gt;投影：&lt;s:property value=&quot;users.&#123;$#this.age&gt;1&#125;.&#123;age&#125; == null&quot;/&gt;&lt;/li&gt;</div></pre></td></tr></table></figure>
+<h3 id="5-5-区分-和"><a href="#5-5-区分-和" class="headerlink" title="5.5 区分 %{} 和 ${}"></a>5.5 区分 %{} 和 ${}</h3><ul>
+<li>%{}<br>%{}的主要作用是告诉标签的处理类将它包含的字符串按照OGNL表达式处理，类似eval函数</li>
+<li>${}<br>${}的主要用于两方面：<ul>
+<li>用于国际化资源文件中</li>
+<li>用于Struts2配置文件中</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/Struts2/" rel="tag"># Struts2</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/21/java/struts2总结 三--Struts Tags/" rel="next" title="struts2总结（三）--Struts Tags">
+                <i class="fa fa-chevron-left"></i> struts2总结（三）--Struts Tags
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/21/java/struts2总结 五--interceptor拦截器/" rel="prev" title="struts2总结（五）--interceptor">
+                struts2总结（五）--interceptor <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Result"><span class="nav-number">1.</span> <span class="nav-text">4 Result</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-Result常用的四中类型"><span class="nav-number">1.1.</span> <span class="nav-text">4.1 Result常用的四中类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-全局结果集"><span class="nav-number">1.2.</span> <span class="nav-text">4.2 全局结果集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-动态结果（了解）"><span class="nav-number">1.3.</span> <span class="nav-text">4.3 动态结果（了解）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-传递参数"><span class="nav-number">1.4.</span> <span class="nav-text">4.4 传递参数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-4-1-ValueStack"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.4.1 ValueStack</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-4-2-ActionContext"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.4.2 ActionContext</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-4-3-取值方式"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.4.3 取值方式</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-OGNL表达式"><span class="nav-number">2.</span> <span class="nav-text">5 OGNL表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-访问普通方法、属性、构造方法"><span class="nav-number">2.1.</span> <span class="nav-text">5.1 访问普通方法、属性、构造方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-访问静态方法、属性"><span class="nav-number">2.2.</span> <span class="nav-text">5.2 访问静态方法、属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-访问集合元素："><span class="nav-number">2.3.</span> <span class="nav-text">5.3 访问集合元素：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-投影和过滤"><span class="nav-number">2.4.</span> <span class="nav-text">5.4 投影和过滤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-区分-和"><span class="nav-number">2.5.</span> <span class="nav-text">5.5 区分 %{} 和 ${}</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

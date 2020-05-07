@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="go," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="第八章 标准库
+标准库是一组核心包，用于扩展和增强语言的能力
+每次语言更新都会带有标准库
+标准库会严格遵守哦向后兼容的承诺
+标准库是go语言开发，构建，发布过程的一部分
+标准库由go的构建者们维护和评审
+go语言发布新版本时，标准库都会被测试，并评估性能
+
+
+开发中尽量使用标准库
+
+文档与源代码
+作为go发布包的一部分，标准库的源代码是经过预编译的，称为归档文件
+这些文件是go静态库文件，由go的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go语言实战 - 标准库">
+<meta property="og:url" content="http://yoursite.com/2020/04/21/golang/go语言实战/go语言实战-标准库/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="第八章 标准库
+标准库是一组核心包，用于扩展和增强语言的能力
+每次语言更新都会带有标准库
+标准库会严格遵守哦向后兼容的承诺
+标准库是go语言开发，构建，发布过程的一部分
+标准库由go的构建者们维护和评审
+go语言发布新版本时，标准库都会被测试，并评估性能
+
+
+开发中尽量使用标准库
+
+文档与源代码
+作为go发布包的一部分，标准库的源代码是经过预编译的，称为归档文件
+这些文件是go静态库文件，由go的">
+<meta property="og:updated_time" content="2020-04-21T10:03:30.309Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="go语言实战 - 标准库">
+<meta name="twitter:description" content="第八章 标准库
+标准库是一组核心包，用于扩展和增强语言的能力
+每次语言更新都会带有标准库
+标准库会严格遵守哦向后兼容的承诺
+标准库是go语言开发，构建，发布过程的一部分
+标准库由go的构建者们维护和评审
+go语言发布新版本时，标准库都会被测试，并评估性能
+
+
+开发中尽量使用标准库
+
+文档与源代码
+作为go发布包的一部分，标准库的源代码是经过预编译的，称为归档文件
+这些文件是go静态库文件，由go的">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/04/21/golang/go语言实战/go语言实战-标准库/"/>
+
+
+
+
+
+  <title>go语言实战 - 标准库 | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/21/golang/go语言实战/go语言实战-标准库/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">go语言实战 - 标准库</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-21T10:27:52+08:00">
+                2020-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="第八章-标准库"><a href="#第八章-标准库" class="headerlink" title="第八章 标准库"></a>第八章 标准库</h2><ul>
+<li>标准库是一组核心包，用于扩展和增强语言的能力<ul>
+<li>每次语言更新都会带有标准库</li>
+<li>标准库会严格遵守哦向后兼容的承诺</li>
+<li>标准库是go语言开发，构建，发布过程的一部分</li>
+<li>标准库由go的构建者们维护和评审</li>
+<li>go语言发布新版本时，标准库都会被测试，并评估性能</li>
+</ul>
+</li>
+<li>开发中尽量使用标准库</li>
+</ul>
+<h3 id="文档与源代码"><a href="#文档与源代码" class="headerlink" title="文档与源代码"></a>文档与源代码</h3><ul>
+<li>作为go发布包的一部分，标准库的源代码是经过预编译的，称为归档文件</li>
+<li>这些文件是go静态库文件，由go的构建工具创建，并在编译和链接最终程序时被使用</li>
+</ul>
+<h3 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h3><h4 id="log包简介"><a href="#log包简介" class="headerlink" title="log包简介"></a>log包简介</h4><ul>
+<li>log包日志项包含前缀、日期时间戳、源文件、行数、日志消息等组成</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> <span class="string">"log"</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</div><div class="line">	log.SetPrefix(<span class="string">"TRACE: "</span>)</div><div class="line">	log.SetFlags(log.Ldate | log.Lmicroseconds | log.Llongfile)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	log.Println(<span class="string">"message"</span>)</div><div class="line"></div><div class="line">	log.Fatalln(<span class="string">"fatal message"</span>)</div><div class="line"></div><div class="line">	log.Panicln(<span class="string">"panic message"</span>)</div><div class="line">&#125;</div><div class="line"><span class="comment">/* 输出结果</span></div><div class="line"><span class="comment">TRACE: 2020/04/21 14:34:16.281971 /Users/dxchang/go/src/api/books/go-in-action/8-pkg/log.go:11: message</span></div><div class="line"><span class="comment">TRACE: 2020/04/21 14:34:16.282102 /Users/dxchang/go/src/api/books/go-in-action/8-pkg/log.go:13: fatal message</span></div><div class="line"><span class="comment">*/</span></div></pre></td></tr></table></figure>
+<ul>
+<li>init函数作为初始化的一部分，会在main函数执行前执行</li>
+<li>SetPrefix()方法进行设置前缀，一般全部大写</li>
+<li>SetFlags设定标志来控制可以写到每个日志项的输出信息，如下</li>
+<li>这样可以用一个字节来存储日志的标志位，<code>log.Ldate | log.Ltime | log.Lmicroseconds | log.Llongfile</code>和传入<code>00001111</code>是等价的</li>
+<li>日志中以ln结尾的函数会换行，以f结尾的函数可以自定义格式化输出</li>
+<li>log包是多线程安全的，多个goroutine同时来调用一个日志记录器的函数，不会存在写冲突</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> (</div><div class="line">	Ldate         = <span class="number">1</span> &lt;&lt; <span class="literal">iota</span>     <span class="comment">// 本地日期: 2009/01/23</span></div><div class="line">	Ltime                         <span class="comment">// 本地时间: 01:23:23</span></div><div class="line">	Lmicroseconds                 <span class="comment">// 时间毫秒数: 01:23:23.123123.</span></div><div class="line">	Llongfile                     <span class="comment">// 日志打印的文件全路径: /a/b/c/d.go:23</span></div><div class="line">	Lshortfile                    <span class="comment">// 日志打印的文件短路径: d.go:23</span></div><div class="line">	LUTC                          <span class="comment">// 使用UTC时区时间</span></div><div class="line">	LstdFlags     = Ldate | Ltime <span class="comment">// 默认日志，打印日期和时间，到秒</span></div><div class="line">)</div></pre></td></tr></table></figure>
+<ul>
+<li>Fatal系列函数来先写消息，然后调用os.Exit方法退出</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Fatal is equivalent to Print() followed by a call to os.Exit(1).</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Fatal</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	std.Output(<span class="number">2</span>, fmt.Sprint(v...))</div><div class="line">	os.Exit(<span class="number">1</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Fatalf is equivalent to Printf() followed by a call to os.Exit(1).</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Fatalf</span><span class="params">(format <span class="keyword">string</span>, v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	std.Output(<span class="number">2</span>, fmt.Sprintf(format, v...))</div><div class="line">	os.Exit(<span class="number">1</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Fatalln is equivalent to Println() followed by a call to os.Exit(1).</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Fatalln</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	std.Output(<span class="number">2</span>, fmt.Sprintln(v...))</div><div class="line">	os.Exit(<span class="number">1</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Panic函数写日志消息，触发panic，打印堆栈然后退出</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Panic is equivalent to Print() followed by a call to panic().</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Panic</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	s := fmt.Sprint(v...)</div><div class="line">	std.Output(<span class="number">2</span>, s)</div><div class="line">	<span class="built_in">panic</span>(s)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Panicf is equivalent to Printf() followed by a call to panic().</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Panicf</span><span class="params">(format <span class="keyword">string</span>, v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	s := fmt.Sprintf(format, v...)</div><div class="line">	std.Output(<span class="number">2</span>, s)</div><div class="line">	<span class="built_in">panic</span>(s)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Panicln is equivalent to Println() followed by a call to panic().</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Panicln</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	s := fmt.Sprintln(v...)</div><div class="line">	std.Output(<span class="number">2</span>, s)</div><div class="line">	<span class="built_in">panic</span>(s)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Print函数是写日志消息的标准方法</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Print calls Output to print to the standard logger.</span></div><div class="line"><span class="comment">// Arguments are handled in the manner of fmt.Print.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Print</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	std.Output(<span class="number">2</span>, fmt.Sprint(v...))</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Printf calls Output to print to the standard logger.</span></div><div class="line"><span class="comment">// Arguments are handled in the manner of fmt.Printf.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Printf</span><span class="params">(format <span class="keyword">string</span>, v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	std.Output(<span class="number">2</span>, fmt.Sprintf(format, v...))</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Println calls Output to print to the standard logger.</span></div><div class="line"><span class="comment">// Arguments are handled in the manner of fmt.Println.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Println</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	std.Output(<span class="number">2</span>, fmt.Sprintln(v...))</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="定制的日志记录器"><a href="#定制的日志记录器" class="headerlink" title="定制的日志记录器"></a>定制的日志记录器</h4><ul>
+<li>创建一个定制的日志记录器，需要创建一个Logger类型值</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> (</div><div class="line">	Trace *log.Logger <span class="comment">// 记录所有日志</span></div><div class="line">	Info *log.Logger <span class="comment">// 重要的信息</span></div><div class="line">	Warning *log.Logger <span class="comment">// 警告</span></div><div class="line">	Error *log.Logger <span class="comment">// 错误</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</div><div class="line">	file, err := os.OpenFile(<span class="string">"errors.txt"</span>, os.O_CREATE | os.O_WRONLY | os.O_APPEND, <span class="number">0666</span>)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		log.Fatalln(<span class="string">"Failed to open error log file:"</span>, err)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	Trace = log.New(ioutil.Discard, <span class="string">"TRACE: "</span>, log.Ldate | log.Ltime | log.Lshortfile)</div><div class="line">	Info = log.New(os.Stdout, <span class="string">"INFO: "</span>, log.Ldate | log.Ltime | log.Lshortfile)</div><div class="line">	Warning = log.New(os.Stdout, <span class="string">"WARNING: "</span>, log.Ldate | log.Ltime | log.Lshortfile)</div><div class="line">	Error = log.New(io.MultiWriter(file, os.Stderr), <span class="string">"TRACE: "</span>, log.Ldate | log.Ltime | log.Lshortfile)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	Trace.Println(<span class="string">"I have something standard to say"</span>)</div><div class="line">	Info.Println(<span class="string">"Special Information"</span>)</div><div class="line">	Warning.Println(<span class="string">"There is something you need to know"</span>)</div><div class="line">	Error.Println(<span class="string">"Something has failed"</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>log包的New()函数完成Logger类型的初始化，设定输出位置，日志前缀，及日志输出内容</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(out io.Writer, prefix <span class="keyword">string</span>, flag <span class="keyword">int</span>)</span> *<span class="title">Logger</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> &amp;Logger&#123;out: out, prefix: prefix, flag: flag&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>ioutil.Discard实现了io.Writer接口，但是并不会发生实际的写入，使用Discard可以禁用这个类型的日志</li>
+<li>os.Stdin、os.Stdout、os.Stderr分别指向标准输入，标准输出，标准错误</li>
+<li>io.MultiWriter()方法可以向多个实现了io.Writer接口的位置写入日志</li>
+</ul>
+<h4 id="log包中的其余函数"><a href="#log包中的其余函数" class="headerlink" title="log包中的其余函数"></a>log包中的其余函数</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Flags</span><span class="params">()</span> <span class="title">int</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> std.Flags()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">SetFlags</span><span class="params">(flag <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	std.SetFlags(flag)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Prefix</span><span class="params">()</span> <span class="title">string</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> std.Prefix()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">SetPrefix</span><span class="params">(prefix <span class="keyword">string</span>)</span></span> &#123;</div><div class="line">	std.SetPrefix(prefix)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// SetOutput sets the output destination for the standard logger.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">SetOutput</span><span class="params">(w io.Writer)</span></span> &#123;</div><div class="line">	std.mu.Lock()</div><div class="line">	<span class="keyword">defer</span> std.mu.Unlock()</div><div class="line">	std.out = w</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Output</span><span class="params">(calldepth <span class="keyword">int</span>, s <span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> std.Output(calldepth+<span class="number">1</span>, s) <span class="comment">// +1 for this frame.</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>logger结构体</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Logger <span class="keyword">struct</span> &#123;</div><div class="line">	mu     sync.Mutex <span class="comment">// 互斥锁，支持原子写入</span></div><div class="line">	prefix <span class="keyword">string</span>     <span class="comment">// 日志前缀</span></div><div class="line">	flag   <span class="keyword">int</span>        <span class="comment">// 日志输出内容标志位</span></div><div class="line">	out    io.Writer  <span class="comment">// 日志输出位置</span></div><div class="line">	buf    []<span class="keyword">byte</span>     <span class="comment">// 要追加的日志内容</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>logger核心方法 Output</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// s为要写入的日志，calldepth目前均为2</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *Logger)</span> <span class="title">Output</span><span class="params">(calldepth <span class="keyword">int</span>, s <span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</div><div class="line">	now := time.Now() <span class="comment">// get this early.</span></div><div class="line">	<span class="keyword">var</span> file <span class="keyword">string</span></div><div class="line">	<span class="keyword">var</span> line <span class="keyword">int</span></div><div class="line">	l.mu.Lock()</div><div class="line">	<span class="keyword">defer</span> l.mu.Unlock()</div><div class="line">	<span class="keyword">if</span> l.flag&amp;(Lshortfile|Llongfile) != <span class="number">0</span> &#123;</div><div class="line">		<span class="comment">// Release lock while getting caller info - it's expensive.</span></div><div class="line">		l.mu.Unlock()</div><div class="line">		<span class="keyword">var</span> ok <span class="keyword">bool</span></div><div class="line">		_, file, line, ok = runtime.Caller(calldepth)</div><div class="line">		<span class="keyword">if</span> !ok &#123;</div><div class="line">			file = <span class="string">"???"</span></div><div class="line">			line = <span class="number">0</span></div><div class="line">		&#125;</div><div class="line">		l.mu.Lock()</div><div class="line">	&#125;</div><div class="line">	l.buf = l.buf[:<span class="number">0</span>]</div><div class="line">	l.formatHeader(&amp;l.buf, now, file, line)</div><div class="line">	l.buf = <span class="built_in">append</span>(l.buf, s...)</div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(s) == <span class="number">0</span> || s[<span class="built_in">len</span>(s)<span class="number">-1</span>] != <span class="string">'\n'</span> &#123;</div><div class="line">		l.buf = <span class="built_in">append</span>(l.buf, <span class="string">'\n'</span>)</div><div class="line">	&#125;</div><div class="line">	_, err := l.out.Write(l.buf)</div><div class="line">	<span class="keyword">return</span> err</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="编码-解码"><a href="#编码-解码" class="headerlink" title="编码/解码"></a>编码/解码</h3><ul>
+<li>xml/json包可以完成json和xml的编码解码</li>
+</ul>
+<h4 id="解码JSON"><a href="#解码JSON" class="headerlink" title="解码JSON"></a>解码JSON</h4><ul>
+<li>使用json包的NewDecode函数和Decode方法来完成json解码</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> gResponse <span class="keyword">struct</span> &#123;</div><div class="line">	ErrCode <span class="keyword">int</span> <span class="string">`json:"errcode"`</span></div><div class="line">	ErrMsg <span class="keyword">string</span> <span class="string">`json:"errmsg"`</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	uri := <span class="string">"https://api.weixin.qq.com/cgi-bin/user/info"</span></div><div class="line">	resp, err := http.Get(uri)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		log.Println(<span class="string">"ERROR: "</span>, err)</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">defer</span> resp.Body.Close()</div><div class="line"></div><div class="line">	<span class="keyword">var</span> gr gResponse</div><div class="line">	err = json.NewDecoder(resp.Body).Decode(&amp;gr)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		log.Println(<span class="string">"ERROR: "</span>, err)</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	fmt.Println(gr)</div><div class="line">&#125;</div><div class="line"><span class="comment">// &#123;41001 access_token missing hints: [xHkBIOLoRa-GmALMa!]&#125;</span></div></pre></td></tr></table></figure>
+<ul>
+<li>json中NewDecoder方法返回Decoder对象</li>
+<li>Decoder结构体从输入流中读取数据并解码成json</li>
+<li>Decode方法完成JSON的解析映射</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewDecoder</span><span class="params">(r io.Reader)</span> *<span class="title">Decoder</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> &amp;Decoder&#123;r: r&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">// A Decoder reads and decodes JSON values from an input stream.</span></div><div class="line"><span class="keyword">type</span> Decoder <span class="keyword">struct</span> &#123;</div><div class="line">	r       io.Reader</div><div class="line">	buf     []<span class="keyword">byte</span></div><div class="line">	d       decodeState</div><div class="line">	scanp   <span class="keyword">int</span>   <span class="comment">// start of unread data in buf</span></div><div class="line">	scanned <span class="keyword">int64</span> <span class="comment">// amount of data already scanned</span></div><div class="line">	scan    scanner</div><div class="line">	err     error</div><div class="line"></div><div class="line">	tokenState <span class="keyword">int</span></div><div class="line">	tokenStack []<span class="keyword">int</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(dec *Decoder)</span> <span class="title">Decode</span><span class="params">(v <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">error</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> dec.err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> dec.err</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">if</span> err := dec.tokenPrepareForDecode(); err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> err</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">if</span> !dec.tokenValueAllowed() &#123;</div><div class="line">		<span class="keyword">return</span> &amp;SyntaxError&#123;msg: <span class="string">"not at beginning of value"</span>, Offset: dec.offset()&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// Read whole value into buffer.</span></div><div class="line">	n, err := dec.readValue()</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> err</div><div class="line">	&#125;</div><div class="line">	dec.d.init(dec.buf[dec.scanp : dec.scanp+n])</div><div class="line">	dec.scanp += n</div><div class="line"></div><div class="line">	err = dec.d.unmarshal(v)</div><div class="line"></div><div class="line">	dec.tokenValueEnd()</div><div class="line"></div><div class="line">	<span class="keyword">return</span> err</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>json文档以string的形式存在，此时使用json.Unmarshal方法完成反序列化处理</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> gResponse <span class="keyword">struct</span> &#123;</div><div class="line">	ErrCode <span class="keyword">int</span> <span class="string">`json:"errcode"`</span></div><div class="line">	ErrMsg <span class="keyword">string</span> <span class="string">`json:"errmsg"`</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	uri := <span class="string">"https://api.weixin.qq.com/cgi-bin/user/info"</span></div><div class="line">	resp, err := http.Get(uri)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		log.Println(<span class="string">"ERROR: "</span>, err)</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">defer</span> resp.Body.Close()</div><div class="line"></div><div class="line">	bytes, err := ioutil.ReadAll(resp.Body)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		log.Println(<span class="string">"ERROR: "</span>, err)</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">var</span> gr gResponse</div><div class="line">	err = json.Unmarshal(bytes, &amp;gr)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		log.Println(<span class="string">"ERROR: "</span>, err)</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	fmt.Println(gr)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="编码JSON"><a href="#编码JSON" class="headerlink" title="编码JSON"></a>编码JSON</h4><ul>
+<li>MarshalIndent方法可以完成map和结构体到json的映射</li>
+</ul>
+<h3 id="输入和输出"><a href="#输入和输出" class="headerlink" title="输入和输出"></a>输入和输出</h3><h4 id="Writer和Reader接口"><a href="#Writer和Reader接口" class="headerlink" title="Writer和Reader接口"></a>Writer和Reader接口</h4><ul>
+<li>io包的核心就是Writer和Reader接口<ul>
+<li>Writer接口<ul>
+<li>Writer接口接收字节切片，返回两个值，写入的字节数和错误输出</li>
+<li>Writer接口从p里向底层的数据流写入len(p)字节的数据</li>
+<li>Writer无论如何也不能改p中的数据</li>
+</ul>
+</li>
+<li>Reader接口<ul>
+<li>Reader接口接收字节切片，返回两个值，读取的字节数和错误输出</li>
+<li>Read最多读入len(p)个字节，保存到p</li>
+<li>可以使用所有的p的空间来存储临时数据</li>
+<li>当字节长度不足len(p)，Read会立刻返回可用的数据，而不是等待更多的数据</li>
+<li>当成功读取了部分字节后，发生错误或者读取完成，Read方法会返回读入的字节数</li>
+<li>即使有错误发生，当读取的字节数&gt;0时，需要先处理读取的数据，再处理错误</li>
+<li>读取的实现，不鼓励返回0个字节并且返回nil值的错误<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Writer <span class="keyword">interface</span> &#123;</div><div class="line">	Write(p []<span class="keyword">byte</span>) (n <span class="keyword">int</span>, err error)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> Reader <span class="keyword">interface</span> &#123;</div><div class="line">	Read(p []<span class="keyword">byte</span>) (n <span class="keyword">int</span>, err error)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="keyword">var</span> b bytes.Buffer</div><div class="line">	b.Write([]<span class="keyword">byte</span>(<span class="string">"Hello "</span>))</div><div class="line"></div><div class="line">	fmt.Fprintf(&amp;b, <span class="string">"World"</span>)</div><div class="line"></div><div class="line">	b.WriteTo(os.Stdout)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Buffe的Write方法</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Write appends the contents of p to the buffer, growing the buffer as</span></div><div class="line"><span class="comment">// needed. The return value n is the length of p; err is always nil. If the</span></div><div class="line"><span class="comment">// buffer becomes too large, Write will panic with ErrTooLarge.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">Write</span><span class="params">(p []<span class="keyword">byte</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	b.lastRead = opInvalid</div><div class="line">	m, ok := b.tryGrowByReslice(<span class="built_in">len</span>(p))</div><div class="line">	<span class="keyword">if</span> !ok &#123;</div><div class="line">		m = b.grow(<span class="built_in">len</span>(p))</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="built_in">copy</span>(b.buf[m:], p), <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="curl"><a href="#curl" class="headerlink" title="curl"></a>curl</h4><ul>
+<li>一个简单的curl,第一个参数指定curl的网站，，第二个参数指定将curl获取的response的body写入的文件名</li>
+<li>defer 打开关闭的资源</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	r, err := http.Get(os.Args[<span class="number">1</span>])</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		log.Fatalln(err)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	file, err := os.Create(os.Args[<span class="number">2</span>])</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		log.Fatalln(err)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">defer</span> file.Close()</div><div class="line"></div><div class="line">	dest := io.MultiWriter(os.Stdout, file)</div><div class="line">	io.Copy(dest, r.Body)</div><div class="line">	<span class="keyword">if</span> err := r.Body.Close(); err != <span class="literal">nil</span> &#123;</div><div class="line">		log.Fatalln(err)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><ul>
+<li>标准库由特殊的保证，并且被社区广泛应用</li>
+<li>使用标准库会让你的代码更易于管理</li>
+<li>接口允许你的代码组合已有的功能</li>
+<li>阅读标准库的代码是熟悉go语言习惯的好方法</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/go/" rel="tag"># go</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/17/golang/源码解读/container/ring/" rel="next" title="go源码解读-ring">
+                <i class="fa fa-chevron-left"></i> go源码解读-ring
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/04/23/golang/go语言实战/go语言实战-测试/" rel="prev" title="go语言实战 - 测试">
+                go语言实战 - 测试 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#第八章-标准库"><span class="nav-number">1.</span> <span class="nav-text">第八章 标准库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#文档与源代码"><span class="nav-number">1.1.</span> <span class="nav-text">文档与源代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#日志"><span class="nav-number">1.2.</span> <span class="nav-text">日志</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#log包简介"><span class="nav-number">1.2.1.</span> <span class="nav-text">log包简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#定制的日志记录器"><span class="nav-number">1.2.2.</span> <span class="nav-text">定制的日志记录器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#log包中的其余函数"><span class="nav-number">1.2.3.</span> <span class="nav-text">log包中的其余函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编码-解码"><span class="nav-number">1.3.</span> <span class="nav-text">编码/解码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#解码JSON"><span class="nav-number">1.3.1.</span> <span class="nav-text">解码JSON</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#编码JSON"><span class="nav-number">1.3.2.</span> <span class="nav-text">编码JSON</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输入和输出"><span class="nav-number">1.4.</span> <span class="nav-text">输入和输出</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Writer和Reader接口"><span class="nav-number">1.4.1.</span> <span class="nav-text">Writer和Reader接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#例子"><span class="nav-number">1.4.2.</span> <span class="nav-text">例子</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#curl"><span class="nav-number">1.4.3.</span> <span class="nav-text">curl</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">1.5.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

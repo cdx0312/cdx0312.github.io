@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="JMS,ActiveMQ," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="上一节总结了ActiveMQ的使用，主要的还是总结了在项目中直接使用和用Spring集成使用。这一节要进一步深入ActiveMQ，学习其内部的原理性的东西。
+SessionActiveMQ消息的发送和接收到离不开Session的建立，首先查看Session的源码：
+123456789public interface Session extends Runnable &amp;#123;    int AU">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ActiveMQ学习总结（二）">
+<meta property="og:url" content="http://yoursite.com/2019/04/21/java/ActiveMQ学习总结（二）/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="上一节总结了ActiveMQ的使用，主要的还是总结了在项目中直接使用和用Spring集成使用。这一节要进一步深入ActiveMQ，学习其内部的原理性的东西。
+SessionActiveMQ消息的发送和接收到离不开Session的建立，首先查看Session的源码：
+123456789public interface Session extends Runnable &amp;#123;    int AU">
+<meta property="og:image" content="http://yoursite.com/img/ActiveMQ-1.png">
+<meta property="og:image" content="http://yoursite.com/img/ActiveMQ-2.png">
+<meta property="og:image" content="http://yoursite.com/img/ActiveMQ-3.png">
+<meta property="og:updated_time" content="2018-04-18T09:27:35.192Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ActiveMQ学习总结（二）">
+<meta name="twitter:description" content="上一节总结了ActiveMQ的使用，主要的还是总结了在项目中直接使用和用Spring集成使用。这一节要进一步深入ActiveMQ，学习其内部的原理性的东西。
+SessionActiveMQ消息的发送和接收到离不开Session的建立，首先查看Session的源码：
+123456789public interface Session extends Runnable &amp;#123;    int AU">
+<meta name="twitter:image" content="http://yoursite.com/img/ActiveMQ-1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/21/java/ActiveMQ学习总结（二）/"/>
+
+
+
+
+
+  <title>ActiveMQ学习总结（二） | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/java/ActiveMQ学习总结（二）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ActiveMQ学习总结（二）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JMS/" itemprop="url" rel="index">
+                    <span itemprop="name">JMS</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JMS/ActiveMQ/" itemprop="url" rel="index">
+                    <span itemprop="name">ActiveMQ</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>上一节总结了ActiveMQ的使用，主要的还是总结了在项目中直接使用和用Spring集成使用。这一节要进一步深入ActiveMQ，学习其内部的原理性的东西。</p>
+<h1 id="Session"><a href="#Session" class="headerlink" title="Session"></a>Session</h1><p>ActiveMQ消息的发送和接收到离不开Session的建立，首先查看Session的源码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public interface Session extends Runnable &#123;</div><div class="line">    int AUTO_ACKNOWLEDGE = 1;</div><div class="line">    int CLIENT_ACKNOWLEDGE = 2;</div><div class="line">    int DUPS_OK_ACKNOWLEDGE = 3;</div><div class="line">    int SESSION_TRANSACTED = 0;</div><div class="line"></div><div class="line">    BytesMessage createBytesMessage() throws JMSException;</div><div class="line">    //omit</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>而ActiveMQ的Session的创建需要通过Connection的createSession方法,该方法需要设置两个参数，第一个参数表示是否支持事务，第二个参数表示签收模式。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">public interface Connection &#123;</div><div class="line">    Session createSession(boolean var1, int var2) throws JMSException;</div><div class="line">    //omit</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>所谓的签收模式也就是消费者在收到消息之后，需要通知消息服务器收到了消息。当消息服务器收到回执之后，本条消息将失效。而如果消费者收到了消息却并不签收，则本条消息继续有效，可能会被其他消费者消费。</p>
+<ul>
+<li>AUTO_ACKNOWLEDGE ：表示消费者接收到消息时自动签收</li>
+<li>CLIENT_ACKNOWLEDGE ：消费者接收消息之后需要手动签收</li>
+<li>DUPS_OK_ACKNOWLEDGE ：签收不签收都可以，要求消费者可以容忍重复消费。</li>
+</ul>
+<p>实际中更加推荐采用手动签收，理论上说，消费者收到消息不代表消息传递的结束，只有当消费者正确处理了消息才是整个消息传递流程的终点。因此如果自动签却没有成功处理收会导致消息丢失。</p>
+<h1 id="消息顺序消费"><a href="#消息顺序消费" class="headerlink" title="消息顺序消费"></a>消息顺序消费</h1><h2 id="消息优先级"><a href="#消息优先级" class="headerlink" title="消息优先级"></a>消息优先级</h2><p>MessageProvider的send方法存在多个重载方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">//</div><div class="line">// Source code recreated from a .class file by IntelliJ IDEA</div><div class="line">// (powered by Fernflower decompiler)</div><div class="line">//</div><div class="line"></div><div class="line">package javax.jms;</div><div class="line"></div><div class="line">public interface MessageProducer &#123;</div><div class="line">    //omit above</div><div class="line">    void send(Message var1) throws JMSException;</div><div class="line"></div><div class="line">    void send(Message var1, int var2, int var3, long var4) throws JMSException;</div><div class="line"></div><div class="line">    void send(Destination var1, Message var2) throws JMSException;</div><div class="line"></div><div class="line">    void send(Destination var1, Message var2, int var3, int var4, long var5) throws JMSException;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><p>而我们在创建生产者时指定了Destination，也可以在send的时候指定。而且实际工程中的业务逻辑会更加复杂，可能会存在各种判断决定消息发往哪个地址，因此不推荐在创建MessageProducer的时候创建Destination。</p>
+</li>
+<li><p>消息优先级，0-9。其中0-4为普通消息，5-9为加急消息，消息的默认级别是4。但是实际上，优先级只是个理论上的概念，ActiveMQ并不能保证消费的顺序性。</p>
+</li>
+</ul>
+<h2 id="顺序消费"><a href="#顺序消费" class="headerlink" title="顺序消费"></a>顺序消费</h2><p>当我们需要对传入的消息设定一个固定的顺序的时候，比如商城项目中用户下单，支付，发货就是有严格的先后顺序的，不可能先发货在支付。这是或我们需要保证ActiveMQ的顺序执行。</p>
+<ul>
+<li>一个简单的思路是根据用户ID做一个哈希表，将消息定位到不同的队列上，从而可以使得同一个用户的消息将发往同一个队列。 然后对于同一个队列三个消息，比如订单消息，支付消息，发货消息，将其先后交付给订单系统，支付系统，物流系统进行处理。这个处理过程是同步的，但是在分布式场景下，并不会降低系统的处理性能。</li>
+</ul>
+<h1 id="消息的同步与异步"><a href="#消息的同步与异步" class="headerlink" title="消息的同步与异步"></a>消息的同步与异步</h1><p>接收消息，可以通过消费者的receive方法，这种方法是client端主动接收消息，也就是同步接收。需要写一个死循环来不停的接受消息。而ActiveMQ提供了异步接收的方法。其实在上一节已经使用了，但是这次单独写出来。原理很简单，我们设置一个消息监听的机制，当队列上有消息了，则回调追星messageListener接口的onMessage方法。这次贴一个我商城里面使用的Listener实现类，实现后台商品添加和索引库的同步，简单逻辑是收到商品添加事件消息之后，根据id去数据库里面查询，然后添加到document中，加到索引库。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 监听商品添加事件，同步索引库</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/9</div><div class="line"> */</div><div class="line">public class ItemAddMessageListener implements MessageListener&#123;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 注入DAO</div><div class="line">     */</div><div class="line">    @Autowired</div><div class="line">    private SearchItemMapper searchItemMapper;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 注入SolrServer对象</div><div class="line">     */</div><div class="line">    @Autowired</div><div class="line">    private SolrServer solrServer;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onMessage(Message message) &#123;</div><div class="line">        try &#123;</div><div class="line">            //从消息中取商品id</div><div class="line">            TextMessage textMessage = (TextMessage) message;</div><div class="line">            String text = textMessage.getText();</div><div class="line">            long itemId = Long.parseLong(text);</div><div class="line">            //根据商品id查询数据库，取商品信息,需要设置等待时间，等待事务提交</div><div class="line">            Thread.sleep(1000);</div><div class="line">            SearchItem searchItem = searchItemMapper.getItemById(itemId);</div><div class="line">            //创建文档对象</div><div class="line">            SolrInputDocument document = new SolrInputDocument();</div><div class="line">            //向文档对象中添加域</div><div class="line">            document.addField(&quot;id&quot;, searchItem.getId());</div><div class="line">            document.addField(&quot;item_title&quot;, searchItem.getTitle());</div><div class="line">            document.addField(&quot;item_sell_point&quot;, searchItem.getSell_point());</div><div class="line">            document.addField(&quot;item_price&quot;, searchItem.getPrice());</div><div class="line">            document.addField(&quot;item_image&quot;, searchItem.getImage());</div><div class="line">            document.addField(&quot;item_category_name&quot;, searchItem.getCategory_name());</div><div class="line">            document.addField(&quot;item_desc&quot;, searchItem.getItem_desc());</div><div class="line">            //把文档对象写入索引库</div><div class="line">            solrServer.add(document);</div><div class="line">            //提交</div><div class="line">            solrServer.commit();</div><div class="line">        &#125; catch (JMSException | InterruptedException | SolrServerException | IOException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="P2P-和-Pub-Sub"><a href="#P2P-和-Pub-Sub" class="headerlink" title="P2P 和 Pub/Sub"></a>P2P 和 Pub/Sub</h1><p>两种消息模式，去网上找了两张图，上一节其实已经介绍了，但是没有图还是不直观</p>
+<ul>
+<li>一对一通信，一个生产者一个消费者</li>
+</ul>
+<p><img src="/img/ActiveMQ-1.png" alt="Alt text"></p>
+<ul>
+<li>发布订阅模式，发布一条消息，所有订阅了该目标的消费者都会收到消息。</li>
+</ul>
+<p><img src="/img/ActiveMQ-2.png" alt="Alt text"></p>
+<p>如果消费者重启了，这个消费者会丢失一些消息，为了避免消息丢失，ActiveMQ采用了持久化机制来保存消息。</p>
+<h2 id="消息化订阅"><a href="#消息化订阅" class="headerlink" title="消息化订阅"></a>消息化订阅</h2><p>持久化订阅就是如果消费者宕机，则将消息暂存在ActiveMQ中，等待消费者正常工作再发送给消费者。首先为消费者设定一个标识ID，然后创建爱你消费者的时候调用session的createDurableSubscriber方法来进行持久化订阅。</p>
+<h1 id="ActiveMQ持久化机制"><a href="#ActiveMQ持久化机制" class="headerlink" title="ActiveMQ持久化机制"></a>ActiveMQ持久化机制</h1><p>为了避免意外宕机丢失信息，需要做到重启后可以恢复消息队列，消息系统一般都会采用持久化机制。ActiveMQ的持久化消息机制有JDBC、AMQ、KahaDB和LevelDB。在发送者将消息发送出去后，消息中心首先将消息存储到本地数据文件、内存数据库或者远程数据库，然后试图将消息发送给接受者，发送成功则将消息从存储中删除，失败则继续尝试。</p>
+<p>消息中心启动之后首先要检查指定的存储位置，如果有未发送成功的消息，则需要把消息发送出去。</p>
+<h2 id="JDBC持久化方式"><a href="#JDBC持久化方式" class="headerlink" title="JDBC持久化方式"></a>JDBC持久化方式</h2><p>使用JDBC持久化方式，数据库会创建三个表：activemq_msgs，activemq_acks，activem_lock。其中activemq_msgs用来存储消息，Queue和Topic都存储在这个表中。</p>
+<ul>
+<li>配置方式</li>
+</ul>
+<p>配置持久化的方式，需要修改conf/activemq.xml文件，首先定义一个mysql-ds的MySQL数据源，然后在persistenceAdapter节点中配置JDBCPersistenceAdapter并且引用刚才的数据源。dataSource指定持久化数据库的Bean，createTablesOnStartup的核定是否在启动时创建数据库表，默认值为true，一般第一次启动设置为true，后面改成false。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">&lt;beans&gt;</div><div class="line">    &lt;broker brokerName=&quot;test-broker&quot; persistent=&quot;true&quot; xmlns=&quot;http://activemq.apache.org/schema/core&quot;&gt;</div><div class="line">        &lt;persistenceAdapter&gt;</div><div class="line">            &lt;jdbcPersistenceAdapter dataSource=&quot;#mysql-ds&quot; createTablesOnStartup=&quot;false&quot;/&gt;</div><div class="line">        &lt;/persistenceAdapter&gt;</div><div class="line">    &lt;/broker&gt;</div><div class="line">    &lt;bean id=&quot;mysql-ds&quot; class=&quot;org.apache.commons.dbcp.BasicDataSource&quot; destroy-method=&quot;close&quot;&gt;</div><div class="line">        &lt;property name=&quot;driverClassName&quot; value=&quot;com.mysql.jdbc.Driver&quot;/&gt;</div><div class="line">        &lt;property name=&quot;url&quot; value=&quot;jdbc:mysql://localhost/activemq?relaxAutoCommit=true&quot;/&gt;</div><div class="line">        &lt;property name=&quot;username&quot; value=&quot;activemq&quot;/&gt;</div><div class="line">        &lt;property name=&quot;password&quot; value=&quot;activemq&quot;/&gt;</div><div class="line">        &lt;property name=&quot;maxActive&quot; value=&quot;200&quot;/&gt;</div><div class="line">        &lt;property name=&quot;poolPreparedStatements&quot; value=&quot;true&quot;/&gt;</div><div class="line">    &lt;/bean&gt;</div><div class="line">&lt;/beans&gt;</div></pre></td></tr></table></figure>
+<ul>
+<li>数据库表信息</li>
+</ul>
+<p>activemq_msgs用于存储消息，Queue和Topic都存储在这个表中：</p>
+<table>
+<thead>
+<tr>
+<th>列明</th>
+<th style="text-align:center">内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ID</td>
+<td style="text-align:center">自增的数据库主键</td>
+</tr>
+<tr>
+<td>CONTAINER</td>
+<td style="text-align:center">消息的Destination</td>
+</tr>
+<tr>
+<td>MSGID_PORD</td>
+<td style="text-align:center">消息发送者客户端的主键</td>
+</tr>
+<tr>
+<td>MSG_SEQ</td>
+<td style="text-align:center">发送消息的顺序，MSGID_PORD+MSG_SEQ可以组成JMS的MessageID</td>
+</tr>
+<tr>
+<td>EXPIRATION</td>
+<td style="text-align:center">消息的过期时间， 存储的是从1970-01-01到现在的毫秒数</td>
+</tr>
+<tr>
+<td>MSG</td>
+<td style="text-align:center">消息本体的Java序列化对象的二进制数据</td>
+</tr>
+<tr>
+<td>PRIORITY</td>
+<td style="text-align:center">优先级 0-9</td>
+</tr>
+</tbody>
+</table>
+<p>activemq_acks用于存储订阅关系。如果是持久化Topic，订阅者和服务器的订阅关系在这个表保存：</p>
+<table>
+<thead>
+<tr>
+<th>列明</th>
+<th style="text-align:center">内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONTAINER</td>
+<td style="text-align:center">消息的Destination</td>
+</tr>
+<tr>
+<td>SUB_DEST</td>
+<td style="text-align:center">如果是使用Static集群，这个字段会有集群其他系统的信息</td>
+</tr>
+<tr>
+<td>CLIENT_ID</td>
+<td style="text-align:center">每个订阅者都必须有一个唯一的客户端ID用以区分</td>
+</tr>
+<tr>
+<td>SUB_NAME</td>
+<td style="text-align:center">订阅者名称</td>
+</tr>
+<tr>
+<td>SELECTOR</td>
+<td style="text-align:center">选择器，可以选择只消费满足条件的消息。条件可以用自定义属性实现，可支持多属性AND和OR操作</td>
+</tr>
+<tr>
+<td>LAST_ACKED_ID</td>
+<td style="text-align:center">记录消费过的消息的ID</td>
+</tr>
+</tbody>
+</table>
+<p>表activemq_lock在集群环境中才有用，只有一个Broker可以获得消息，称为Master Broker，其他的只能作为备份等待Master Broker不可用，才可能成为下一个Master Broker。这个表用于记录哪个Broker是当前的Master Broker。</p>
+<h2 id="AMQ方式"><a href="#AMQ方式" class="headerlink" title="AMQ方式"></a>AMQ方式</h2><ul>
+<li><p>性能高于JDBC，写入消息时，会将消息写入日志文件，由于是顺序追加写，性能很高。为了提升性能，创建消息主键索引，并且提供缓存机制，进一步提升性能。</p>
+</li>
+<li><p>每个日志文件的大小是有限制的，默认为32M,可以自行配置。当超过这个大小，系统会重新建立一个文件，当所有消息都消费完成，系统会删除这个文件或者归档。</p>
+</li>
+<li><p>主要缺点在于AMQ Message会为每一个Destination创建一个索引，如果使用了大量的Queue，索引文件的大小会占用很多磁盘空间，而由于索引巨大，Broker崩溃，重建索引的速度非常慢。</p>
+</li>
+<li><p>配置方法：</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;persistenceAdapter&gt;</div><div class="line">     &lt;amqPersistenceAdapter directory=&quot;$&#123;activemq.data&#125;/activemq-data&quot; maxFileLength=&quot;32mb&quot;/&gt;</div><div class="line">&lt;/persistenceAdapter&gt;</div></pre></td></tr></table></figure>
+<p>虽然AMQ性能高于KahaDb方式，但是由于重建索引时间过长，索引占用磁盘空间过大，实际项目中并不推荐使用，了解即可。</p>
+<h2 id="KahaDB方式"><a href="#KahaDB方式" class="headerlink" title="KahaDB方式"></a>KahaDB方式</h2><p>KahaDB是从ActiveMQ5.4开始默认的持久化插件。KahaDB恢复时间远远小于其前身AMQ并且使用更少的数据文件，可以完全替代AMQ。</p>
+<p>KahaDB的持久化同样是基于日志文件，索引和缓存的。</p>
+<ul>
+<li>配置方式如下，其中directory用来指定持久化消息的存储目录，journalMaxFileLength用来指定保存消息的日志文件大小，具体根据你的实际应用配置。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;persistenceAdapter&gt;</div><div class="line">    &lt;kahaDB directory=&quot;$&#123;activemq.data&#125;/activemq-data&quot; journalMaxFileLength=&quot;16mb&quot;/&gt;</div><div class="line">&lt;/persistenceAdapter&gt;</div></pre></td></tr></table></figure>
+<ul>
+<li><p>KahaDB主要特性：</p>
+<ul>
+<li>日志形式存储消息</li>
+<li>消息索引以B-Tree结构存储</li>
+<li>完全支持JMS事务</li>
+<li>支持多种恢复机制</li>
+</ul>
+</li>
+<li><p>KahaDB的结构</p>
+</li>
+</ul>
+<p>消息存储在基于文件的的数据日志中。如果消息发送成功，变标记为可删除。系统会周期性的清除或者归档日志文件。消息文件的位置索引存储在内存中，这样能快速定位到文件。定期将内存中的消息索引保存到metadata store中，避免大量消息未发送时，消息索引占用过多内存。</p>
+<p><img src="/img/ActiveMQ-3.png" alt="Alt text"></p>
+<ul>
+<li><p>Data logs:Data logs用于存储消息日志，消息的去哪补内容都在Data logs中。同AMQ一样，一个Data logs文件大小超过规定的最大值，会新建一个文件，同样是在文件尾部追加，写入性能很快。每个消息在Data logs中有计数引用，所以当一个文件里所有的消息都不需要了，系统会自动删除文件或放入归档文件夹。</p>
+</li>
+<li><p>Metadata cache:缓存用于存放在线消费者消息。如果消费者已经快速的消费完成，name这些消息就不需要写入磁盘了。Btree索引会根据MessageID创建索引，用于快速的查找消息，这个索引同样维护持久化订阅者与Destination的关系，以及每个消费者消费消息的指针。</p>
+</li>
+<li><p>Metadata store：在db.data文件中保存消息日志中消息的元数据，也是一B-Tree结构存储的，定时从Metadata cache更新数据。Metadata store也会备份一些在消息日志中存在的信息，这样可以让broker实例快速启动。几遍metadata store文件被破坏或者删除了，broker可以读取data logs恢复过来，只是速度回很慢。</p>
+</li>
+</ul>
+<h2 id="LevelDB"><a href="#LevelDB" class="headerlink" title="LevelDB"></a>LevelDB</h2><ul>
+<li>ActiveMQ5.6之后推出的持久化引擎LevelDB。</li>
+<li>默认方式仍然是KahaDB，LevelDB的持久化性能要高于KahaDB。</li>
+<li>LevelDB主要用于Master-Slave方式的主从复制数据。</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JMS/" rel="tag"># JMS</a>
+          
+            <a href="/tags/ActiveMQ/" rel="tag"># ActiveMQ</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/21/java/Dubbo框架学习总结/" rel="next" title="Dubbo框架学习总结">
+                <i class="fa fa-chevron-left"></i> Dubbo框架学习总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/21/java/hibernate总结/" rel="prev" title="Hibernate总结">
+                Hibernate总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Session"><span class="nav-number">1.</span> <span class="nav-text">Session</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#消息顺序消费"><span class="nav-number">2.</span> <span class="nav-text">消息顺序消费</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#消息优先级"><span class="nav-number">2.1.</span> <span class="nav-text">消息优先级</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#顺序消费"><span class="nav-number">2.2.</span> <span class="nav-text">顺序消费</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#消息的同步与异步"><span class="nav-number">3.</span> <span class="nav-text">消息的同步与异步</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#P2P-和-Pub-Sub"><span class="nav-number">4.</span> <span class="nav-text">P2P 和 Pub/Sub</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#消息化订阅"><span class="nav-number">4.1.</span> <span class="nav-text">消息化订阅</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ActiveMQ持久化机制"><span class="nav-number">5.</span> <span class="nav-text">ActiveMQ持久化机制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JDBC持久化方式"><span class="nav-number">5.1.</span> <span class="nav-text">JDBC持久化方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AMQ方式"><span class="nav-number">5.2.</span> <span class="nav-text">AMQ方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KahaDB方式"><span class="nav-number">5.3.</span> <span class="nav-text">KahaDB方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LevelDB"><span class="nav-number">5.4.</span> <span class="nav-text">LevelDB</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

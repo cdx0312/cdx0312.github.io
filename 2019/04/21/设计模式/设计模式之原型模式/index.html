@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java,design patterns," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="模式定义用原型实例指定创建对象的种类，并通过拷贝这些原型创建新的对象。
+模式使用场景
+类初始化需要消耗非常多的资源，这个资源包括数据，硬件资源等，通过原型拷贝避免这些消耗。
+通过new产生一个对象需要非常繁琐的数据准备或访问权限，则可以使用原型模式。
+一个对象需要提供给其他对象访问，而且各个调用者可能都需要修改其值时，可以考虑使用原型模式拷贝多个对象供调用者使用。
+
+UML图
+角色描述* Clie">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式之原型模式">
+<meta property="og:url" content="http://yoursite.com/2019/04/21/设计模式/设计模式之原型模式/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="模式定义用原型实例指定创建对象的种类，并通过拷贝这些原型创建新的对象。
+模式使用场景
+类初始化需要消耗非常多的资源，这个资源包括数据，硬件资源等，通过原型拷贝避免这些消耗。
+通过new产生一个对象需要非常繁琐的数据准备或访问权限，则可以使用原型模式。
+一个对象需要提供给其他对象访问，而且各个调用者可能都需要修改其值时，可以考虑使用原型模式拷贝多个对象供调用者使用。
+
+UML图
+角色描述* Clie">
+<meta property="og:image" content="http://yoursite.com/img/dp-factory-prototype.png">
+<meta property="og:updated_time" content="2018-03-25T07:38:27.270Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="设计模式之原型模式">
+<meta name="twitter:description" content="模式定义用原型实例指定创建对象的种类，并通过拷贝这些原型创建新的对象。
+模式使用场景
+类初始化需要消耗非常多的资源，这个资源包括数据，硬件资源等，通过原型拷贝避免这些消耗。
+通过new产生一个对象需要非常繁琐的数据准备或访问权限，则可以使用原型模式。
+一个对象需要提供给其他对象访问，而且各个调用者可能都需要修改其值时，可以考虑使用原型模式拷贝多个对象供调用者使用。
+
+UML图
+角色描述* Clie">
+<meta name="twitter:image" content="http://yoursite.com/img/dp-factory-prototype.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/21/设计模式/设计模式之原型模式/"/>
+
+
+
+
+
+  <title>设计模式之原型模式 | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/设计模式/设计模式之原型模式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">设计模式之原型模式</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/design-patterns/" itemprop="url" rel="index">
+                    <span itemprop="name">design patterns</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>用原型实例指定创建对象的种类，并通过拷贝这些原型创建新的对象。</p>
+<h1 id="模式使用场景"><a href="#模式使用场景" class="headerlink" title="模式使用场景"></a>模式使用场景</h1><ol>
+<li>类初始化需要消耗非常多的资源，这个资源包括数据，硬件资源等，通过原型拷贝避免这些消耗。</li>
+<li>通过new产生一个对象需要非常繁琐的数据准备或访问权限，则可以使用原型模式。</li>
+<li>一个对象需要提供给其他对象访问，而且各个调用者可能都需要修改其值时，可以考虑使用原型模式拷贝多个对象供调用者使用。</li>
+</ol>
+<h1 id="UML图"><a href="#UML图" class="headerlink" title="UML图"></a>UML图</h1><p><img src="/img/dp-factory-prototype.png" alt="Alt text"></p>
+<h2 id="角色描述"><a href="#角色描述" class="headerlink" title="角色描述"></a>角色描述</h2><pre><code>* Client: 客户端用户
+* Prototype：抽象类或接口，声明具备clone能力
+* ConcretePrototype：具体的原型类
+</code></pre><h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>文档拷贝为例。</p>
+<p>Prototype抽象类为java.lang.clone,ConcretePrototype通过重写该方法完成对象的拷贝功能。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div></pre></td><td class="code"><pre><div class="line">package prototype;</div><div class="line"></div><div class="line">import java.util.ArrayList;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/25</div><div class="line"> */</div><div class="line">public class ConcretePrototype implements Cloneable&#123;</div><div class="line">    private String mText;</div><div class="line">    private ArrayList&lt;String&gt; mImages = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    public ConcretePrototype() &#123;</div><div class="line">        System.out.println(&quot;concretePrototype构造函数&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected Object clone() throws CloneNotSupportedException &#123;</div><div class="line">        try &#123;</div><div class="line">            ConcretePrototype concretePrototype = (ConcretePrototype) super.clone();</div><div class="line">            concretePrototype.mText = this.mText;</div><div class="line">            concretePrototype.mImages = this.mImages;</div><div class="line">            return concretePrototype;</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String getmText() &#123;</div><div class="line">        return mText;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setmText(String mText) &#123;</div><div class="line">        this.mText = mText;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public ArrayList&lt;String&gt; getmImages() &#123;</div><div class="line">        return mImages;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setmImages(ArrayList&lt;String&gt; mImages) &#123;</div><div class="line">        this.mImages = mImages;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void addImage(String img) &#123;</div><div class="line">        this.mImages.add(img);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void showContent() &#123;</div><div class="line">        System.out.println(&quot;==========start===========&quot;);</div><div class="line">        System.out.println(&quot;Text:  &quot; + mText);</div><div class="line">        System.out.println(&quot;Images List: &quot;);</div><div class="line">        for (String string : mImages) &#123;</div><div class="line">            System.out.println(&quot;image name : &quot; + string);</div><div class="line">        &#125;</div><div class="line">        System.out.println(&quot;============end==========&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Client:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">package prototype;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/25</div><div class="line"> */</div><div class="line">public class Client &#123;</div><div class="line">    public static void main(String[] args) throws CloneNotSupportedException &#123;</div><div class="line">        //创建对象</div><div class="line">        ConcretePrototype original = new ConcretePrototype();</div><div class="line">        original.setmText(&quot;first&quot;);</div><div class="line">        original.addImage(&quot;pic 1&quot;);</div><div class="line">        original.addImage(&quot;pic 2&quot;);</div><div class="line">        original.addImage(&quot;pic 3&quot;);</div><div class="line">        original.addImage(&quot;pic 4&quot;);</div><div class="line">        original.showContent();</div><div class="line">        //复制对象</div><div class="line">        ConcretePrototype clone = (ConcretePrototype) original.clone();</div><div class="line">        clone.showContent();</div><div class="line">        //修改并展示复制的对象</div><div class="line">        clone.setmText(&quot;clone&quot;);</div><div class="line">        clone.showContent();</div><div class="line">        //展示原型对象</div><div class="line">        original.showContent();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>结果：修改clone之后的对象的值不会印象到原来的值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">concretePrototype构造函数</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  clone</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div></pre></td></tr></table></figure>
+<p>深浅拷贝的区别：引用类型拷贝过程中，只拷贝了其引用，并没有将对象进行复制：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">package prototype;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/25</div><div class="line"> */</div><div class="line">public class Client1 &#123;</div><div class="line">    public static void main(String[] args) throws CloneNotSupportedException &#123;</div><div class="line">        //创建对象</div><div class="line">        ConcretePrototype original = new ConcretePrototype();</div><div class="line">        original.setmText(&quot;first&quot;);</div><div class="line">        original.addImage(&quot;pic 1&quot;);</div><div class="line">        original.addImage(&quot;pic 2&quot;);</div><div class="line">        original.addImage(&quot;pic 3&quot;);</div><div class="line">        original.addImage(&quot;pic 4&quot;);</div><div class="line">        original.showContent();</div><div class="line"></div><div class="line">        ConcretePrototype clone = (ConcretePrototype) original.clone();</div><div class="line">        clone.showContent();</div><div class="line"></div><div class="line">        clone.setmText(&quot;clone1&quot;);</div><div class="line">        clone.addImage(&quot;new pic 5&quot;);</div><div class="line">        clone.showContent();</div><div class="line"></div><div class="line">        original.showContent();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">concretePrototype构造函数</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  clone1</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">image name : new pic 5</div><div class="line">============end==========</div><div class="line">==========start===========</div><div class="line">Text:  first</div><div class="line">Images List:</div><div class="line">image name : pic 1</div><div class="line">image name : pic 2</div><div class="line">image name : pic 3</div><div class="line">image name : pic 4</div><div class="line">image name : new pic 5</div><div class="line">============end==========</div></pre></td></tr></table></figure>
+<p>深拷贝过程中需要将引用类型的字段也要进行拷贝，而不是单纯的拷贝引用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 深拷贝</div><div class="line"> * @return</div><div class="line"> * @throws CloneNotSupportedException</div><div class="line"> */</div><div class="line">@Override</div><div class="line">protected Object clone() throws CloneNotSupportedException &#123;</div><div class="line">    try &#123;</div><div class="line">        ConcretePrototype concretePrototype = (ConcretePrototype) super.clone();</div><div class="line">        concretePrototype.mText = this.mText;</div><div class="line">        concretePrototype.mImages = (ArrayList&lt;String&gt;) this.mImages.clone();</div><div class="line">        return concretePrototype;</div><div class="line">    &#125; catch (Exception e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    return null;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="优点和缺点"><a href="#优点和缺点" class="headerlink" title="优点和缺点"></a>优点和缺点</h2><ul>
+<li><p>优点：原型模式是在内存二进制流的拷贝，要比直接new一个对象性能好很多，特别是需要在一个循环体中产生大量对象时。</p>
+</li>
+<li><p>缺点：直接在内存中拷贝，构造方法不会执行，减少了约束，需要注意。</p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/design-patterns/" rel="tag"># design patterns</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/21/设计模式/设计模式简介/" rel="next" title="设计模式简介">
+                <i class="fa fa-chevron-left"></i> 设计模式简介
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/04/16/golang/the-way-to-go-基础/" rel="prev" title="the way to go 基础篇">
+                the way to go 基础篇 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#模式定义"><span class="nav-number">1.</span> <span class="nav-text">模式定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模式使用场景"><span class="nav-number">2.</span> <span class="nav-text">模式使用场景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#UML图"><span class="nav-number">3.</span> <span class="nav-text">UML图</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#角色描述"><span class="nav-number">3.1.</span> <span class="nav-text">角色描述</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实现"><span class="nav-number">4.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#优点和缺点"><span class="nav-number">4.1.</span> <span class="nav-text">优点和缺点</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

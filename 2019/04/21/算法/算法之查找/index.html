@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java,algorithms," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="数组重复元素问题给定一个数组，查看数组是否存在重复元素1234567891011121314151617181920package leetcode.search;import java.util.HashSet;import java.util.Set;/** * Created by cdx0312 * 2018/4/6 */public class ContainsDuplicate_217">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法-查找">
+<meta property="og:url" content="http://yoursite.com/2019/04/21/算法/算法之查找/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="数组重复元素问题给定一个数组，查看数组是否存在重复元素1234567891011121314151617181920package leetcode.search;import java.util.HashSet;import java.util.Set;/** * Created by cdx0312 * 2018/4/6 */public class ContainsDuplicate_217">
+<meta property="og:updated_time" content="2018-04-15T11:12:50.473Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="算法-查找">
+<meta name="twitter:description" content="数组重复元素问题给定一个数组，查看数组是否存在重复元素1234567891011121314151617181920package leetcode.search;import java.util.HashSet;import java.util.Set;/** * Created by cdx0312 * 2018/4/6 */public class ContainsDuplicate_217">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/21/算法/算法之查找/"/>
+
+
+
+
+
+  <title>算法-查找 | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/算法/算法之查找/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">算法-查找</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/algorithms/" itemprop="url" rel="index">
+                    <span itemprop="name">algorithms</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="数组重复元素问题"><a href="#数组重复元素问题" class="headerlink" title="数组重复元素问题"></a>数组重复元素问题</h1><h2 id="给定一个数组，查看数组是否存在重复元素"><a href="#给定一个数组，查看数组是否存在重复元素" class="headerlink" title="给定一个数组，查看数组是否存在重复元素"></a>给定一个数组，查看数组是否存在重复元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashSet;</div><div class="line">import java.util.Set;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/6</div><div class="line"> */</div><div class="line">public class ContainsDuplicate_217 &#123;</div><div class="line">    public boolean containsDuplicate(int[] nums) &#123;</div><div class="line">        Set&lt;Integer&gt; record = new HashSet&lt;&gt;();</div><div class="line">        for (int i = 0; i &lt; nums.length; i++) &#123;</div><div class="line">            if (record.contains(nums[i]))</div><div class="line">                return true;</div><div class="line">            record.add(nums[i]);</div><div class="line">        &#125;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="给定一个数组，是否存在两个元素重复，并且两个元素下标之差的绝对值小于等于k。"><a href="#给定一个数组，是否存在两个元素重复，并且两个元素下标之差的绝对值小于等于k。" class="headerlink" title="给定一个数组，是否存在两个元素重复，并且两个元素下标之差的绝对值小于等于k。"></a>给定一个数组，是否存在两个元素重复，并且两个元素下标之差的绝对值小于等于k。</h2><p>维持set的长度为K</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line">import java.util.HashSet;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/6</div><div class="line"> */</div><div class="line">public class ContainsDuplicateII &#123;</div><div class="line">    public boolean containsNearbyDuplicate(int[] nums, int k) &#123;</div><div class="line">        HashSet&lt;Integer&gt; record = new HashSet&lt;&gt;();</div><div class="line">        for (int i = 0; i &lt; nums.length; i++) &#123;</div><div class="line">            if (record.contains(nums[i]))</div><div class="line">                return true;</div><div class="line">            record.add(nums[i]);</div><div class="line">            if (record.size() == k + 1)</div><div class="line">                record.remove(nums[i-k]);</div><div class="line">        &#125;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="给定一个数组，是否存在两个元素的之差的绝对值小于等于t，并且两个元素下标之差的绝对值小于等于k。"><a href="#给定一个数组，是否存在两个元素的之差的绝对值小于等于t，并且两个元素下标之差的绝对值小于等于k。" class="headerlink" title="给定一个数组，是否存在两个元素的之差的绝对值小于等于t，并且两个元素下标之差的绝对值小于等于k。"></a>给定一个数组，是否存在两个元素的之差的绝对值小于等于t，并且两个元素下标之差的绝对值小于等于k。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashSet;</div><div class="line">import java.util.TreeSet;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/6</div><div class="line"> */</div><div class="line">public class ContainsDuplicateIII &#123;</div><div class="line">    public boolean containsNearbyAlmostDuplicate(int[] nums, int k, int t) &#123;</div><div class="line">        if (nums.length &lt; 2 || k == 0) &#123;</div><div class="line">            return false;</div><div class="line">        &#125;</div><div class="line">        TreeSet&lt;Long&gt; set = new TreeSet&lt;&gt;();</div><div class="line"></div><div class="line">        int i = 0;</div><div class="line">        while (i &lt; nums.length) &#123;</div><div class="line">            Long floor = set.floor((long) nums[i]);</div><div class="line">            Long ceiling = set.ceiling((long) nums[i]);</div><div class="line">            if ((floor != null &amp;&amp; nums[i] - floor &lt;= t ) ||</div><div class="line">                    (ceiling != null &amp;&amp; ceiling - nums[i] &lt;= t)) &#123;</div><div class="line">                return true;</div><div class="line">            &#125;</div><div class="line">            set.add((long) nums[i++]);</div><div class="line">            if (i &gt; k) &#123;</div><div class="line">                set.remove((long) nums[i - k - 1]);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="数组和问题"><a href="#数组和问题" class="headerlink" title="数组和问题"></a>数组和问题</h1><h2 id="数组中查找是否存在和为target的问题"><a href="#数组中查找是否存在和为target的问题" class="headerlink" title="数组中查找是否存在和为target的问题"></a>数组中查找是否存在和为target的问题</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class TwoSum_1 &#123;</div><div class="line">    //1、暴力O(N^2)</div><div class="line">    public int[] twoSum3(int[] nums, int target) &#123;</div><div class="line">        int[] res = new int[2];</div><div class="line">        for (int i = 0; i &lt; nums.length-1; i++) &#123;</div><div class="line">            for (int j = i + 1; j &lt; nums.length; j++) &#123;</div><div class="line">                if (nums[i] + nums[j] == target) &#123;</div><div class="line">                    res[0] = i;</div><div class="line">                    res[1] = j;</div><div class="line">                    return res;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //O(N) O(N)</div><div class="line">    public int[] twoSum(int[] nums, int target) &#123;</div><div class="line">        int[] res = new int[2];</div><div class="line">        HashMap&lt;Integer, Integer&gt; record = new HashMap&lt;&gt;();</div><div class="line">        for (int i = 0; i &lt; nums.length; i++) &#123;</div><div class="line">            int complement = target - nums[i];</div><div class="line">            if (record.containsKey(complement)) &#123;</div><div class="line">                res[1] = i;</div><div class="line">                res[0] = record.get(complement);</div><div class="line">                return res;</div><div class="line">            &#125;</div><div class="line">            record.put(nums[i], i);</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="查找表问题"><a href="#查找表问题" class="headerlink" title="查找表问题"></a>查找表问题</h1><h2 id="给定四个整形列表，A-i-B-j-C-k-D-l-0-找出所有的i-j-k-l的个数。"><a href="#给定四个整形列表，A-i-B-j-C-k-D-l-0-找出所有的i-j-k-l的个数。" class="headerlink" title="给定四个整形列表，A[i] + B[j] + C[k] + D[l] = 0,找出所有的i,j,k,l的个数。"></a>给定四个整形列表，A[i] + B[j] + C[k] + D[l] = 0,找出所有的i,j,k,l的个数。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/5</div><div class="line"> */</div><div class="line">public class FourSumII_454 &#123;</div><div class="line">    //查找表中记录C,D中任意两个和的可能次数O(N^2)</div><div class="line">    public int fourSumCount(int[] A, int[] B, int[] C, int[] D) &#123;</div><div class="line">        HashMap&lt;Integer, Integer&gt; record = new HashMap&lt;&gt;();</div><div class="line">        for (int aC : C) &#123;</div><div class="line">            for (int aD : D) &#123;</div><div class="line">                int tmp = aC + aD;</div><div class="line">                if (record.containsKey(tmp)) &#123;</div><div class="line">                    record.put(tmp, record.get(tmp) + 1);</div><div class="line">                &#125; else &#123;</div><div class="line">                    record.put(tmp, 1);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        int count = 0;</div><div class="line">        for (int i = 0; i &lt; A.length; i++) &#123;</div><div class="line">            for (int j = 0; j &lt; B.length; j++) &#123;</div><div class="line">                int tmp = 0 - A[i] - B[j];</div><div class="line">                if (record.containsKey(tmp)) &#123;</div><div class="line">                    count += record.get(tmp);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return count;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="返回两个数组的交集"><a href="#返回两个数组的交集" class="headerlink" title="返回两个数组的交集"></a>返回两个数组的交集</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashSet;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class IntersectoionOfTwoArray &#123;</div><div class="line">    public int[] intersection(int[] num1, int[] num2) &#123;</div><div class="line">        HashSet&lt;Integer&gt; record = new HashSet&lt;&gt;();</div><div class="line">        HashSet&lt;Integer&gt; result = new HashSet&lt;&gt;();</div><div class="line"></div><div class="line">        for (int aNum1 : num1) &#123;</div><div class="line">            record.add(aNum1);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        for (int aNum1 : num2) &#123;</div><div class="line">            if (record.contains(aNum1))</div><div class="line">                result.add(aNum1);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        int[] resultA = new int[result.size()];</div><div class="line"></div><div class="line">        int j = 0;</div><div class="line">        for (int i : result) &#123;</div><div class="line">            resultA[j++] = i;</div><div class="line">        &#125;</div><div class="line">        return resultA;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="给定两个字符串s-t，确定s是否可以通过替换变成t。Given-“egg”-“add”-return-true-Given-“foo”-“bar”-return-false-Given-“paper”-“title”-return-true"><a href="#给定两个字符串s-t，确定s是否可以通过替换变成t。Given-“egg”-“add”-return-true-Given-“foo”-“bar”-return-false-Given-“paper”-“title”-return-true" class="headerlink" title="给定两个字符串s,t，确定s是否可以通过替换变成t。Given “egg”, “add”, return true.Given “foo”, “bar”, return false.Given “paper”, “title”, return true."></a>给定两个字符串s,t，确定s是否可以通过替换变成t。Given “egg”, “add”, return true.Given “foo”, “bar”, return false.Given “paper”, “title”, return true.</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashSet;</div><div class="line">import java.util.Set;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class IsomorphicStrings_205 &#123;</div><div class="line">    public boolean isIsomorphic(String s, String t) &#123;</div><div class="line">        int[] num = new int[256];</div><div class="line">        Set&lt;Integer&gt; set = new HashSet&lt;&gt;();</div><div class="line">        for (int i = 0; i &lt; num.length; i++)</div><div class="line">            num[i] = Integer.MAX_VALUE;</div><div class="line">        for (int i = 0; i &lt; s.length(); i++) &#123;</div><div class="line">            int tmp = t.charAt(i);</div><div class="line">            if (num[s.charAt(i)] == Integer.MAX_VALUE) &#123;</div><div class="line">                num[s.charAt(i)] = tmp;</div><div class="line">                if (set.contains(tmp))</div><div class="line">                    return false;</div><div class="line">                else</div><div class="line">                    set.add(tmp);</div><div class="line">            &#125; else &#123;</div><div class="line">                if (tmp != num[s.charAt(i)])</div><div class="line">                    return false;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="i和j的距离与i和k的距离相等"><a href="#i和j的距离与i和k的距离相等" class="headerlink" title="i和j的距离与i和k的距离相等"></a>i和j的距离与i和k的距离相等</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/5</div><div class="line"> */</div><div class="line">public class NumberOfBoomerangs_447 &#123;</div><div class="line">    public int numberOfBoomerangs(int[][] points) &#123;</div><div class="line">        int res = 0;</div><div class="line">        for (int i = 0; i &lt; points.length; i++) &#123;</div><div class="line">            //和i点的距离，距离出现的频率</div><div class="line">            HashMap&lt;Integer, Integer&gt; record = new HashMap&lt;&gt;();</div><div class="line">            for (int j = 0; j &lt; points.length; j++) &#123;</div><div class="line">                if (j != i) &#123;</div><div class="line">                    int dis = dis(points[i], points[j]);</div><div class="line">                    if (record.containsKey(dis))&#123;</div><div class="line">                        record.put(dis, record.get(dis)+1);</div><div class="line">                    &#125; else &#123;</div><div class="line">                        record.put(dis, 1);</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            for (Integer integer : record.keySet()) &#123;</div><div class="line">                if (record.get(integer) &gt;= 2) &#123;</div><div class="line">                    res += record.get(integer) * (record.get(integer)-1);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private int dis(int[] point, int[] point1) &#123;</div><div class="line">        return (point[0] - point1[0]) * (point[0] - point1[0])</div><div class="line">                + (point[1] - point1[1]) * (point[1] - point1[1]);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="按照字符串的频率逆序排列"><a href="#按照字符串的频率逆序排列" class="headerlink" title="按照字符串的频率逆序排列"></a>按照字符串的频率逆序排列</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.*;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class SortCharactersByFrequency_451 &#123;</div><div class="line">    public String frequencySort(String s) &#123;</div><div class="line">        HashMap&lt;Character, Integer&gt; map = new HashMap&lt;&gt;();</div><div class="line">        for (char c : s.toCharArray()) &#123;</div><div class="line">            if (map.containsKey(c))</div><div class="line">                map.put(c, map.get(c) + 1);</div><div class="line">            else</div><div class="line">                map.put(c, 1);</div><div class="line">        &#125;</div><div class="line">        List&lt;Character&gt; [] bucket = new List[s.length() + 1];</div><div class="line">        for (char key : map.keySet()) &#123;</div><div class="line">            int freq = map.get(key);</div><div class="line">            if (bucket[freq] == null)</div><div class="line">                bucket[freq] = new ArrayList&lt;&gt;();</div><div class="line">            bucket[freq].add(key);</div><div class="line">        &#125;</div><div class="line">        StringBuilder sb = new StringBuilder();</div><div class="line">        for (int j = bucket.length - 1; j &gt;= 0; j--) &#123;</div><div class="line">            if (bucket[j] != null) &#123;</div><div class="line">                for (char ch : bucket[j]) &#123;</div><div class="line">                    for (int i = 0; i &lt; map.get(ch); i++)</div><div class="line">                        sb.append(ch);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return sb.toString();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="判断t和S是否由相同的char组成"><a href="#判断t和S是否由相同的char组成" class="headerlink" title="判断t和S是否由相同的char组成"></a>判断t和S是否由相同的char组成</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class ValidAnagram_242 &#123;</div><div class="line">    public boolean isAnagram(String s, String t) &#123;</div><div class="line">        if (s == null &amp;&amp; t == null)</div><div class="line">            return true;</div><div class="line">        if (s == null || t == null)</div><div class="line">            return false;</div><div class="line">        if (s.length() != t.length())</div><div class="line">            return false;</div><div class="line">        HashMap&lt;Character, Integer&gt; sMap = new HashMap&lt;&gt;();</div><div class="line">        for (int i = 0; i &lt; s.length(); i++) &#123;</div><div class="line">            char s1 = s.charAt(i);</div><div class="line">            char t1 = t.charAt(i);</div><div class="line">            if (sMap.containsKey(s1))</div><div class="line">                sMap.put(s1, sMap.get(s1)+1);</div><div class="line">            else</div><div class="line">                sMap.put(s1,1);</div><div class="line">            if (sMap.containsKey(t1))</div><div class="line">                sMap.put(t1, sMap.get(t1)-1);</div><div class="line">            else</div><div class="line">                sMap.put(t1, -1);</div><div class="line">        &#125;</div><div class="line">        for (Character ch : sMap.keySet()) &#123;</div><div class="line">            if (sMap.get(ch) != 0)</div><div class="line">                return false;</div><div class="line">        &#125;</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public boolean isAnagram1(String s, String t) &#123;</div><div class="line">        int[] chars = new int[26];</div><div class="line">        for (char c : s.toCharArray()) &#123;</div><div class="line">            chars[c-&apos;a&apos;]++;</div><div class="line">        &#125;</div><div class="line">        for (char c : t.toCharArray()) &#123;</div><div class="line">            chars[c-&apos;a&apos;]--;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        for (int i : chars) &#123;</div><div class="line">            if (i != 0)</div><div class="line">                return false;</div><div class="line">        &#125;</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="判断一个字符串是否遵循固定的样式，如pattern-“abba”-str-“dog-cat-cat-dog”-should-return-true"><a href="#判断一个字符串是否遵循固定的样式，如pattern-“abba”-str-“dog-cat-cat-dog”-should-return-true" class="headerlink" title="判断一个字符串是否遵循固定的样式，如pattern = “abba”, str = “dog cat cat dog” should return true."></a>判断一个字符串是否遵循固定的样式，如pattern = “abba”, str = “dog cat cat dog” should return true.</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line">import java.util.HashSet;</div><div class="line">import java.util.Objects;</div><div class="line">import java.util.Set;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class WordPattern_290 &#123;</div><div class="line">    public boolean wordPattern(String pattern, String str) &#123;</div><div class="line">        if (pattern == null || str == null)</div><div class="line">            return false;</div><div class="line">        HashMap&lt;Object, Integer&gt; map = new HashMap&lt;&gt;();</div><div class="line">        char[] chars = pattern.toCharArray();</div><div class="line">        String[] strings = str.split(&quot; &quot;);</div><div class="line">        if (chars.length != strings.length)</div><div class="line">            return false;</div><div class="line">        for (int i = 0; i &lt; chars.length; i++) &#123;</div><div class="line">            if (!Objects.equals(map.put(chars[i], i), map.put(strings[i], i)))</div><div class="line">                return false;</div><div class="line">        &#125;</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public boolean wordPattern1(String pattern, String str) &#123;</div><div class="line">        char[] chars = pattern.toCharArray();</div><div class="line">        String[] strings = str.split(&quot; &quot;);</div><div class="line">        String[] pat = new String[26];</div><div class="line">        if (chars.length != strings.length)</div><div class="line">            return false;</div><div class="line">        Set&lt;String&gt; set = new HashSet&lt;&gt;();</div><div class="line"></div><div class="line">        for (int i = 0; i &lt; chars.length; i++) &#123;</div><div class="line">            if (pat[chars[i]-&apos;a&apos;] == null) &#123;</div><div class="line">                pat[chars[i]-&apos;a&apos;] = strings[i];</div><div class="line">                if (set.contains(strings[i]))</div><div class="line">                    return false;</div><div class="line">                else</div><div class="line">                    set.add(strings[i]);</div><div class="line">            &#125; else &#123;</div><div class="line">                if (!strings[i].equals(pat[chars[i]-&apos;a&apos;]))</div><div class="line">                    return false;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="happy-Number判定"><a href="#happy-Number判定" class="headerlink" title="happy Number判定"></a>happy Number判定</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashSet;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class HappyNum_202 &#123;</div><div class="line">    public boolean isHappy(int n) &#123;</div><div class="line">        HashSet&lt;Integer&gt; set = new HashSet&lt;&gt;();</div><div class="line">        int sum = 0;</div><div class="line">        while (n != 1) &#123;</div><div class="line">            set.add(n);</div><div class="line">            while (n != 0) &#123;</div><div class="line">                sum += (n % 10) * (n % 10);</div><div class="line">                n = n / 10;</div><div class="line">            &#125;</div><div class="line">            n = sum;</div><div class="line">            sum = 0;</div><div class="line">            if (set.contains(n))</div><div class="line">                return false;</div><div class="line">        &#125;</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/algorithms/" rel="tag"># algorithms</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/21/算法/算法之链表/" rel="next" title="算法-链表">
+                <i class="fa fa-chevron-left"></i> 算法-链表
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/21/算法/算法之队列/" rel="prev" title="算法-队列">
+                算法-队列 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#数组重复元素问题"><span class="nav-number">1.</span> <span class="nav-text">数组重复元素问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#给定一个数组，查看数组是否存在重复元素"><span class="nav-number">1.1.</span> <span class="nav-text">给定一个数组，查看数组是否存在重复元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#给定一个数组，是否存在两个元素重复，并且两个元素下标之差的绝对值小于等于k。"><span class="nav-number">1.2.</span> <span class="nav-text">给定一个数组，是否存在两个元素重复，并且两个元素下标之差的绝对值小于等于k。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#给定一个数组，是否存在两个元素的之差的绝对值小于等于t，并且两个元素下标之差的绝对值小于等于k。"><span class="nav-number">1.3.</span> <span class="nav-text">给定一个数组，是否存在两个元素的之差的绝对值小于等于t，并且两个元素下标之差的绝对值小于等于k。</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数组和问题"><span class="nav-number">2.</span> <span class="nav-text">数组和问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#数组中查找是否存在和为target的问题"><span class="nav-number">2.1.</span> <span class="nav-text">数组中查找是否存在和为target的问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查找表问题"><span class="nav-number">3.</span> <span class="nav-text">查找表问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#给定四个整形列表，A-i-B-j-C-k-D-l-0-找出所有的i-j-k-l的个数。"><span class="nav-number">3.1.</span> <span class="nav-text">给定四个整形列表，A[i] + B[j] + C[k] + D[l] = 0,找出所有的i,j,k,l的个数。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#返回两个数组的交集"><span class="nav-number">3.2.</span> <span class="nav-text">返回两个数组的交集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#给定两个字符串s-t，确定s是否可以通过替换变成t。Given-“egg”-“add”-return-true-Given-“foo”-“bar”-return-false-Given-“paper”-“title”-return-true"><span class="nav-number">3.3.</span> <span class="nav-text">给定两个字符串s,t，确定s是否可以通过替换变成t。Given “egg”, “add”, return true.Given “foo”, “bar”, return false.Given “paper”, “title”, return true.</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#i和j的距离与i和k的距离相等"><span class="nav-number">3.4.</span> <span class="nav-text">i和j的距离与i和k的距离相等</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#按照字符串的频率逆序排列"><span class="nav-number">3.5.</span> <span class="nav-text">按照字符串的频率逆序排列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#判断t和S是否由相同的char组成"><span class="nav-number">3.6.</span> <span class="nav-text">判断t和S是否由相同的char组成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#判断一个字符串是否遵循固定的样式，如pattern-“abba”-str-“dog-cat-cat-dog”-should-return-true"><span class="nav-number">3.7.</span> <span class="nav-text">判断一个字符串是否遵循固定的样式，如pattern = “abba”, str = “dog cat cat dog” should return true.</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#happy-Number判定"><span class="nav-number">4.</span> <span class="nav-text">happy Number判定</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

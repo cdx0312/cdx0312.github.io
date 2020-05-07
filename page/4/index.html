@@ -277,215 +277,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/一致性哈希算法及其Java实现/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/一致性哈希算法及其Java实现/" itemprop="url">一致性哈希及其Java实现</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/Consistent-Hash/" itemprop="url" rel="index">
-                    <span itemprop="name">Consistent Hash</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="一致性哈希概念"><a href="#一致性哈希概念" class="headerlink" title="一致性哈希概念"></a>一致性哈希概念</h1><ul>
-<li>维基百科的定义</li>
-</ul>
-<p>一致哈希 是一种特殊的哈希算法。在使用一致哈希算法后，哈希表槽位数（大小）的改变平均只需要对K/n 个关键字重新映射，其中K是关键字的数量，n是槽位数量。然而在传统的哈希表中，添加或删除一个槽位的几乎需要对所有关键字进行重新映射。</p>
-<p>一致性哈希算法提出了动态变化的Cache环境中，判定哈希算法好坏的四个定义：</p>
-<ol>
-<li>平衡性：哈希的结果尽可能分布到所有的缓存中，充分利用缓存空间。</li>
-<li>单调性：举例说吧，本来有ABC三个缓存，数据1存储在B中，现在添加了D缓存进去，则数据1只会分布在B或者D中，不会分配到AC中。</li>
-<li>分散性：分散性是同一个数据被映射到不同的缓存中，需要避免</li>
-<li>负载：一个缓冲区被多个用户映射为不同的内容，需要降低缓冲的负载。</li>
-</ol>
-<h1 id="传统哈希算法"><a href="#传统哈希算法" class="headerlink" title="传统哈希算法"></a>传统哈希算法</h1><p>针对分布式场景，假定有1000W个数据项，100个存储接待你，一个数据的存储位置为该数据的Hash值对服务器数量取余，这样可以将数据尽可能的分散到各个服务器上。</p>
-<p>  <img src="/img/cons-Hash-1.png" alt="Alt text"></p>
-<p>这种哈希方案的优点是每个节点的的数据量是相仿的，相对均衡，但是当在集群里面增加一台服务器，或者减少一台服务器的话，几乎所有的缓存都会失效，需要重新哈希。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/18\</div><div class="line"> * 传统哈希方法</div><div class="line"> * 100000000个数据项，100个存储节点</div><div class="line"> */</div><div class="line">public class NormalHashMethod &#123;</div><div class="line">    //数据数</div><div class="line">    public static final int NUMBER_OF_DATA = 10000000;</div><div class="line">    //节点数</div><div class="line">    public static final int NUMBER_OF_NODE = 100;</div><div class="line">    //节点中存放的数据个数</div><div class="line">    private static int[] record = new int[NUMBER_OF_NODE];</div><div class="line"></div><div class="line">    //将节点放入对应的服务器中</div><div class="line">    public static void hashProcess() &#123;</div><div class="line">        for (int i = 0; i &lt; NUMBER_OF_DATA; i++) &#123;</div><div class="line">            int result = getHash(i+&quot;&quot;);</div><div class="line">            record[result%100]++;</div><div class="line">        &#125;</div><div class="line">        System.out.println(&quot;平均节点中的数据量： &quot; + NUMBER_OF_DATA/NUMBER_OF_NODE);</div><div class="line">        System.out.println(&quot;最多的一个节点的数量： &quot; + getMax(record));</div><div class="line">        System.out.println(&quot;最少的一个节点的数量： &quot; + getMin(record));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //添加一个节点或者减少一个节点时，需要移动的节点数</div><div class="line">    public static void afterAddOrDeleteOneNode() &#123;</div><div class="line">        int count = 0;</div><div class="line">        int count1 = 0;</div><div class="line">        //对所有数据进行hash，对新的服务器数量取余</div><div class="line">        for (int i = 0; i &lt; NUMBER_OF_DATA; i++) &#123;</div><div class="line">            int result = getHash(i+&quot;&quot;);</div><div class="line">            if (result % NUMBER_OF_NODE != result % (NUMBER_OF_NODE + 1))</div><div class="line">                count++;</div><div class="line">            if (result % NUMBER_OF_NODE != result % (NUMBER_OF_NODE - 1))</div><div class="line">                count1++;</div><div class="line">        &#125;</div><div class="line">        System.out.println(&quot;添加一个节点数据移动的数量： &quot; + count);</div><div class="line">        System.out.println(&quot;减少一个节点数据移动的数量： &quot; + count1);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //使用FNV1_32_HASH算法</div><div class="line">    private static int getHash(String str) &#123;</div><div class="line">        final int p = 16777619;</div><div class="line">        int hash = (int) 2166136261L;</div><div class="line">        for (int i = 0; i &lt; str.length(); i++)</div><div class="line">            hash = (hash ^ str.charAt(i)) * p;</div><div class="line">        hash += hash &lt;&lt; 13;</div><div class="line">        hash ^= hash &gt;&gt; 7;</div><div class="line">        hash += hash &lt;&lt; 3;</div><div class="line">        hash ^= hash &gt;&gt; 17;</div><div class="line">        hash += hash &lt;&lt; 5;</div><div class="line"></div><div class="line">        // 如果算出来的值为负数则取其绝对值</div><div class="line">        if (hash &lt; 0)</div><div class="line">            hash = Math.abs(hash);</div><div class="line">        return hash;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static int getMax(int[] arr) &#123;</div><div class="line">        int max = arr[0];</div><div class="line">        for (int x = 1; x &lt; arr.length; x++) &#123;</div><div class="line">            if (arr[x] &gt; max)</div><div class="line">                max = arr[x];</div><div class="line"></div><div class="line">        &#125;</div><div class="line">        return max;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static int getMin(int[] arr) &#123;</div><div class="line">        int min = arr[0];</div><div class="line">        for (int x = 1; x &lt; arr.length; x++) &#123;</div><div class="line">            if (arr[x] &lt; min)</div><div class="line">                min = arr[x];</div><div class="line"></div><div class="line">        &#125;</div><div class="line">        return min;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        hashProcess();</div><div class="line">        afterAddOrDeleteOneNode();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>上面的例子中是用普通哈希方法来做的，输出结果如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">平均节点中的数据量： 100000</div><div class="line">最多的一个节点的数量： 100653</div><div class="line">最少的一个节点的数量： 99160</div><div class="line">添加一个节点数据移动的数量： 9900492</div><div class="line">减少一个节点数据移动的数量： 9899656</div></pre></td></tr></table></figure>
-<p>可以看出，一共1000万个数据，添加或者减少一个节点，进行重新哈希，则990万个数据需要改变存储位置。也就是说990万个缓存不能命中，实际场景中这明显是不能接受的，因此提出了一致性哈希来解决这个问题。</p>
-<h1 id="一致性哈希"><a href="#一致性哈希" class="headerlink" title="一致性哈希"></a>一致性哈希</h1><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><ul>
-<li>唤醒hash空间：按照常用的hash算法来将对应的key哈希到一个具有2^32次方个桶的空间中，也就是0-2^32-1的数字空间中，将其收尾相连，形成一个环空间。</li>
-</ul>
-<p>Hash(object1) = key1；<br>Hash(object2) = key2；<br>Hash(object3) = key3；<br>Hash(object4) = key4；</p>
-<p>  <img src="/img/cons-Hash-2.png" alt="Alt text"></p>
-<ul>
-<li><p>将数据通过一定的哈希算法处理后映射到环上</p>
-<p><img src="/img/cons-Hash-3.png" alt="Alt text"></p>
-</li>
-<li><p>将服务器通过哈希算法映射到环上,和数据的哈希算法是一样的，环上的数据，顺时针遇到的第一个服务器就是该数据的存储位置。假定有三个服务器节点。</p>
-</li>
-</ul>
-<p>Hash(NODE1) = KEY1;<br>Hash(NODE2) = KEY2;<br>Hash(NODE3) = KEY3;</p>
-<p>  <img src="/img/cons-Hash-4.png" alt="Alt text"></p>
-<p>由于哈希环是不会变更的，因此一个数据可以快速的知道他的真正的存储位置。</p>
-<h2 id="服务器的删除与添加"><a href="#服务器的删除与添加" class="headerlink" title="服务器的删除与添加"></a>服务器的删除与添加</h2><p>不同于传统哈希求余方法，一致性哈希算法在增加或者删除服务器节点是，需要换位置的节点很少，性能很高。</p>
-<ol>
-<li><p>删除服务器节点,如果NODE2出现故障，则从集群里面溢出，那么object3会迁移到Node3中，其他数据的位置不变。</p>
-<p><img src="/img/cons-Hash-5.png" alt="Alt text"></p>
-</li>
-<li><p>添加服务器节点，向集群里面添加新的 首先将其映射到环中，通过顺时针迁移的规则，object2会迁移到NODE4中，其他对象不会发生改变。数据迁移的数量很小，很适合分布式集群。</p>
-<p><img src="/img/cons-Hash-6.png" alt="Alt text"></p>
-</li>
-<li><p>java示范</p>
-</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div></pre></td><td class="code"><pre><div class="line">import java.util.Objects;</div><div class="line">import java.util.SortedMap;</div><div class="line">import java.util.TreeMap;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/18\</div><div class="line"> * 一致性哈希方法</div><div class="line"> * 100000000个数据项，100个存储节点</div><div class="line"> */</div><div class="line">public class ConsistentHashMethod &#123;</div><div class="line">    public static final int NUMBER_OF_DATA = 10000000;</div><div class="line">    public static final int NUMBER_OF_NODE = 100;</div><div class="line">    //记录服务器要添加的环上的位置，默认为均匀分布的</div><div class="line">    private static int[] servers = new int[NUMBER_OF_NODE];</div><div class="line">    //key-服务器的哈希值，value表示服务器的位置</div><div class="line">    private static SortedMap&lt;Integer, Integer&gt; sortedMap = new TreeMap&lt;&gt;();</div><div class="line">    //记录每个服务器节点放置的数据数</div><div class="line">    private static int[] record = new int[NUMBER_OF_NODE];</div><div class="line"></div><div class="line">    //初始化，将服务器放入环中</div><div class="line">    public static void init() &#123;</div><div class="line">        int div = (Integer.MAX_VALUE) / NUMBER_OF_NODE;</div><div class="line">        for (int i = 0; i &lt; 100; i++) &#123;</div><div class="line">            servers[i] = i * div;</div><div class="line">        &#125;</div><div class="line">        //将所有服务器放入SortedMap中</div><div class="line">        for (int i = 0; i &lt; servers.length; i++) &#123;</div><div class="line">            int hash = getHash(servers[i] + &quot;&quot;);</div><div class="line">            sortedMap.put(hash, servers[i]);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void hashProcess() &#123;</div><div class="line">        int div = 21474836;</div><div class="line">        for (int i = 0; i &lt; NUMBER_OF_DATA; i++) &#123;</div><div class="line">            int hash = getHash(i+&quot;&quot;);</div><div class="line">            //得到大于该Hash值的所有Map</div><div class="line">            SortedMap&lt;Integer, Integer&gt; subMap = sortedMap.tailMap(hash);</div><div class="line">            //将节点放入对应的服务器中</div><div class="line">            if (subMap.isEmpty()) &#123;</div><div class="line">                Integer index = sortedMap.firstKey();</div><div class="line">                record[sortedMap.get(index) / div]++;</div><div class="line">            &#125; else &#123;</div><div class="line">                Integer index = subMap.firstKey();</div><div class="line">                record[sortedMap.get(index)/div]++;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        System.out.println(&quot;平均节点中的数据量： &quot; + NUMBER_OF_DATA/NUMBER_OF_NODE);</div><div class="line">        System.out.println(&quot;最多的一个节点的数量： &quot; + getMax(record));</div><div class="line">        System.out.println(&quot;最少的一个节点的数量： &quot; + getMin(record));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void afterAddOneNode() &#123;</div><div class="line">        int count = 0;</div><div class="line">        int div1 = (Integer.MAX_VALUE) / NUMBER_OF_NODE;</div><div class="line">        SortedMap&lt;Integer, Integer&gt; addNode = new TreeMap&lt;&gt;(sortedMap);</div><div class="line">        addNode.put(getHash(&quot;2333&quot;), 2333);</div><div class="line">        for (int i = 0; i &lt; NUMBER_OF_DATA; i++) &#123;</div><div class="line">            int hash = getHash(i + &quot;&quot;);</div><div class="line">            SortedMap&lt;Integer, Integer&gt; sub = sortedMap.tailMap(hash);</div><div class="line">            SortedMap&lt;Integer, Integer&gt; sub1 = addNode.tailMap(hash);</div><div class="line">            if (sub.isEmpty() &amp;&amp; sub1.isEmpty() ) &#123;</div><div class="line">                count++;</div><div class="line">            &#125;</div><div class="line">            if (!sub.isEmpty() &amp;&amp; !sub1.isEmpty() &amp;&amp; !Objects.equals(sub.firstKey(), sub1.firstKey())) &#123;</div><div class="line">                count++;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        System.out.println(&quot;添加一个节点数据移动的数量： &quot; + count);</div><div class="line">    &#125;</div><div class="line">    //使用FNV1_32_HASH算法</div><div class="line">    private static int getHash(String str) &#123;</div><div class="line">        final int p = 16777619;</div><div class="line">        int hash = (int) 2166136261L;</div><div class="line">        for (int i = 0; i &lt; str.length(); i++)</div><div class="line">            hash = (hash ^ str.charAt(i)) * p;</div><div class="line">        hash += hash &lt;&lt; 13;</div><div class="line">        hash ^= hash &gt;&gt; 7;</div><div class="line">        hash += hash &lt;&lt; 3;</div><div class="line">        hash ^= hash &gt;&gt; 17;</div><div class="line">        hash += hash &lt;&lt; 5;</div><div class="line"></div><div class="line">        // 如果算出来的值为负数则取其绝对值</div><div class="line">        if (hash &lt; 0)</div><div class="line">            hash = Math.abs(hash);</div><div class="line">        return hash;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static int getMax(int[] arr) &#123;</div><div class="line">        int max = arr[0];</div><div class="line">        for (int x = 1; x &lt; arr.length; x++) &#123;</div><div class="line">            if (arr[x] &gt; max)</div><div class="line">                max = arr[x];</div><div class="line"></div><div class="line">        &#125;</div><div class="line">        return max;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static int getMin(int[] arr) &#123;</div><div class="line">        int min = arr[0];</div><div class="line">        for (int x = 1; x &lt; arr.length; x++) &#123;</div><div class="line">            if (arr[x] &lt; min)</div><div class="line">                min = arr[x];</div><div class="line"></div><div class="line">        &#125;</div><div class="line">        return min;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        init();</div><div class="line">        hashProcess();</div><div class="line">        afterAddOneNode();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>运行结果为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">平均节点中的数据量： 100000</div><div class="line">最多的一个节点的数量： 479784</div><div class="line">最少的一个节点的数量： 1367</div><div class="line">添加一个节点数据移动的数量： 138303</div></pre></td></tr></table></figure>
-<p>可以看出添加一个节点之后，要修改的数据只有十万个，效率很高。</p>
-<h2 id="虚拟节点"><a href="#虚拟节点" class="headerlink" title="虚拟节点"></a>虚拟节点</h2><p>上面可以明确看出，一致性哈希算法满足了单调性和负载均衡的特性以及一般hash算法的分散性，平衡性的体现通过虚拟节点来实现。哈希算法是不保证平衡的，如值部署了NODE1和NODE3的情况，object1存储到NODE1中，其他的都存到NODE3中，这样就非常不平衡了。因此引入了虚拟节点。</p>
-<ul>
-<li><p>虚拟节点：实际上是及其在哈希空间中的复制品，一个实际的节点对应了若干个虚拟节点，这样对应个数也成为复制个数，虚拟节点在哈希空间中以哈希值排列。新建两个复制节点之后可以看到节点分配变得很均衡。</p>
-<p><img src="/img/cons-Hash-7.png" alt="Alt text"></p>
-</li>
-</ul>
-<p>其中涉及了哈希虚拟节点到实际节点的转换，其实只是一个简单的映射：</p>
-<p>  <img src="/img/cons-Hash-8.png" alt="Alt text"></p>
-<p>而在实际的场景中，可以通过对真实节点进行编号来生成相应的虚拟节点。如真实节点的IP为192.168.10.11，则虚拟节点可以设置为192.168.10.11#1,192.168.10.11#2。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/Zookeeper分布式专题/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1024,7 +815,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/struts2总结 六--struts2项目开发流程/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/一致性哈希算法及其Java实现/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="cdx">
@@ -1043,7 +834,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/04/21/struts2总结 六--struts2项目开发流程/" itemprop="url">struts2总结（六）--Struts2项目开发流程</a></h1>
+                <a class="post-title-link" href="/2019/04/21/一致性哈希算法及其Java实现/" itemprop="url">一致性哈希及其Java实现</a></h1>
         
 
         <div class="post-meta">
@@ -1089,8 +880,8 @@
                 
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/Struts2/" itemprop="url" rel="index">
-                    <span itemprop="name">Struts2</span>
+                  <a href="/categories/Java/Consistent-Hash/" itemprop="url" rel="index">
+                    <span itemprop="name">Consistent Hash</span>
                   </a>
                 </span>
 
@@ -1128,25 +919,63 @@
       
         
           
-            <ol>
-<li>建立界面原型</li>
-<li>建立struts.XHTML<ul>
-<li>确定namespace</li>
-<li>确定package</li>
-<li>确定Result</li>
-<li>将界面原型页面进行修改，匹配现有设置</li>
-<li>测试</li>
-<li>做好规划</li>
+            <h1 id="一致性哈希概念"><a href="#一致性哈希概念" class="headerlink" title="一致性哈希概念"></a>一致性哈希概念</h1><ul>
+<li>维基百科的定义</li>
 </ul>
-</li>
-<li>建立数据库</li>
-<li>建立Model层</li>
-<li>建立Service层<ul>
-<li>使用JUnit进行单元测试</li>
-</ul>
-</li>
-<li>开始开发</li>
+<p>一致哈希 是一种特殊的哈希算法。在使用一致哈希算法后，哈希表槽位数（大小）的改变平均只需要对K/n 个关键字重新映射，其中K是关键字的数量，n是槽位数量。然而在传统的哈希表中，添加或删除一个槽位的几乎需要对所有关键字进行重新映射。</p>
+<p>一致性哈希算法提出了动态变化的Cache环境中，判定哈希算法好坏的四个定义：</p>
+<ol>
+<li>平衡性：哈希的结果尽可能分布到所有的缓存中，充分利用缓存空间。</li>
+<li>单调性：举例说吧，本来有ABC三个缓存，数据1存储在B中，现在添加了D缓存进去，则数据1只会分布在B或者D中，不会分配到AC中。</li>
+<li>分散性：分散性是同一个数据被映射到不同的缓存中，需要避免</li>
+<li>负载：一个缓冲区被多个用户映射为不同的内容，需要降低缓冲的负载。</li>
 </ol>
+<h1 id="传统哈希算法"><a href="#传统哈希算法" class="headerlink" title="传统哈希算法"></a>传统哈希算法</h1><p>针对分布式场景，假定有1000W个数据项，100个存储接待你，一个数据的存储位置为该数据的Hash值对服务器数量取余，这样可以将数据尽可能的分散到各个服务器上。</p>
+<p>  <img src="/img/cons-Hash-1.png" alt="Alt text"></p>
+<p>这种哈希方案的优点是每个节点的的数据量是相仿的，相对均衡，但是当在集群里面增加一台服务器，或者减少一台服务器的话，几乎所有的缓存都会失效，需要重新哈希。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/18\</div><div class="line"> * 传统哈希方法</div><div class="line"> * 100000000个数据项，100个存储节点</div><div class="line"> */</div><div class="line">public class NormalHashMethod &#123;</div><div class="line">    //数据数</div><div class="line">    public static final int NUMBER_OF_DATA = 10000000;</div><div class="line">    //节点数</div><div class="line">    public static final int NUMBER_OF_NODE = 100;</div><div class="line">    //节点中存放的数据个数</div><div class="line">    private static int[] record = new int[NUMBER_OF_NODE];</div><div class="line"></div><div class="line">    //将节点放入对应的服务器中</div><div class="line">    public static void hashProcess() &#123;</div><div class="line">        for (int i = 0; i &lt; NUMBER_OF_DATA; i++) &#123;</div><div class="line">            int result = getHash(i+&quot;&quot;);</div><div class="line">            record[result%100]++;</div><div class="line">        &#125;</div><div class="line">        System.out.println(&quot;平均节点中的数据量： &quot; + NUMBER_OF_DATA/NUMBER_OF_NODE);</div><div class="line">        System.out.println(&quot;最多的一个节点的数量： &quot; + getMax(record));</div><div class="line">        System.out.println(&quot;最少的一个节点的数量： &quot; + getMin(record));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //添加一个节点或者减少一个节点时，需要移动的节点数</div><div class="line">    public static void afterAddOrDeleteOneNode() &#123;</div><div class="line">        int count = 0;</div><div class="line">        int count1 = 0;</div><div class="line">        //对所有数据进行hash，对新的服务器数量取余</div><div class="line">        for (int i = 0; i &lt; NUMBER_OF_DATA; i++) &#123;</div><div class="line">            int result = getHash(i+&quot;&quot;);</div><div class="line">            if (result % NUMBER_OF_NODE != result % (NUMBER_OF_NODE + 1))</div><div class="line">                count++;</div><div class="line">            if (result % NUMBER_OF_NODE != result % (NUMBER_OF_NODE - 1))</div><div class="line">                count1++;</div><div class="line">        &#125;</div><div class="line">        System.out.println(&quot;添加一个节点数据移动的数量： &quot; + count);</div><div class="line">        System.out.println(&quot;减少一个节点数据移动的数量： &quot; + count1);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //使用FNV1_32_HASH算法</div><div class="line">    private static int getHash(String str) &#123;</div><div class="line">        final int p = 16777619;</div><div class="line">        int hash = (int) 2166136261L;</div><div class="line">        for (int i = 0; i &lt; str.length(); i++)</div><div class="line">            hash = (hash ^ str.charAt(i)) * p;</div><div class="line">        hash += hash &lt;&lt; 13;</div><div class="line">        hash ^= hash &gt;&gt; 7;</div><div class="line">        hash += hash &lt;&lt; 3;</div><div class="line">        hash ^= hash &gt;&gt; 17;</div><div class="line">        hash += hash &lt;&lt; 5;</div><div class="line"></div><div class="line">        // 如果算出来的值为负数则取其绝对值</div><div class="line">        if (hash &lt; 0)</div><div class="line">            hash = Math.abs(hash);</div><div class="line">        return hash;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static int getMax(int[] arr) &#123;</div><div class="line">        int max = arr[0];</div><div class="line">        for (int x = 1; x &lt; arr.length; x++) &#123;</div><div class="line">            if (arr[x] &gt; max)</div><div class="line">                max = arr[x];</div><div class="line"></div><div class="line">        &#125;</div><div class="line">        return max;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static int getMin(int[] arr) &#123;</div><div class="line">        int min = arr[0];</div><div class="line">        for (int x = 1; x &lt; arr.length; x++) &#123;</div><div class="line">            if (arr[x] &lt; min)</div><div class="line">                min = arr[x];</div><div class="line"></div><div class="line">        &#125;</div><div class="line">        return min;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        hashProcess();</div><div class="line">        afterAddOrDeleteOneNode();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面的例子中是用普通哈希方法来做的，输出结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">平均节点中的数据量： 100000</div><div class="line">最多的一个节点的数量： 100653</div><div class="line">最少的一个节点的数量： 99160</div><div class="line">添加一个节点数据移动的数量： 9900492</div><div class="line">减少一个节点数据移动的数量： 9899656</div></pre></td></tr></table></figure>
+<p>可以看出，一共1000万个数据，添加或者减少一个节点，进行重新哈希，则990万个数据需要改变存储位置。也就是说990万个缓存不能命中，实际场景中这明显是不能接受的，因此提出了一致性哈希来解决这个问题。</p>
+<h1 id="一致性哈希"><a href="#一致性哈希" class="headerlink" title="一致性哈希"></a>一致性哈希</h1><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><ul>
+<li>唤醒hash空间：按照常用的hash算法来将对应的key哈希到一个具有2^32次方个桶的空间中，也就是0-2^32-1的数字空间中，将其收尾相连，形成一个环空间。</li>
+</ul>
+<p>Hash(object1) = key1；<br>Hash(object2) = key2；<br>Hash(object3) = key3；<br>Hash(object4) = key4；</p>
+<p>  <img src="/img/cons-Hash-2.png" alt="Alt text"></p>
+<ul>
+<li><p>将数据通过一定的哈希算法处理后映射到环上</p>
+<p><img src="/img/cons-Hash-3.png" alt="Alt text"></p>
+</li>
+<li><p>将服务器通过哈希算法映射到环上,和数据的哈希算法是一样的，环上的数据，顺时针遇到的第一个服务器就是该数据的存储位置。假定有三个服务器节点。</p>
+</li>
+</ul>
+<p>Hash(NODE1) = KEY1;<br>Hash(NODE2) = KEY2;<br>Hash(NODE3) = KEY3;</p>
+<p>  <img src="/img/cons-Hash-4.png" alt="Alt text"></p>
+<p>由于哈希环是不会变更的，因此一个数据可以快速的知道他的真正的存储位置。</p>
+<h2 id="服务器的删除与添加"><a href="#服务器的删除与添加" class="headerlink" title="服务器的删除与添加"></a>服务器的删除与添加</h2><p>不同于传统哈希求余方法，一致性哈希算法在增加或者删除服务器节点是，需要换位置的节点很少，性能很高。</p>
+<ol>
+<li><p>删除服务器节点,如果NODE2出现故障，则从集群里面溢出，那么object3会迁移到Node3中，其他数据的位置不变。</p>
+<p><img src="/img/cons-Hash-5.png" alt="Alt text"></p>
+</li>
+<li><p>添加服务器节点，向集群里面添加新的 首先将其映射到环中，通过顺时针迁移的规则，object2会迁移到NODE4中，其他对象不会发生改变。数据迁移的数量很小，很适合分布式集群。</p>
+<p><img src="/img/cons-Hash-6.png" alt="Alt text"></p>
+</li>
+<li><p>java示范</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div></pre></td><td class="code"><pre><div class="line">import java.util.Objects;</div><div class="line">import java.util.SortedMap;</div><div class="line">import java.util.TreeMap;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/18\</div><div class="line"> * 一致性哈希方法</div><div class="line"> * 100000000个数据项，100个存储节点</div><div class="line"> */</div><div class="line">public class ConsistentHashMethod &#123;</div><div class="line">    public static final int NUMBER_OF_DATA = 10000000;</div><div class="line">    public static final int NUMBER_OF_NODE = 100;</div><div class="line">    //记录服务器要添加的环上的位置，默认为均匀分布的</div><div class="line">    private static int[] servers = new int[NUMBER_OF_NODE];</div><div class="line">    //key-服务器的哈希值，value表示服务器的位置</div><div class="line">    private static SortedMap&lt;Integer, Integer&gt; sortedMap = new TreeMap&lt;&gt;();</div><div class="line">    //记录每个服务器节点放置的数据数</div><div class="line">    private static int[] record = new int[NUMBER_OF_NODE];</div><div class="line"></div><div class="line">    //初始化，将服务器放入环中</div><div class="line">    public static void init() &#123;</div><div class="line">        int div = (Integer.MAX_VALUE) / NUMBER_OF_NODE;</div><div class="line">        for (int i = 0; i &lt; 100; i++) &#123;</div><div class="line">            servers[i] = i * div;</div><div class="line">        &#125;</div><div class="line">        //将所有服务器放入SortedMap中</div><div class="line">        for (int i = 0; i &lt; servers.length; i++) &#123;</div><div class="line">            int hash = getHash(servers[i] + &quot;&quot;);</div><div class="line">            sortedMap.put(hash, servers[i]);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void hashProcess() &#123;</div><div class="line">        int div = 21474836;</div><div class="line">        for (int i = 0; i &lt; NUMBER_OF_DATA; i++) &#123;</div><div class="line">            int hash = getHash(i+&quot;&quot;);</div><div class="line">            //得到大于该Hash值的所有Map</div><div class="line">            SortedMap&lt;Integer, Integer&gt; subMap = sortedMap.tailMap(hash);</div><div class="line">            //将节点放入对应的服务器中</div><div class="line">            if (subMap.isEmpty()) &#123;</div><div class="line">                Integer index = sortedMap.firstKey();</div><div class="line">                record[sortedMap.get(index) / div]++;</div><div class="line">            &#125; else &#123;</div><div class="line">                Integer index = subMap.firstKey();</div><div class="line">                record[sortedMap.get(index)/div]++;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        System.out.println(&quot;平均节点中的数据量： &quot; + NUMBER_OF_DATA/NUMBER_OF_NODE);</div><div class="line">        System.out.println(&quot;最多的一个节点的数量： &quot; + getMax(record));</div><div class="line">        System.out.println(&quot;最少的一个节点的数量： &quot; + getMin(record));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void afterAddOneNode() &#123;</div><div class="line">        int count = 0;</div><div class="line">        int div1 = (Integer.MAX_VALUE) / NUMBER_OF_NODE;</div><div class="line">        SortedMap&lt;Integer, Integer&gt; addNode = new TreeMap&lt;&gt;(sortedMap);</div><div class="line">        addNode.put(getHash(&quot;2333&quot;), 2333);</div><div class="line">        for (int i = 0; i &lt; NUMBER_OF_DATA; i++) &#123;</div><div class="line">            int hash = getHash(i + &quot;&quot;);</div><div class="line">            SortedMap&lt;Integer, Integer&gt; sub = sortedMap.tailMap(hash);</div><div class="line">            SortedMap&lt;Integer, Integer&gt; sub1 = addNode.tailMap(hash);</div><div class="line">            if (sub.isEmpty() &amp;&amp; sub1.isEmpty() ) &#123;</div><div class="line">                count++;</div><div class="line">            &#125;</div><div class="line">            if (!sub.isEmpty() &amp;&amp; !sub1.isEmpty() &amp;&amp; !Objects.equals(sub.firstKey(), sub1.firstKey())) &#123;</div><div class="line">                count++;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        System.out.println(&quot;添加一个节点数据移动的数量： &quot; + count);</div><div class="line">    &#125;</div><div class="line">    //使用FNV1_32_HASH算法</div><div class="line">    private static int getHash(String str) &#123;</div><div class="line">        final int p = 16777619;</div><div class="line">        int hash = (int) 2166136261L;</div><div class="line">        for (int i = 0; i &lt; str.length(); i++)</div><div class="line">            hash = (hash ^ str.charAt(i)) * p;</div><div class="line">        hash += hash &lt;&lt; 13;</div><div class="line">        hash ^= hash &gt;&gt; 7;</div><div class="line">        hash += hash &lt;&lt; 3;</div><div class="line">        hash ^= hash &gt;&gt; 17;</div><div class="line">        hash += hash &lt;&lt; 5;</div><div class="line"></div><div class="line">        // 如果算出来的值为负数则取其绝对值</div><div class="line">        if (hash &lt; 0)</div><div class="line">            hash = Math.abs(hash);</div><div class="line">        return hash;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static int getMax(int[] arr) &#123;</div><div class="line">        int max = arr[0];</div><div class="line">        for (int x = 1; x &lt; arr.length; x++) &#123;</div><div class="line">            if (arr[x] &gt; max)</div><div class="line">                max = arr[x];</div><div class="line"></div><div class="line">        &#125;</div><div class="line">        return max;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static int getMin(int[] arr) &#123;</div><div class="line">        int min = arr[0];</div><div class="line">        for (int x = 1; x &lt; arr.length; x++) &#123;</div><div class="line">            if (arr[x] &lt; min)</div><div class="line">                min = arr[x];</div><div class="line"></div><div class="line">        &#125;</div><div class="line">        return min;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        init();</div><div class="line">        hashProcess();</div><div class="line">        afterAddOneNode();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>运行结果为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">平均节点中的数据量： 100000</div><div class="line">最多的一个节点的数量： 479784</div><div class="line">最少的一个节点的数量： 1367</div><div class="line">添加一个节点数据移动的数量： 138303</div></pre></td></tr></table></figure>
+<p>可以看出添加一个节点之后，要修改的数据只有十万个，效率很高。</p>
+<h2 id="虚拟节点"><a href="#虚拟节点" class="headerlink" title="虚拟节点"></a>虚拟节点</h2><p>上面可以明确看出，一致性哈希算法满足了单调性和负载均衡的特性以及一般hash算法的分散性，平衡性的体现通过虚拟节点来实现。哈希算法是不保证平衡的，如值部署了NODE1和NODE3的情况，object1存储到NODE1中，其他的都存到NODE3中，这样就非常不平衡了。因此引入了虚拟节点。</p>
+<ul>
+<li><p>虚拟节点：实际上是及其在哈希空间中的复制品，一个实际的节点对应了若干个虚拟节点，这样对应个数也成为复制个数，虚拟节点在哈希空间中以哈希值排列。新建两个复制节点之后可以看到节点分配变得很均衡。</p>
+<p><img src="/img/cons-Hash-7.png" alt="Alt text"></p>
+</li>
+</ul>
+<p>其中涉及了哈希虚拟节点到实际节点的转换，其实只是一个简单的映射：</p>
+<p>  <img src="/img/cons-Hash-8.png" alt="Alt text"></p>
+<p>而在实际的场景中，可以通过对真实节点进行编号来生成相应的虚拟节点。如真实节点的IP为192.168.10.11，则虚拟节点可以设置为192.168.10.11#1,192.168.10.11#2。</p>
 
           
         
@@ -1439,6 +1268,177 @@
 <p><em>参考：<a href="http://www.jianshu.com/p/a884504a8863" target="_blank" rel="external">http://www.jianshu.com/p/a884504a8863</a></em></p>
 </li>
 </ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/struts2总结 六--struts2项目开发流程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/21/struts2总结 六--struts2项目开发流程/" itemprop="url">struts2总结（六）--Struts2项目开发流程</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/Struts2/" itemprop="url" rel="index">
+                    <span itemprop="name">Struts2</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <ol>
+<li>建立界面原型</li>
+<li>建立struts.XHTML<ul>
+<li>确定namespace</li>
+<li>确定package</li>
+<li>确定Result</li>
+<li>将界面原型页面进行修改，匹配现有设置</li>
+<li>测试</li>
+<li>做好规划</li>
+</ul>
+</li>
+<li>建立数据库</li>
+<li>建立Model层</li>
+<li>建立Service层<ul>
+<li>使用JUnit进行单元测试</li>
+</ul>
+</li>
+<li>开始开发</li>
+</ol>
 
           
         
@@ -1898,254 +1898,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/SQL开发技巧/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/SQL开发技巧/" itemprop="url">SQL开发技巧</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/MySQL/" itemprop="url" rel="index">
-                    <span itemprop="name">MySQL</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/MySQL/database/" itemprop="url" rel="index">
-                    <span itemprop="name">database</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="SQL语句分类"><a href="#SQL语句分类" class="headerlink" title="SQL语句分类"></a>SQL语句分类</h1><ul>
-<li>DDL：数据定义语言</li>
-<li>TPL：事务处理语言</li>
-<li>DCL：数据控制语言-grant</li>
-<li>DML：数据操作语言-crud</li>
-</ul>
-<h1 id="join从句"><a href="#join从句" class="headerlink" title="join从句"></a>join从句</h1><p>操作表数据：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select * from user1;</div><div class="line">+----+-----------+----------+</div><div class="line">| id | user_name | over     |</div><div class="line">+----+-----------+----------+</div><div class="line">|  1 | 唐僧      | 唐僧成佛 |</div><div class="line">|  2 | 猪八戒    | 净坛使者 |</div><div class="line">|  3 | 孙悟空    | 斗战胜佛 |</div><div class="line">|  4 | 沙僧      | 金身罗汉 |</div><div class="line">+----+-----------+----------+</div><div class="line">4 rows in set (0.00 sec)</div><div class="line"></div><div class="line">mysql&gt; select * from user2;</div><div class="line">+----+-----------+--------+</div><div class="line">| id | user_name | over   |</div><div class="line">+----+-----------+--------+</div><div class="line">|  1 | 孙悟空    | 成佛   |</div><div class="line">|  2 | 牛魔王    | 妖怪吧 |</div><div class="line">|  3 | 蛟魔王    | 妖怪吧 |</div><div class="line">|  4 | 鹏魔王    | 妖怪吧 |</div><div class="line">|  5 | 狮驼王    | 妖怪吧 |</div><div class="line">+----+-----------+--------+</div><div class="line">5 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
-<h2 id="内连接-inner"><a href="#内连接-inner" class="headerlink" title="内连接 inner"></a>内连接 inner</h2><p>基于连接谓词将两张表的列组合在一起，产生新的结果表，交集。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.user_name, a.over, b.over from user1 a join user2 b on a.user_name = b.user_name;</div><div class="line">+-----------+----------+------+</div><div class="line">| user_name | over     | over |</div><div class="line">+-----------+----------+------+</div><div class="line">| 孙悟空    | 斗战胜佛 | 成佛 |</div><div class="line">+-----------+----------+------+</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure>
-<h2 id="全外连接-full-outer"><a href="#全外连接-full-outer" class="headerlink" title="全外连接 full outer"></a>全外连接 full outer</h2><p>并集，MySQL中不支持直接的full join。用union all来实现。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.user_name, a.over, b.over from user1 a left join user2 b on a.user_name = b. user_name</div><div class="line">    -&gt; union all</div><div class="line">    -&gt; select b.user_name, b.over, a.over</div><div class="line">    -&gt; from user1 a right join user2 b on b.user_name = a.user_name;</div><div class="line">+-----------+----------+----------+</div><div class="line">| user_name | over     | over     |</div><div class="line">+-----------+----------+----------+</div><div class="line">| 孙悟空    | 斗战胜佛 | 成佛     |</div><div class="line">| 唐僧      | 唐僧成佛 | NULL     |</div><div class="line">| 猪八戒    | 净坛使者 | NULL     |</div><div class="line">| 沙僧      | 金身罗汉 | NULL     |</div><div class="line">| 孙悟空    | 成佛     | 斗战胜佛 |</div><div class="line">| 牛魔王    | 妖怪吧   | NULL     |</div><div class="line">| 蛟魔王    | 妖怪吧   | NULL     |</div><div class="line">| 鹏魔王    | 妖怪吧   | NULL     |</div><div class="line">| 狮驼王    | 妖怪吧   | NULL     |</div><div class="line">+-----------+----------+----------+</div><div class="line">9 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
-<h2 id="左外连接-left-outer"><a href="#左外连接-left-outer" class="headerlink" title="左外连接 left outer"></a>左外连接 left outer</h2><p>以左表为准。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.user_name, a.over, b.over from user1 a left join user2 b on a.user_name = b.user_name where b.user_name is null;</div><div class="line">+-----------+----------+------+</div><div class="line">| user_name | over     | over |</div><div class="line">+-----------+----------+------+</div><div class="line">| 唐僧      | 唐僧成佛 | NULL |</div><div class="line">| 猪八戒    | 净坛使者 | NULL |</div><div class="line">| 沙僧      | 金身罗汉 | NULL |</div><div class="line">+-----------+----------+------+</div><div class="line">3 rows in set (0.00 sec)</div><div class="line">mysql&gt; select a.user_name, a.over, b.over from user1 a left join user2 b on a.user_name = b.user_name where b.user_name is not null;</div><div class="line">+-----------+----------+------+</div><div class="line">| user_name | over     | over |</div><div class="line">+-----------+----------+------+</div><div class="line">| 孙悟空    | 斗战胜佛 | 成佛 |</div><div class="line">+-----------+----------+------+</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure>
-<h2 id="右外连接-right-outer"><a href="#右外连接-right-outer" class="headerlink" title="右外连接 right outer"></a>右外连接 right outer</h2><p>以右表为准。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select b.user_name, b.over, a.over from user1 a right join user2 b on b.user_name = a.user_name where a.user_name is null;</div><div class="line">+-----------+--------+------+</div><div class="line">| user_name | over   | over |</div><div class="line">+-----------+--------+------+</div><div class="line">| 牛魔王    | 妖怪吧 | NULL |</div><div class="line">| 蛟魔王    | 妖怪吧 | NULL |</div><div class="line">| 鹏魔王    | 妖怪吧 | NULL |</div><div class="line">| 狮驼王    | 妖怪吧 | NULL |</div><div class="line">+-----------+--------+------+</div><div class="line">4 rows in set (0.00 sec)</div><div class="line"></div><div class="line">mysql&gt; select b.user_name, b.over, a.over from user1 a right join user2 b on b.user_name = a.user_name where a.user_name is not null;</div><div class="line">+-----------+------+----------+</div><div class="line">| user_name | over | over     |</div><div class="line">+-----------+------+----------+</div><div class="line">| 孙悟空    | 成佛 | 斗战胜佛 |</div><div class="line">+-----------+------+----------+</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure>
-<h2 id="交叉连接-cross"><a href="#交叉连接-cross" class="headerlink" title="交叉连接 cross"></a>交叉连接 cross</h2><p>实际中需要避免。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.user_name, a.over, b.over from user1 a cross join user2 b;</div><div class="line">+-----------+----------+--------+</div><div class="line">| user_name | over     | over   |</div><div class="line">+-----------+----------+--------+</div><div class="line">| 唐僧      | 唐僧成佛 | 成佛   |</div><div class="line">| 猪八戒    | 净坛使者 | 成佛   |</div><div class="line">| 孙悟空    | 斗战胜佛 | 成佛   |</div><div class="line">| 沙僧      | 金身罗汉 | 成佛   |</div><div class="line">| 唐僧      | 唐僧成佛 | 妖怪吧 |</div><div class="line">| 猪八戒    | 净坛使者 | 妖怪吧 |</div><div class="line">| 孙悟空    | 斗战胜佛 | 妖怪吧 |</div><div class="line">| 沙僧      | 金身罗汉 | 妖怪吧 |</div><div class="line">| 唐僧      | 唐僧成佛 | 妖怪吧 |</div><div class="line">| 猪八戒    | 净坛使者 | 妖怪吧 |</div><div class="line">| 孙悟空    | 斗战胜佛 | 妖怪吧 |</div><div class="line">| 沙僧      | 金身罗汉 | 妖怪吧 |</div><div class="line">| 唐僧      | 唐僧成佛 | 妖怪吧 |</div><div class="line">| 猪八戒    | 净坛使者 | 妖怪吧 |</div><div class="line">| 孙悟空    | 斗战胜佛 | 妖怪吧 |</div><div class="line">| 沙僧      | 金身罗汉 | 妖怪吧 |</div><div class="line">| 唐僧      | 唐僧成佛 | 妖怪吧 |</div><div class="line">| 猪八戒    | 净坛使者 | 妖怪吧 |</div><div class="line">| 孙悟空    | 斗战胜佛 | 妖怪吧 |</div><div class="line">| 沙僧      | 金身罗汉 | 妖怪吧 |</div><div class="line">+-----------+----------+--------+</div><div class="line">20 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
-<h2 id="如何更新过滤条件中包括自身的表"><a href="#如何更新过滤条件中包括自身的表" class="headerlink" title="如何更新过滤条件中包括自身的表"></a>如何更新过滤条件中包括自身的表</h2><p>直接更新是不可以的：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">mysql&gt; update user1 set over=&apos;齐天大圣&apos; where user1.user_name in (</div><div class="line">    -&gt; select b.user_name</div><div class="line">    -&gt; from user1 a inner join user2 b on</div><div class="line">    -&gt; a.user_name=b.user_name);</div><div class="line">ERROR 1093 (HY000): You can&apos;t specify target table &apos;user1&apos; for update in FROM clause</div></pre></td></tr></table></figure>
-<p>先join，更新join之后的表方法:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">mysql&gt; update user1 a join(</div><div class="line">    -&gt; select b.user_name</div><div class="line">    -&gt; from user1 a inner join user2 b on</div><div class="line">    -&gt; a.user_name=b.user_name) b on a.user_name = b.user_name set a.over=&apos;齐天大圣&apos;;</div><div class="line">Query OK, 1 row affected (0.01 sec)</div><div class="line">Rows matched: 1  Changed: 1  Warnings: 0</div><div class="line"></div><div class="line">mysql&gt; select * from user1;</div><div class="line">+----+-----------+----------+</div><div class="line">| id | user_name | over     |</div><div class="line">+----+-----------+----------+</div><div class="line">|  1 | 唐僧      | 唐僧成佛 |</div><div class="line">|  2 | 猪八戒    | 净坛使者 |</div><div class="line">|  3 | 孙悟空    | 齐天大圣 |</div><div class="line">|  4 | 沙僧      | 金身罗汉 |</div><div class="line">+----+-----------+----------+</div><div class="line">4 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
-<h2 id="join优化子查询"><a href="#join优化子查询" class="headerlink" title="join优化子查询"></a>join优化子查询</h2><p>低效的子查询：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.user_name, a.over, (select over from user2 b where a.user_name=b.user_name) as over2 from user1 a;</div><div class="line">+-----------+----------+-------+</div><div class="line">| user_name | over     | over2 |</div><div class="line">+-----------+----------+-------+</div><div class="line">| 唐僧      | 唐僧成佛 | NULL  |</div><div class="line">| 猪八戒    | 净坛使者 | NULL  |</div><div class="line">| 孙悟空    | 齐天大圣 | 成佛  |</div><div class="line">| 沙僧      | 金身罗汉 | NULL  |</div><div class="line">+-----------+----------+-------+</div><div class="line">4 rows in set (0.00 sec)</div><div class="line">mysql&gt; explain select a.user_name, a.over, (select over from user2 b where a.user_name=b.user_name) as over2 from user1 a\G</div><div class="line">*************************** 1. row ***************************</div><div class="line">           id: 1</div><div class="line">  select_type: PRIMARY</div><div class="line">        table: a</div><div class="line">   partitions: NULL</div><div class="line">         type: ALL</div><div class="line">possible_keys: NULL</div><div class="line">          key: NULL</div><div class="line">      key_len: NULL</div><div class="line">          ref: NULL</div><div class="line">         rows: 4</div><div class="line">     filtered: 100.00</div><div class="line">        Extra: NULL</div><div class="line">*************************** 2. row ***************************</div><div class="line">           id: 2</div><div class="line">  select_type: DEPENDENT SUBQUERY</div><div class="line">        table: b</div><div class="line">   partitions: NULL</div><div class="line">         type: ALL</div><div class="line">possible_keys: NULL</div><div class="line">          key: NULL</div><div class="line">      key_len: NULL</div><div class="line">          ref: NULL</div><div class="line">         rows: 5</div><div class="line">     filtered: 20.00</div><div class="line">        Extra: Using where</div><div class="line">2 rows in set, 2 warnings (0.00 sec)</div></pre></td></tr></table></figure>
-<p>left join优化后：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.user_name, a.over, b.over as over2 from user1 a left join user2 b on a.user_name=b.user_name;</div><div class="line">+-----------+----------+-------+</div><div class="line">| user_name | over     | over2 |</div><div class="line">+-----------+----------+-------+</div><div class="line">| 孙悟空    | 齐天大圣 | 成佛  |</div><div class="line">| 唐僧      | 唐僧成佛 | NULL  |</div><div class="line">| 猪八戒    | 净坛使者 | NULL  |</div><div class="line">| 沙僧      | 金身罗汉 | NULL  |</div><div class="line">+-----------+----------+-------+</div><div class="line">4 rows in set (0.00 sec)</div><div class="line"></div><div class="line">mysql&gt; explain select a.user_name, a.over, b.over as over2 from user1 a left join user2 b on a.user_name=b.user_name\G</div><div class="line">*************************** 1. row ***************************</div><div class="line">           id: 1</div><div class="line">  select_type: SIMPLE</div><div class="line">        table: a</div><div class="line">   partitions: NULL</div><div class="line">         type: ALL</div><div class="line">possible_keys: NULL</div><div class="line">          key: NULL</div><div class="line">      key_len: NULL</div><div class="line">          ref: NULL</div><div class="line">         rows: 4</div><div class="line">     filtered: 100.00</div><div class="line">        Extra: NULL</div><div class="line">*************************** 2. row ***************************</div><div class="line">           id: 1</div><div class="line">  select_type: SIMPLE</div><div class="line">        table: b</div><div class="line">   partitions: NULL</div><div class="line">         type: ALL</div><div class="line">possible_keys: NULL</div><div class="line">          key: NULL</div><div class="line">      key_len: NULL</div><div class="line">          ref: NULL</div><div class="line">         rows: 5</div><div class="line">     filtered: 100.00</div><div class="line">        Extra: Using where; Using join buffer (Block Nested Loop)</div><div class="line">2 rows in set, 1 warning (0.00 sec)</div></pre></td></tr></table></figure>
-<h2 id="join优化聚合子查询"><a href="#join优化聚合子查询" class="headerlink" title="join优化聚合子查询"></a>join优化聚合子查询</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.user_name, b.timestr, b.kills from user1 a join user_kills b on a.id=b.user_id where b.kills=(select max(c.kills) from user_kills c where c.user_id = b.user_id);</div><div class="line">+-----------+-----------+-------+</div><div class="line">| user_name | timestr   | kills |</div><div class="line">+-----------+-----------+-------+</div><div class="line">| 猪八戒    | 2013-2-5  |    12 |</div><div class="line">| 沙僧      | 2013-1-10 |     3 |</div><div class="line">+-----------+-----------+-------+</div><div class="line">2 rows in set (0.00 sec)</div><div class="line">mysql&gt; explain select a.user_name, b.timestr, b.kills from user1 a join user_kills b on a.id=b.user_id where b.kills=(select max(c.kills) from user_kills c where c.user_id = b.user_id)\G</div><div class="line">*************************** 1. row ***************************</div><div class="line">           id: 1</div><div class="line">  select_type: PRIMARY</div><div class="line">        table: a</div><div class="line">   partitions: NULL</div><div class="line">         type: ALL</div><div class="line">possible_keys: PRIMARY</div><div class="line">          key: NULL</div><div class="line">      key_len: NULL</div><div class="line">          ref: NULL</div><div class="line">         rows: 4</div><div class="line">     filtered: 100.00</div><div class="line">        Extra: NULL</div><div class="line">*************************** 2. row ***************************</div><div class="line">           id: 1</div><div class="line">  select_type: PRIMARY</div><div class="line">        table: b</div><div class="line">   partitions: NULL</div><div class="line">         type: ALL</div><div class="line">possible_keys: NULL</div><div class="line">          key: NULL</div><div class="line">      key_len: NULL</div><div class="line">          ref: NULL</div><div class="line">         rows: 5</div><div class="line">     filtered: 20.00</div><div class="line">        Extra: Using where; Using join buffer (Block Nested Loop)</div><div class="line">*************************** 3. row ***************************</div><div class="line">           id: 2</div><div class="line">  select_type: DEPENDENT SUBQUERY</div><div class="line">        table: c</div><div class="line">   partitions: NULL</div><div class="line">         type: ALL</div><div class="line">possible_keys: NULL</div><div class="line">          key: NULL</div><div class="line">      key_len: NULL</div><div class="line">          ref: NULL</div><div class="line">         rows: 5</div><div class="line">     filtered: 20.00</div><div class="line">        Extra: Using where</div><div class="line">3 rows in set, 2 warnings (0.00 sec)</div></pre></td></tr></table></figure>
-<p>优化后：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.user_name, b.timestr, b.kills from user1 a join user_kills b on a.id = b.user_id join user_kills c on c.user_id=b.user_id group by a.user_name, b.timestr, b.kills having b.kills = max(c.kills);</div><div class="line">+-----------+-----------+-------+</div><div class="line">| user_name | timestr   | kills |</div><div class="line">+-----------+-----------+-------+</div><div class="line">| 沙僧      | 2013-1-10 |     3 |</div><div class="line">| 猪八戒    | 2013-2-5  |    12 |</div><div class="line">+-----------+-----------+-------+</div><div class="line">2 rows in set (0.00 sec)</div><div class="line"></div><div class="line">mysql&gt; explain select a.user_name, b.timestr, b.kills from user1 a join user_kills b on a.id = b.user_id join user_kills c on c.user_id=b.user_id group by a.user_name, b.timestr, b.kills having b.kills = max(c.kills)\G</div><div class="line">*************************** 1. row ***************************</div><div class="line">           id: 1</div><div class="line">  select_type: SIMPLE</div><div class="line">        table: b</div><div class="line">   partitions: NULL</div><div class="line">         type: ALL</div><div class="line">possible_keys: NULL</div><div class="line">          key: NULL</div><div class="line">      key_len: NULL</div><div class="line">          ref: NULL</div><div class="line">         rows: 5</div><div class="line">     filtered: 100.00</div><div class="line">        Extra: Using where; Using temporary; Using filesort</div><div class="line">*************************** 2. row ***************************</div><div class="line">           id: 1</div><div class="line">  select_type: SIMPLE</div><div class="line">        table: c</div><div class="line">   partitions: NULL</div><div class="line">         type: ALL</div><div class="line">possible_keys: NULL</div><div class="line">          key: NULL</div><div class="line">      key_len: NULL</div><div class="line">          ref: NULL</div><div class="line">         rows: 5</div><div class="line">     filtered: 20.00</div><div class="line">        Extra: Using where; Using join buffer (Block Nested Loop)</div><div class="line">*************************** 3. row ***************************</div><div class="line">           id: 1</div><div class="line">  select_type: SIMPLE</div><div class="line">        table: a</div><div class="line">   partitions: NULL</div><div class="line">         type: eq_ref</div><div class="line">possible_keys: PRIMARY</div><div class="line">          key: PRIMARY</div><div class="line">      key_len: 4</div><div class="line">          ref: test1.b.user_id</div><div class="line">         rows: 1</div><div class="line">     filtered: 100.00</div><div class="line">        Extra: NULL</div><div class="line">3 rows in set, 1 warning (0.00 sec)</div></pre></td></tr></table></figure>
-<h1 id="如何实现分组选择"><a href="#如何实现分组选择" class="headerlink" title="如何实现分组选择"></a>如何实现分组选择</h1><p>每一组数据中选出前几名的情景，可以分组逐个进行查询，这种情况下，分组比较多，需要执行同一次查询很多次，而且增加了应用程序与数据库的交互次数，增加了数据库执行查询的次数，不符合批处理的原则，也会增加网络流量，因此实际中不使用这种方式。</p>
-<p>优化方法:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select d.user_name, c.timestr, kills from (select user_id, timestr, kills, (select count(*) from user_kills b where b.user_id=a.user_id and a.kills&lt;=b.kills) as cnt from user_kills a group by user_id, timestr, kills) c join user1 d on c.user_id=d.id where cnt&lt;=2;</div><div class="line">+-----------+-----------+-------+</div><div class="line">| user_name | timestr   | kills |</div><div class="line">+-----------+-----------+-------+</div><div class="line">| 猪八戒    | 2013-2-5  |    12 |</div><div class="line">| 猪八戒    | 2013-1-10 |    10 |</div><div class="line">| 沙僧      | 2013-1-10 |     3 |</div><div class="line">+-----------+-----------+-------+</div><div class="line">3 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
-<h1 id="如何进行行列转换"><a href="#如何进行行列转换" class="headerlink" title="如何进行行列转换"></a>如何进行行列转换</h1><h2 id="行转列"><a href="#行转列" class="headerlink" title="行转列"></a>行转列</h2><p>报表统计，汇总显示会经常使用行转列的操作。</p>
-<ul>
-<li><p>打印流水单：</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.user_name, b.kills from user1 a join user_kills b on a.id=b.user_id;</div><div class="line">+-----------+-------+</div><div class="line">| user_name | kills |</div><div class="line">+-----------+-------+</div><div class="line">| 猪八戒    |    10 |</div><div class="line">| 猪八戒    |     2 |</div><div class="line">| 猪八戒    |    12 |</div><div class="line">| 沙僧      |     3 |</div><div class="line">| 猪八戒    |     6 |</div><div class="line">| 孙悟空    |    50 |</div><div class="line">| 孙悟空    |    12 |</div><div class="line">| 孙悟空    |     5 |</div><div class="line">| 猪八戒    |    15 |</div><div class="line">| 沙僧      |   123 |</div><div class="line">| 沙僧      |    14 |</div><div class="line">| 沙僧      |    10 |</div><div class="line">+-----------+-------+</div><div class="line">12 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
-</li>
-<li><p>汇总通过sum和group by</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.user_name, sum(b.kills) from user1 a join user_kills b on a.id=b.user_id group by a.user_name;</div><div class="line">+-----------+--------------+</div><div class="line">| user_name | sum(b.kills) |</div><div class="line">+-----------+--------------+</div><div class="line">| 孙悟空    |           67 |</div><div class="line">| 沙僧      |          150 |</div><div class="line">| 猪八戒    |           45 |</div><div class="line">+-----------+--------------+</div><div class="line">3 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
-</li>
-<li><p>通过cross join来实现行转列, 存在性能问题。</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select * from (select sum(b.kills) as &apos;猪八戒&apos; from user1 a join user_kills b on a.id=b.user_id and user_name=&apos;猪八戒&apos;) a cross join (select sum(b.kills) as &apos;孙悟空&apos; from user1 a join user_kills b on a.id=b.user_id and user_name=&apos;孙悟空&apos;) b cross join (select sum(b.kills) as &apos;沙僧&apos; from user1 a join user_kills b on a.id=b.user_id and user_name=&apos;沙僧&apos;) c;</div><div class="line">+--------+--------+------+</div><div class="line">| 猪八戒 | 孙悟空 | 沙僧 |</div><div class="line">+--------+--------+------+</div><div class="line">|     45 |     67 |  150 |</div><div class="line">+--------+--------+------+</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure>
-</li>
-<li><p>使用case语句来实现行转列</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select sum(case when user_name=&apos;孙悟空&apos; then kills end) as &apos;孙悟空&apos;, sum(case when user_name=&apos;猪八戒&apos; then kills end) as &apos;猪八戒&apos;, sum(case when user_name=&apos;沙僧&apos; then kills end) as &apos;沙僧&apos; from user1 a join user_kills b on  a.id = b.user_id;</div><div class="line">+--------+--------+------+</div><div class="line">| 孙悟空 | 猪八戒 | 沙僧 |</div><div class="line">+--------+--------+------+</div><div class="line">|     67 |     45 |  150 |</div><div class="line">+--------+--------+------+</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h2 id="列转行"><a href="#列转行" class="headerlink" title="列转行"></a>列转行</h2><p>属性拆分，比如权限分隔。</p>
-<ul>
-<li><p>利用序列表实现列转行</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">mysql&gt; SELECT</div><div class="line">user_name,REPLACE(substring(SUBSTRING_INDEX(mobile,&apos;,&apos;,a.id),CHAR_LENGTH(SUBSTRING_INDEX(mobile,&apos;,&apos;,a.id-1))+1),&apos;,&apos;,&apos;&apos;) AS mobile</div><div class="line">FROM tb_sequence AS a</div><div class="line">CROSS JOIN</div><div class="line">(SELECT user_name, CONCAT(mobile,&apos;,&apos;) AS mobile, (LENGTH(mobile)-LENGTH(REPLACE(mobile,&apos;,&apos;,&apos;&apos;))+1) AS size FROM user1) AS b</div><div class="line">ON a.id &lt;= b.size;</div><div class="line">+-----------+----------+</div><div class="line">| user_name | mobile   |</div><div class="line">+-----------+----------+</div><div class="line">| 唐僧      | 12123123 |</div><div class="line">| 唐僧      | 123      |</div><div class="line">| 唐僧      | 123432   |</div><div class="line">| 唐僧      | 2131     |</div><div class="line">| 唐僧      | 4213     |</div><div class="line">| 唐僧      | 3421     |</div><div class="line">| 猪八戒    | 12123123 |</div><div class="line">| 猪八戒    | 123      |</div><div class="line">| 猪八戒    | 123432   |</div><div class="line">| 猪八戒    | 2131     |</div><div class="line">| 猪八戒    | 4213     |</div><div class="line">| 猪八戒    | 3421     |</div><div class="line">| 孙悟空    | 12123123 |</div><div class="line">| 孙悟空    | 123      |</div><div class="line">| 孙悟空    | 123432   |</div><div class="line">| 孙悟空    | 2131     |</div><div class="line">| 孙悟空    | 4213     |</div><div class="line">| 孙悟空    | 3421     |</div><div class="line">| 沙僧      | 12123123 |</div><div class="line">| 沙僧      | 123      |</div><div class="line">| 沙僧      | 123432   |</div><div class="line">| 沙僧      | 2131     |</div><div class="line">| 沙僧      | 4213     |</div><div class="line">| 沙僧      | 3421     |</div><div class="line">+-----------+----------+</div><div class="line">24 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
-</li>
-<li><p>使用union join实现行列转换</p>
-</li>
-</ul>
-<p>原数据</p>
-<pre><code><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select user_name, arms, clothing, shoe from user1 a join user1_equipment b on a.id = b.user_id;</div><div class="line">+-----------+----------+------------+------------+</div><div class="line">| user_name | arms     | clothing   | shoe       |</div><div class="line">+-----------+----------+------------+------------+</div><div class="line">| 唐僧      | 九环锡杖 | 袈裟       | 僧鞋       |</div><div class="line">| 猪八戒    | 九齿钉耙 | 僧衣       | 僧鞋       |</div><div class="line">| 孙悟空    | 金箍棒   | 梭子黄金甲 | 藕丝云步履 |</div><div class="line">| 沙僧      | 降妖宝杖 | 僧衣       | 僧鞋       |</div><div class="line">+-----------+----------+------------+------------+</div><div class="line">4 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
-</code></pre><p>结果集：</p>
-<pre><code><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select user_name, &apos;arms&apos; as equipment, arms from user1 a join user1_equipment b on a.id = b.user_id</div><div class="line">    -&gt; union all</div><div class="line">    -&gt; select user_name, &apos;clothing&apos; as equipment, clothing from user1 a join user1_equipment b on a.id = b.user_id</div><div class="line">    -&gt; union all</div><div class="line">    -&gt; select user_name, &apos;shoe&apos; as equipment, shoe from user1 a join user1_equipment b on a.id = b.user_id</div><div class="line">    -&gt; order by user_name;</div><div class="line">+-----------+-----------+------------+</div><div class="line">| user_name | equipment | arms       |</div><div class="line">+-----------+-----------+------------+</div><div class="line">| 唐僧      | clothing  | 袈裟       |</div><div class="line">| 唐僧      | arms      | 九环锡杖   |</div><div class="line">| 唐僧      | shoe      | 僧鞋       |</div><div class="line">| 孙悟空    | arms      | 金箍棒     |</div><div class="line">| 孙悟空    | shoe      | 藕丝云步履 |</div><div class="line">| 孙悟空    | clothing  | 梭子黄金甲 |</div><div class="line">| 沙僧      | shoe      | 僧鞋       |</div><div class="line">| 沙僧      | clothing  | 僧衣       |</div><div class="line">| 沙僧      | arms      | 降妖宝杖   |</div><div class="line">| 猪八戒    | shoe      | 僧鞋       |</div><div class="line">| 猪八戒    | clothing  | 僧衣       |</div><div class="line">| 猪八戒    | arms      | 九齿钉耙   |</div><div class="line">+-----------+-----------+------------+</div><div class="line">12 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
-</code></pre><ul>
-<li><p>使用序列号进行列转行</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select user_name,</div><div class="line">    -&gt; case when c.id=1 then &apos;arms&apos;</div><div class="line">    -&gt; when c.id=2 then &apos;clothing&apos;</div><div class="line">    -&gt; when c.id=3 then &apos;shoe&apos;</div><div class="line">    -&gt; end as equipment,</div><div class="line">    -&gt; coalesce(case when c.id=1 then arms end,</div><div class="line">    -&gt; case when c.id=2 then clothing end,</div><div class="line">    -&gt; case when c.id=3 then shoe end) as eq_name</div><div class="line">    -&gt; from user1 a</div><div class="line">    -&gt; join user1_equipment b on a.id=b.user_id</div><div class="line">    -&gt; cross join tb_sequence c where c.id&lt;=3 order by user_name;</div><div class="line">+-----------+-----------+------------+</div><div class="line">| user_name | equipment | eq_name    |</div><div class="line">+-----------+-----------+------------+</div><div class="line">| 唐僧      | shoe      | 僧鞋       |</div><div class="line">| 唐僧      | arms      | 九环锡杖   |</div><div class="line">| 唐僧      | clothing  | 袈裟       |</div><div class="line">| 孙悟空    | shoe      | 藕丝云步履 |</div><div class="line">| 孙悟空    | arms      | 金箍棒     |</div><div class="line">| 孙悟空    | clothing  | 梭子黄金甲 |</div><div class="line">| 沙僧      | clothing  | 僧衣       |</div><div class="line">| 沙僧      | shoe      | 僧鞋       |</div><div class="line">| 沙僧      | arms      | 降妖宝杖   |</div><div class="line">| 猪八戒    | clothing  | 僧衣       |</div><div class="line">| 猪八戒    | shoe      | 僧鞋       |</div><div class="line">| 猪八戒    | arms      | 九齿钉耙   |</div><div class="line">+-----------+-----------+------------+</div><div class="line">12 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h1 id="如何生成唯一序列号"><a href="#如何生成唯一序列号" class="headerlink" title="如何生成唯一序列号"></a>如何生成唯一序列号</h1><p>需要的场景：</p>
-<ul>
-<li>数据库主键，聚集索引方式</li>
-<li>业务序列号如发票号，车票号，订单号</li>
-</ul>
-<p>生成序列号的方法：</p>
-<ul>
-<li>MySQL：auto_increment</li>
-<li>Oracle：sequence</li>
-<li>SQLServer：identity/sequence</li>
-</ul>
-<p>如何选择生成序列号的方式：</p>
-<ul>
-<li><p>优先选择系统提供的序列号生成方式，需要注意数据空洞的问题：</p>
-<pre><code><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">mysql&gt; create table t (id int auto_increment not null, primary key(id));</div><div class="line">Query OK, 0 rows affected (0.04 sec)</div><div class="line">mysql&gt; insert into t value(),();</div><div class="line">Query OK, 2 rows affected (0.01 sec)</div><div class="line">Records: 2  Duplicates: 0  Warnings: 0</div><div class="line">mysql&gt; select * from t;</div><div class="line">+----+</div><div class="line">| id |</div><div class="line">+----+</div><div class="line">|  1 |</div><div class="line">|  2 |</div><div class="line">+----+</div><div class="line">2 rows in set (0.00 sec)</div><div class="line">mysql&gt; begin;</div><div class="line">Query OK, 0 rows affected (0.00 sec)</div><div class="line">mysql&gt; insert into t values();</div><div class="line">Query OK, 1 row affected (0.00 sec)</div><div class="line">mysql&gt; select * from t;</div><div class="line">+----+</div><div class="line">| id |</div><div class="line">+----+</div><div class="line">|  1 |</div><div class="line">|  2 |</div><div class="line">|  3 |</div><div class="line">+----+</div><div class="line">3 rows in set (0.00 sec)</div><div class="line">mysql&gt; rollback;</div><div class="line">Query OK, 0 rows affected (0.01 sec)</div><div class="line">mysql&gt; insert into t values();</div><div class="line">Query OK, 1 row affected (0.00 sec)</div><div class="line">mysql&gt; select * from t;</div><div class="line">+----+</div><div class="line">| id |</div><div class="line">+----+</div><div class="line">|  1 |</div><div class="line">|  2 |</div><div class="line">|  4 |</div><div class="line">+----+</div><div class="line">3 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
-</code></pre><ul>
-<li><p>使用SQL方式生成序列号，特殊情况下使用。如生成订单序列号，要求序列号的格式为YYYYMMDDNNNNNNN</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">CREATE PROCEDURE usp_seqnum()</div><div class="line">    BEGIN</div><div class="line">      #定义变量并获取相关值</div><div class="line">      DECLARE v_cnt INT;</div><div class="line">      DECLARE v_timestr INT;</div><div class="line">      SET v_timestr = DATE_FORMAT(NOW(),&apos;%Y%m%d&apos;);</div><div class="line">      SELECT ROUND(RAND()*100,0)+1 INTO v_cnt;</div><div class="line">      #新建表</div><div class="line">      DROP TABLE IF EXISTS im_orderseq;</div><div class="line">      CREATE TABLE  im_orderseq(</div><div class="line">        timestr NVARCHAR(8) NOT NULL ,</div><div class="line">        ordersn INT(3)</div><div class="line">      );</div><div class="line">      START TRANSACTION;</div><div class="line">      #更新表的最值</div><div class="line">      UPDATE im_orderseq SET ordersn = ordersn + v_cnt WHERE timestr = v_timestr;</div><div class="line">      IF ROW_COUNT() = 0 THEN</div><div class="line">        #插入数据</div><div class="line">        INSERT INTO im_orderseq(timestr,ordersn) VALUES(v_timestr,v_cnt);</div><div class="line">      END IF;</div><div class="line">      SELECT CONCAT(v_timestr,LPAD(ordersn,7,0))AS ordersn</div><div class="line">      FROM im_orderseq WHERE timestr = v_timestr;</div><div class="line">      COMMIT;</div><div class="line">    END;</div><div class="line"></div><div class="line">    mysql&gt; call usp_seqnum();</div><div class="line">    +-----------------+</div><div class="line">    | ordersn         |</div><div class="line">    +-----------------+</div><div class="line">    | 201804270000009 |</div><div class="line">    +-----------------+</div><div class="line">    1 row in set (0.04 sec)</div><div class="line"></div><div class="line">    Query OK, 0 rows affected (0.05 sec)</div></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="如何删除重复元素"><a href="#如何删除重复元素" class="headerlink" title="如何删除重复元素"></a>如何删除重复元素</h1><p>产生原因：</p>
-<pre><code>* 人为原因，重复录入数据，重复提交数据
-* 系统原因，由于系统升级或设计的原因使原来可以重复的数据变为不能重复了。
-</code></pre><p>查询数据是否重复：group by + having</p>
-<pre><code><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select * from user1_test;</div><div class="line">+----+-----------+----------+------------------------------------+</div><div class="line">| id | user_name | over     | mobile                             |</div><div class="line">+----+-----------+----------+------------------------------------+</div><div class="line">|  1 | 唐僧      | 唐僧成佛 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">|  2 | 猪八戒    | 净坛使者 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">|  3 | 孙悟空    | 齐天大圣 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">|  4 | 沙僧      | 金身罗汉 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">|  8 | 唐僧      | 唐僧成佛 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">|  9 | 猪八戒    | 净坛使者 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">| 10 | 孙悟空    | 齐天大圣 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">| 11 | 沙僧      | 金身罗汉 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">+----+-----------+----------+------------------------------------+</div><div class="line">8 rows in set (0.00 sec)</div><div class="line"></div><div class="line">mysql&gt; select user_name, count(*) from user1_test group by user_name having count(*)&gt;1;</div><div class="line">+-----------+----------+</div><div class="line">| user_name | count(*) |</div><div class="line">+-----------+----------+</div><div class="line">| 唐僧      |        2 |</div><div class="line">| 孙悟空    |        2 |</div><div class="line">| 沙僧      |        2 |</div><div class="line">| 猪八戒    |        2 |</div><div class="line">+-----------+----------+</div><div class="line">4 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
-</code></pre><p>删除重复数据，相同数据保留ID最大的：</p>
-<pre><code><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select * from user1_test;</div><div class="line">+----+-----------+----------+------------------------------------+</div><div class="line">| id | user_name | over     | mobile                             |</div><div class="line">+----+-----------+----------+------------------------------------+</div><div class="line">|  1 | 唐僧      | 唐僧成佛 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">|  2 | 猪八戒    | 净坛使者 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">|  3 | 孙悟空    | 齐天大圣 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">|  4 | 沙僧      | 金身罗汉 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">|  8 | 唐僧      | 唐僧成佛 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">|  9 | 猪八戒    | 净坛使者 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">| 10 | 孙悟空    | 齐天大圣 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">| 11 | 沙僧      | 金身罗汉 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">+----+-----------+----------+------------------------------------+</div><div class="line">8 rows in set (0.00 sec)</div><div class="line"></div><div class="line">mysql&gt; delete a from user1_test a join (</div><div class="line">    -&gt; select user_name, count(*), max(id) as id</div><div class="line">    -&gt; from user1_test</div><div class="line">    -&gt; group by user_name</div><div class="line">    -&gt; having count(*)&gt;1) b</div><div class="line">    -&gt; on a.user_name=b.user_name</div><div class="line">    -&gt; where a.id &lt; b.id;</div><div class="line">Query OK, 4 rows affected (0.01 sec)</div><div class="line"></div><div class="line">mysql&gt; select * from user1_test;</div><div class="line">+----+-----------+----------+------------------------------------+</div><div class="line">| id | user_name | over     | mobile                             |</div><div class="line">+----+-----------+----------+------------------------------------+</div><div class="line">|  8 | 唐僧      | 唐僧成佛 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">|  9 | 猪八戒    | 净坛使者 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">| 10 | 孙悟空    | 齐天大圣 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">| 11 | 沙僧      | 金身罗汉 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">+----+-----------+----------+------------------------------------+</div><div class="line">4 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
-</code></pre><h1 id="如何在子查询中匹配两个值"><a href="#如何在子查询中匹配两个值" class="headerlink" title="如何在子查询中匹配两个值"></a>如何在子查询中匹配两个值</h1><ul>
-<li>子查询：当一个查询是另一个查询的条件时，成为子查询。</li>
-</ul>
-<h1 id="解决同属性多值过滤的问题"><a href="#解决同属性多值过滤的问题" class="headerlink" title="解决同属性多值过滤的问题"></a>解决同属性多值过滤的问题</h1><h1 id="如何计算累进税问题"><a href="#如何计算累进税问题" class="headerlink" title="如何计算累进税问题"></a>如何计算累进税问题</h1>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/struts2总结 一--简介和Action/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2390,6 +2142,254 @@
 <li><code>&lt;default-action-ref name=&quot;index&quot;&gt;&lt;/default-action-ref&gt;</code></li>
 </ul>
 
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/SQL开发技巧/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/21/SQL开发技巧/" itemprop="url">SQL开发技巧</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index">
+                    <span itemprop="name">MySQL</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/database/" itemprop="url" rel="index">
+                    <span itemprop="name">database</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="SQL语句分类"><a href="#SQL语句分类" class="headerlink" title="SQL语句分类"></a>SQL语句分类</h1><ul>
+<li>DDL：数据定义语言</li>
+<li>TPL：事务处理语言</li>
+<li>DCL：数据控制语言-grant</li>
+<li>DML：数据操作语言-crud</li>
+</ul>
+<h1 id="join从句"><a href="#join从句" class="headerlink" title="join从句"></a>join从句</h1><p>操作表数据：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select * from user1;</div><div class="line">+----+-----------+----------+</div><div class="line">| id | user_name | over     |</div><div class="line">+----+-----------+----------+</div><div class="line">|  1 | 唐僧      | 唐僧成佛 |</div><div class="line">|  2 | 猪八戒    | 净坛使者 |</div><div class="line">|  3 | 孙悟空    | 斗战胜佛 |</div><div class="line">|  4 | 沙僧      | 金身罗汉 |</div><div class="line">+----+-----------+----------+</div><div class="line">4 rows in set (0.00 sec)</div><div class="line"></div><div class="line">mysql&gt; select * from user2;</div><div class="line">+----+-----------+--------+</div><div class="line">| id | user_name | over   |</div><div class="line">+----+-----------+--------+</div><div class="line">|  1 | 孙悟空    | 成佛   |</div><div class="line">|  2 | 牛魔王    | 妖怪吧 |</div><div class="line">|  3 | 蛟魔王    | 妖怪吧 |</div><div class="line">|  4 | 鹏魔王    | 妖怪吧 |</div><div class="line">|  5 | 狮驼王    | 妖怪吧 |</div><div class="line">+----+-----------+--------+</div><div class="line">5 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
+<h2 id="内连接-inner"><a href="#内连接-inner" class="headerlink" title="内连接 inner"></a>内连接 inner</h2><p>基于连接谓词将两张表的列组合在一起，产生新的结果表，交集。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.user_name, a.over, b.over from user1 a join user2 b on a.user_name = b.user_name;</div><div class="line">+-----------+----------+------+</div><div class="line">| user_name | over     | over |</div><div class="line">+-----------+----------+------+</div><div class="line">| 孙悟空    | 斗战胜佛 | 成佛 |</div><div class="line">+-----------+----------+------+</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure>
+<h2 id="全外连接-full-outer"><a href="#全外连接-full-outer" class="headerlink" title="全外连接 full outer"></a>全外连接 full outer</h2><p>并集，MySQL中不支持直接的full join。用union all来实现。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.user_name, a.over, b.over from user1 a left join user2 b on a.user_name = b. user_name</div><div class="line">    -&gt; union all</div><div class="line">    -&gt; select b.user_name, b.over, a.over</div><div class="line">    -&gt; from user1 a right join user2 b on b.user_name = a.user_name;</div><div class="line">+-----------+----------+----------+</div><div class="line">| user_name | over     | over     |</div><div class="line">+-----------+----------+----------+</div><div class="line">| 孙悟空    | 斗战胜佛 | 成佛     |</div><div class="line">| 唐僧      | 唐僧成佛 | NULL     |</div><div class="line">| 猪八戒    | 净坛使者 | NULL     |</div><div class="line">| 沙僧      | 金身罗汉 | NULL     |</div><div class="line">| 孙悟空    | 成佛     | 斗战胜佛 |</div><div class="line">| 牛魔王    | 妖怪吧   | NULL     |</div><div class="line">| 蛟魔王    | 妖怪吧   | NULL     |</div><div class="line">| 鹏魔王    | 妖怪吧   | NULL     |</div><div class="line">| 狮驼王    | 妖怪吧   | NULL     |</div><div class="line">+-----------+----------+----------+</div><div class="line">9 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
+<h2 id="左外连接-left-outer"><a href="#左外连接-left-outer" class="headerlink" title="左外连接 left outer"></a>左外连接 left outer</h2><p>以左表为准。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.user_name, a.over, b.over from user1 a left join user2 b on a.user_name = b.user_name where b.user_name is null;</div><div class="line">+-----------+----------+------+</div><div class="line">| user_name | over     | over |</div><div class="line">+-----------+----------+------+</div><div class="line">| 唐僧      | 唐僧成佛 | NULL |</div><div class="line">| 猪八戒    | 净坛使者 | NULL |</div><div class="line">| 沙僧      | 金身罗汉 | NULL |</div><div class="line">+-----------+----------+------+</div><div class="line">3 rows in set (0.00 sec)</div><div class="line">mysql&gt; select a.user_name, a.over, b.over from user1 a left join user2 b on a.user_name = b.user_name where b.user_name is not null;</div><div class="line">+-----------+----------+------+</div><div class="line">| user_name | over     | over |</div><div class="line">+-----------+----------+------+</div><div class="line">| 孙悟空    | 斗战胜佛 | 成佛 |</div><div class="line">+-----------+----------+------+</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure>
+<h2 id="右外连接-right-outer"><a href="#右外连接-right-outer" class="headerlink" title="右外连接 right outer"></a>右外连接 right outer</h2><p>以右表为准。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select b.user_name, b.over, a.over from user1 a right join user2 b on b.user_name = a.user_name where a.user_name is null;</div><div class="line">+-----------+--------+------+</div><div class="line">| user_name | over   | over |</div><div class="line">+-----------+--------+------+</div><div class="line">| 牛魔王    | 妖怪吧 | NULL |</div><div class="line">| 蛟魔王    | 妖怪吧 | NULL |</div><div class="line">| 鹏魔王    | 妖怪吧 | NULL |</div><div class="line">| 狮驼王    | 妖怪吧 | NULL |</div><div class="line">+-----------+--------+------+</div><div class="line">4 rows in set (0.00 sec)</div><div class="line"></div><div class="line">mysql&gt; select b.user_name, b.over, a.over from user1 a right join user2 b on b.user_name = a.user_name where a.user_name is not null;</div><div class="line">+-----------+------+----------+</div><div class="line">| user_name | over | over     |</div><div class="line">+-----------+------+----------+</div><div class="line">| 孙悟空    | 成佛 | 斗战胜佛 |</div><div class="line">+-----------+------+----------+</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure>
+<h2 id="交叉连接-cross"><a href="#交叉连接-cross" class="headerlink" title="交叉连接 cross"></a>交叉连接 cross</h2><p>实际中需要避免。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.user_name, a.over, b.over from user1 a cross join user2 b;</div><div class="line">+-----------+----------+--------+</div><div class="line">| user_name | over     | over   |</div><div class="line">+-----------+----------+--------+</div><div class="line">| 唐僧      | 唐僧成佛 | 成佛   |</div><div class="line">| 猪八戒    | 净坛使者 | 成佛   |</div><div class="line">| 孙悟空    | 斗战胜佛 | 成佛   |</div><div class="line">| 沙僧      | 金身罗汉 | 成佛   |</div><div class="line">| 唐僧      | 唐僧成佛 | 妖怪吧 |</div><div class="line">| 猪八戒    | 净坛使者 | 妖怪吧 |</div><div class="line">| 孙悟空    | 斗战胜佛 | 妖怪吧 |</div><div class="line">| 沙僧      | 金身罗汉 | 妖怪吧 |</div><div class="line">| 唐僧      | 唐僧成佛 | 妖怪吧 |</div><div class="line">| 猪八戒    | 净坛使者 | 妖怪吧 |</div><div class="line">| 孙悟空    | 斗战胜佛 | 妖怪吧 |</div><div class="line">| 沙僧      | 金身罗汉 | 妖怪吧 |</div><div class="line">| 唐僧      | 唐僧成佛 | 妖怪吧 |</div><div class="line">| 猪八戒    | 净坛使者 | 妖怪吧 |</div><div class="line">| 孙悟空    | 斗战胜佛 | 妖怪吧 |</div><div class="line">| 沙僧      | 金身罗汉 | 妖怪吧 |</div><div class="line">| 唐僧      | 唐僧成佛 | 妖怪吧 |</div><div class="line">| 猪八戒    | 净坛使者 | 妖怪吧 |</div><div class="line">| 孙悟空    | 斗战胜佛 | 妖怪吧 |</div><div class="line">| 沙僧      | 金身罗汉 | 妖怪吧 |</div><div class="line">+-----------+----------+--------+</div><div class="line">20 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
+<h2 id="如何更新过滤条件中包括自身的表"><a href="#如何更新过滤条件中包括自身的表" class="headerlink" title="如何更新过滤条件中包括自身的表"></a>如何更新过滤条件中包括自身的表</h2><p>直接更新是不可以的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">mysql&gt; update user1 set over=&apos;齐天大圣&apos; where user1.user_name in (</div><div class="line">    -&gt; select b.user_name</div><div class="line">    -&gt; from user1 a inner join user2 b on</div><div class="line">    -&gt; a.user_name=b.user_name);</div><div class="line">ERROR 1093 (HY000): You can&apos;t specify target table &apos;user1&apos; for update in FROM clause</div></pre></td></tr></table></figure>
+<p>先join，更新join之后的表方法:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">mysql&gt; update user1 a join(</div><div class="line">    -&gt; select b.user_name</div><div class="line">    -&gt; from user1 a inner join user2 b on</div><div class="line">    -&gt; a.user_name=b.user_name) b on a.user_name = b.user_name set a.over=&apos;齐天大圣&apos;;</div><div class="line">Query OK, 1 row affected (0.01 sec)</div><div class="line">Rows matched: 1  Changed: 1  Warnings: 0</div><div class="line"></div><div class="line">mysql&gt; select * from user1;</div><div class="line">+----+-----------+----------+</div><div class="line">| id | user_name | over     |</div><div class="line">+----+-----------+----------+</div><div class="line">|  1 | 唐僧      | 唐僧成佛 |</div><div class="line">|  2 | 猪八戒    | 净坛使者 |</div><div class="line">|  3 | 孙悟空    | 齐天大圣 |</div><div class="line">|  4 | 沙僧      | 金身罗汉 |</div><div class="line">+----+-----------+----------+</div><div class="line">4 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
+<h2 id="join优化子查询"><a href="#join优化子查询" class="headerlink" title="join优化子查询"></a>join优化子查询</h2><p>低效的子查询：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.user_name, a.over, (select over from user2 b where a.user_name=b.user_name) as over2 from user1 a;</div><div class="line">+-----------+----------+-------+</div><div class="line">| user_name | over     | over2 |</div><div class="line">+-----------+----------+-------+</div><div class="line">| 唐僧      | 唐僧成佛 | NULL  |</div><div class="line">| 猪八戒    | 净坛使者 | NULL  |</div><div class="line">| 孙悟空    | 齐天大圣 | 成佛  |</div><div class="line">| 沙僧      | 金身罗汉 | NULL  |</div><div class="line">+-----------+----------+-------+</div><div class="line">4 rows in set (0.00 sec)</div><div class="line">mysql&gt; explain select a.user_name, a.over, (select over from user2 b where a.user_name=b.user_name) as over2 from user1 a\G</div><div class="line">*************************** 1. row ***************************</div><div class="line">           id: 1</div><div class="line">  select_type: PRIMARY</div><div class="line">        table: a</div><div class="line">   partitions: NULL</div><div class="line">         type: ALL</div><div class="line">possible_keys: NULL</div><div class="line">          key: NULL</div><div class="line">      key_len: NULL</div><div class="line">          ref: NULL</div><div class="line">         rows: 4</div><div class="line">     filtered: 100.00</div><div class="line">        Extra: NULL</div><div class="line">*************************** 2. row ***************************</div><div class="line">           id: 2</div><div class="line">  select_type: DEPENDENT SUBQUERY</div><div class="line">        table: b</div><div class="line">   partitions: NULL</div><div class="line">         type: ALL</div><div class="line">possible_keys: NULL</div><div class="line">          key: NULL</div><div class="line">      key_len: NULL</div><div class="line">          ref: NULL</div><div class="line">         rows: 5</div><div class="line">     filtered: 20.00</div><div class="line">        Extra: Using where</div><div class="line">2 rows in set, 2 warnings (0.00 sec)</div></pre></td></tr></table></figure>
+<p>left join优化后：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.user_name, a.over, b.over as over2 from user1 a left join user2 b on a.user_name=b.user_name;</div><div class="line">+-----------+----------+-------+</div><div class="line">| user_name | over     | over2 |</div><div class="line">+-----------+----------+-------+</div><div class="line">| 孙悟空    | 齐天大圣 | 成佛  |</div><div class="line">| 唐僧      | 唐僧成佛 | NULL  |</div><div class="line">| 猪八戒    | 净坛使者 | NULL  |</div><div class="line">| 沙僧      | 金身罗汉 | NULL  |</div><div class="line">+-----------+----------+-------+</div><div class="line">4 rows in set (0.00 sec)</div><div class="line"></div><div class="line">mysql&gt; explain select a.user_name, a.over, b.over as over2 from user1 a left join user2 b on a.user_name=b.user_name\G</div><div class="line">*************************** 1. row ***************************</div><div class="line">           id: 1</div><div class="line">  select_type: SIMPLE</div><div class="line">        table: a</div><div class="line">   partitions: NULL</div><div class="line">         type: ALL</div><div class="line">possible_keys: NULL</div><div class="line">          key: NULL</div><div class="line">      key_len: NULL</div><div class="line">          ref: NULL</div><div class="line">         rows: 4</div><div class="line">     filtered: 100.00</div><div class="line">        Extra: NULL</div><div class="line">*************************** 2. row ***************************</div><div class="line">           id: 1</div><div class="line">  select_type: SIMPLE</div><div class="line">        table: b</div><div class="line">   partitions: NULL</div><div class="line">         type: ALL</div><div class="line">possible_keys: NULL</div><div class="line">          key: NULL</div><div class="line">      key_len: NULL</div><div class="line">          ref: NULL</div><div class="line">         rows: 5</div><div class="line">     filtered: 100.00</div><div class="line">        Extra: Using where; Using join buffer (Block Nested Loop)</div><div class="line">2 rows in set, 1 warning (0.00 sec)</div></pre></td></tr></table></figure>
+<h2 id="join优化聚合子查询"><a href="#join优化聚合子查询" class="headerlink" title="join优化聚合子查询"></a>join优化聚合子查询</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.user_name, b.timestr, b.kills from user1 a join user_kills b on a.id=b.user_id where b.kills=(select max(c.kills) from user_kills c where c.user_id = b.user_id);</div><div class="line">+-----------+-----------+-------+</div><div class="line">| user_name | timestr   | kills |</div><div class="line">+-----------+-----------+-------+</div><div class="line">| 猪八戒    | 2013-2-5  |    12 |</div><div class="line">| 沙僧      | 2013-1-10 |     3 |</div><div class="line">+-----------+-----------+-------+</div><div class="line">2 rows in set (0.00 sec)</div><div class="line">mysql&gt; explain select a.user_name, b.timestr, b.kills from user1 a join user_kills b on a.id=b.user_id where b.kills=(select max(c.kills) from user_kills c where c.user_id = b.user_id)\G</div><div class="line">*************************** 1. row ***************************</div><div class="line">           id: 1</div><div class="line">  select_type: PRIMARY</div><div class="line">        table: a</div><div class="line">   partitions: NULL</div><div class="line">         type: ALL</div><div class="line">possible_keys: PRIMARY</div><div class="line">          key: NULL</div><div class="line">      key_len: NULL</div><div class="line">          ref: NULL</div><div class="line">         rows: 4</div><div class="line">     filtered: 100.00</div><div class="line">        Extra: NULL</div><div class="line">*************************** 2. row ***************************</div><div class="line">           id: 1</div><div class="line">  select_type: PRIMARY</div><div class="line">        table: b</div><div class="line">   partitions: NULL</div><div class="line">         type: ALL</div><div class="line">possible_keys: NULL</div><div class="line">          key: NULL</div><div class="line">      key_len: NULL</div><div class="line">          ref: NULL</div><div class="line">         rows: 5</div><div class="line">     filtered: 20.00</div><div class="line">        Extra: Using where; Using join buffer (Block Nested Loop)</div><div class="line">*************************** 3. row ***************************</div><div class="line">           id: 2</div><div class="line">  select_type: DEPENDENT SUBQUERY</div><div class="line">        table: c</div><div class="line">   partitions: NULL</div><div class="line">         type: ALL</div><div class="line">possible_keys: NULL</div><div class="line">          key: NULL</div><div class="line">      key_len: NULL</div><div class="line">          ref: NULL</div><div class="line">         rows: 5</div><div class="line">     filtered: 20.00</div><div class="line">        Extra: Using where</div><div class="line">3 rows in set, 2 warnings (0.00 sec)</div></pre></td></tr></table></figure>
+<p>优化后：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.user_name, b.timestr, b.kills from user1 a join user_kills b on a.id = b.user_id join user_kills c on c.user_id=b.user_id group by a.user_name, b.timestr, b.kills having b.kills = max(c.kills);</div><div class="line">+-----------+-----------+-------+</div><div class="line">| user_name | timestr   | kills |</div><div class="line">+-----------+-----------+-------+</div><div class="line">| 沙僧      | 2013-1-10 |     3 |</div><div class="line">| 猪八戒    | 2013-2-5  |    12 |</div><div class="line">+-----------+-----------+-------+</div><div class="line">2 rows in set (0.00 sec)</div><div class="line"></div><div class="line">mysql&gt; explain select a.user_name, b.timestr, b.kills from user1 a join user_kills b on a.id = b.user_id join user_kills c on c.user_id=b.user_id group by a.user_name, b.timestr, b.kills having b.kills = max(c.kills)\G</div><div class="line">*************************** 1. row ***************************</div><div class="line">           id: 1</div><div class="line">  select_type: SIMPLE</div><div class="line">        table: b</div><div class="line">   partitions: NULL</div><div class="line">         type: ALL</div><div class="line">possible_keys: NULL</div><div class="line">          key: NULL</div><div class="line">      key_len: NULL</div><div class="line">          ref: NULL</div><div class="line">         rows: 5</div><div class="line">     filtered: 100.00</div><div class="line">        Extra: Using where; Using temporary; Using filesort</div><div class="line">*************************** 2. row ***************************</div><div class="line">           id: 1</div><div class="line">  select_type: SIMPLE</div><div class="line">        table: c</div><div class="line">   partitions: NULL</div><div class="line">         type: ALL</div><div class="line">possible_keys: NULL</div><div class="line">          key: NULL</div><div class="line">      key_len: NULL</div><div class="line">          ref: NULL</div><div class="line">         rows: 5</div><div class="line">     filtered: 20.00</div><div class="line">        Extra: Using where; Using join buffer (Block Nested Loop)</div><div class="line">*************************** 3. row ***************************</div><div class="line">           id: 1</div><div class="line">  select_type: SIMPLE</div><div class="line">        table: a</div><div class="line">   partitions: NULL</div><div class="line">         type: eq_ref</div><div class="line">possible_keys: PRIMARY</div><div class="line">          key: PRIMARY</div><div class="line">      key_len: 4</div><div class="line">          ref: test1.b.user_id</div><div class="line">         rows: 1</div><div class="line">     filtered: 100.00</div><div class="line">        Extra: NULL</div><div class="line">3 rows in set, 1 warning (0.00 sec)</div></pre></td></tr></table></figure>
+<h1 id="如何实现分组选择"><a href="#如何实现分组选择" class="headerlink" title="如何实现分组选择"></a>如何实现分组选择</h1><p>每一组数据中选出前几名的情景，可以分组逐个进行查询，这种情况下，分组比较多，需要执行同一次查询很多次，而且增加了应用程序与数据库的交互次数，增加了数据库执行查询的次数，不符合批处理的原则，也会增加网络流量，因此实际中不使用这种方式。</p>
+<p>优化方法:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select d.user_name, c.timestr, kills from (select user_id, timestr, kills, (select count(*) from user_kills b where b.user_id=a.user_id and a.kills&lt;=b.kills) as cnt from user_kills a group by user_id, timestr, kills) c join user1 d on c.user_id=d.id where cnt&lt;=2;</div><div class="line">+-----------+-----------+-------+</div><div class="line">| user_name | timestr   | kills |</div><div class="line">+-----------+-----------+-------+</div><div class="line">| 猪八戒    | 2013-2-5  |    12 |</div><div class="line">| 猪八戒    | 2013-1-10 |    10 |</div><div class="line">| 沙僧      | 2013-1-10 |     3 |</div><div class="line">+-----------+-----------+-------+</div><div class="line">3 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
+<h1 id="如何进行行列转换"><a href="#如何进行行列转换" class="headerlink" title="如何进行行列转换"></a>如何进行行列转换</h1><h2 id="行转列"><a href="#行转列" class="headerlink" title="行转列"></a>行转列</h2><p>报表统计，汇总显示会经常使用行转列的操作。</p>
+<ul>
+<li><p>打印流水单：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.user_name, b.kills from user1 a join user_kills b on a.id=b.user_id;</div><div class="line">+-----------+-------+</div><div class="line">| user_name | kills |</div><div class="line">+-----------+-------+</div><div class="line">| 猪八戒    |    10 |</div><div class="line">| 猪八戒    |     2 |</div><div class="line">| 猪八戒    |    12 |</div><div class="line">| 沙僧      |     3 |</div><div class="line">| 猪八戒    |     6 |</div><div class="line">| 孙悟空    |    50 |</div><div class="line">| 孙悟空    |    12 |</div><div class="line">| 孙悟空    |     5 |</div><div class="line">| 猪八戒    |    15 |</div><div class="line">| 沙僧      |   123 |</div><div class="line">| 沙僧      |    14 |</div><div class="line">| 沙僧      |    10 |</div><div class="line">+-----------+-------+</div><div class="line">12 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
+</li>
+<li><p>汇总通过sum和group by</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.user_name, sum(b.kills) from user1 a join user_kills b on a.id=b.user_id group by a.user_name;</div><div class="line">+-----------+--------------+</div><div class="line">| user_name | sum(b.kills) |</div><div class="line">+-----------+--------------+</div><div class="line">| 孙悟空    |           67 |</div><div class="line">| 沙僧      |          150 |</div><div class="line">| 猪八戒    |           45 |</div><div class="line">+-----------+--------------+</div><div class="line">3 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
+</li>
+<li><p>通过cross join来实现行转列, 存在性能问题。</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select * from (select sum(b.kills) as &apos;猪八戒&apos; from user1 a join user_kills b on a.id=b.user_id and user_name=&apos;猪八戒&apos;) a cross join (select sum(b.kills) as &apos;孙悟空&apos; from user1 a join user_kills b on a.id=b.user_id and user_name=&apos;孙悟空&apos;) b cross join (select sum(b.kills) as &apos;沙僧&apos; from user1 a join user_kills b on a.id=b.user_id and user_name=&apos;沙僧&apos;) c;</div><div class="line">+--------+--------+------+</div><div class="line">| 猪八戒 | 孙悟空 | 沙僧 |</div><div class="line">+--------+--------+------+</div><div class="line">|     45 |     67 |  150 |</div><div class="line">+--------+--------+------+</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure>
+</li>
+<li><p>使用case语句来实现行转列</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select sum(case when user_name=&apos;孙悟空&apos; then kills end) as &apos;孙悟空&apos;, sum(case when user_name=&apos;猪八戒&apos; then kills end) as &apos;猪八戒&apos;, sum(case when user_name=&apos;沙僧&apos; then kills end) as &apos;沙僧&apos; from user1 a join user_kills b on  a.id = b.user_id;</div><div class="line">+--------+--------+------+</div><div class="line">| 孙悟空 | 猪八戒 | 沙僧 |</div><div class="line">+--------+--------+------+</div><div class="line">|     67 |     45 |  150 |</div><div class="line">+--------+--------+------+</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="列转行"><a href="#列转行" class="headerlink" title="列转行"></a>列转行</h2><p>属性拆分，比如权限分隔。</p>
+<ul>
+<li><p>利用序列表实现列转行</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">mysql&gt; SELECT</div><div class="line">user_name,REPLACE(substring(SUBSTRING_INDEX(mobile,&apos;,&apos;,a.id),CHAR_LENGTH(SUBSTRING_INDEX(mobile,&apos;,&apos;,a.id-1))+1),&apos;,&apos;,&apos;&apos;) AS mobile</div><div class="line">FROM tb_sequence AS a</div><div class="line">CROSS JOIN</div><div class="line">(SELECT user_name, CONCAT(mobile,&apos;,&apos;) AS mobile, (LENGTH(mobile)-LENGTH(REPLACE(mobile,&apos;,&apos;,&apos;&apos;))+1) AS size FROM user1) AS b</div><div class="line">ON a.id &lt;= b.size;</div><div class="line">+-----------+----------+</div><div class="line">| user_name | mobile   |</div><div class="line">+-----------+----------+</div><div class="line">| 唐僧      | 12123123 |</div><div class="line">| 唐僧      | 123      |</div><div class="line">| 唐僧      | 123432   |</div><div class="line">| 唐僧      | 2131     |</div><div class="line">| 唐僧      | 4213     |</div><div class="line">| 唐僧      | 3421     |</div><div class="line">| 猪八戒    | 12123123 |</div><div class="line">| 猪八戒    | 123      |</div><div class="line">| 猪八戒    | 123432   |</div><div class="line">| 猪八戒    | 2131     |</div><div class="line">| 猪八戒    | 4213     |</div><div class="line">| 猪八戒    | 3421     |</div><div class="line">| 孙悟空    | 12123123 |</div><div class="line">| 孙悟空    | 123      |</div><div class="line">| 孙悟空    | 123432   |</div><div class="line">| 孙悟空    | 2131     |</div><div class="line">| 孙悟空    | 4213     |</div><div class="line">| 孙悟空    | 3421     |</div><div class="line">| 沙僧      | 12123123 |</div><div class="line">| 沙僧      | 123      |</div><div class="line">| 沙僧      | 123432   |</div><div class="line">| 沙僧      | 2131     |</div><div class="line">| 沙僧      | 4213     |</div><div class="line">| 沙僧      | 3421     |</div><div class="line">+-----------+----------+</div><div class="line">24 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
+</li>
+<li><p>使用union join实现行列转换</p>
+</li>
+</ul>
+<p>原数据</p>
+<pre><code><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select user_name, arms, clothing, shoe from user1 a join user1_equipment b on a.id = b.user_id;</div><div class="line">+-----------+----------+------------+------------+</div><div class="line">| user_name | arms     | clothing   | shoe       |</div><div class="line">+-----------+----------+------------+------------+</div><div class="line">| 唐僧      | 九环锡杖 | 袈裟       | 僧鞋       |</div><div class="line">| 猪八戒    | 九齿钉耙 | 僧衣       | 僧鞋       |</div><div class="line">| 孙悟空    | 金箍棒   | 梭子黄金甲 | 藕丝云步履 |</div><div class="line">| 沙僧      | 降妖宝杖 | 僧衣       | 僧鞋       |</div><div class="line">+-----------+----------+------------+------------+</div><div class="line">4 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
+</code></pre><p>结果集：</p>
+<pre><code><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select user_name, &apos;arms&apos; as equipment, arms from user1 a join user1_equipment b on a.id = b.user_id</div><div class="line">    -&gt; union all</div><div class="line">    -&gt; select user_name, &apos;clothing&apos; as equipment, clothing from user1 a join user1_equipment b on a.id = b.user_id</div><div class="line">    -&gt; union all</div><div class="line">    -&gt; select user_name, &apos;shoe&apos; as equipment, shoe from user1 a join user1_equipment b on a.id = b.user_id</div><div class="line">    -&gt; order by user_name;</div><div class="line">+-----------+-----------+------------+</div><div class="line">| user_name | equipment | arms       |</div><div class="line">+-----------+-----------+------------+</div><div class="line">| 唐僧      | clothing  | 袈裟       |</div><div class="line">| 唐僧      | arms      | 九环锡杖   |</div><div class="line">| 唐僧      | shoe      | 僧鞋       |</div><div class="line">| 孙悟空    | arms      | 金箍棒     |</div><div class="line">| 孙悟空    | shoe      | 藕丝云步履 |</div><div class="line">| 孙悟空    | clothing  | 梭子黄金甲 |</div><div class="line">| 沙僧      | shoe      | 僧鞋       |</div><div class="line">| 沙僧      | clothing  | 僧衣       |</div><div class="line">| 沙僧      | arms      | 降妖宝杖   |</div><div class="line">| 猪八戒    | shoe      | 僧鞋       |</div><div class="line">| 猪八戒    | clothing  | 僧衣       |</div><div class="line">| 猪八戒    | arms      | 九齿钉耙   |</div><div class="line">+-----------+-----------+------------+</div><div class="line">12 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
+</code></pre><ul>
+<li><p>使用序列号进行列转行</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select user_name,</div><div class="line">    -&gt; case when c.id=1 then &apos;arms&apos;</div><div class="line">    -&gt; when c.id=2 then &apos;clothing&apos;</div><div class="line">    -&gt; when c.id=3 then &apos;shoe&apos;</div><div class="line">    -&gt; end as equipment,</div><div class="line">    -&gt; coalesce(case when c.id=1 then arms end,</div><div class="line">    -&gt; case when c.id=2 then clothing end,</div><div class="line">    -&gt; case when c.id=3 then shoe end) as eq_name</div><div class="line">    -&gt; from user1 a</div><div class="line">    -&gt; join user1_equipment b on a.id=b.user_id</div><div class="line">    -&gt; cross join tb_sequence c where c.id&lt;=3 order by user_name;</div><div class="line">+-----------+-----------+------------+</div><div class="line">| user_name | equipment | eq_name    |</div><div class="line">+-----------+-----------+------------+</div><div class="line">| 唐僧      | shoe      | 僧鞋       |</div><div class="line">| 唐僧      | arms      | 九环锡杖   |</div><div class="line">| 唐僧      | clothing  | 袈裟       |</div><div class="line">| 孙悟空    | shoe      | 藕丝云步履 |</div><div class="line">| 孙悟空    | arms      | 金箍棒     |</div><div class="line">| 孙悟空    | clothing  | 梭子黄金甲 |</div><div class="line">| 沙僧      | clothing  | 僧衣       |</div><div class="line">| 沙僧      | shoe      | 僧鞋       |</div><div class="line">| 沙僧      | arms      | 降妖宝杖   |</div><div class="line">| 猪八戒    | clothing  | 僧衣       |</div><div class="line">| 猪八戒    | shoe      | 僧鞋       |</div><div class="line">| 猪八戒    | arms      | 九齿钉耙   |</div><div class="line">+-----------+-----------+------------+</div><div class="line">12 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="如何生成唯一序列号"><a href="#如何生成唯一序列号" class="headerlink" title="如何生成唯一序列号"></a>如何生成唯一序列号</h1><p>需要的场景：</p>
+<ul>
+<li>数据库主键，聚集索引方式</li>
+<li>业务序列号如发票号，车票号，订单号</li>
+</ul>
+<p>生成序列号的方法：</p>
+<ul>
+<li>MySQL：auto_increment</li>
+<li>Oracle：sequence</li>
+<li>SQLServer：identity/sequence</li>
+</ul>
+<p>如何选择生成序列号的方式：</p>
+<ul>
+<li><p>优先选择系统提供的序列号生成方式，需要注意数据空洞的问题：</p>
+<pre><code><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">mysql&gt; create table t (id int auto_increment not null, primary key(id));</div><div class="line">Query OK, 0 rows affected (0.04 sec)</div><div class="line">mysql&gt; insert into t value(),();</div><div class="line">Query OK, 2 rows affected (0.01 sec)</div><div class="line">Records: 2  Duplicates: 0  Warnings: 0</div><div class="line">mysql&gt; select * from t;</div><div class="line">+----+</div><div class="line">| id |</div><div class="line">+----+</div><div class="line">|  1 |</div><div class="line">|  2 |</div><div class="line">+----+</div><div class="line">2 rows in set (0.00 sec)</div><div class="line">mysql&gt; begin;</div><div class="line">Query OK, 0 rows affected (0.00 sec)</div><div class="line">mysql&gt; insert into t values();</div><div class="line">Query OK, 1 row affected (0.00 sec)</div><div class="line">mysql&gt; select * from t;</div><div class="line">+----+</div><div class="line">| id |</div><div class="line">+----+</div><div class="line">|  1 |</div><div class="line">|  2 |</div><div class="line">|  3 |</div><div class="line">+----+</div><div class="line">3 rows in set (0.00 sec)</div><div class="line">mysql&gt; rollback;</div><div class="line">Query OK, 0 rows affected (0.01 sec)</div><div class="line">mysql&gt; insert into t values();</div><div class="line">Query OK, 1 row affected (0.00 sec)</div><div class="line">mysql&gt; select * from t;</div><div class="line">+----+</div><div class="line">| id |</div><div class="line">+----+</div><div class="line">|  1 |</div><div class="line">|  2 |</div><div class="line">|  4 |</div><div class="line">+----+</div><div class="line">3 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
+</code></pre><ul>
+<li><p>使用SQL方式生成序列号，特殊情况下使用。如生成订单序列号，要求序列号的格式为YYYYMMDDNNNNNNN</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">CREATE PROCEDURE usp_seqnum()</div><div class="line">    BEGIN</div><div class="line">      #定义变量并获取相关值</div><div class="line">      DECLARE v_cnt INT;</div><div class="line">      DECLARE v_timestr INT;</div><div class="line">      SET v_timestr = DATE_FORMAT(NOW(),&apos;%Y%m%d&apos;);</div><div class="line">      SELECT ROUND(RAND()*100,0)+1 INTO v_cnt;</div><div class="line">      #新建表</div><div class="line">      DROP TABLE IF EXISTS im_orderseq;</div><div class="line">      CREATE TABLE  im_orderseq(</div><div class="line">        timestr NVARCHAR(8) NOT NULL ,</div><div class="line">        ordersn INT(3)</div><div class="line">      );</div><div class="line">      START TRANSACTION;</div><div class="line">      #更新表的最值</div><div class="line">      UPDATE im_orderseq SET ordersn = ordersn + v_cnt WHERE timestr = v_timestr;</div><div class="line">      IF ROW_COUNT() = 0 THEN</div><div class="line">        #插入数据</div><div class="line">        INSERT INTO im_orderseq(timestr,ordersn) VALUES(v_timestr,v_cnt);</div><div class="line">      END IF;</div><div class="line">      SELECT CONCAT(v_timestr,LPAD(ordersn,7,0))AS ordersn</div><div class="line">      FROM im_orderseq WHERE timestr = v_timestr;</div><div class="line">      COMMIT;</div><div class="line">    END;</div><div class="line"></div><div class="line">    mysql&gt; call usp_seqnum();</div><div class="line">    +-----------------+</div><div class="line">    | ordersn         |</div><div class="line">    +-----------------+</div><div class="line">    | 201804270000009 |</div><div class="line">    +-----------------+</div><div class="line">    1 row in set (0.04 sec)</div><div class="line"></div><div class="line">    Query OK, 0 rows affected (0.05 sec)</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="如何删除重复元素"><a href="#如何删除重复元素" class="headerlink" title="如何删除重复元素"></a>如何删除重复元素</h1><p>产生原因：</p>
+<pre><code>* 人为原因，重复录入数据，重复提交数据
+* 系统原因，由于系统升级或设计的原因使原来可以重复的数据变为不能重复了。
+</code></pre><p>查询数据是否重复：group by + having</p>
+<pre><code><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select * from user1_test;</div><div class="line">+----+-----------+----------+------------------------------------+</div><div class="line">| id | user_name | over     | mobile                             |</div><div class="line">+----+-----------+----------+------------------------------------+</div><div class="line">|  1 | 唐僧      | 唐僧成佛 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">|  2 | 猪八戒    | 净坛使者 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">|  3 | 孙悟空    | 齐天大圣 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">|  4 | 沙僧      | 金身罗汉 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">|  8 | 唐僧      | 唐僧成佛 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">|  9 | 猪八戒    | 净坛使者 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">| 10 | 孙悟空    | 齐天大圣 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">| 11 | 沙僧      | 金身罗汉 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">+----+-----------+----------+------------------------------------+</div><div class="line">8 rows in set (0.00 sec)</div><div class="line"></div><div class="line">mysql&gt; select user_name, count(*) from user1_test group by user_name having count(*)&gt;1;</div><div class="line">+-----------+----------+</div><div class="line">| user_name | count(*) |</div><div class="line">+-----------+----------+</div><div class="line">| 唐僧      |        2 |</div><div class="line">| 孙悟空    |        2 |</div><div class="line">| 沙僧      |        2 |</div><div class="line">| 猪八戒    |        2 |</div><div class="line">+-----------+----------+</div><div class="line">4 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
+</code></pre><p>删除重复数据，相同数据保留ID最大的：</p>
+<pre><code><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select * from user1_test;</div><div class="line">+----+-----------+----------+------------------------------------+</div><div class="line">| id | user_name | over     | mobile                             |</div><div class="line">+----+-----------+----------+------------------------------------+</div><div class="line">|  1 | 唐僧      | 唐僧成佛 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">|  2 | 猪八戒    | 净坛使者 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">|  3 | 孙悟空    | 齐天大圣 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">|  4 | 沙僧      | 金身罗汉 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">|  8 | 唐僧      | 唐僧成佛 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">|  9 | 猪八戒    | 净坛使者 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">| 10 | 孙悟空    | 齐天大圣 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">| 11 | 沙僧      | 金身罗汉 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">+----+-----------+----------+------------------------------------+</div><div class="line">8 rows in set (0.00 sec)</div><div class="line"></div><div class="line">mysql&gt; delete a from user1_test a join (</div><div class="line">    -&gt; select user_name, count(*), max(id) as id</div><div class="line">    -&gt; from user1_test</div><div class="line">    -&gt; group by user_name</div><div class="line">    -&gt; having count(*)&gt;1) b</div><div class="line">    -&gt; on a.user_name=b.user_name</div><div class="line">    -&gt; where a.id &lt; b.id;</div><div class="line">Query OK, 4 rows affected (0.01 sec)</div><div class="line"></div><div class="line">mysql&gt; select * from user1_test;</div><div class="line">+----+-----------+----------+------------------------------------+</div><div class="line">| id | user_name | over     | mobile                             |</div><div class="line">+----+-----------+----------+------------------------------------+</div><div class="line">|  8 | 唐僧      | 唐僧成佛 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">|  9 | 猪八戒    | 净坛使者 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">| 10 | 孙悟空    | 齐天大圣 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">| 11 | 沙僧      | 金身罗汉 | 12123123,123,123432,2131,4213,3421 |</div><div class="line">+----+-----------+----------+------------------------------------+</div><div class="line">4 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
+</code></pre><h1 id="如何在子查询中匹配两个值"><a href="#如何在子查询中匹配两个值" class="headerlink" title="如何在子查询中匹配两个值"></a>如何在子查询中匹配两个值</h1><ul>
+<li>子查询：当一个查询是另一个查询的条件时，成为子查询。</li>
+</ul>
+<h1 id="解决同属性多值过滤的问题"><a href="#解决同属性多值过滤的问题" class="headerlink" title="解决同属性多值过滤的问题"></a>解决同属性多值过滤的问题</h1><h1 id="如何计算累进税问题"><a href="#如何计算累进税问题" class="headerlink" title="如何计算累进税问题"></a>如何计算累进税问题</h1>
           
         
       

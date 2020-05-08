@@ -277,6 +277,203 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/java/Java网络编程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/21/java/Java网络编程/" itemprop="url">Java网络编程</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="网络编程中的两个主要问题"><a href="#网络编程中的两个主要问题" class="headerlink" title="网络编程中的两个主要问题"></a>网络编程中的两个主要问题</h1><ul>
+<li>如何准确的定位网络上的一台或者多台主机</li>
+</ul>
+<p>TCP/IP协议中IP协议主要负责网络主机的定位，数据传输的路由，可以由IP地址唯一的确定Internet上的一台主机。</p>
+<ul>
+<li>找到主机后如何进行可靠高效的数据传输</li>
+</ul>
+<p>TCP层提供面向应用的可靠传输（TCP） 或者非可靠的UDP数据传输机制。目前比较流行的网络编程模型为C/S架构，也就是通信一方作为服务器等待客户提出请求并给予相应，客户端在需要服务时向服务器提出申请。服务器一般作为守护进程始终执行，监听网络端口，一旦有客户请求，就会启动一个服务进程来响应客户，同时自己继续监听服务端口，使后来的客户也能及时得到服务。</p>
+<h1 id="TCP协议和UDP协议"><a href="#TCP协议和UDP协议" class="headerlink" title="TCP协议和UDP协议"></a>TCP协议和UDP协议</h1><p>TCP：Transfer Control Protocol的简称，是一种面向连接的可靠传输协议。通过TCP协议传输得到的是一个顺序的无差错的数据流，发送方和接收方的成对的连个socket必须建立连接，以便在TCP协议的基础上进行通信。</p>
+<p>UDP：User Datagram Protocol的简称，是一种无连接的协议。每个数据报都是一个独立的消息，包括完整的源地址或目的地址，在网络上以任何可能的路径进行传送，能否到达目的地以及到达的时间都不确定。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align:center">UDP</th>
+<th style="text-align:right">TCP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>连接性</td>
+<td style="text-align:center">无连接</td>
+<td style="text-align:right">面向连接</td>
+</tr>
+<tr>
+<td>传输数据大小</td>
+<td style="text-align:center">大小有限制，64KB以内</td>
+<td style="text-align:right">统一格式数据传输</td>
+</tr>
+<tr>
+<td>可靠性</td>
+<td style="text-align:center">不可靠，不保证到达</td>
+<td style="text-align:right">可靠协议</td>
+</tr>
+<tr>
+<td>应用</td>
+<td style="text-align:center">Telnet/FTP</td>
+<td style="text-align:right">视频会议</td>
+</tr>
+</tbody>
+</table>
+<h1 id="基于Socket的Java网络编程"><a href="#基于Socket的Java网络编程" class="headerlink" title="基于Socket的Java网络编程"></a>基于Socket的Java网络编程</h1><p>网络上两个程序通过一个双向的通讯连接实现数据的交换，这个双向链路的一端成为一个Socket。Socket通常用来实现客户方和服务端的链接。一个Socket由一个IP和一个PROT唯一确定。Java环境下，Socket编程主要是指基于TCP/IP协议的网络编程。</p>
+<h2 id="Socket通信流程"><a href="#Socket通信流程" class="headerlink" title="Socket通信流程"></a>Socket通信流程</h2><ol>
+<li>Server端监听某个端口是否有连接请求</li>
+<li>Client端相Server端发送Connect请求</li>
+<li>Server端相Client端发送Accept消息，建立连接。</li>
+<li>Server端和Client端都可以通过Send，Write等方式通信。</li>
+<li>关闭Socket</li>
+</ol>
+<h2 id="创建一个Socket"><a href="#创建一个Socket" class="headerlink" title="创建一个Socket"></a>创建一个Socket</h2><p>Java中java.net包中提供了两个类，Socket，ServerSocket，分别表示双向连接的客户端和服务端。</p>
+<p>客户端类的构造方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public Socket(String host, int port)</div><div class="line">    throws UnknownHostException, IOException</div><div class="line">&#123;</div><div class="line">    this(host != null ? new InetSocketAddress(host, port) :</div><div class="line">         new InetSocketAddress(InetAddress.getByName(null), port),</div><div class="line">         (SocketAddress) null, true);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>服务端的构造方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public ServerSocket(int port) throws IOException &#123;</div><div class="line">    this(port, 50, null);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="简单的Client-Server程序"><a href="#简单的Client-Server程序" class="headerlink" title="简单的Client/Server程序"></a>简单的Client/Server程序</h2><hr>
+<p>未完</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/java/Java多线程-锁机制/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1380,514 +1577,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/java/Java Enum的用法总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/java/Java Enum的用法总结/" itemprop="url">Java Enum用法总结</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="常量"><a href="#常量" class="headerlink" title="常量"></a>常量</h1><p>枚举类可以用来当做常量使用，非常的方便。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public enum Color &#123;</div><div class="line">    RED, GREEN, BLACK, YELLOW</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="枚举类可以做switch中的判定类型"><a href="#枚举类可以做switch中的判定类型" class="headerlink" title="枚举类可以做switch中的判定类型"></a>枚举类可以做switch中的判定类型</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">public class Aweek &#123;</div><div class="line">    Day day = Day.MONDAY;</div><div class="line">    public void getDay() &#123;</div><div class="line">        switch (day) &#123;</div><div class="line">            case MONDAY:</div><div class="line">                day = Day.MONDAY;</div><div class="line">                break;</div><div class="line">            case TUESDAY:</div><div class="line">                day = Day.TUESDAY;</div><div class="line">                break;</div><div class="line">            case WEDSDAY:</div><div class="line">                day = Day.WEDSDAY;</div><div class="line">                break;</div><div class="line">            case THURSDAY:</div><div class="line">                day = Day.THURSDAY;</div><div class="line">                break;</div><div class="line">            case SATURDAY:</div><div class="line">                day = Day.SATURDAY;</div><div class="line">                break;</div><div class="line">            case SUNDAY:</div><div class="line">                day = Day.SUNDAY;</div><div class="line">                break;</div><div class="line">            case FRIDAY:</div><div class="line">                day = Day.FRIDAY;</div><div class="line">                break;</div><div class="line">        &#125;</div><div class="line">        System.out.println(day);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        new Aweek().getDay();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">enum Day &#123;</div><div class="line">    MONDAY, TUESDAY, WEDSDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="枚举中可以添加方法，也可以覆盖方法"><a href="#枚举中可以添加方法，也可以覆盖方法" class="headerlink" title="枚举中可以添加方法，也可以覆盖方法"></a>枚举中可以添加方法，也可以覆盖方法</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line">public enum Colors&#123;</div><div class="line">    RED(&quot;red&quot;, 1), GREEN(&quot;green&quot;, 2), BLANK(&quot;blank&quot;, 3), YELLOW(&quot;yellow&quot;, 4);</div><div class="line"></div><div class="line">    //成员变量</div><div class="line">    private String name;</div><div class="line">    private int index;</div><div class="line"></div><div class="line">    // 构造方法</div><div class="line">    Colors(String name, int index) &#123;</div><div class="line">        this.name = name;</div><div class="line">        this.index = index;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    // 覆盖方法</div><div class="line">    @Override</div><div class="line">    public String toString() &#123;</div><div class="line">        return this.index + &quot;&quot; + this.name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String getName() &#123;</div><div class="line">        return name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setName(String name) &#123;</div><div class="line">        this.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public int getIndex() &#123;</div><div class="line">        return index;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setIndex(int index) &#123;</div><div class="line">        this.index = index;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //普通方法</div><div class="line">    public static String getName(int index) &#123;</div><div class="line">        for (Colors colors : Colors.values()) &#123;</div><div class="line">            if (colors.getIndex() == index)</div><div class="line">                return colors.getName();</div><div class="line">        &#125;</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="枚举类可以实现接口，但是不能继承类"><a href="#枚举类可以实现接口，但是不能继承类" class="headerlink" title="枚举类可以实现接口，但是不能继承类"></a>枚举类可以实现接口，但是不能继承类</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">public interface Print &#123;</div><div class="line">    void print();</div><div class="line">&#125;</div><div class="line"></div><div class="line">public enum Colors implements Print&#123;</div><div class="line">    RED(&quot;red&quot;, 1), GREEN(&quot;green&quot;, 2), BLANK(&quot;blank&quot;, 3), YELLOW(&quot;yellow&quot;, 4);</div><div class="line"></div><div class="line">    //成员变量</div><div class="line">    private String name;</div><div class="line">    private int index;</div><div class="line"></div><div class="line">    // 构造方法</div><div class="line">    Colors(String name, int index) &#123;</div><div class="line">        this.name = name;</div><div class="line">        this.index = index;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void print() &#123;</div><div class="line">        System.out.println(&quot;haha&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="使用接口来组织枚举的结构"><a href="#使用接口来组织枚举的结构" class="headerlink" title="使用接口来组织枚举的结构"></a>使用接口来组织枚举的结构</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public interface Food &#123;</div><div class="line">    enum Coffee implements Food &#123;</div><div class="line">        BLACK_COFFEE, DECAF_CAFFEE, LATTE, CAPPUCCINO</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    enum Dessert implements Food&#123;</div><div class="line">        FRUIT, CAKE, GELATO</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/HTTP协议小结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/HTTP协议小结/" itemprop="url">HTTP协议小结</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/HTTP/" itemprop="url" rel="index">
-                    <span itemprop="name">HTTP</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/HTTP/TCP/" itemprop="url" rel="index">
-                    <span itemprop="name">TCP</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>HTTP协议是基于TCP/IP协议来传递数据的应用层协议，规定了客户端和服务器之间的通信格式，其默认端口为80，HTTP是无连接无状态的。</p>
-<h1 id="主要特点："><a href="#主要特点：" class="headerlink" title="主要特点："></a>主要特点：</h1><ol>
-<li>简单快速：客户向服务器请求服务时只需要传送请求方法和路径，请求方法常用的有GET，POST，不同方法规定了客户和服务器不同的联系类型。协议通信速度很快。</li>
-<li>灵活：HTTP协议允许传输任意类型的数据对象，正在传输的类型由Content-Type加以标记。</li>
-<li>无连接：限制每次连接只处理一个请求，服务端确定用户端收到了处理后的结果之后，立刻断开连接。节省传输时间。</li>
-<li>无状态：HTTP协议是无状态协议。无状态指的是协议对于事务处理没有记忆能力。</li>
-<li>支持BS及CS模式</li>
-</ol>
-<h1 id="URL"><a href="#URL" class="headerlink" title="URL"></a>URL</h1><p><code>http://host[:port][abs_path]</code></p>
-<p>例如：</p>
-<p><code>https://www.baidu.com/s?wd=HttP%E5%8D%8F%E8%AE%AE%E6%80%BB%E7%BB%93&amp;rsv_spt=1&amp;rsv_iqid=0xbb6ac0d200022f6c&amp;issp=1&amp;f=8&amp;rsv_bp=1&amp;rsv_idx=2&amp;ie=utf-8&amp;rqlang=cn&amp;tn=baiduhome_pg&amp;rsv_enter=1&amp;oq=HttP%25E6%2580%25BB%25E7%25BB%2593&amp;inputT=7363&amp;rsv_t=089bmiWk56%2BnKt5Ljs7CZihPEekxaufgYcpdefPyy4J6qS3KjJEt6Qzyg5XhLwQPRZTF&amp;rsv_pq=c43d53970003ea1e&amp;rsv_sug3=58&amp;rsv_sug1=42&amp;rsv_sug7=100&amp;rsv_sug2=0&amp;rsv_sug4=8625&amp;rsv_sug=2</code></p>
-<ul>
-<li>协议部分：如http,https,tcp，其后加<code>://</code></li>
-<li>域名部分：<code>www.baidu.com</code>,合法的Internet主机域名或者IP地址</li>
-<li>端口部分：指定一个端口，拥有被请求资源的服务器主机监听该端口的TCP连接。如果port为空，HTTP协议默认为80，HTTPS协议默认为443。</li>
-<li>虚拟目录部分：从域名的第一个<code>/</code>开始到最后一个<code>/</code>为止。</li>
-<li>文件名部分：从域名后的最后一个<code>/</code>开始到<code>?</code>为止，是文件名部分，如果没有<code>?</code>文件名部分：从域名后的最后一个“/”开始到“？”为止，是文件名部分，如果没有“?”,则是从域名后的最后一个“/”开始到“#”为止，是文件部分，如果没有“？”和“#”，那么从域名后的最后一个“/”开始到结束，都是文件名部分。</li>
-<li>锚部分：从“#”开始到最后，都是锚部分。</li>
-<li>参数部分：从“？”开始到“#”为止之间的部分为参数部分，又称搜索部分、查询部分。</li>
-</ul>
-<h1 id="URL和URI的区别："><a href="#URL和URI的区别：" class="headerlink" title="URL和URI的区别："></a>URL和URI的区别：</h1><table>
-<thead>
-<tr>
-<th></th>
-<th style="text-align:center">URL</th>
-<th style="text-align:center">URI</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>全名</td>
-<td style="text-align:center">Uniform resource locator</td>
-<td style="text-align:center">Uniform resource identifier</td>
-</tr>
-<tr>
-<td>用途</td>
-<td style="text-align:center">url可以用来标识一个资源，还指明了如何locate这个资源</td>
-<td style="text-align:center">定位web上可用的各种资源文件</td>
-</tr>
-<tr>
-<td>组成</td>
-<td style="text-align:center">协议+IP地址（端口）+主机资源的具体地址</td>
-<td style="text-align:center">访问资源的命名机制+存放资源的主机名+资源自身的名称</td>
-</tr>
-</tbody>
-</table>
-<h1 id="请求消息Request"><a href="#请求消息Request" class="headerlink" title="请求消息Request"></a>请求消息Request</h1><p>客户端发送一个HTTP请求到服务器的请求消息包含：</p>
-<ul>
-<li>请求行</li>
-<li>请求头部</li>
-<li>空行</li>
-<li><p>请求数据</p>
-<p><img src="/img/http-1.png" alt="Alt text"></p>
-</li>
-</ul>
-<ol>
-<li>请求行：说明请求类型，要访问的资源以及使用的HTTP版本</li>
-<li>请求头部:说明服务器要使用的附加信息，host将指出请求的目的地，User-Agent。</li>
-<li>空行：强制空行划分请求头和请求数据</li>
-<li>请求数据：也叫请求主题，可以添加任意的其他数据。</li>
-</ol>
-<h2 id="请求头的常用字段："><a href="#请求头的常用字段：" class="headerlink" title="请求头的常用字段："></a>请求头的常用字段：</h2><ul>
-<li>Accept：告诉服务器，客户机支持的数据格式</li>
-<li>Accept-Charset：告诉服务器，客户机采用的编码</li>
-<li>Accept-Encoding：告诉服务器，客户机支持的数据压缩格式</li>
-<li>Accept-language：用于告诉服务器，资源缓存的时间</li>
-<li>Host：用于告诉服务器，客户机向访问的主机名</li>
-<li>If-Modified-Since：用于告诉客户机，资源缓存的时间</li>
-<li>Referer: 用于告诉服务器，客户机是从哪个资源链接到本资源的</li>
-<li>User-Agent：客户机通过这个头可以向服务器带数据。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">Accept: text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01</div><div class="line">Accept-Encoding: gzip, deflate, br</div><div class="line">Accept-Language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,ja;q=0.6</div><div class="line">Connection: keep-alive</div><div class="line">Cookie: BAIDUID=CDFD2D15954E6F99667163D726B3A3E4:FG=1; BIDUPSID=CDFD2D15954E6F99667163D726B3A3E4; PSTM=1500866515; BDUSS=hEYVF-Wmpka0lRLXMwWGRQZmtiVkViUDB5OVJnblNrQVpEM29EcHJPZ2JMS1paSUFBQUFBJCQAAAAAAAAAAAEAAAD0yYIxX8biX9fTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABufflkbn35ZWj; MCITY=-131%3A; BD_UPN=12314753; H_PS_PSSID=1445_21099_20928; BD_CK_SAM=1; PSINO=1; H_PS_645EC=b5cdqANCiMatErji8Z8BouSUOvY79iH5o%2Fjy%2FUKJM0yMzqrgjyQy2ee4g9p7aR60t86a</div><div class="line">Host: www.baidu.com</div><div class="line">Referer: https://www.baidu.com/s?ie=utf-8&amp;f=8&amp;rsv_bp=1&amp;rsv_idx=2&amp;tn=baiduhome_pg&amp;wd=http%E8%AF%B7%E6%B1%82%E5%A4%B4%E4%B8%AD%E7%9A%84%E5%AD%97%E6%AE%B5&amp;rsv_spt=1&amp;oq=http%25E8%25AF%25B7%25E6%25B1%2582&amp;rsv_pq=c189685100052af0&amp;rsv_t=596djY6Nc%2B2XuiZI2%2BAjz0DgMcM0Kn2EZBS1dtxl4a3ykgijQGu4DuQ3OjfSPXh6SjPu&amp;rqlang=cn&amp;rsv_enter=1&amp;rsv_sug3=5&amp;rsv_sug1=4&amp;rsv_sug7=100&amp;rsv_sug2=0&amp;inputT=5807&amp;rsv_sug4=6646</div><div class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36</div><div class="line">X-Requested-With: XMLHttpRequest</div></pre></td></tr></table></figure>
-<h1 id="消息相应Response"><a href="#消息相应Response" class="headerlink" title="消息相应Response"></a>消息相应Response</h1><p>消息相应由四部分组成：</p>
-<p><img src="/img/http-2.png" alt="Alt text"></p>
-<ul>
-<li>状态行：由HTTP协议版本号，状态码，状态消息三部分组成</li>
-<li>消息报头：说明客户端要使用的一些附加信息</li>
-<li>空行：分割用，必须</li>
-<li>响应正文：服务器返回给客户端的文本信息</li>
-</ul>
-<h2 id="状态码："><a href="#状态码：" class="headerlink" title="状态码："></a>状态码：</h2><ol>
-<li>1XX：指示信息，表示请求已经接收，继续处理</li>
-<li>2XX：成功，表示请求已经被成功接收</li>
-<li>3XX：重定向，要完成请求需要进行更进一步的操作</li>
-<li>4XX：客户端错误，请求有语法错误或者请求无法实现</li>
-<li>5XX：服务器内部错误。</li>
-</ol>
-<p>常见状态码：</p>
-<ul>
-<li>200 OK</li>
-<li>400 bad Request</li>
-<li>401 Unauthorized</li>
-<li>403 Forbidden</li>
-<li>404 Not Found</li>
-<li>500 Internal Server Error</li>
-<li>503 Server Unavailable</li>
-</ul>
-<h2 id="常见响应头"><a href="#常见响应头" class="headerlink" title="常见响应头"></a>常见响应头</h2><ul>
-<li>Location：这个响应头配合302状态码使用，用于告诉客户机资源的地址</li>
-<li>Server：服务器通过这个头，告诉浏览器服务器的类型</li>
-<li>Content-Encoding：服务器通过这个头，告诉浏览器数据压缩的格式</li>
-<li>Content-Length：服务器通过这个头，告诉浏览器回送数据的长度</li>
-<li>Content-Type：服务器通过这个头，告诉浏览器回送数据的类型</li>
-<li>Last-Modified:服务器通过这个头，告诉浏览器当前资源缓存时间</li>
-<li>Refresh：服务器通过这个头，告诉浏览器隔多长时间刷新一次</li>
-<li>Content-Disposition：服务器通过这个头，告诉浏览器以下载方式打开数据</li>
-<li>Transfer-Encoding：服务器通过这个头，告诉浏览器数据传送的格式</li>
-<li>ETag：缓存相关的头，和Last-Modified功能一样，不过实时性更强（Last-Modified是一秒内即使内容更新也让浏览器找缓存）</li>
-<li>Expires:服务器通过这个头，告诉浏览器把回送的资源缓存多长时间，0或-1表示不缓存</li>
-<li>Cache-Control：no-cache</li>
-<li>Pragma： no-cache</li>
-</ul>
-<h1 id="HTTP请求方法"><a href="#HTTP请求方法" class="headerlink" title="HTTP请求方法"></a>HTTP请求方法</h1><p>HTTP1.0定义了三种请求方式，get、post、head，HTTP1.1新增了五种请求方法，options、put、delete、trace、connect。</p>
-<ul>
-<li>GET：请求指定的页面信息，并返回实体主体</li>
-<li>HEAD：类似于GET请求，只不过返回的响应中没有具体的内容，用于获取报头。</li>
-<li>POST：向指定资源提交数据进行处理请求，数据被包含在请求体中，POST请求可能会导致新的资源的尽力或者已有资源的修改。</li>
-<li>PUT：从客户端向服务器传送的数据取代指定的文档的内容。</li>
-<li>DELETE：请求服务器删除指定的页面。</li>
-<li>CONNECT：HTTP1.1协议中预留给能够将连接改为管道方式的代理服务器。</li>
-<li>OPTIONS：允许客户端查看服务器性能。</li>
-<li>TRACE：回显服务器收到的请求，主要用于测试或诊断。</li>
-</ul>
-<h1 id="HTTP工作原理"><a href="#HTTP工作原理" class="headerlink" title="HTTP工作原理"></a>HTTP工作原理</h1><p>HTTP协议采用了请求/响应模型，客户端向服务器发送一个请求报文，请求报文包含请求的方法，URL，协议版本，请求头部和请求数据。服务器以一个状态行作为相应，相应的内容包括协议的版本，成功或者错误代码，服务器信息，响应头部和响应数据。</p>
-<p>HTTP请求响应的步骤：</p>
-<ol>
-<li><p>客户端连接到Web服务器，HTTP客户端，比如浏览器，与Web服务器的HTTP端口建立一个TCP套接字连接。</p>
-</li>
-<li><p>发送HTTP请求，通过TCP套接字，客户端向Web服务器发送一个文本的请求报文，一个请求报文由请求行，请求头部，空行和请求数据四部分组成。</p>
-</li>
-<li><p>服务器接收请求并返回HTTP响应，Web服务器解析请求，定位请求资源。服务器将资源副本写到TCP套接字，由客户端读取。一个响应由状态行、响应头部，空行和响应数据4部分组成。</p>
-</li>
-<li><p>释放TCP连接，如果Connection模式为close，则服务器主动关闭TCP连接，客户端被动关闭连接，释放TCP连接；若connection模式为keepalive，则该连接会保持一段时间，在该时间内可以继续接受请求。</p>
-</li>
-<li><p>客户端浏览器解析HTML内容。浏览器解析状态行，查看表明请求是否成功的状态代码，然后解析每一个响应头，响应头告知一下若干字节的HTML文档和文档的字符集。客户端浏览器读取响应数据HTML，根据HTML语法对其进行格式化，并在浏览器窗口中显示。</p>
-</li>
-</ol>
-<h1 id="GET和POST请求的区别"><a href="#GET和POST请求的区别" class="headerlink" title="GET和POST请求的区别"></a>GET和POST请求的区别</h1><table>
-<thead>
-<tr>
-<th></th>
-<th style="text-align:center">GET</th>
-<th style="text-align:center">POST</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>提交</td>
-<td style="text-align:center">GET提交，请求的数据会附在URL之后，也就是讲数据放在HTTP协议头之内，以？分隔URL和传输数据，多个参数用&amp;连接</td>
-<td style="text-align:center">POST提交，把提交的数据放置在HTTP包的包体中，不像get提交会在地址栏上显示出来</td>
-</tr>
-<tr>
-<td>传输数据大小</td>
-<td style="text-align:center">特定浏览器和服务器对URL长度有限制，get请求会收到URL长度的限制</td>
-<td style="text-align:center">理论上不受到任何限制</td>
-</tr>
-<tr>
-<td>安全性</td>
-<td style="text-align:center">get提交数据，例如用户名和密码将明文出现在URL上</td>
-<td style="text-align:center">安全性较高</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li><p>HTTP get,post,soap协议都是在HTTP上运行的</p>
-<ul>
-<li><p>get:请求参数是作为一个key-value键值对的序列附加到URL上，查询字符串长度受到浏览器和服务器的限制，不适合传输大型数据集且其极不安全。</p>
-</li>
-<li><p>psot:请求参数是在HTTP标题的一个不同部分传输的，这一部分用来传输表单信息，因此必须将contentType设置为application/x-www-form- urlencoded。POST参数也是key-value键值对。但是它不支持复杂类型数据，因为POST没有定义传输数据结构的语义和规则。</p>
-</li>
-<li><p>soap：http POST的一个专用版本，遵循一种特殊的XML消息格式，contentType设置为text/xml 任何数据都可以xml化。</p>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="TCP连接建立过程"><a href="#TCP连接建立过程" class="headerlink" title="TCP连接建立过程"></a>TCP连接建立过程</h1><p><img src="/img/tcp-conn.png" alt="Alt text"></p>
-<ol>
-<li>两端TCP进程都是处于关闭状态，A是主动打开连接，B是被动打开连接。</li>
-<li>A的TCP客户端进程向B发出连接请报文段，这时首部中的同步位SYN=1，同时选择一个初始序号seq=x。TCP规定，SYN报文段不能携带数据但要消耗一个序号。这时，A的客户进程就进入SYN-SENT状态（同步已发送）。</li>
-<li>B收到连接请求报文之后，向A发送确认。在确认报文段中把SYN和ACK位都设置为1，确认号是ack=x+1,同时也为自己选择一个初始序号seq=y。这个报文段也不携带信息但是要消耗掉一个序号。这时B的TCP进程就进入SYN-RCVD（已收到同步）状态。</li>
-<li>A的TCP客户端收到B的确认后，还要向B给出确认，确认报文段的ACK设置为1，确认号ack=y+1，而自己的序号seq=x+1。这时TCP连接已经建立，A进入ESTABLISHED（已建立连接）状态。</li>
-<li>B收到A的确认后，也会进入ESTABLISHED状态。</li>
-</ol>
-<ul>
-<li>为什么A还要再发送一次确认呢？<br>是为了防止已失效的连接请求报文段突然又回传到了B，而产生错误。（该报文段可能因为网络延时而失效）</li>
-</ul>
-<h1 id="TCP连接断开的过程"><a href="#TCP连接断开的过程" class="headerlink" title="TCP连接断开的过程"></a>TCP连接断开的过程</h1><p><img src="/img/tcp-close.png" alt="Alt text"></p>
-<ol>
-<li><p>断开连接时，发起方可以是客户端也可以是服务端。发起方会先发送一个FIN包，就进入FIN_WAIT状态，因此就不能发送用户数据，等待响应方回复ACK。</p>
-</li>
-<li><p>响应方收到FIN包后，就给发起方回复ACK。此时，响应方进入CLOSE_WAIT状态，因此响应方还有待发送的数据，需要等待发送完毕，才能关闭连接（发起方在发送FIN前，会保证已经发送完数据）。</p>
-</li>
-<li><p>发起方收到ACK后，就进入FIN_WAIT_2。此时还能继续接受数据，直到收到响应方的FIN。</p>
-</li>
-<li><p>响应方等数据发送完毕后，就给发起方发送FIN包。</p>
-</li>
-<li><p>发起方收到响应方的FIN包后，就进入TIME_WAIT状态，并向响应方发送ACK。</p>
-</li>
-<li><p>响应方收到ACK后，就进入CLOSE状态，完成了断开流程。</p>
-</li>
-<li><p>发起方的TIME_WAIT状态会持续2MSL（最大报文生存时间）。然后进入到CLOSED。</p>
-</li>
-</ol>
-<ul>
-<li><p>为何是四次握手？<br>响应方还有待发送端 数据，需要数据发送完才能发SYN包。</p>
-</li>
-<li><p>为什么需要TIME_WAIT状态？<br>因为在发起方发送ACK之后，不保证响应方一定能收到ACK。响应方在发送FIN后，就等待发起方的ACK，在等待一段时间之后，如果没有收到ACK，就会重发FIN包。发起方在TIME_WAIT的时间内如果又收到了FIN包，就会在发送ACK包。</p>
-</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/java/hibernate总结/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2356,6 +2045,514 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/HTTP协议小结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/21/HTTP协议小结/" itemprop="url">HTTP协议小结</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/HTTP/" itemprop="url" rel="index">
+                    <span itemprop="name">HTTP</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/HTTP/TCP/" itemprop="url" rel="index">
+                    <span itemprop="name">TCP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>HTTP协议是基于TCP/IP协议来传递数据的应用层协议，规定了客户端和服务器之间的通信格式，其默认端口为80，HTTP是无连接无状态的。</p>
+<h1 id="主要特点："><a href="#主要特点：" class="headerlink" title="主要特点："></a>主要特点：</h1><ol>
+<li>简单快速：客户向服务器请求服务时只需要传送请求方法和路径，请求方法常用的有GET，POST，不同方法规定了客户和服务器不同的联系类型。协议通信速度很快。</li>
+<li>灵活：HTTP协议允许传输任意类型的数据对象，正在传输的类型由Content-Type加以标记。</li>
+<li>无连接：限制每次连接只处理一个请求，服务端确定用户端收到了处理后的结果之后，立刻断开连接。节省传输时间。</li>
+<li>无状态：HTTP协议是无状态协议。无状态指的是协议对于事务处理没有记忆能力。</li>
+<li>支持BS及CS模式</li>
+</ol>
+<h1 id="URL"><a href="#URL" class="headerlink" title="URL"></a>URL</h1><p><code>http://host[:port][abs_path]</code></p>
+<p>例如：</p>
+<p><code>https://www.baidu.com/s?wd=HttP%E5%8D%8F%E8%AE%AE%E6%80%BB%E7%BB%93&amp;rsv_spt=1&amp;rsv_iqid=0xbb6ac0d200022f6c&amp;issp=1&amp;f=8&amp;rsv_bp=1&amp;rsv_idx=2&amp;ie=utf-8&amp;rqlang=cn&amp;tn=baiduhome_pg&amp;rsv_enter=1&amp;oq=HttP%25E6%2580%25BB%25E7%25BB%2593&amp;inputT=7363&amp;rsv_t=089bmiWk56%2BnKt5Ljs7CZihPEekxaufgYcpdefPyy4J6qS3KjJEt6Qzyg5XhLwQPRZTF&amp;rsv_pq=c43d53970003ea1e&amp;rsv_sug3=58&amp;rsv_sug1=42&amp;rsv_sug7=100&amp;rsv_sug2=0&amp;rsv_sug4=8625&amp;rsv_sug=2</code></p>
+<ul>
+<li>协议部分：如http,https,tcp，其后加<code>://</code></li>
+<li>域名部分：<code>www.baidu.com</code>,合法的Internet主机域名或者IP地址</li>
+<li>端口部分：指定一个端口，拥有被请求资源的服务器主机监听该端口的TCP连接。如果port为空，HTTP协议默认为80，HTTPS协议默认为443。</li>
+<li>虚拟目录部分：从域名的第一个<code>/</code>开始到最后一个<code>/</code>为止。</li>
+<li>文件名部分：从域名后的最后一个<code>/</code>开始到<code>?</code>为止，是文件名部分，如果没有<code>?</code>文件名部分：从域名后的最后一个“/”开始到“？”为止，是文件名部分，如果没有“?”,则是从域名后的最后一个“/”开始到“#”为止，是文件部分，如果没有“？”和“#”，那么从域名后的最后一个“/”开始到结束，都是文件名部分。</li>
+<li>锚部分：从“#”开始到最后，都是锚部分。</li>
+<li>参数部分：从“？”开始到“#”为止之间的部分为参数部分，又称搜索部分、查询部分。</li>
+</ul>
+<h1 id="URL和URI的区别："><a href="#URL和URI的区别：" class="headerlink" title="URL和URI的区别："></a>URL和URI的区别：</h1><table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align:center">URL</th>
+<th style="text-align:center">URI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全名</td>
+<td style="text-align:center">Uniform resource locator</td>
+<td style="text-align:center">Uniform resource identifier</td>
+</tr>
+<tr>
+<td>用途</td>
+<td style="text-align:center">url可以用来标识一个资源，还指明了如何locate这个资源</td>
+<td style="text-align:center">定位web上可用的各种资源文件</td>
+</tr>
+<tr>
+<td>组成</td>
+<td style="text-align:center">协议+IP地址（端口）+主机资源的具体地址</td>
+<td style="text-align:center">访问资源的命名机制+存放资源的主机名+资源自身的名称</td>
+</tr>
+</tbody>
+</table>
+<h1 id="请求消息Request"><a href="#请求消息Request" class="headerlink" title="请求消息Request"></a>请求消息Request</h1><p>客户端发送一个HTTP请求到服务器的请求消息包含：</p>
+<ul>
+<li>请求行</li>
+<li>请求头部</li>
+<li>空行</li>
+<li><p>请求数据</p>
+<p><img src="/img/http-1.png" alt="Alt text"></p>
+</li>
+</ul>
+<ol>
+<li>请求行：说明请求类型，要访问的资源以及使用的HTTP版本</li>
+<li>请求头部:说明服务器要使用的附加信息，host将指出请求的目的地，User-Agent。</li>
+<li>空行：强制空行划分请求头和请求数据</li>
+<li>请求数据：也叫请求主题，可以添加任意的其他数据。</li>
+</ol>
+<h2 id="请求头的常用字段："><a href="#请求头的常用字段：" class="headerlink" title="请求头的常用字段："></a>请求头的常用字段：</h2><ul>
+<li>Accept：告诉服务器，客户机支持的数据格式</li>
+<li>Accept-Charset：告诉服务器，客户机采用的编码</li>
+<li>Accept-Encoding：告诉服务器，客户机支持的数据压缩格式</li>
+<li>Accept-language：用于告诉服务器，资源缓存的时间</li>
+<li>Host：用于告诉服务器，客户机向访问的主机名</li>
+<li>If-Modified-Since：用于告诉客户机，资源缓存的时间</li>
+<li>Referer: 用于告诉服务器，客户机是从哪个资源链接到本资源的</li>
+<li>User-Agent：客户机通过这个头可以向服务器带数据。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">Accept: text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01</div><div class="line">Accept-Encoding: gzip, deflate, br</div><div class="line">Accept-Language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,ja;q=0.6</div><div class="line">Connection: keep-alive</div><div class="line">Cookie: BAIDUID=CDFD2D15954E6F99667163D726B3A3E4:FG=1; BIDUPSID=CDFD2D15954E6F99667163D726B3A3E4; PSTM=1500866515; BDUSS=hEYVF-Wmpka0lRLXMwWGRQZmtiVkViUDB5OVJnblNrQVpEM29EcHJPZ2JMS1paSUFBQUFBJCQAAAAAAAAAAAEAAAD0yYIxX8biX9fTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABufflkbn35ZWj; MCITY=-131%3A; BD_UPN=12314753; H_PS_PSSID=1445_21099_20928; BD_CK_SAM=1; PSINO=1; H_PS_645EC=b5cdqANCiMatErji8Z8BouSUOvY79iH5o%2Fjy%2FUKJM0yMzqrgjyQy2ee4g9p7aR60t86a</div><div class="line">Host: www.baidu.com</div><div class="line">Referer: https://www.baidu.com/s?ie=utf-8&amp;f=8&amp;rsv_bp=1&amp;rsv_idx=2&amp;tn=baiduhome_pg&amp;wd=http%E8%AF%B7%E6%B1%82%E5%A4%B4%E4%B8%AD%E7%9A%84%E5%AD%97%E6%AE%B5&amp;rsv_spt=1&amp;oq=http%25E8%25AF%25B7%25E6%25B1%2582&amp;rsv_pq=c189685100052af0&amp;rsv_t=596djY6Nc%2B2XuiZI2%2BAjz0DgMcM0Kn2EZBS1dtxl4a3ykgijQGu4DuQ3OjfSPXh6SjPu&amp;rqlang=cn&amp;rsv_enter=1&amp;rsv_sug3=5&amp;rsv_sug1=4&amp;rsv_sug7=100&amp;rsv_sug2=0&amp;inputT=5807&amp;rsv_sug4=6646</div><div class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36</div><div class="line">X-Requested-With: XMLHttpRequest</div></pre></td></tr></table></figure>
+<h1 id="消息相应Response"><a href="#消息相应Response" class="headerlink" title="消息相应Response"></a>消息相应Response</h1><p>消息相应由四部分组成：</p>
+<p><img src="/img/http-2.png" alt="Alt text"></p>
+<ul>
+<li>状态行：由HTTP协议版本号，状态码，状态消息三部分组成</li>
+<li>消息报头：说明客户端要使用的一些附加信息</li>
+<li>空行：分割用，必须</li>
+<li>响应正文：服务器返回给客户端的文本信息</li>
+</ul>
+<h2 id="状态码："><a href="#状态码：" class="headerlink" title="状态码："></a>状态码：</h2><ol>
+<li>1XX：指示信息，表示请求已经接收，继续处理</li>
+<li>2XX：成功，表示请求已经被成功接收</li>
+<li>3XX：重定向，要完成请求需要进行更进一步的操作</li>
+<li>4XX：客户端错误，请求有语法错误或者请求无法实现</li>
+<li>5XX：服务器内部错误。</li>
+</ol>
+<p>常见状态码：</p>
+<ul>
+<li>200 OK</li>
+<li>400 bad Request</li>
+<li>401 Unauthorized</li>
+<li>403 Forbidden</li>
+<li>404 Not Found</li>
+<li>500 Internal Server Error</li>
+<li>503 Server Unavailable</li>
+</ul>
+<h2 id="常见响应头"><a href="#常见响应头" class="headerlink" title="常见响应头"></a>常见响应头</h2><ul>
+<li>Location：这个响应头配合302状态码使用，用于告诉客户机资源的地址</li>
+<li>Server：服务器通过这个头，告诉浏览器服务器的类型</li>
+<li>Content-Encoding：服务器通过这个头，告诉浏览器数据压缩的格式</li>
+<li>Content-Length：服务器通过这个头，告诉浏览器回送数据的长度</li>
+<li>Content-Type：服务器通过这个头，告诉浏览器回送数据的类型</li>
+<li>Last-Modified:服务器通过这个头，告诉浏览器当前资源缓存时间</li>
+<li>Refresh：服务器通过这个头，告诉浏览器隔多长时间刷新一次</li>
+<li>Content-Disposition：服务器通过这个头，告诉浏览器以下载方式打开数据</li>
+<li>Transfer-Encoding：服务器通过这个头，告诉浏览器数据传送的格式</li>
+<li>ETag：缓存相关的头，和Last-Modified功能一样，不过实时性更强（Last-Modified是一秒内即使内容更新也让浏览器找缓存）</li>
+<li>Expires:服务器通过这个头，告诉浏览器把回送的资源缓存多长时间，0或-1表示不缓存</li>
+<li>Cache-Control：no-cache</li>
+<li>Pragma： no-cache</li>
+</ul>
+<h1 id="HTTP请求方法"><a href="#HTTP请求方法" class="headerlink" title="HTTP请求方法"></a>HTTP请求方法</h1><p>HTTP1.0定义了三种请求方式，get、post、head，HTTP1.1新增了五种请求方法，options、put、delete、trace、connect。</p>
+<ul>
+<li>GET：请求指定的页面信息，并返回实体主体</li>
+<li>HEAD：类似于GET请求，只不过返回的响应中没有具体的内容，用于获取报头。</li>
+<li>POST：向指定资源提交数据进行处理请求，数据被包含在请求体中，POST请求可能会导致新的资源的尽力或者已有资源的修改。</li>
+<li>PUT：从客户端向服务器传送的数据取代指定的文档的内容。</li>
+<li>DELETE：请求服务器删除指定的页面。</li>
+<li>CONNECT：HTTP1.1协议中预留给能够将连接改为管道方式的代理服务器。</li>
+<li>OPTIONS：允许客户端查看服务器性能。</li>
+<li>TRACE：回显服务器收到的请求，主要用于测试或诊断。</li>
+</ul>
+<h1 id="HTTP工作原理"><a href="#HTTP工作原理" class="headerlink" title="HTTP工作原理"></a>HTTP工作原理</h1><p>HTTP协议采用了请求/响应模型，客户端向服务器发送一个请求报文，请求报文包含请求的方法，URL，协议版本，请求头部和请求数据。服务器以一个状态行作为相应，相应的内容包括协议的版本，成功或者错误代码，服务器信息，响应头部和响应数据。</p>
+<p>HTTP请求响应的步骤：</p>
+<ol>
+<li><p>客户端连接到Web服务器，HTTP客户端，比如浏览器，与Web服务器的HTTP端口建立一个TCP套接字连接。</p>
+</li>
+<li><p>发送HTTP请求，通过TCP套接字，客户端向Web服务器发送一个文本的请求报文，一个请求报文由请求行，请求头部，空行和请求数据四部分组成。</p>
+</li>
+<li><p>服务器接收请求并返回HTTP响应，Web服务器解析请求，定位请求资源。服务器将资源副本写到TCP套接字，由客户端读取。一个响应由状态行、响应头部，空行和响应数据4部分组成。</p>
+</li>
+<li><p>释放TCP连接，如果Connection模式为close，则服务器主动关闭TCP连接，客户端被动关闭连接，释放TCP连接；若connection模式为keepalive，则该连接会保持一段时间，在该时间内可以继续接受请求。</p>
+</li>
+<li><p>客户端浏览器解析HTML内容。浏览器解析状态行，查看表明请求是否成功的状态代码，然后解析每一个响应头，响应头告知一下若干字节的HTML文档和文档的字符集。客户端浏览器读取响应数据HTML，根据HTML语法对其进行格式化，并在浏览器窗口中显示。</p>
+</li>
+</ol>
+<h1 id="GET和POST请求的区别"><a href="#GET和POST请求的区别" class="headerlink" title="GET和POST请求的区别"></a>GET和POST请求的区别</h1><table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align:center">GET</th>
+<th style="text-align:center">POST</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>提交</td>
+<td style="text-align:center">GET提交，请求的数据会附在URL之后，也就是讲数据放在HTTP协议头之内，以？分隔URL和传输数据，多个参数用&amp;连接</td>
+<td style="text-align:center">POST提交，把提交的数据放置在HTTP包的包体中，不像get提交会在地址栏上显示出来</td>
+</tr>
+<tr>
+<td>传输数据大小</td>
+<td style="text-align:center">特定浏览器和服务器对URL长度有限制，get请求会收到URL长度的限制</td>
+<td style="text-align:center">理论上不受到任何限制</td>
+</tr>
+<tr>
+<td>安全性</td>
+<td style="text-align:center">get提交数据，例如用户名和密码将明文出现在URL上</td>
+<td style="text-align:center">安全性较高</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p>HTTP get,post,soap协议都是在HTTP上运行的</p>
+<ul>
+<li><p>get:请求参数是作为一个key-value键值对的序列附加到URL上，查询字符串长度受到浏览器和服务器的限制，不适合传输大型数据集且其极不安全。</p>
+</li>
+<li><p>psot:请求参数是在HTTP标题的一个不同部分传输的，这一部分用来传输表单信息，因此必须将contentType设置为application/x-www-form- urlencoded。POST参数也是key-value键值对。但是它不支持复杂类型数据，因为POST没有定义传输数据结构的语义和规则。</p>
+</li>
+<li><p>soap：http POST的一个专用版本，遵循一种特殊的XML消息格式，contentType设置为text/xml 任何数据都可以xml化。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="TCP连接建立过程"><a href="#TCP连接建立过程" class="headerlink" title="TCP连接建立过程"></a>TCP连接建立过程</h1><p><img src="/img/tcp-conn.png" alt="Alt text"></p>
+<ol>
+<li>两端TCP进程都是处于关闭状态，A是主动打开连接，B是被动打开连接。</li>
+<li>A的TCP客户端进程向B发出连接请报文段，这时首部中的同步位SYN=1，同时选择一个初始序号seq=x。TCP规定，SYN报文段不能携带数据但要消耗一个序号。这时，A的客户进程就进入SYN-SENT状态（同步已发送）。</li>
+<li>B收到连接请求报文之后，向A发送确认。在确认报文段中把SYN和ACK位都设置为1，确认号是ack=x+1,同时也为自己选择一个初始序号seq=y。这个报文段也不携带信息但是要消耗掉一个序号。这时B的TCP进程就进入SYN-RCVD（已收到同步）状态。</li>
+<li>A的TCP客户端收到B的确认后，还要向B给出确认，确认报文段的ACK设置为1，确认号ack=y+1，而自己的序号seq=x+1。这时TCP连接已经建立，A进入ESTABLISHED（已建立连接）状态。</li>
+<li>B收到A的确认后，也会进入ESTABLISHED状态。</li>
+</ol>
+<ul>
+<li>为什么A还要再发送一次确认呢？<br>是为了防止已失效的连接请求报文段突然又回传到了B，而产生错误。（该报文段可能因为网络延时而失效）</li>
+</ul>
+<h1 id="TCP连接断开的过程"><a href="#TCP连接断开的过程" class="headerlink" title="TCP连接断开的过程"></a>TCP连接断开的过程</h1><p><img src="/img/tcp-close.png" alt="Alt text"></p>
+<ol>
+<li><p>断开连接时，发起方可以是客户端也可以是服务端。发起方会先发送一个FIN包，就进入FIN_WAIT状态，因此就不能发送用户数据，等待响应方回复ACK。</p>
+</li>
+<li><p>响应方收到FIN包后，就给发起方回复ACK。此时，响应方进入CLOSE_WAIT状态，因此响应方还有待发送的数据，需要等待发送完毕，才能关闭连接（发起方在发送FIN前，会保证已经发送完数据）。</p>
+</li>
+<li><p>发起方收到ACK后，就进入FIN_WAIT_2。此时还能继续接受数据，直到收到响应方的FIN。</p>
+</li>
+<li><p>响应方等数据发送完毕后，就给发起方发送FIN包。</p>
+</li>
+<li><p>发起方收到响应方的FIN包后，就进入TIME_WAIT状态，并向响应方发送ACK。</p>
+</li>
+<li><p>响应方收到ACK后，就进入CLOSE状态，完成了断开流程。</p>
+</li>
+<li><p>发起方的TIME_WAIT状态会持续2MSL（最大报文生存时间）。然后进入到CLOSED。</p>
+</li>
+</ol>
+<ul>
+<li><p>为何是四次握手？<br>响应方还有待发送端 数据，需要数据发送完才能发SYN包。</p>
+</li>
+<li><p>为什么需要TIME_WAIT状态？<br>因为在发起方发送ACK之后，不保证响应方一定能收到ACK。响应方在发送FIN后，就等待发起方的ACK，在等待一段时间之后，如果没有收到ACK，就会重发FIN包。发起方在TIME_WAIT的时间内如果又收到了FIN包，就会在发送ACK包。</p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/java/Java Enum的用法总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/21/java/Java Enum的用法总结/" itemprop="url">Java Enum用法总结</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="常量"><a href="#常量" class="headerlink" title="常量"></a>常量</h1><p>枚举类可以用来当做常量使用，非常的方便。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public enum Color &#123;</div><div class="line">    RED, GREEN, BLACK, YELLOW</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="枚举类可以做switch中的判定类型"><a href="#枚举类可以做switch中的判定类型" class="headerlink" title="枚举类可以做switch中的判定类型"></a>枚举类可以做switch中的判定类型</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">public class Aweek &#123;</div><div class="line">    Day day = Day.MONDAY;</div><div class="line">    public void getDay() &#123;</div><div class="line">        switch (day) &#123;</div><div class="line">            case MONDAY:</div><div class="line">                day = Day.MONDAY;</div><div class="line">                break;</div><div class="line">            case TUESDAY:</div><div class="line">                day = Day.TUESDAY;</div><div class="line">                break;</div><div class="line">            case WEDSDAY:</div><div class="line">                day = Day.WEDSDAY;</div><div class="line">                break;</div><div class="line">            case THURSDAY:</div><div class="line">                day = Day.THURSDAY;</div><div class="line">                break;</div><div class="line">            case SATURDAY:</div><div class="line">                day = Day.SATURDAY;</div><div class="line">                break;</div><div class="line">            case SUNDAY:</div><div class="line">                day = Day.SUNDAY;</div><div class="line">                break;</div><div class="line">            case FRIDAY:</div><div class="line">                day = Day.FRIDAY;</div><div class="line">                break;</div><div class="line">        &#125;</div><div class="line">        System.out.println(day);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        new Aweek().getDay();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">enum Day &#123;</div><div class="line">    MONDAY, TUESDAY, WEDSDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="枚举中可以添加方法，也可以覆盖方法"><a href="#枚举中可以添加方法，也可以覆盖方法" class="headerlink" title="枚举中可以添加方法，也可以覆盖方法"></a>枚举中可以添加方法，也可以覆盖方法</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line">public enum Colors&#123;</div><div class="line">    RED(&quot;red&quot;, 1), GREEN(&quot;green&quot;, 2), BLANK(&quot;blank&quot;, 3), YELLOW(&quot;yellow&quot;, 4);</div><div class="line"></div><div class="line">    //成员变量</div><div class="line">    private String name;</div><div class="line">    private int index;</div><div class="line"></div><div class="line">    // 构造方法</div><div class="line">    Colors(String name, int index) &#123;</div><div class="line">        this.name = name;</div><div class="line">        this.index = index;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    // 覆盖方法</div><div class="line">    @Override</div><div class="line">    public String toString() &#123;</div><div class="line">        return this.index + &quot;&quot; + this.name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String getName() &#123;</div><div class="line">        return name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setName(String name) &#123;</div><div class="line">        this.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public int getIndex() &#123;</div><div class="line">        return index;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setIndex(int index) &#123;</div><div class="line">        this.index = index;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //普通方法</div><div class="line">    public static String getName(int index) &#123;</div><div class="line">        for (Colors colors : Colors.values()) &#123;</div><div class="line">            if (colors.getIndex() == index)</div><div class="line">                return colors.getName();</div><div class="line">        &#125;</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="枚举类可以实现接口，但是不能继承类"><a href="#枚举类可以实现接口，但是不能继承类" class="headerlink" title="枚举类可以实现接口，但是不能继承类"></a>枚举类可以实现接口，但是不能继承类</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">public interface Print &#123;</div><div class="line">    void print();</div><div class="line">&#125;</div><div class="line"></div><div class="line">public enum Colors implements Print&#123;</div><div class="line">    RED(&quot;red&quot;, 1), GREEN(&quot;green&quot;, 2), BLANK(&quot;blank&quot;, 3), YELLOW(&quot;yellow&quot;, 4);</div><div class="line"></div><div class="line">    //成员变量</div><div class="line">    private String name;</div><div class="line">    private int index;</div><div class="line"></div><div class="line">    // 构造方法</div><div class="line">    Colors(String name, int index) &#123;</div><div class="line">        this.name = name;</div><div class="line">        this.index = index;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void print() &#123;</div><div class="line">        System.out.println(&quot;haha&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="使用接口来组织枚举的结构"><a href="#使用接口来组织枚举的结构" class="headerlink" title="使用接口来组织枚举的结构"></a>使用接口来组织枚举的结构</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public interface Food &#123;</div><div class="line">    enum Coffee implements Food &#123;</div><div class="line">        BLACK_COFFEE, DECAF_CAFFEE, LATTE, CAPPUCCINO</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    enum Dessert implements Food&#123;</div><div class="line">        FRUIT, CAKE, GELATO</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/java/ActiveMQ学习总结（二）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2663,533 +2860,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/java/Dubbo框架学习总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/java/Dubbo框架学习总结/" itemprop="url">Dubbo框架学习总结</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/Dubbo/" itemprop="url" rel="index">
-                    <span itemprop="name">Dubbo</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/Dubbo/RPC/" itemprop="url" rel="index">
-                    <span itemprop="name">RPC</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="Dubbo的定义"><a href="#Dubbo的定义" class="headerlink" title="Dubbo的定义"></a>Dubbo的定义</h1><p>官方定义：Apache Dubbo是一个由阿里提供开源的基于Java的高性能的RPC框架。遵循RPC框架的设计原则，Dubbo也定义了服务的概念，可以远程根据参数和返回值来调用具体的方法。在服务侧，服务侧实现这个接口并运行一个Dubbo服务来处理客户端的请求，在客户端保存有服务端相同的方法存根。</p>
-<p>Dubbo有三个主要特性：</p>
-<ul>
-<li>基于接口的远程的调用</li>
-<li>容错和负载均衡</li>
-<li>服务的子自动注册和发现。</li>
-</ul>
-<p>Dubbo相关的文档：<br><a href="http://dubbo.apache.org/books/dubbo-user-book/preface/background.html" target="_blank" rel="external">Dubbo用户手册</a><br><a href="http://dubbo.apache.org/books/dubbo-dev-book/build.html" target="_blank" rel="external">Dubbo开发手册</a><br><a href="http://dubbo.apache.org/books/dubbo-admin-book/install/zookeeper.html" target="_blank" rel="external">Dubbo管理手册</a><br><a href="https://github.com/apache/incubator-dubbo" target="_blank" rel="external">Dubbo GitHub </a></p>
-<h1 id="Dubbo结构"><a href="#Dubbo结构" class="headerlink" title="Dubbo结构"></a>Dubbo结构</h1><p><img src="/img/Dubbo-Arch.png" alt="Alt text"></p>
-<ol>
-<li>服务提供者-对外暴露自己的服务，服务提供者会将自己提供的服务注册到注册中心</li>
-<li>容器-初始化服务，加载服务，运行服务</li>
-<li>服务消费者-调用远程服务，会向注册中心订阅他需要的服务。</li>
-<li>注册中心-服务注册与发现</li>
-<li>监控中心-记录服务相关的数据，比如服务的调用频率，调用次数等</li>
-</ol>
-<p><em>服务提供者，服务消费者和注册中心的连接是持久的，所以当一个服务提供者挂掉之后，注册中心可以检测到服务提供者的失效并将此信息通知给服务消费者</em></p>
-<p><em>注册中心和监控中心是可选的，服务消费者可以直接连接到服务提供者，但是这样会影响整个系统的稳定性，不推荐直接连接</em></p>
-<h2 id="调用关系说明"><a href="#调用关系说明" class="headerlink" title="调用关系说明"></a>调用关系说明</h2><ol>
-<li>服务容器负责启动，加载，运行服务提供者。</li>
-<li>服务提供者在启动时，向注册中心注册自己提供的服务。</li>
-<li>服务消费者在启动时，向注册中心订阅自己需要的服务。</li>
-<li>注册中心返回服务提供者列表给消费者，如果有变更，注册中心将基于长连接推送变更数据给消费者。</li>
-<li>服务消费者，从提供者地址列表中，基于软负载均衡算法，选一台提供者经调用，如果调用失败，再选一台调用。</li>
-<li>服务消费者和提供者，在内存中累积调用次数和调用时间，定时每分钟发送一次统计数据到监控中心。</li>
-</ol>
-<h2 id="Dubbo架构的特点"><a href="#Dubbo架构的特点" class="headerlink" title="Dubbo架构的特点"></a>Dubbo架构的特点</h2><h3 id="连通性"><a href="#连通性" class="headerlink" title="连通性"></a>连通性</h3><ul>
-<li>注册中心负责服务地址的注册于查找，相当于目录服务，服务提供者和消费者只在启动时与注册中心交互，注册中心不转发消息，压力较小。</li>
-<li>监控中心负责统计各服务调用次数，调用时间等，统计先在内存汇总后每分钟一次发送到监控中心服务器，并以报表展示。</li>
-<li>服务提供者向注册中心注册其提供的服务，并汇报调用时间到监控中心，此时间不包含网络开销。</li>
-<li>服务消费者向注册中心获取服务提供者地址列表，并根据负载算法直接调用提供者，同时汇报调用时间到监控中心，此时间包含网络开销。</li>
-<li>注册中心，服务提供者，服务消费者三者之间均为长连接，监控中心不是。</li>
-<li>注册中心通过长连接感知服务提供者的存在，服务提供者宕机，注册中心将立即推送事件通知消费者。</li>
-<li>注册中心和监控中心全部宕机，不影响已运行的提供者和消费者，消费者在本地魂村了提供者列表。</li>
-<li>注册中心和监控中心都是可选的，服务消费者可以直连服务提供者。</li>
-</ul>
-<h3 id="健壮性"><a href="#健壮性" class="headerlink" title="健壮性"></a>健壮性</h3><ul>
-<li>监控中心宕机不影响使用，只是丢失部分统计数据。</li>
-<li>数据库宕机，注册中心仍能通过缓存提供服务列表查询，但不能注册新服务</li>
-<li>注册中心对等集群，任意一台宕机之后，将自动切换到另一台</li>
-<li>注册中心全部宕机后，服务提供者和服务消费者仍能通过本地换粗通讯</li>
-<li>服务提供者无状态，任意一台宕机后，不影响使用。</li>
-<li>服务提供者全部宕机之后，服务消费者应用将无法使用，并无限次重连等待服务提供者回复。</li>
-</ul>
-<h3 id="伸缩性"><a href="#伸缩性" class="headerlink" title="伸缩性"></a>伸缩性</h3><ul>
-<li>注册中心为了对等集群，可动态增加机器部署实例，所有客户端将自动发现新的注册中心</li>
-<li>服务提供者无状态，可动态增加及其部署实例，注册中心将推送新的服务提供者信息给消费者。</li>
-</ul>
-<h3 id="升级性"><a href="#升级性" class="headerlink" title="升级性"></a>升级性</h3><ul>
-<li>当服务集群规模进一步扩大，带动IT治理结构进一步升级，需要实现动态部署，进行流动计算，现有的分布式架构不会带来阻力，下图为一种可能结果：</li>
-</ul>
-<p><img src="/img/Dubbo-Futurearch.png" alt="Alt text"></p>
-<h1 id="Dubbo依赖要求"><a href="#Dubbo依赖要求" class="headerlink" title="Dubbo依赖要求"></a>Dubbo依赖要求</h1><ul>
-<li><p>工具版本要求：</p>
-<ul>
-<li>JDK：6及以上</li>
-<li>Maven：3及以上</li>
-</ul>
-</li>
-<li><p>Maven依赖配置：</p>
-</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;dependency&gt;</div><div class="line">    &lt;groupId&gt;com.alibaba&lt;/groupId&gt;</div><div class="line">    &lt;artifactId&gt;dubbo&lt;/artifactId&gt;</div><div class="line">    &lt;version&gt;$&#123;dubbo.version&#125;&lt;/version&gt;</div><div class="line">&lt;/dependency&gt;</div></pre></td></tr></table></figure>
-<ul>
-<li>Dubbo缺省依赖以下库：</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[INFO] +- com.alibaba:dubbo:jar:2.5.9-SNAPSHOT:compile</div><div class="line">[INFO] |  +- org.springframework:spring-context:jar:4.3.10.RELEASE:compile</div><div class="line">[INFO] |  +- org.javassist:javassist:jar:3.21.0-GA:compile</div><div class="line">[INFO] |  \- org.jboss.netty:netty:jar:3.2.5.Final:compile</div></pre></td></tr></table></figure>
-<ul>
-<li>可选依赖</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">netty-all 4.0.35.Final</div><div class="line">mina: 1.1.7</div><div class="line">grizzly: 2.1.4</div><div class="line">httpclient: 4.5.3</div><div class="line">hessian_lite: 3.2.1-fixed</div><div class="line">fastjson: 1.2.31</div><div class="line">zookeeper: 3.4.9</div><div class="line">jedis: 2.9.0</div><div class="line">xmemcached: 1.3.6</div><div class="line">hessian: 4.0.38</div><div class="line">jetty: 6.1.26</div><div class="line">hibernate-validator: 5.4.1.Final</div><div class="line">zkclient: 0.2</div><div class="line">curator: 2.12.0</div><div class="line">cxf: 3.0.14</div><div class="line">thrift: 0.8.0</div><div class="line">servlet: 3.0 6</div><div class="line">validation-api: 1.1.0.GA 6</div><div class="line">jcache: 1.0.0 6</div><div class="line">javax.el: 3.0.1-b08 6</div><div class="line">kryo: 4.0.1</div><div class="line">kryo-serializers: 0.42</div><div class="line">fst: 2.48-jdk-6</div><div class="line">resteasy: 3.0.19.Final</div><div class="line">tomcat-embed-core: 8.0.11</div><div class="line">slf4j: 1.7.25</div><div class="line">log4j: 1.2.16</div></pre></td></tr></table></figure>
-<h2 id="Spring中Dubbo应用示例"><a href="#Spring中Dubbo应用示例" class="headerlink" title="Spring中Dubbo应用示例"></a>Spring中Dubbo应用示例</h2><ul>
-<li>定义服务接口：由于服务的提供者和消费者都依赖于同一个接口，因此强烈建议将接口定义在一个单独的模块里面，从而方便服务提供者模块和消费者模块来依赖。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">package com.alibaba.dubbo.demo;</div><div class="line"></div><div class="line">public interface DemoService &#123;</div><div class="line">    String sayHello(String name);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>实现服务的提供者</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">package com.alibaba.dubbo.demo.provider;</div><div class="line">import com.alibaba.dubbo.demo.DemoService;</div><div class="line"></div><div class="line">public class DemoServiceImpl implements DemoService &#123;</div><div class="line">    public String sayHello(String name) &#123;</div><div class="line">        return &quot;Hello &quot; + name;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>配置服务的提供者–在spring中如何配置Dubbo服务。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</div><div class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</div><div class="line">    xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</div><div class="line">    xmlns:dubbo=&quot;http://code.alibabatech.com/schema/dubbo&quot;</div><div class="line">    xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans        http://www.springframework.org/schema/beans/spring-beans.xsd        http://code.alibabatech.com/schema/dubbo        http://code.alibabatech.com/schema/dubbo/dubbo.xsd&quot;&gt;</div><div class="line"></div><div class="line">    &lt;!-- 提供方应用信息，用于计算依赖关系 --&gt;</div><div class="line">    &lt;dubbo:application name=&quot;hello-world-app&quot;  /&gt;</div><div class="line"></div><div class="line">    &lt;!-- 使用multicast广播注册中心暴露服务地址 --&gt;</div><div class="line">    &lt;dubbo:registry address=&quot;multicast://224.5.6.7:1234&quot; /&gt;</div><div class="line"></div><div class="line">    &lt;!-- 用dubbo协议在20880端口暴露服务 --&gt;</div><div class="line">    &lt;dubbo:protocol name=&quot;dubbo&quot; port=&quot;20880&quot; /&gt;</div><div class="line"></div><div class="line">    &lt;!-- 声明需要暴露的服务接口 --&gt;</div><div class="line">    &lt;dubbo:service interface=&quot;com.alibaba.dubbo.demo.DemoService&quot; ref=&quot;demoService&quot; /&gt;</div><div class="line"></div><div class="line">    &lt;!-- 和本地bean一样实现服务 --&gt;</div><div class="line">    &lt;bean id=&quot;demoService&quot; class=&quot;com.alibaba.dubbo.demo.provider.DemoServiceImpl&quot; /&gt;</div><div class="line">&lt;/beans&gt;</div></pre></td></tr></table></figure>
-<p>从配置文件中可以看到我们只将demoService的接口暴露给一个URL，dubbo://127.0.0.1:20880,并将该服务注册给一个多媒体地址：multicast://224.5.6.7:1234</p>
-<p>dubbo协议是Dubbo框架支持的众多协议之一，dubbo协议是在Java NIO特性的基础之上的，为Dubbo架构的默认协议。</p>
-<ul>
-<li>开启服务</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">import org.springframework.context.support.ClassPathXmlApplicationContext;</div><div class="line"></div><div class="line">public class Provider &#123;</div><div class="line">    public static void main(String[] args) throws Exception &#123;</div><div class="line">        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(</div><div class="line">                new String[] &#123;&quot;META-INF/spring/dubbo-demo-provider.xml&quot;&#125;);</div><div class="line">        context.start();</div><div class="line">        // press any key to exit</div><div class="line">        System.in.read();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>配置服务消费者</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</div><div class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</div><div class="line">    xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</div><div class="line">    xmlns:dubbo=&quot;http://code.alibabatech.com/schema/dubbo&quot;</div><div class="line">    xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans        http://www.springframework.org/schema/beans/spring-beans.xsd        http://code.alibabatech.com/schema/dubbo        http://code.alibabatech.com/schema/dubbo/dubbo.xsd&quot;&gt;</div><div class="line"></div><div class="line">    &lt;!-- 消费方应用名，用于计算依赖关系，不是匹配条件，不要与提供方一样 --&gt;</div><div class="line">    &lt;dubbo:application name=&quot;consumer-of-helloworld-app&quot;  /&gt;</div><div class="line"></div><div class="line">    &lt;!-- 使用multicast广播注册中心暴露发现服务地址 --&gt;</div><div class="line">    &lt;dubbo:registry address=&quot;multicast://224.5.6.7:1234&quot; /&gt;</div><div class="line"></div><div class="line">    &lt;!-- 生成远程服务代理，可以和本地bean一样使用demoService --&gt;</div><div class="line">    &lt;dubbo:reference id=&quot;demoService&quot; interface=&quot;com.alibaba.dubbo.demo.DemoService&quot; /&gt;</div><div class="line">&lt;/beans&gt;</div></pre></td></tr></table></figure>
-<p>这个过程看起来和传统的web服务调用很想，但是dubbo协议使得其调用更加简单，轻量化，效率相对要高。</p>
-<ul>
-<li>运行服务消费者</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">import org.springframework.context.support.ClassPathXmlApplicationContext;</div><div class="line">import com.alibaba.dubbo.demo.DemoService;</div><div class="line"></div><div class="line">public class Consumer &#123;</div><div class="line">    public static void main(String[] args) throws Exception &#123;</div><div class="line">        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[] &#123;&quot;http://10.20.160.198/wiki/display/dubbo/consumer.xml&quot;&#125;);</div><div class="line">        context.start();</div><div class="line">        DemoService demoService = (DemoService)context.getBean(&quot;demoService&quot;); // 获取远程服务代理</div><div class="line">        String hello = demoService.sayHello(&quot;world&quot;); // 执行远程方法</div><div class="line">        System.out.println( hello ); // 显示调用结果</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>配置简单注册中心</li>
-</ul>
-<p>当我们使用多点传播注册中心时，注册服务不是单独的，因此适用于局域网场景。为了适应更加便于管理的注册中心，可以使用SimpleRegistryService。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">&lt;dubbo:application name=&quot;simple-registry&quot; /&gt;</div><div class="line">&lt;dubbo:protocol port=&quot;9090&quot; /&gt;</div><div class="line">&lt;dubbo:service interface=&quot;com.alibaba.dubbo.registry.RegistryService&quot;</div><div class="line">  ref=&quot;registryService&quot; registry=&quot;N/A&quot; ondisconnect=&quot;disconnect&quot;&gt;</div><div class="line">    &lt;dubbo:method name=&quot;subscribe&quot;&gt;</div><div class="line">        &lt;dubbo:argument index=&quot;1&quot; callback=&quot;true&quot; /&gt;</div><div class="line">    &lt;/dubbo:method&gt;</div><div class="line">    &lt;dubbo:method name=&quot;unsubscribe&quot;&gt;</div><div class="line">        &lt;dubbo:argument index=&quot;1&quot; callback=&quot;true&quot; /&gt;</div><div class="line">    &lt;/dubbo:method&gt;</div><div class="line">&lt;/dubbo:service&gt;</div><div class="line"></div><div class="line">&lt;bean class=&quot;com.alibaba.dubbo.registry.simple.SimpleRegistryService&quot;</div><div class="line">  id=&quot;registryService&quot; /&gt;</div></pre></td></tr></table></figure>
-<p>可以用于测试，但是实际工程中不推荐使用。</p>
-<h1 id="Dubbo配置"><a href="#Dubbo配置" class="headerlink" title="Dubbo配置"></a>Dubbo配置</h1><h2 id="XML配置"><a href="#XML配置" class="headerlink" title="XML配置"></a>XML配置</h2><p>xml配置Dubbo可以参照上一节的实例，spring中可以直接通过dubbo标签库来对其进行配置设定等操作，使用广泛且条理清晰。所有的标签都支持自定义参数，用于不同扩展点实现的特殊配置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;dubbo:protocol name=&quot;jms&quot;&gt;</div><div class="line">    &lt;dubbo:parameter key=&quot;queue&quot; value=&quot;your_queue&quot; /&gt;</div><div class="line">&lt;/dubbo:protocol&gt;</div></pre></td></tr></table></figure>
-<p>或者</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">//2.1之后开始支持这种自定义参数的方式</div><div class="line">&lt;dubbo:protocol name=&quot;jms&quot; p:queue=&quot;your_queue&quot; /&gt;</div></pre></td></tr></table></figure>
-<ul>
-<li>常用标签</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>标签</th>
-<th style="text-align:center">用途</th>
-<th style="text-align:right">解释</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>&lt;dubbo:service/&gt;</code></td>
-<td style="text-align:center">服务配置</td>
-<td style="text-align:right">用于暴露一个服务，定义服务的元信息，一个服务可以用多个协议暴露，一个服务也可以注册到多个注册中心</td>
-</tr>
-<tr>
-<td><code>&lt;dubbo:reference/&gt;</code></td>
-<td style="text-align:center">引用配置</td>
-<td style="text-align:right">用于创建一个远程服务代理，一个引用可以指向多个注册中心</td>
-</tr>
-<tr>
-<td><code>&lt;dubbo:protocol/&gt;</code></td>
-<td style="text-align:center">协议配置</td>
-<td style="text-align:right">用于配置提供服务的协议信息，协议由提供方指定，消费方被动接受</td>
-</tr>
-<tr>
-<td><code>&lt;dubbo:application/&gt;</code></td>
-<td style="text-align:center">应用配置</td>
-<td style="text-align:right">用于配置当前应用信息，不管该应用是提供者还是消费者</td>
-</tr>
-<tr>
-<td><code>&lt;dubbo:module/&gt;</code></td>
-<td style="text-align:center">模块配置</td>
-<td style="text-align:right">用于配置当前模块信息，可选</td>
-</tr>
-<tr>
-<td><code>&lt;dubbo:registry/&gt;</code></td>
-<td style="text-align:center">注册中心配置</td>
-<td style="text-align:right">用于配置连接注册中心相关信息</td>
-</tr>
-<tr>
-<td><code>&lt;dubbo:monitor/&gt;</code></td>
-<td style="text-align:center">监控中心配置</td>
-<td style="text-align:right">用于配置连接监控中心相关信息，可选</td>
-</tr>
-<tr>
-<td><code>&lt;dubbo:provider/&gt;</code></td>
-<td style="text-align:center">提供方配置</td>
-<td style="text-align:right">当ProtocolConfig 和 ServiceConfig 某属性没有配置时，采用此缺省值，可选</td>
-</tr>
-<tr>
-<td><code>&lt;dubbo:consumer/&gt;</code></td>
-<td style="text-align:center">消费方配置</td>
-<td style="text-align:right">当 ReferenceConfig 某属性没有配置时，采用此缺省值，可选</td>
-</tr>
-<tr>
-<td><code>&lt;dubbo:method/&gt;</code></td>
-<td style="text-align:center">方法配置</td>
-<td style="text-align:right">用于 ServiceConfig 和 ReferenceConfig 指定方法级的配置信息</td>
-</tr>
-<tr>
-<td><code>&lt;dubbo:argument/&gt;</code></td>
-<td style="text-align:center">参数配置</td>
-<td style="text-align:right">用于指定方法参数配置</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>标签之间的关系</li>
-</ul>
-<p><img src="/img/Dubbo-3.png" alt="Alt text"></p>
-<p>  <em>配置覆盖关系为方法级别的优先，接口几倍的次之，全局配置再次之，级别一样消费者优先，提供者次之</em></p>
-<h2 id="属性配置"><a href="#属性配置" class="headerlink" title="属性配置"></a>属性配置</h2><p>公共配置简单，没有多注册中心，多协议等情况，或者多个Spring容器想要共享配置，可以使用dubbo.properties作为缺省配置。Dubbo会自动加载classpath路径下的dubbo.properties文件，可以通过JVM启动参数<code>-Ddubbo.properties.file=xxx.properties</code>改动缺省位置。</p>
-<ul>
-<li>映射规则:将XML配置的标签名，属性名，用点分隔，多个属性拆分成多行。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">dubbo.application.name=foo</div><div class="line">dubbo.application.owner=bar</div><div class="line">dubbo.registry.address=10.20.153.10:9090</div></pre></td></tr></table></figure>
-<ul>
-<li>覆盖策略：JVM启动，-D参数优先，XML次之，Properties文件最后。只有XML没有配置时，dubbo.properties才会生效。</li>
-</ul>
-<h2 id="Java-API配置Dubbo"><a href="#Java-API配置Dubbo" class="headerlink" title="Java API配置Dubbo"></a>Java API配置Dubbo</h2><p>除了spring配置文件来配置Dubbo之外，通过Java API，property文件以及注解来配置Dubbo同样可以。配置文件和注解配置适用于结构不是很复杂的场景。下面介绍如何使用API来配置Dubbo。</p>
-<ul>
-<li>服务提供者</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">import com.alibaba.dubbo.rpc.config.ApplicationConfig;</div><div class="line">import com.alibaba.dubbo.rpc.config.RegistryConfig;</div><div class="line">import com.alibaba.dubbo.rpc.config.ProviderConfig;</div><div class="line">import com.alibaba.dubbo.rpc.config.ServiceConfig;</div><div class="line">import com.xxx.XxxService;</div><div class="line">import com.xxx.XxxServiceImpl;</div><div class="line"></div><div class="line">// 服务实现</div><div class="line">XxxService xxxService = new XxxServiceImpl();</div><div class="line"></div><div class="line">// 当前应用配置</div><div class="line">ApplicationConfig application = new ApplicationConfig();</div><div class="line">application.setName(&quot;xxx&quot;);</div><div class="line"></div><div class="line">// 连接注册中心配置</div><div class="line">RegistryConfig registry = new RegistryConfig();</div><div class="line">registry.setAddress(&quot;10.20.130.230:9090&quot;);</div><div class="line">registry.setUsername(&quot;aaa&quot;);</div><div class="line">registry.setPassword(&quot;bbb&quot;);</div><div class="line"></div><div class="line">// 服务提供者协议配置</div><div class="line">ProtocolConfig protocol = new ProtocolConfig();</div><div class="line">protocol.setName(&quot;dubbo&quot;);</div><div class="line">protocol.setPort(12345);</div><div class="line">protocol.setThreads(200);</div><div class="line"></div><div class="line">// 注意：ServiceConfig为重对象，内部封装了与注册中心的连接，以及开启服务端口</div><div class="line"></div><div class="line">// 服务提供者暴露服务配置</div><div class="line">ServiceConfig&lt;XxxService&gt; service = new ServiceConfig&lt;XxxService&gt;(); // 此实例很重，封装了与注册中心的连接，请自行缓存，否则可能造成内存和连接泄漏</div><div class="line">service.setApplication(application);</div><div class="line">service.setRegistry(registry); // 多个注册中心可以用setRegistries()</div><div class="line">service.setProtocol(protocol); // 多个协议可以用setProtocols()</div><div class="line">service.setInterface(XxxService.class);</div><div class="line">service.setRef(xxxService);</div><div class="line">service.setVersion(&quot;1.0.0&quot;);</div><div class="line"></div><div class="line">// 暴露及注册服务</div><div class="line">service.export();</div></pre></td></tr></table></figure>
-<ul>
-<li>此时，服务已经暴露给多点传播的注册中心了，然后配置服务消费者：</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">import com.alibaba.dubbo.rpc.config.ApplicationConfig;</div><div class="line">import com.alibaba.dubbo.rpc.config.RegistryConfig;</div><div class="line">import com.alibaba.dubbo.rpc.config.ConsumerConfig;</div><div class="line">import com.alibaba.dubbo.rpc.config.ReferenceConfig;</div><div class="line">import com.xxx.XxxService;</div><div class="line"></div><div class="line">// 当前应用配置</div><div class="line">ApplicationConfig application = new ApplicationConfig();</div><div class="line">application.setName(&quot;yyy&quot;);</div><div class="line"></div><div class="line">// 连接注册中心配置</div><div class="line">RegistryConfig registry = new RegistryConfig();</div><div class="line">registry.setAddress(&quot;10.20.130.230:9090&quot;);</div><div class="line">registry.setUsername(&quot;aaa&quot;);</div><div class="line">registry.setPassword(&quot;bbb&quot;);</div><div class="line"></div><div class="line">// 注意：ReferenceConfig为重对象，内部封装了与注册中心的连接，以及与服务提供方的连接</div><div class="line"></div><div class="line">// 引用远程服务</div><div class="line">ReferenceConfig&lt;XxxService&gt; reference = new ReferenceConfig&lt;XxxService&gt;(); // 此实例很重，封装了与注册中心的连接以及与提供者的连接，请自行缓存，否则可能造成内存和连接泄漏</div><div class="line">reference.setApplication(application);</div><div class="line">reference.setRegistry(registry); // 多个注册中心可以用setRegistries()</div><div class="line">reference.setInterface(XxxService.class);</div><div class="line">reference.setVersion(&quot;1.0.0&quot;);</div><div class="line"></div><div class="line">// 和本地bean一样使用xxxService</div><div class="line">XxxService xxxService = reference.get(); // 注意：此代理对象内部封装了所有通讯细节，对象较重，请缓存复用</div></pre></td></tr></table></figure>
-<h2 id="注解配置"><a href="#注解配置" class="headerlink" title="注解配置"></a>注解配置</h2><h3 id="服务提供方"><a href="#服务提供方" class="headerlink" title="服务提供方"></a>服务提供方</h3><ul>
-<li>Service注解暴露服务</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">import com.alibaba.dubbo.config.annotation.Service;</div><div class="line"></div><div class="line">@Service(timeout = 5000)</div><div class="line">public class AnnotateServiceImpl implements AnnotateService &#123;</div><div class="line">    // ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>javaconfig形式配置公共模块</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">@Configuration</div><div class="line">public class DubboConfiguration &#123;</div><div class="line"></div><div class="line">    @Bean</div><div class="line">    public ApplicationConfig applicationConfig() &#123;</div><div class="line">        ApplicationConfig applicationConfig = new ApplicationConfig();</div><div class="line">        applicationConfig.setName(&quot;provider-test&quot;);</div><div class="line">        return applicationConfig;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Bean</div><div class="line">    public RegistryConfig registryConfig() &#123;</div><div class="line">        RegistryConfig registryConfig = new RegistryConfig();</div><div class="line">        registryConfig.setAddress(&quot;zookeeper://127.0.0.1:2181&quot;);</div><div class="line">        registryConfig.setClient(&quot;curator&quot;);</div><div class="line">        return registryConfig;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>指定Java扫描路径</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">@SpringBootApplication</div><div class="line">@DubboComponentScan(basePackages = &quot;com.alibaba.dubbo.test.service.impl&quot;)</div><div class="line">public class ProviderTestApp &#123;</div><div class="line">    // ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="服务消费者"><a href="#服务消费者" class="headerlink" title="服务消费者"></a>服务消费者</h3><ul>
-<li>reference 注解引用服务</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public class AnnotationConsumeService &#123;</div><div class="line"></div><div class="line">    @com.alibaba.dubbo.config.annotation.Reference</div><div class="line">    public AnnotateService annotateService;</div><div class="line"></div><div class="line">    // ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>javaconfig形式配置公共模块</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">@Configuration</div><div class="line">public class DubboConfiguration &#123;</div><div class="line"></div><div class="line">    @Bean</div><div class="line">    public ApplicationConfig applicationConfig() &#123;</div><div class="line">        ApplicationConfig applicationConfig = new ApplicationConfig();</div><div class="line">        applicationConfig.setName(&quot;consumer-test&quot;);</div><div class="line">        return applicationConfig;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Bean</div><div class="line">    public ConsumerConfig consumerConfig() &#123;</div><div class="line">        ConsumerConfig consumerConfig = new ConsumerConfig();</div><div class="line">        consumerConfig.setTimeout(3000);</div><div class="line">        return consumerConfig;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Bean</div><div class="line">    public RegistryConfig registryConfig() &#123;</div><div class="line">        RegistryConfig registryConfig = new RegistryConfig();</div><div class="line">        registryConfig.setAddress(&quot;zookeeper://127.0.0.1:2181&quot;);</div><div class="line">        registryConfig.setClient(&quot;curator&quot;);</div><div class="line">        return registryConfig;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>指定dubbo扫描路径</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">@SpringBootApplication</div><div class="line">@DubboComponentScan(basePackages = &quot;com.alibaba.dubbo.test.service&quot;)</div><div class="line">public class ConsumerTestApp &#123;</div><div class="line">    // ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>可以看出，还是XML配置更加的简洁明了。</p>
-<h1 id="Dubbo支持的协议"><a href="#Dubbo支持的协议" class="headerlink" title="Dubbo支持的协议"></a>Dubbo支持的协议</h1><p>Dubbo框架支持多种协议，包括dubbo、RMI、hessian、HTTP、web service、thrift、memcached、redis等。大多数协议之前都已经了解过，除了dubbo这个协议。</p>
-<p>dubbo协议在服务提供者和消费者之间建立了长连接，这种长连接和非阻塞的网络传输在传输数据小于100k的时候效率非常高。dubbo协议中的参数包含端口，每个消费者的连接数，最大接受的连接数等。</p>
-<p><code>&lt;dubbo:protocol name=&quot;dubbo&quot; port=&quot;20880&quot;  connections=&quot;2&quot; accepts=&quot;1000&quot; /&gt;</code></p>
-<p>Dubbo还支持通过不同协议来同时暴露服务。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;dubbo:protocol name=&quot;dubbo&quot; port=&quot;20880&quot; /&gt;</div><div class="line">&lt;dubbo:protocol name=&quot;rmi&quot; port=&quot;1099&quot; /&gt;</div><div class="line"></div><div class="line">&lt;dubbo:service interface=&quot;com.baeldung.dubbo.remote.GreetingsService&quot; version=&quot;1.0.0&quot; ref=&quot;greetingsService&quot; protocol=&quot;dubbo&quot; /&gt;</div><div class="line">&lt;dubbo:service interface=&quot;com.bealdung.dubbo.remote.AnotherService&quot; version=&quot;1.0.0&quot; ref=&quot;anotherService&quot; protocol=&quot;rmi&quot; /&gt;</div></pre></td></tr></table></figure>
-<h1 id="结果缓存"><a href="#结果缓存" class="headerlink" title="结果缓存"></a>结果缓存</h1><p>Dubbo对于远程调用的结果进行了本地的缓存来提高对于热点数据的访问速度。实现添加cache属性即可：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;dubbo:reference interface=&quot;com.baeldung.dubbo.remote.GreetingsService&quot; id=&quot;greetingsService&quot; cache=&quot;lru&quot; /&gt;</div></pre></td></tr></table></figure>
-<p>缓存策略选择的是最少最近使用缓存，当我们队服务的提供者的实现类进行修改之后：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public class GreetingsServiceSpecialImpl implements GreetingsService &#123;</div><div class="line">    @Override</div><div class="line">    public String sayHi(String name) &#123;</div><div class="line">        try &#123;</div><div class="line">            SECONDS.sleep(5);</div><div class="line">        &#125; catch (Exception ignored) &#123; &#125;</div><div class="line">        return &quot;hi, &quot; + name;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>对调用速度进行一下测试：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">@Test</div><div class="line">public void givenProvider_whenConsumerSaysHi_thenGotResponse() &#123;</div><div class="line">    ClassPathXmlApplicationContext localContext</div><div class="line">      = new ClassPathXmlApplicationContext(&quot;multicast/consumer-app.xml&quot;);</div><div class="line">    localContext.start();</div><div class="line">    GreetingsService greetingsService</div><div class="line">      = (GreetingsService) localContext.getBean(&quot;greetingsService&quot;);</div><div class="line"></div><div class="line">    long before = System.currentTimeMillis();</div><div class="line">    String hiMessage = greetingsService.sayHi(&quot;baeldung&quot;);</div><div class="line"></div><div class="line">    long timeElapsed = System.currentTimeMillis() - before;</div><div class="line">    assertTrue(timeElapsed &gt; 5000);</div><div class="line">    assertNotNull(hiMessage);</div><div class="line">    assertEquals(&quot;hi, baeldung&quot;, hiMessage);</div><div class="line"></div><div class="line">    before = System.currentTimeMillis();</div><div class="line">    hiMessage = greetingsService.sayHi(&quot;baeldung&quot;);</div><div class="line">    timeElapsed = System.currentTimeMillis() - before;</div><div class="line"></div><div class="line">    assertTrue(timeElapsed &lt; 1000);</div><div class="line">    assertNotNull(hiMessage);</div><div class="line">    assertEquals(&quot;hi, baeldung&quot;, hiMessage);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>除了第一次调用，后面的调用几乎是立刻完成的，说明缓存生效了。</p>
-<h1 id="zookeeper"><a href="#zookeeper" class="headerlink" title="zookeeper"></a>zookeeper</h1><p>Dubbo通过负载均衡和集中容错策略可以支持我们来自由的扩展我们的服务。假定我们使用zookeeper来做我们管理服务的集群。服务提供者在zookeeper上注册服务：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;dubbo:registry address=&quot;zookeeper://127.0.0.1:2181&quot;/&gt;</div></pre></td></tr></table></figure>
-<p>为了引入使用以上的注册方式，需要引入zookeeper的相关依赖：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&lt;dependency&gt;</div><div class="line">    &lt;groupId&gt;org.apache.zookeeper&lt;/groupId&gt;</div><div class="line">    &lt;artifactId&gt;zookeeper&lt;/artifactId&gt;</div><div class="line">    &lt;version&gt;3.4.11&lt;/version&gt;</div><div class="line">&lt;/dependency&gt;</div><div class="line">&lt;dependency&gt;</div><div class="line">    &lt;groupId&gt;com.101tec&lt;/groupId&gt;</div><div class="line">    &lt;artifactId&gt;zkclient&lt;/artifactId&gt;</div><div class="line">    &lt;version&gt;0.10&lt;/version&gt;</div><div class="line">&lt;/dependency&gt;</div></pre></td></tr></table></figure>
-<h1 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h1><ul>
-<li>随机负载均衡<ul>
-<li>随机，按照权重设置随机概率</li>
-<li>在一个截面上碰撞的概率高，单调用量越大分布越均匀，而且按概率使用权重后也比较均匀，有利于动态调整提供者权重。</li>
-</ul>
-</li>
-<li>轮询负载均衡<ul>
-<li>按公约后的权重设置轮询比率。</li>
-<li>存在慢的提供者累积请求的问题，比如第二台机器很慢，当请求调到第二台就卡在那里，时间久了所有请求都卡在第二台机器上。</li>
-</ul>
-</li>
-<li>最少活跃数负载均衡<ul>
-<li>最少活跃调用数，相同活跃数的随机，活跃数指调用前后计数差。</li>
-<li>使慢的提供者受到更少的请求，因为越慢的提供者的调用前后计数差会越大。</li>
-</ul>
-</li>
-<li>一致性哈希负载均衡<ul>
-<li>相同参数的请求总是发到同一个提供者</li>
-<li>当某一台提供者挂掉时，原本发往该提供者的请求，基于虚拟节点，平摊到其他提供者，不会引起剧烈变动。</li>
-<li>缺醒只对第一个参数哈希，也可以配置<dubbo:parameter key="hash.arguments" value="0,1">修改。</dubbo:parameter></li>
-<li>缺醒使用160份虚拟节点，如果要修改，请配置<dubbo:parameter key="hash.nodes" value="320"></dubbo:parameter></li>
-</ul>
-</li>
-</ul>
-<p>配置：</p>
-<ul>
-<li><p>服务端</p>
-<ul>
-<li>服务级别<code>&lt;dubbo:service interface=&quot;...&quot; loadbalance=&quot;roundrobin&quot; /&gt;</code></li>
-<li>方法级别<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;dubbo:service interface=&quot;...&quot;&gt;</div><div class="line">    &lt;dubbo:method name=&quot;...&quot; loadbalance=&quot;roundrobin&quot;/&gt;</div><div class="line">&lt;/dubbo:service&gt;</div></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-<li><p>客户端</p>
-<ul>
-<li>服务级别<code>&lt;dubbo:reference interface=&quot;...&quot; loadbalance=&quot;roundrobin&quot; /&gt;</code></li>
-<li>方法级别<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;dubbo:reference interface=&quot;...&quot;&gt;</div><div class="line">    &lt;dubbo:method name=&quot;...&quot; loadbalance=&quot;roundrobin&quot;/&gt;</div><div class="line">&lt;/dubbo:reference&gt;</div></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-</ul>
-<h2 id="轮询负载均衡举例"><a href="#轮询负载均衡举例" class="headerlink" title="轮询负载均衡举例"></a>轮询负载均衡举例</h2><p>假定在一个集群里面存在两这个服务的实现作为服务提供者，请求时采用轮询方式做负载均衡。首先，创建服务提供者：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">Before</div><div class="line">public void initRemote() &#123;</div><div class="line">    ExecutorService executorService = Executors.newFixedThreadPool(2);</div><div class="line">    executorService.submit(() -&gt; &#123;</div><div class="line">        ClassPathXmlApplicationContext remoteContext</div><div class="line">          = new ClassPathXmlApplicationContext(&quot;cluster/provider-app-default.xml&quot;);</div><div class="line">        remoteContext.start();</div><div class="line">    &#125;);</div><div class="line">    executorService.submit(() -&gt; &#123;</div><div class="line">        ClassPathXmlApplicationContext backupRemoteContext</div><div class="line">          = new ClassPathXmlApplicationContext(&quot;cluster/provider-app-special.xml&quot;);</div><div class="line">        backupRemoteContext.start();</div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>然后我们有一个标准的高速服务提供者，可以立即给出相应结果，一个低速服务提供者，每个响应需要等候5s。执行六次请求，此时采用轮询的负载均衡侧率，则期待的是平均相应时间为2.5s。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">@Test</div><div class="line">public void givenProviderCluster_whenConsumerSaysHi_thenResponseBalanced() &#123;</div><div class="line">    ClassPathXmlApplicationContext localContext</div><div class="line">      = new ClassPathXmlApplicationContext(&quot;cluster/consumer-app-lb.xml&quot;);</div><div class="line">    localContext.start();</div><div class="line">    GreetingsService greetingsService</div><div class="line">      = (GreetingsService) localContext.getBean(&quot;greetingsService&quot;);</div><div class="line"></div><div class="line">    List&lt;Long&gt; elapseList = new ArrayList&lt;&gt;(6);</div><div class="line">    for (int i = 0; i &lt; 6; i++) &#123;</div><div class="line">        long current = System.currentTimeMillis();</div><div class="line">        String hiMessage = greetingsService.sayHi(&quot;baeldung&quot;);</div><div class="line">        assertNotNull(hiMessage);</div><div class="line">        elapseList.add(System.currentTimeMillis() - current);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    OptionalDouble avgElapse = elapseList</div><div class="line">      .stream()</div><div class="line">      .mapToLong(e -&gt; e)</div><div class="line">      .average();</div><div class="line">    assertTrue(avgElapse.isPresent());</div><div class="line">    assertTrue(avgElapse.getAsDouble() &gt; 2500.0);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>同时，动态负载均衡是支持的，下面的例子说明这一点，采用的是轮询的负载均衡策略，当新的服务注册时候，消费者会选择新的服务。低俗的服务提供者在系统启动后2s注册。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">@Before</div><div class="line">public void initRemote() &#123;</div><div class="line">    ExecutorService executorService = Executors.newFixedThreadPool(2);</div><div class="line">    executorService.submit(() -&gt; &#123;</div><div class="line">        ClassPathXmlApplicationContext remoteContext</div><div class="line">          = new ClassPathXmlApplicationContext(&quot;cluster/provider-app-default.xml&quot;);</div><div class="line">        remoteContext.start();</div><div class="line">    &#125;);</div><div class="line">    executorService.submit(() -&gt; &#123;</div><div class="line">        SECONDS.sleep(2);</div><div class="line">        ClassPathXmlApplicationContext backupRemoteContext</div><div class="line">          = new ClassPathXmlApplicationContext(&quot;cluster/provider-app-special.xml&quot;);</div><div class="line">        backupRemoteContext.start();</div><div class="line">        return null;</div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>服务提供者此时每秒调用一次服务，6次之后，我们期望平均响应时间大于1.6s。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">@Test</div><div class="line">public void givenProviderCluster_whenConsumerSaysHi_thenResponseBalanced()</div><div class="line">  throws InterruptedException &#123;</div><div class="line">    ClassPathXmlApplicationContext localContext</div><div class="line">      = new ClassPathXmlApplicationContext(&quot;cluster/consumer-app-lb.xml&quot;);</div><div class="line">    localContext.start();</div><div class="line">    GreetingsService greetingsService</div><div class="line">      = (GreetingsService) localContext.getBean(&quot;greetingsService&quot;);</div><div class="line">    List&lt;Long&gt; elapseList = new ArrayList&lt;&gt;(6);</div><div class="line">    for (int i = 0; i &lt; 6; i++) &#123;</div><div class="line">        long current = System.currentTimeMillis();</div><div class="line">        String hiMessage = greetingsService.sayHi(&quot;baeldung&quot;);</div><div class="line">        assertNotNull(hiMessage);</div><div class="line">        elapseList.add(System.currentTimeMillis() - current);</div><div class="line">        SECONDS.sleep(1);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    OptionalDouble avgElapse = elapseList</div><div class="line">      .stream()</div><div class="line">      .mapToLong(e -&gt; e)</div><div class="line">      .average();</div><div class="line"></div><div class="line">    assertTrue(avgElapse.isPresent());</div><div class="line">    assertTrue(avgElapse.getAsDouble() &gt; 1666.0);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><em>负载均衡在服务提供者和服务消费者都可以使用。</em></p>
-<h1 id="集群容错"><a href="#集群容错" class="headerlink" title="集群容错"></a>集群容错</h1><p>Dubbo支持多种容错机制，默认为failover重试。</p>
-<p><img src="/img/Dubbo-4.png" alt="Alt text"></p>
-<h2 id="各节点的关系"><a href="#各节点的关系" class="headerlink" title="各节点的关系"></a>各节点的关系</h2><ul>
-<li>Invoke是Provider的一个可调用Service的抽象，Invoker封装了Provider地址及Service接口信息。</li>
-<li>Directory代表多个Invoker，List<invoker>，值可以动态变化，比如注册中心推送变更</invoker></li>
-<li>Cluster将Director中的多个Invoker封装成一个Invoker，对上层逃命，伪装过程包含了容错逻辑，如果失败后，重试另一个</li>
-<li>Route负责从多个Invoker中按照路由规则选出子集没比如读写分离，应用隔离等</li>
-<li>loadbalance负责从多个Invoker中选出一个具体用于本地调用，选的过程中包含了负载均衡该算法。</li>
-</ul>
-<h2 id="集群容错模式"><a href="#集群容错模式" class="headerlink" title="集群容错模式"></a>集群容错模式</h2><ul>
-<li>fail-over<ul>
-<li>当一个消费者获取一个服务失败的时候，会尝试访问集群中其他的服务提供者</li>
-<li>通常用于读操作，但是重试会带来更长的延迟</li>
-<li>可通过retries=“2”来设置重试次数，其中第一次不包含在内。</li>
-</ul>
-</li>
-<li>fail-safe<ul>
-<li>失败安全，出现异常时，直接忽略</li>
-<li>通常用于写入审计日志等操作</li>
-</ul>
-</li>
-<li>fail-fast<ul>
-<li>快速失败，只发起一次调用，失败立即报错</li>
-<li>通常用于非幂等性的写操作，比如新增记录</li>
-</ul>
-</li>
-<li>fail-back<ul>
-<li>失败自动恢复，后台记录失败请求，定时重发</li>
-<li>通常用于消息通知操作</li>
-</ul>
-</li>
-<li>forking<ul>
-<li>并行调度多个服务器，只要一个成功及返回。</li>
-<li>通常实时性要求比较高的读操作，但是需要浪费很多服务资源，可以通过forks=”2”来设置最大并行数</li>
-</ul>
-</li>
-<li>broadcast<ul>
-<li>广播调用所有的提供者，逐个调用，任意一台报错则报错。</li>
-<li>通常用于通知所有提供者更新缓存或者日志等本地资源信息。</li>
-</ul>
-</li>
-</ul>
-<h2 id="集群模式配置"><a href="#集群模式配置" class="headerlink" title="集群模式配置"></a>集群模式配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">//服务端</div><div class="line">&lt;dubbo:service cluster=&quot;failsafe&quot; /&gt;</div><div class="line">//客户端</div><div class="line">&lt;dubbo:reference cluster=&quot;failsafe&quot; /&gt;</div></pre></td></tr></table></figure>
-<h1 id="线性模型"><a href="#线性模型" class="headerlink" title="线性模型"></a>线性模型</h1><p><img src="/img/Dubbo-5.png" alt="Alt text"></p>
-<ul>
-<li>如果事件的处理逻辑能够迅速完成，并且不会发起新的IO请求，比如只是在内存中标记个标识，则直接在IO线程上处理更快，因为这样减少了线程池的调度。</li>
-<li>如果事件处理逻辑较慢，或者需要发起新的IO请求，比如需要查询数据库，则必须派发到线程池，否则IO线程阻塞，将导致不能接受其他请求。</li>
-<li>如果用IO线程处理事件，又在事件处理过程中发起新的IO请求，比如在链接事件中发起登录请求，会报可能发生死锁异常。</li>
-</ul>
-<p>针对不同的场景，需要设定相应的派发侧率和不同的线程池：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;dubbo:protocol name=&quot;dubbo&quot; dispatcher=&quot;all&quot; threadpool=&quot;fixed&quot; threads=&quot;100&quot; /&gt;</div></pre></td></tr></table></figure>
-<h2 id="Dispatcher"><a href="#Dispatcher" class="headerlink" title="Dispatcher"></a>Dispatcher</h2><ul>
-<li>all，所有消息都派发到线程池，包括请求，相应，连接事件，断开事件，心跳等。</li>
-<li>direct，所有消息都不派发到线程池，全部在IO线程上直接执行</li>
-<li>message，只有请求相应消息派发到线程池，其他直接在IO线程执行</li>
-<li>execution，只将请求消息派发到线程池，其他直接在IO线程执行</li>
-<li>connection，在IO线程上，将连接断开事件放入队列，顺序执行，其他消息派发到线程池</li>
-</ul>
-<h2 id="threadPool"><a href="#threadPool" class="headerlink" title="threadPool"></a>threadPool</h2><ul>
-<li>fixed，固定大小线程池，启动时创建线程，不关闭，一致持有，缺省</li>
-<li>cached，缓存线程池，线程空闲一分钟自动删除，需要时创建</li>
-<li>limited，可伸缩性线程池，单线程池中的线程数只会增长不会收缩，避免收缩带来的性能问题。</li>
-<li>eager，优先创建worker线程池，当任务数量大于corePoolSize但小于maximumPoolSize时，优先创建Worker来处理任务。当任务数量大于maximumpoolSize时，将任务放入阻塞队列，阻塞队列充满时抛出RejectedExecutionException。</li>
-</ul>
-<h1 id="客户端和服务端直连"><a href="#客户端和服务端直连" class="headerlink" title="客户端和服务端直连"></a>客户端和服务端直连</h1><p>测试过程中，可以绕过注册中心来直接连接，此时会忽略注册中心的提供者列表，A接口配置点对点，不影响B接口从注册中心获取列表。</p>
-<p>配置方法：</p>
-<ul>
-<li><p>XML：<code>&lt;dubbo:reference id=&quot;xxxService&quot; interface=&quot;com.alibaba.xxx.XxxService&quot; url=&quot;dubbo://localhost:20890&quot; /&gt;</code></p>
-</li>
-<li><p>JVM：<code>java -Dcom.alibaba.xxx.XxxService=dubbo://localhost:20890</code></p>
-</li>
-<li><p>properties: <code>com.alibaba.xxx.XxxService=dubbo://localhost:20890</code></p>
-</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -3243,7 +2913,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-count">90</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

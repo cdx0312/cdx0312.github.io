@@ -277,6 +277,196 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/设计模式/设计模式之Builder模式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/21/设计模式/设计模式之Builder模式/" itemprop="url">设计模式之Builder模式</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/design-patterns/" itemprop="url" rel="index">
+                    <span itemprop="name">design patterns</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>将一个复杂对象的构建与他的表示分离，使得同样的构建过程可以创建不同的表示。</p>
+<h1 id="模式使用场景"><a href="#模式使用场景" class="headerlink" title="模式使用场景"></a>模式使用场景</h1><ol>
+<li>相同的方法，不同的执行顺序，产生不同的时间结果时。</li>
+<li>多个部件或零件，都可以装配到一个对象中，但是产生的结果又不相同时。</li>
+<li>产品类非常复杂，或者产品类中的调用顺序不同产生了不同的效能时。</li>
+</ol>
+<h1 id="UML图"><a href="#UML图" class="headerlink" title="UML图"></a>UML图</h1><p><img src="/img/dp-factory-builder.png" alt="Alt text"></p>
+<h2 id="角色描述"><a href="#角色描述" class="headerlink" title="角色描述"></a>角色描述</h2><pre><code>* Product产品类：产品的抽象类
+* Builder：抽象类，规范产品的组件，一般由子类实现具体的组装过程。
+* ConcreteBuilder：具体的构造器
+* Director：统一组装过程
+</code></pre><h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>电脑组装过程比较复杂，步骤很多，但是顺序却不确定。适用于Builder模式</p>
+<p>Computer抽象类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">public abstract class Computer &#123;</div><div class="line">    protected int mCpuCore = 1;</div><div class="line">    protected int mRanSize = 0;</div><div class="line">    protected String mOs = &quot;Dos&quot;;</div><div class="line"></div><div class="line">    public Computer() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public abstract void setmCpuCore(int mCpuCore);</div><div class="line"></div><div class="line">    public abstract void setmRanSize(int mRanSize);</div><div class="line"></div><div class="line">    public abstract void setmOs(String mOs);</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public String toString() &#123;</div><div class="line">        return &quot;Computer&#123;&quot; +</div><div class="line">                &quot;mCpuCore=&quot; + mCpuCore +</div><div class="line">                &quot;, mRanSize=&quot; + mRanSize +</div><div class="line">                &quot;, mOs=&apos;&quot; + mOs + &apos;\&apos;&apos; +</div><div class="line">                &apos;&#125;&apos;;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>AppleComputer实现类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">public class AppleComputer extends Computer&#123;</div><div class="line">    protected AppleComputer()&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void setmCpuCore(int mCpuCore) &#123;</div><div class="line">        super.mCpuCore = mCpuCore;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void setmRanSize(int mRanSize) &#123;</div><div class="line">        super.mRanSize = mRanSize;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void setmOs(String mOs) &#123;</div><div class="line">        super.mOs = mOs;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Builder抽象类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public abstract class Builder &#123;</div><div class="line">    public abstract void buildCPU(int core);</div><div class="line"></div><div class="line">    public abstract void buildRAM(int gb);</div><div class="line"></div><div class="line">    public abstract void buildOs(String os);</div><div class="line"></div><div class="line">    public abstract Computer create();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>AppleBuilder实现类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">public class AppleBuilder extends Builder&#123;</div><div class="line"></div><div class="line">    private Computer mApplePC = new AppleComputer();</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void buildCPU(int core) &#123;</div><div class="line">        mApplePC.setmCpuCore(core);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void buildRAM(int gb) &#123;</div><div class="line">        mApplePC.setmRanSize(gb);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void buildOs(String os) &#123;</div><div class="line">        mApplePC.setmOs(os);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Computer create() &#123;</div><div class="line">        return mApplePC;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public class Director &#123;</div><div class="line">    Builder builder = null;</div><div class="line"></div><div class="line">    public Director(Builder builder) &#123;</div><div class="line">        this.builder = builder;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void construct(int cpu, int ram, String os) &#123;</div><div class="line">        builder.buildCPU(cpu);</div><div class="line">        builder.buildRAM(ram);</div><div class="line">        builder.buildOs(os);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Test</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Builder builder = new AppleBuilder();</div><div class="line">        Director director = new Director(builder);</div><div class="line">        director.construct(4,2,&quot;Max OS X 10.0.3&quot;);</div><div class="line">        System.out.println(builder.create().toString());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="优点和缺点"><a href="#优点和缺点" class="headerlink" title="优点和缺点"></a>优点和缺点</h2><ul>
+<li><p>优点：</p>
+<ul>
+<li>良好的封装性，使用Builder模式可以使客户端不必知道产品内部组成的细节。</li>
+<li>建造者独立，容易扩展</li>
+<li>在对象创建过程中会使用到系统中的其他对象，这些对象在产品的创建过程中不易得到。</li>
+</ul>
+</li>
+<li><p>缺点：</p>
+<ul>
+<li>会产生多余的Builder对象和Director对象，消耗内存</li>
+<li>对象的构建过程暴露。</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/算法/算法之查找/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1804,383 +1994,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/数据库/数据库整理/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/数据库/数据库整理/" itemprop="url">数据库整理</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/database/" itemprop="url" rel="index">
-                    <span itemprop="name">database</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="什么是存储过程？有什么优缺点？"><a href="#什么是存储过程？有什么优缺点？" class="headerlink" title="什么是存储过程？有什么优缺点？"></a>什么是存储过程？有什么优缺点？</h1><p>存储过程是一些预编译的SQL语句。也就是说存储过程是一个记录集，它是由一些T-SQL语句组成的代码块，这些T-SQL语句代码像一个方法一样实现一些功能（比如对单表的CRUD），然后再给这个代码块取一个名字，在用到这个功能的时候调用就可以。</p>
-<ul>
-<li>存储过程是一个预编译的代码块，执行效率比较高</li>
-<li>一个存储过程替代大量T-SQL语句，可以降低网络通信量，提高通信速率。</li>
-<li>可以一定程度上确保数据安全。</li>
-</ul>
-<h1 id="索引是什么？有什么作用及优缺点？"><a href="#索引是什么？有什么作用及优缺点？" class="headerlink" title="索引是什么？有什么作用及优缺点？"></a>索引是什么？有什么作用及优缺点？</h1><ul>
-<li><p>索引是对数据库表中一列或多列的值进行排序的结构，是帮助MySQL高效获取数据的数据结构。</p>
-</li>
-<li><p>索引就是加快检索表中数据的方法。数据库的索引类似于书籍的索引。在书籍中，索引允许用户不必翻阅整个书就能迅速地找到所需要的信息。在数据库中，索引也允许数据库程序迅速地找到表中的数据，而不必扫描整个数据库。</p>
-</li>
-<li><p>MySQL数据库几个基本的索引类型：</p>
-<ul>
-<li><p>普通索引：没有任何限制，最基本的索引，创建方式有以下几种</p>
-<ul>
-<li><p>直接创建索引：<code>CREATE INDEX index_name ON table(column(length))</code></p>
-</li>
-<li><p>修改表结构的方式添加索引：<code>ALTER TABLE table_name ADD INDEX index_name ON (column(length))</code></p>
-</li>
-<li><p>创建表的时候创建索引：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">CREATE TABLE `table` (</div><div class="line">  `id` int(11) NOT NULL AUTO_INCREMENT ,</div><div class="line">  `title` char(255) CHARACTER NOT NULL ,</div><div class="line">  `content` text CHARACTER NULL ,</div><div class="line">  `time` int(10) NULL DEFAULT NULL ,</div><div class="line">  PRIMARY KEY (`id`),</div><div class="line">  INDEX index_name (title(length))</div><div class="line">  )</div></pre></td></tr></table></figure>
-</li>
-<li><p>删除索引：<code>DROP INDEX index_name ON table</code></p>
-</li>
-</ul>
-</li>
-<li><p>主键索引：一种特殊的唯一索引，一个表只能有一个主键，不允许有空值。一般在建表的同时创建主键索引：</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">CREATE TABLE `table` (</div><div class="line">    `id` int(11) NOT NULL AUTO_INCREMENT ,</div><div class="line">    `title` char(255) NOT NULL ,</div><div class="line">    PRIMARY KEY (`id`)</div><div class="line">);</div></pre></td></tr></table></figure>
-</li>
-<li><p>唯一索引：索引列的值必须是唯一的，允许有控制。如果是组合索引，则列的组合必须唯一，创建方式：</p>
-<ul>
-<li><p>创建唯一索引：<code>CREATE UNIQUE INDEX indexName ON table(column(length))</code></p>
-</li>
-<li><p>修改表结构的时候指定唯一索引：<code>ALTER TABLE table_name ADD UNIQUE indexName ON (column(length))</code>  </p>
-</li>
-<li><p>创建表的时候直接指定：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">CREATE TABLE `table` (</div><div class="line">    `id` int(11) NOT NULL AUTO_INCREMENT ,</div><div class="line">    `title` char(255) CHARACTER NOT NULL ,</div><div class="line">    `content` text CHARACTER NULL ,</div><div class="line">    `time` int(10) NULL DEFAULT NULL ,</div><div class="line">    UNIQUE indexName (title(length))</div><div class="line">);</div></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-<li><p>组合索引：多个字段上创建的索引，只有在查询条件中使用了创建索引时的第一个字段，索引才会被使用，使用组合索引时遵循最左前缀集合：<code>ALTER TABLE</code>table<code>ADD INDEX name_city_age (name,city,age);</code></p>
-</li>
-<li><p>全文索引:主要用来查找文本中的关键字，而不是直接参与索引中的值的比较。fulltext索引和其他索引不太一样，更像一个搜索引擎，而不是一个简单的where语句的参数匹配。fulltext索引配合match against操作使用，而不是一般的where语句加like。全文索引可以在建表，修改表，创建索引中使用，不过目前只有cahr,varchar,text列上可以创建全文索引。而当数据量较大时，将现有数据放入一个没有全局索引的表中，然后再create index创建全文索引，要比先为一张表创建全文索引然后再将数据写入速度快很多。</p>
-<ul>
-<li><p>创建表时添加全文索引:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">CREATE TABLE `table` (</div><div class="line">    `id` int(11) NOT NULL AUTO_INCREMENT ,</div><div class="line">    `title` char(255) CHARACTER NOT NULL ,</div><div class="line">    `content` text CHARACTER NULL ,</div><div class="line">    `time` int(10) NULL DEFAULT NULL ,</div><div class="line">    PRIMARY KEY (`id`),</div><div class="line">    FULLTEXT (content)</div><div class="line">);</div></pre></td></tr></table></figure>
-</li>
-<li><p>修改表结构添加全文索引：<code>ALTER TABLE article ADD FULLTEXT index_content(content)</code></p>
-</li>
-<li><p>直接创建索引：<code>CREATE FULLTEXT INDEX index_content ON article(content)</code></p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>优缺点：</p>
-<ul>
-<li>索引加快数据库的检索速度</li>
-<li>索引降低了插入，删除，修改等维护任务的速度</li>
-<li>唯一索引可以确保每一行数据的唯一性</li>
-<li>通过使用索引，可以在查询的过程中使用优化隐藏器，提高系统的性能。</li>
-<li>索引需要占物理和数据空间</li>
-</ul>
-</li>
-</ul>
-<h1 id="什么是事务？"><a href="#什么是事务？" class="headerlink" title="什么是事务？"></a>什么是事务？</h1><ul>
-<li>事务是并发控制的基本单位。所谓的事务，它指的是一个操作序列，这些操作要么都执行，要么都不执行。它是一个不可分割的工作单位。事务是数据库维护数据一致性的单位，在每个事务结束时，都能保持数据的一致性。</li>
-</ul>
-<h1 id="数据库的乐观锁AND悲观锁是什么？"><a href="#数据库的乐观锁AND悲观锁是什么？" class="headerlink" title="数据库的乐观锁AND悲观锁是什么？"></a>数据库的乐观锁AND悲观锁是什么？</h1><ul>
-<li>数据库管理系统DBMS中并发控制的任务是确保在多个事务同时存取数据库中同一数据时不破坏事务的隔离性和统一性以及数据库的统一性。</li>
-<li>乐观锁和悲观锁是并发控制主要采用的技术手段：<ul>
-<li>乐观锁：假定不会发生并发冲突，只在提交操作时检查是否违反数据完整性。</li>
-<li>悲观锁：假定会发生并发冲突，屏蔽一切可能违反数据完整性的操作。</li>
-</ul>
-</li>
-</ul>
-<h1 id="使用索引查询一定能提高查询的性能吗？为什么？"><a href="#使用索引查询一定能提高查询的性能吗？为什么？" class="headerlink" title="使用索引查询一定能提高查询的性能吗？为什么？"></a>使用索引查询一定能提高查询的性能吗？为什么？</h1><ul>
-<li>通常来说，通过索引查询数据比全表扫描要快。</li>
-<li>但是索引需要空间来存储，也需要定期维护。每当有记录在表中增减或者索引列被修改时，索引本身也会被修改。意味着每条记录的insert，delete，update方法将会为此多付出4,5次的磁盘IO。</li>
-<li>因为索引需要额外的存储空间和处理，那些不必要的索引反而会使查询反应时间变慢。使用索引不一定能提高查询性能。</li>
-<li><p>索引范围性查找适用于两种情况：</p>
-<ul>
-<li>基于一个范围的检索，一般返回结果集小于表中记录的30%。</li>
-<li>基于唯一性索引的检索。</li>
-</ul>
-</li>
-</ul>
-<h1 id="MySQL数据库索引失效的原因："><a href="#MySQL数据库索引失效的原因：" class="headerlink" title="MySQL数据库索引失效的原因："></a>MySQL数据库索引失效的原因：</h1><ul>
-<li>对单字段建立了索引，where条件多字段</li>
-<li>建立了联合索引，where条件单字段</li>
-<li>对索引列运算，运算包括（+、-、*、/、！、&lt;&gt;、%、like’%_‘、or、in、exist）导致索引失效</li>
-<li>类型错误，如字段类型为varchar，where条件用number</li>
-<li>对应索引内部函数，这种情况下应该建立基于函数的索引</li>
-<li>查询表的效率要比查询索引快的情况</li>
-<li>is null索引失效，is not null betree索引生效。</li>
-</ul>
-<h1 id="说一下drop、delete、truncate的区别："><a href="#说一下drop、delete、truncate的区别：" class="headerlink" title="说一下drop、delete、truncate的区别："></a>说一下drop、delete、truncate的区别：</h1><ul>
-<li>delete和truncate只删除表的数据不删除表的结构</li>
-<li>速度来说：drop&gt;truncate&gt;delete</li>
-<li>delete语句是dml，这个操作会放到rollback segment中，事务提交之后才生效。如果有相应的trigger，执行的时候将被出发。truncate和drop是ddl，操作立即生效，原数据不放到rollback segment中，不能回滚也不能触发trigger。</li>
-</ul>
-<h1 id="drop、delete、truncate的使用场景？"><a href="#drop、delete、truncate的使用场景？" class="headerlink" title="drop、delete、truncate的使用场景？"></a>drop、delete、truncate的使用场景？</h1><ul>
-<li>drop，不再需要一张表时</li>
-<li>delete，向删除部分数据行时，并带上where子句</li>
-<li>truncate，保留表结构而删除所有数据的时候</li>
-</ul>
-<h1 id="超键，候选键，主键，外键分别是什么"><a href="#超键，候选键，主键，外键分别是什么" class="headerlink" title="超键，候选键，主键，外键分别是什么"></a>超键，候选键，主键，外键分别是什么</h1><table>
-<thead>
-<tr>
-<th></th>
-<th style="text-align:center">GET</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>超键</td>
-<td style="text-align:center">在关系中能唯一标识元组的属性集成为关系模式的超键。一个属性可以作为一个超键，多个属性组合在一起也可以作为一个超键。超键包含候选键和主键</td>
-</tr>
-<tr>
-<td>候选键</td>
-<td style="text-align:center">是最小的超键，即没有冗余元素的超键</td>
-</tr>
-<tr>
-<td>主键</td>
-<td style="text-align:center">数据库表中对存储数据对象给予唯一和完整标识的数据列或者属性的集合。一个数据列只能有一个主键，且主键的取值不能缺少，即不能为空值（null）</td>
-</tr>
-<tr>
-<td>外键</td>
-<td style="text-align:center">在一个表中存在另一个表的主键称为此表的外键</td>
-</tr>
-</tbody>
-</table>
-<h1 id="什么是视图？以及视图的使用场景？"><a href="#什么是视图？以及视图的使用场景？" class="headerlink" title="什么是视图？以及视图的使用场景？"></a>什么是视图？以及视图的使用场景？</h1><ul>
-<li><p>视图是一张虚拟的表，具有和物理表相同的功能。可以对视图进行CRUD，视图通常是由一个表或者多个表的行或列的子集。对视图的修改不影响基本表。它使得我们获取数据更容易，相比多表查询。</p>
-</li>
-<li><p>只暴露部分字段给访问者，所以就建一个虚表，也就是一个视图。</p>
-</li>
-<li>查询的数据来源于不同的表，而查询者希望以统一的方式查询，这样可以建立一个视图，把多个表查询结果联合起来，查询者只需要直接从视图中获取数据，不必考虑数据来源于不同表中的差异。</li>
-</ul>
-<h1 id="数据库三范式"><a href="#数据库三范式" class="headerlink" title="数据库三范式"></a>数据库三范式</h1><ul>
-<li><p>1NF：数据库表中的字段都是单一属性，不可再分。这个单一属性由基本类型构成，包括整形，实数，字符型，逻辑型，日期型等。</p>
-</li>
-<li><p>2NF：数据库表中不存在非关键字段对任意候选关键字段的部分依赖（部分依赖指的是存在组合关键字中的某些字段决定非关键字段的情况），也即所有非关键字段都完全依赖于任意一组候选关键字。</p>
-</li>
-<li><p>3NF：数据表中不存在非关键字段对任一候选关键字段的传递依赖。传递依赖指的数据库中不存在如下依赖关系：关键字段-&gt;非关键字段X-&gt;非关键字段Y</p>
-</li>
-</ul>
-<h1 id="SQL语句总结"><a href="#SQL语句总结" class="headerlink" title="SQL语句总结"></a>SQL语句总结</h1><ol>
-<li><p>SELECT：将数据从数据库中的表中取出，<code>SELECT &quot;列名&quot; FROM &quot;表名&quot;</code>。</p>
-</li>
-<li><p>DISTINCT：去重，在上述 SELECT 关键词后加上一个 DISTINCT 就可以去除选择出来的重复，从而完成求得这个表格中该字段有哪些不同的值的功能。语法为<code>SELECT DISTINCT &quot;列名&quot; FROM &quot;表名&quot;</code>。</p>
-</li>
-<li><p>WHERE：这个关键词可以帮助我们选择性地获取数据，而不是全取出来。语法为<code>SELECT &quot;列名&quot; FROM &quot;表名&quot; WHERE &quot;条件&quot;</code></p>
-</li>
-<li><p>AND OR：上例中的 WHERE 指令可以被用来由表格中有条件地选取资料。这个条件可能是简单的，也可能是复杂的。复杂条件是由二或多个简单条件透过 AND 或是 OR 的连接而成。语法为：<code>SELECT &quot;列名&quot;  FROM &quot;表名&quot;  WHERE &quot;简单条件&quot;  {[AND|OR] &quot;简单条件&quot;}+</code></p>
-</li>
-<li><p>IN：在SQL中，与 WHERE一起使用，我们事先已知道至少一个我们需要的值，而我们将这些知道的值都放入 IN  这个子句。语法为：<code>SELECT &quot;列名&quot;  FROM &quot;表名&quot;  WHERE &quot;列名&quot; IN (&#39;值一&#39;, &#39;值二&#39;, ...)</code>  </p>
-</li>
-<li><p>BETWEEN：IN 这个指令可以让我们依照一或数个不连续 (discrete)的值的限制之内获取数据，而 BETWEEN 则是让我们可以运用一个范围 (range)获取数据，语法为：<br><code>SELECT &quot;列名&quot;  FROM &quot;表名&quot; WHERE &quot;列名&quot; BETWEEN &#39;值一&#39; AND &#39;值二&#39;</code></p>
-</li>
-<li><p>LIKE：LIKE 是另一个在 WHERE子句中会用到的指令。LIKE依据一个模式(pattern)来找出我们要的数据。语法为：<br><code>SELECT &quot;列名&quot;  FROM &quot;表名&quot;  WHERE &quot;列名&quot; LIKE {模式}</code></p>
-</li>
-<li><p>ORDER BY：排序指令。语法为：<code>SELECT &quot;列名&quot;  FROM &quot;表名 [WHERE &quot;条件&quot;] ORDER BY &quot;列名&quot; [ASC, DESC]</code></p>
-</li>
-<li><p>函数: 函数允许我们能够对这些数字的型态存在的行或者列做运算，包括 AVG (平均)、COUNT (计数)、MAX (最大值)、MIN (最小值)、SUM (总合)。语法为：<code>SELECT &quot;函数名&quot;(&quot;列名&quot;) FROM &quot;表名&quot;</code></p>
-</li>
-<li><p>COUNT：这个关键词能够帮我我们统计有多少个数据被选出来，语法为：<code>SELECT COUNT(&quot;列名&quot;) FROM &quot;表名&quot;</code></p>
-</li>
-<li><p>GROUP BY：GROUP BY 语句用于结合合计函数，根据一个或多个列对结果集进行分组。语法为：<code>SELECT &quot;列1&quot;, SUM(&quot;列2&quot;)  FROM &quot;表名&quot;  GROUP BY &quot;列1&quot;</code></p>
-</li>
-<li><p>HAVING：该关键词可以帮助我们对函数产生的值来设定条件。语法为：<code>SELECT &quot;；列1&quot;, SUM(&quot;列2&quot;)  FROM &quot;表格名&quot;  GROUP BY &quot;列1&quot;  HAVING (函数条件)</code></p>
-</li>
-<li><p>ALIAS：我们可以通过ALIAS为列名称和表名称指定别名，语法为：<code>SELECT &quot;表格别名&quot;.&quot;列1&quot; &quot;；列1别名&quot;  FROM &quot;表格名&quot; &quot;表格别名&quot;</code></p>
-</li>
-</ol>
-<ul>
-<li>实战，数据库结构如下</li>
-</ul>
-<p>Student(S#,Sname,Sage,Ssex) 学生表<br>Course(C#,Cname,T#) 课程表<br>SC(S#,C#,score) 成绩表<br>Teacher(T#,Tname) 教师表</p>
-<pre><code>1. 查询“001”课程比“002”课程成绩高的所有学生的学号：
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">SELECT a.S# from (select s#,score from SC where C#=&apos;001&apos;) a,</div><div class="line">(select s#,score from SC where C#=&apos;002&apos;) b</div><div class="line">WHERE a.score &gt; b.score and a.S#=b.S#;</div></pre></td></tr></table></figure>
-
-2. 查询平均成绩大于60分的同学的学号和平均成绩：
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">SELECT S#, AVG(score)</div><div class="line">FROM SC</div><div class="line">GROUP by S# HAVING AVG(score) &gt; 60;</div></pre></td></tr></table></figure>
-
-3. 查询所有同学的学号、姓名、选课数、总成绩:
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">select Student.S#, Student.Sname, COUNT(SC.C#), SUM(score)</div><div class="line">from Student left Outer join SC on Student.S#=SC.S#</div><div class="line">GROUP by Student.S#, Sname;</div></pre></td></tr></table></figure>
-
-4. 查询姓“李”的老师的个数:
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">select COUNT(distinct(Tname))</div><div class="line">from Teacher</div><div class="line">WHERE Tname LIKE &apos;李%&apos;；</div></pre></td></tr></table></figure>
-
-5. 查询没学过“叶平”老师课的同学的学号、姓名；
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">select Student.S#,Student.Sname</div><div class="line">from Student</div><div class="line">where S# not in (select distinct( SC.S#) from SC,Course,Teacher where SC.C#=Course.C# and Teacher.T#=Course.T# and Teacher.Tname=’叶平’);</div></pre></td></tr></table></figure>
-
-6. 查询学过“001”并且也学过编号“002”课程的同学的学号、姓名:
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">select Student.S#,Student.Sname</div><div class="line">from Student,SC</div><div class="line">where Student.S#=SC.S# and SC.C#=’001′and exists( Select * from SC as SC_2 where SC_2.S#=SC.S# and SC_2.C#=’002′);</div></pre></td></tr></table></figure>
-
-7. 查询学过“叶平”老师所教的所有课的同学的学号、姓名:
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">select S#,Sname</div><div class="line">from Student</div><div class="line">where S# in</div><div class="line">(select S#</div><div class="line">from SC ,Course ,Teacher</div><div class="line">where SC.C#=Course.C# and Teacher.T#=Course.T# and Teacher.Tname=’叶平’ group by S# having count(SC.C#)=(select count(C#) from Course,Teacher where Teacher.T#=Course.T# and Tname=’叶平’));</div></pre></td></tr></table></figure>
-
-8. 查询所有课程成绩小于60分的同学的学号、姓名:
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">select S#,Sname</div><div class="line">from Student</div><div class="line">where S# not in (select Student.S# from Student,SC where S.S#=SC.S# and score&gt;60);</div></pre></td></tr></table></figure>
-
-9. 查询没有学全所有课的同学的学号、姓名:
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">select Student.S#,Student.Sname</div><div class="line">from Student,SC</div><div class="line">where Student.S#=SC.S#</div><div class="line">group by Student.S#,Student.Sname having count(C#) &lt;(select count(C#) from Course);</div></pre></td></tr></table></figure>
-
-10. 查询至少有一门课与学号为“1001”的同学所学相同的同学的学号和姓名:
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">select S#,Sname</div><div class="line">from Student,SC</div><div class="line">where Student.S#=SC.S# and C# in （select C# from SC where S#=&apos;1001&apos;）;</div></pre></td></tr></table></figure>
-
-11. 删除学习“叶平”老师课的SC表记录:
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Delect SC</div><div class="line">from course ,Teacher</div><div class="line">where Course.C#=SC.C# and Course.T#= Teacher.T# and Tname=&apos;叶平&apos;;</div></pre></td></tr></table></figure>
-
-12. 查询各科成绩最高和最低的分：以如下形式显示：课程ID，最高分，最低分
-
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">SELECT L.C# 课程ID,L.score 最高分,R.score 最低分</div><div class="line">FROM SC L ,SC R</div><div class="line">WHERE L.C# = R.C#</div><div class="line">and</div><div class="line">L.score = (SELECT MAX(IL.score)</div><div class="line">FROM SC IL,Student IM</div><div class="line">WHERE IL.C# = L.C# and IM.S#=IL.S#</div><div class="line">GROUP BY IL.C#)</div><div class="line">and</div><div class="line">R.Score = (SELECT MIN(IR.score)</div><div class="line">FROM SC IR</div><div class="line">WHERE IR.C# = R.C#</div><div class="line">GROUP BY IR.C# );</div></pre></td></tr></table></figure>
-
-  13. 查询学生平均成绩及其名次:
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">SELECT 1+(SELECT COUNT( distinct 平均成绩)</div><div class="line">FROM (SELECT S#,AVG(score) 平均成绩</div><div class="line">FROM SC</div><div class="line">GROUP BY S# ) T1</div><div class="line">WHERE 平均成绩 &gt; T2.平均成绩) 名次, S# 学生学号,平均成绩</div><div class="line">FROM (SELECT S#,AVG(score) 平均成绩 FROM SC GROUP BY S# ) T2</div><div class="line">ORDER BY 平均成绩 desc;</div></pre></td></tr></table></figure>
-
-  14. 查询各科成绩前三名的记录:(不考虑成绩并列情况)
-
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">SELECT t1.S# as 学生ID,t1.C# as 课程ID,Score as 分数</div><div class="line">FROM SC t1</div><div class="line">WHERE score IN (SELECT TOP 3 score</div><div class="line">FROM SC</div><div class="line">WHERE t1.C#= C#</div><div class="line">ORDER BY score DESC)</div><div class="line">ORDER BY t1.C#;</div></pre></td></tr></table></figure>
-
-  15. 查询每门功成绩最好的前两名
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">SELECT t1.S# as 学生ID,t1.C# as 课程ID,Score as 分数</div><div class="line">FROM SC t1</div><div class="line">WHERE score IN (SELECT TOP 2 score</div><div class="line">FROM SC</div><div class="line">WHERE t1.C#= C#</div><div class="line">ORDER BY score DESC )</div><div class="line">ORDER BY t1.C#;</div></pre></td></tr></table></figure>
-</code></pre>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2234,7 +2047,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-count">90</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

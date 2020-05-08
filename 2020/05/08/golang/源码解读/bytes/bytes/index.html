@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="go,源码解读," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="bytes包常用函数
+bytes.go中提供了很多字节切片的工具类
+
+Compare
+Compare方法比较两个字节切片的大小，-1，0， 1
+nil和空切片是相等的
+
+123func Compare(a, b []byte) int &amp;#123;	return bytealg.Compare(a, b)&amp;#125;
+Contains
+Contains方法返回b中是否存在子切片subslice">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go源码解读-bytes包常用函数">
+<meta property="og:url" content="http://yoursite.com/2020/05/08/golang/源码解读/bytes/bytes/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="bytes包常用函数
+bytes.go中提供了很多字节切片的工具类
+
+Compare
+Compare方法比较两个字节切片的大小，-1，0， 1
+nil和空切片是相等的
+
+123func Compare(a, b []byte) int &amp;#123;	return bytealg.Compare(a, b)&amp;#125;
+Contains
+Contains方法返回b中是否存在子切片subslice">
+<meta property="og:updated_time" content="2020-05-08T14:32:57.336Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="go源码解读-bytes包常用函数">
+<meta name="twitter:description" content="bytes包常用函数
+bytes.go中提供了很多字节切片的工具类
+
+Compare
+Compare方法比较两个字节切片的大小，-1，0， 1
+nil和空切片是相等的
+
+123func Compare(a, b []byte) int &amp;#123;	return bytealg.Compare(a, b)&amp;#125;
+Contains
+Contains方法返回b中是否存在子切片subslice">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/05/08/golang/源码解读/bytes/bytes/"/>
+
+
+
+
+
+  <title>go源码解读-bytes包常用函数 | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/08/golang/源码解读/bytes/bytes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">go源码解读-bytes包常用函数</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-08T11:43:01+08:00">
+                2020-05-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/源码解读/" itemprop="url" rel="index">
+                    <span itemprop="name">源码解读</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="bytes包常用函数"><a href="#bytes包常用函数" class="headerlink" title="bytes包常用函数"></a>bytes包常用函数</h2><ul>
+<li>bytes.go中提供了很多字节切片的工具类</li>
+</ul>
+<h3 id="Compare"><a href="#Compare" class="headerlink" title="Compare"></a>Compare</h3><ul>
+<li>Compare方法比较两个字节切片的大小，-1，0， 1</li>
+<li>nil和空切片是相等的</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Compare</span><span class="params">(a, b []<span class="keyword">byte</span>)</span> <span class="title">int</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> bytealg.Compare(a, b)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Contains"><a href="#Contains" class="headerlink" title="Contains"></a>Contains</h3><ul>
+<li>Contains方法返回b中是否存在子切片subslice</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Contains</span><span class="params">(b, subslice []<span class="keyword">byte</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> Index(b, subslice) != <span class="number">-1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Contains函数主题为函数Index</li>
+<li>Index函数返回sep在s中找到的第一个实例的索引值，比如s为{1,2,3,1,2,3}， sep为{2,3}，则Index函数返回1，如果没有匹配到，则返回-1</li>
+<li>Index方法中，根据sep的长度做了一些优化，为0直接返回0，意思是index为0</li>
+<li>sep长度为1时，利用IndexByte函数找一个字节是否在切片中出现过</li>
+<li>sep的长度和s的长度相等时，利用Equal方法判断两个切片是否相等</li>
+<li>sep长度小于MaxLen时，这个值根据操作系统在32或者64，<ul>
+<li>s的长度小于64时，直接用bytealg.Index函数进行暴力查找即可</li>
+<li>是的长度大于64时，先找到匹配sep第一个字符的索引值，然后判断第二个字符是否相等，相等则直接用Equal方法判断两个截取的切片是否相等。如果第二个字符不相等，则失败次数+1，同时比较失败次数和Cutover函数的返回值，如果错误次数过多，此时会直接进行暴力查找</li>
+</ul>
+</li>
+<li>sep的长度大于MaxLen时，前半部分和之前阐述的类似，不通的在于对失败错误的容忍度。<ul>
+<li>Cutover函数允许每8个字节出错一次，实验证明其切换间隔为16个字节时效率更高，此时采用RabinKarp算法进行查找</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Index</span><span class="params">(s, sep []<span class="keyword">byte</span>)</span> <span class="title">int</span></span> &#123;</div><div class="line">	n := <span class="built_in">len</span>(sep)</div><div class="line">	<span class="keyword">switch</span> &#123;</div><div class="line">	<span class="keyword">case</span> n == <span class="number">0</span>:</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span></div><div class="line">	<span class="keyword">case</span> n == <span class="number">1</span>:</div><div class="line">		<span class="keyword">return</span> IndexByte(s, sep[<span class="number">0</span>])</div><div class="line">	<span class="keyword">case</span> n == <span class="built_in">len</span>(s):</div><div class="line">		<span class="keyword">if</span> Equal(sep, s) &#123;</div><div class="line">			<span class="keyword">return</span> <span class="number">0</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">	<span class="keyword">case</span> n &gt; <span class="built_in">len</span>(s):</div><div class="line">		<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">	<span class="keyword">case</span> n &lt;= bytealg.MaxLen:</div><div class="line">		<span class="comment">// Use brute force when s and sep both are small</span></div><div class="line">		<span class="keyword">if</span> <span class="built_in">len</span>(s) &lt;= bytealg.MaxBruteForce &#123;</div><div class="line">			<span class="keyword">return</span> bytealg.Index(s, sep)</div><div class="line">		&#125;</div><div class="line">		c0 := sep[<span class="number">0</span>]</div><div class="line">		c1 := sep[<span class="number">1</span>]</div><div class="line">		i := <span class="number">0</span></div><div class="line">		t := <span class="built_in">len</span>(s) - n + <span class="number">1</span></div><div class="line">		fails := <span class="number">0</span></div><div class="line">		<span class="keyword">for</span> i &lt; t &#123;</div><div class="line">			<span class="keyword">if</span> s[i] != c0 &#123;</div><div class="line">				<span class="comment">// IndexByte is faster than bytealg.Index, so use it as long as</span></div><div class="line">				<span class="comment">// we're not getting lots of false positives.</span></div><div class="line">				o := IndexByte(s[i:t], c0)</div><div class="line">				<span class="keyword">if</span> o &lt; <span class="number">0</span> &#123;</div><div class="line">					<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">				&#125;</div><div class="line">				i += o</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">if</span> s[i+<span class="number">1</span>] == c1 &amp;&amp; Equal(s[i:i+n], sep) &#123;</div><div class="line">				<span class="keyword">return</span> i</div><div class="line">			&#125;</div><div class="line">			fails++</div><div class="line">			i++</div><div class="line">			<span class="comment">// Switch to bytealg.Index when IndexByte produces too many false positives.</span></div><div class="line">			<span class="keyword">if</span> fails &gt; bytealg.Cutover(i) &#123;</div><div class="line">				r := bytealg.Index(s[i:], sep)</div><div class="line">				<span class="keyword">if</span> r &gt;= <span class="number">0</span> &#123;</div><div class="line">					<span class="keyword">return</span> r + i</div><div class="line">				&#125;</div><div class="line">				<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">	&#125;</div><div class="line">	c0 := sep[<span class="number">0</span>]</div><div class="line">	c1 := sep[<span class="number">1</span>]</div><div class="line">	i := <span class="number">0</span></div><div class="line">	fails := <span class="number">0</span></div><div class="line">	t := <span class="built_in">len</span>(s) - n + <span class="number">1</span></div><div class="line">	<span class="keyword">for</span> i &lt; t &#123;</div><div class="line">		<span class="keyword">if</span> s[i] != c0 &#123;</div><div class="line">			o := IndexByte(s[i:t], c0)</div><div class="line">			<span class="keyword">if</span> o &lt; <span class="number">0</span> &#123;</div><div class="line">				<span class="keyword">break</span></div><div class="line">			&#125;</div><div class="line">			i += o</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> s[i+<span class="number">1</span>] == c1 &amp;&amp; Equal(s[i:i+n], sep) &#123;</div><div class="line">			<span class="keyword">return</span> i</div><div class="line">		&#125;</div><div class="line">		i++</div><div class="line">		fails++</div><div class="line">		<span class="keyword">if</span> fails &gt;= <span class="number">4</span>+i&gt;&gt;<span class="number">4</span> &amp;&amp; i &lt; t &#123;</div><div class="line">			j := indexRabinKarp(s[i:], sep)</div><div class="line">			<span class="keyword">if</span> j &lt; <span class="number">0</span> &#123;</div><div class="line">				<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">			&#125;</div><div class="line">			<span class="keyword">return</span> i + j</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">IndexByte</span><span class="params">(b []<span class="keyword">byte</span>, c <span class="keyword">byte</span>)</span> <span class="title">int</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> bytealg.IndexByte(b, c)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Equal</span><span class="params">(a, b []<span class="keyword">byte</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> bytealg.Equal(a, b)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Cutover</span><span class="params">(n <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</div><div class="line">	<span class="comment">// 1 error per 8 characters, plus a few slop to start.</span></div><div class="line">	<span class="keyword">return</span> (n + <span class="number">16</span>) / <span class="number">8</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>RabinKarp算法实现，假定sep为{a,b}，s为{d,c,a,b}<ul>
+<li>RabinKarp算法首先选取一个基准值，primeRK=16777619，这个</li>
+<li>然后用函数hashStr对sep进行hash运算，返回的结果包括两个<ul>
+<li>第一个hash，表示的是对子串的计算值，其值可以理解为primeRK进制下该字节数组的值，则hash=97*primeRK+b</li>
+<li>第二个pow，返回的是和sep长度相关的值，由于pow的值为uint32，则实际上是个取余之后的值，RK^(len（sep-1) % 2^32，其目的是为了在s上找sep滑动时，去除掉最高位的hash值</li>
+</ul>
+</li>
+<li>在s的最左边开始计算和sep长度相等的hash值为d*RK+c，如果匹配则直接返回索引0</li>
+<li>如果不匹配，则在s上进行长度为len(sep)的滑动，此时hash为<code>d*Rk*Rk + c * RK + a - d * pow</code></li>
+<li>而实际上<code>pow = RK*RK</code>的，则hash值为<code>c*RK + a</code>,此时不符合继续滑动</li>
+<li>滑动之后hash值为<code>a*RK + b</code>，此时返回索引2</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">indexRabinKarp</span><span class="params">(s, sep []<span class="keyword">byte</span>)</span> <span class="title">int</span></span> &#123;</div><div class="line">	<span class="comment">// Rabin-Karp search</span></div><div class="line">	hashsep, pow := hashStr(sep)</div><div class="line">	n := <span class="built_in">len</span>(sep)</div><div class="line">	<span class="keyword">var</span> h <span class="keyword">uint32</span></div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</div><div class="line">		h = h*primeRK + <span class="keyword">uint32</span>(s[i])</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> h == hashsep &amp;&amp; Equal(s[:n], sep) &#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">for</span> i := n; i &lt; <span class="built_in">len</span>(s); &#123;</div><div class="line">		h *= primeRK</div><div class="line">		h += <span class="keyword">uint32</span>(s[i])</div><div class="line">		h -= pow * <span class="keyword">uint32</span>(s[i-n])</div><div class="line">		i++</div><div class="line">		<span class="keyword">if</span> h == hashsep &amp;&amp; Equal(s[i-n:i], sep) &#123;</div><div class="line">			<span class="keyword">return</span> i - n</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 基准值</span></div><div class="line"><span class="keyword">const</span> primeRK = <span class="number">16777619</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">hashStr</span><span class="params">(sep []<span class="keyword">byte</span>)</span> <span class="params">(<span class="keyword">uint32</span>, <span class="keyword">uint32</span>)</span></span> &#123;</div><div class="line">	hash := <span class="keyword">uint32</span>(<span class="number">0</span>)</div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(sep); i++ &#123;</div><div class="line">		hash = hash*primeRK + <span class="keyword">uint32</span>(sep[i])</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">var</span> pow, sq <span class="keyword">uint32</span> = <span class="number">1</span>, primeRK</div><div class="line">	<span class="keyword">for</span> i := <span class="built_in">len</span>(sep); i &gt; <span class="number">0</span>; i &gt;&gt;= <span class="number">1</span> &#123;</div><div class="line">		<span class="keyword">if</span> i&amp;<span class="number">1</span> != <span class="number">0</span> &#123;</div><div class="line">			pow *= sq</div><div class="line">		&#125;</div><div class="line">		sq *= sq</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> hash, pow</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>ContainsAny方法只要chars中任意一个utf-8编码的字符存在于字节切片中，返回true<ul>
+<li>IndexAny实际上为ContainsAny的主要函数</li>
+<li>如果s字节数组大于8并且是ASCII编码的，则用函数makeASCIISet构建ASCII集合<ul>
+<li>makeASCIISet返回的数据asciiSet为一个32字节的数据，从前向后每一个bit位的索引代表对应的ASCII的值，实际上32字节的数据是分为8个uint32的数字来表示的，这样如字符a的位置为第四个元素的倒数第二个bit位</li>
+<li>从而对s进行迭代，看其中的byte是否存asciiSet中，asciiSet提供了contain方法来校验其对应的bit位上是否存在该字符</li>
+<li>bitmap可以最大限度的节省内存空间，但是代码会复杂一些，实际工作中自己做取舍</li>
+</ul>
+</li>
+<li>否则对切片s进行rune转码，逐个字符迭代比较并返回结果，属于暴力方法</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">ContainsAny</span><span class="params">(b []<span class="keyword">byte</span>, chars <span class="keyword">string</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> IndexAny(b, chars) &gt;= <span class="number">0</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">IndexAny</span><span class="params">(s []<span class="keyword">byte</span>, chars <span class="keyword">string</span>)</span> <span class="title">int</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> chars == <span class="string">""</span> &#123;</div><div class="line">		<span class="comment">// Avoid scanning all of s.</span></div><div class="line">		<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(s) &gt; <span class="number">8</span> &#123;</div><div class="line">		<span class="keyword">if</span> as, isASCII := makeASCIISet(chars); isASCII &#123;</div><div class="line">			<span class="keyword">for</span> i, c := <span class="keyword">range</span> s &#123;</div><div class="line">				<span class="keyword">if</span> as.contains(c) &#123;</div><div class="line">					<span class="keyword">return</span> i</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">var</span> width <span class="keyword">int</span></div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(s); i += width &#123;</div><div class="line">		r := <span class="keyword">rune</span>(s[i])</div><div class="line">		<span class="keyword">if</span> r &lt; utf8.RuneSelf &#123;</div><div class="line">			width = <span class="number">1</span></div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			r, width = utf8.DecodeRune(s[i:])</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">for</span> _, ch := <span class="keyword">range</span> chars &#123;</div><div class="line">			<span class="keyword">if</span> r == ch &#123;</div><div class="line">				<span class="keyword">return</span> i</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> asciiSet [<span class="number">8</span>]<span class="keyword">uint32</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeASCIISet</span><span class="params">(chars <span class="keyword">string</span>)</span> <span class="params">(as asciiSet, ok <span class="keyword">bool</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(chars); i++ &#123;</div><div class="line">		c := chars[i]</div><div class="line">		<span class="keyword">if</span> c &gt;= utf8.RuneSelf &#123;</div><div class="line">			<span class="keyword">return</span> as, <span class="literal">false</span></div><div class="line">		&#125;</div><div class="line">		as[c&gt;&gt;<span class="number">5</span>] |= <span class="number">1</span> &lt;&lt; <span class="keyword">uint</span>(c&amp;<span class="number">31</span>)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> as, <span class="literal">true</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// contains reports whether c is inside the set.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(as *asciiSet)</span> <span class="title">contains</span><span class="params">(c <span class="keyword">byte</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> (as[c&gt;&gt;<span class="number">5</span>] &amp; (<span class="number">1</span> &lt;&lt; <span class="keyword">uint</span>(c&amp;<span class="number">31</span>))) != <span class="number">0</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>ContainsRune方法返回切片b中是否含有字符r，返回找到的匹配字节的索引值</li>
+<li>通过方法IndexRune来实现<ul>
+<li>如果r是ASCII字符，调用函数IndexBytes来完成查找</li>
+<li>如果要查找的是utf8.RuneError，则返回第一个不合法的序列</li>
+<li>否则将rune转换成字节切片，调用Index方法完成查找</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">ContainsRune</span><span class="params">(b []<span class="keyword">byte</span>, r <span class="keyword">rune</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> IndexRune(b, r) &gt;= <span class="number">0</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">IndexRune</span><span class="params">(s []<span class="keyword">byte</span>, r <span class="keyword">rune</span>)</span> <span class="title">int</span></span> &#123;</div><div class="line">	<span class="keyword">switch</span> &#123;</div><div class="line">	<span class="keyword">case</span> <span class="number">0</span> &lt;= r &amp;&amp; r &lt; utf8.RuneSelf:</div><div class="line">		<span class="keyword">return</span> IndexByte(s, <span class="keyword">byte</span>(r))</div><div class="line">	<span class="keyword">case</span> r == utf8.RuneError:</div><div class="line">		<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(s); &#123;</div><div class="line">			r1, n := utf8.DecodeRune(s[i:])</div><div class="line">			<span class="keyword">if</span> r1 == utf8.RuneError &#123;</div><div class="line">				<span class="keyword">return</span> i</div><div class="line">			&#125;</div><div class="line">			i += n</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">	<span class="keyword">case</span> !utf8.ValidRune(r):</div><div class="line">		<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">	<span class="keyword">default</span>:</div><div class="line">		<span class="keyword">var</span> b [utf8.UTFMax]<span class="keyword">byte</span></div><div class="line">		n := utf8.EncodeRune(b[:], r)</div><div class="line">		<span class="keyword">return</span> Index(s, b[:n])</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Count"><a href="#Count" class="headerlink" title="Count"></a>Count</h3><ul>
+<li>Count函数返回字节数组中s存在sep的个数<ul>
+<li>sep长度为0，则返回s中字符数+1</li>
+<li>sep长度为1，调用bytealg.Count函数返回结果</li>
+<li>否则，利用Index方法来进行个数查找</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Count</span><span class="params">(s, sep []<span class="keyword">byte</span>)</span> <span class="title">int</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(sep) == <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">return</span> utf8.RuneCount(s) + <span class="number">1</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(sep) == <span class="number">1</span> &#123;</div><div class="line">		<span class="keyword">return</span> bytealg.Count(s, sep[<span class="number">0</span>])</div><div class="line">	&#125;</div><div class="line">	n := <span class="number">0</span></div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		i := Index(s, sep)</div><div class="line">		<span class="keyword">if</span> i == <span class="number">-1</span> &#123;</div><div class="line">			<span class="keyword">return</span> n</div><div class="line">		&#125;</div><div class="line">		n++</div><div class="line">		s = s[i+<span class="built_in">len</span>(sep):]</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Equal"><a href="#Equal" class="headerlink" title="Equal"></a>Equal</h3><ul>
+<li>Equal的实现是调用更底层的Equal方法</li>
+<li>Equal实际上只是看两个字节切片的长度和元素值是否相等，不看是否来自同一个底层数组的引用</li>
+<li>nil和空切片是相等的</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Equal</span><span class="params">(a, b []<span class="keyword">byte</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> bytealg.Equal(a, b)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="EqualFold"><a href="#EqualFold" class="headerlink" title="EqualFold"></a>EqualFold</h3><ul>
+<li>EqualFold方法将判断s,t在Unicode大小写折叠下是否相等</li>
+<li>如果是ASCII编码则简单比较大小写即可，否则需要进行unicode.SimpleFold进行转换并比较</li>
+<li>判断也是值是否相等</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">EqualFold</span><span class="params">(s, t []<span class="keyword">byte</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	<span class="keyword">for</span> <span class="built_in">len</span>(s) != <span class="number">0</span> &amp;&amp; <span class="built_in">len</span>(t) != <span class="number">0</span> &#123;</div><div class="line">		<span class="comment">// Extract first rune from each.</span></div><div class="line">		<span class="keyword">var</span> sr, tr <span class="keyword">rune</span></div><div class="line">		<span class="keyword">if</span> s[<span class="number">0</span>] &lt; utf8.RuneSelf &#123;</div><div class="line">			sr, s = <span class="keyword">rune</span>(s[<span class="number">0</span>]), s[<span class="number">1</span>:]</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			r, size := utf8.DecodeRune(s)</div><div class="line">			sr, s = r, s[size:]</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> t[<span class="number">0</span>] &lt; utf8.RuneSelf &#123;</div><div class="line">			tr, t = <span class="keyword">rune</span>(t[<span class="number">0</span>]), t[<span class="number">1</span>:]</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			r, size := utf8.DecodeRune(t)</div><div class="line">			tr, t = r, t[size:]</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="comment">// If they match, keep going; if not, return false.</span></div><div class="line"></div><div class="line">		<span class="comment">// Easy case.</span></div><div class="line">		<span class="keyword">if</span> tr == sr &#123;</div><div class="line">			<span class="keyword">continue</span></div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="comment">// Make sr &lt; tr to simplify what follows.</span></div><div class="line">		<span class="keyword">if</span> tr &lt; sr &#123;</div><div class="line">			tr, sr = sr, tr</div><div class="line">		&#125;</div><div class="line">		<span class="comment">// Fast check for ASCII.</span></div><div class="line">		<span class="keyword">if</span> tr &lt; utf8.RuneSelf &#123;</div><div class="line">			<span class="comment">// ASCII only, sr/tr must be upper/lower case</span></div><div class="line">			<span class="keyword">if</span> <span class="string">'A'</span> &lt;= sr &amp;&amp; sr &lt;= <span class="string">'Z'</span> &amp;&amp; tr == sr+<span class="string">'a'</span>-<span class="string">'A'</span> &#123;</div><div class="line">				<span class="keyword">continue</span></div><div class="line">			&#125;</div><div class="line">			<span class="keyword">return</span> <span class="literal">false</span></div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="comment">// General case. SimpleFold(x) returns the next equivalent rune &gt; x</span></div><div class="line">		<span class="comment">// or wraps around to smaller values.</span></div><div class="line">		r := unicode.SimpleFold(sr)</div><div class="line">		<span class="keyword">for</span> r != sr &amp;&amp; r &lt; tr &#123;</div><div class="line">			r = unicode.SimpleFold(r)</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> r == tr &#123;</div><div class="line">			<span class="keyword">continue</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> <span class="literal">false</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// One string is empty. Are both?</span></div><div class="line">	<span class="keyword">return</span> <span class="built_in">len</span>(s) == <span class="built_in">len</span>(t)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Fields"><a href="#Fields" class="headerlink" title="Fields"></a>Fields</h3><ul>
+<li>Fields函数将字节切片s，以空白字符切割，并返回[][]byte类型结果，如<code>[]byte(&quot;1  2  3  4&quot;)</code>返回<code>[]string{&quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;}</code></li>
+<li>用setBits来记录s中出现过的字节</li>
+<li>如果<code>setBits&gt;utf8.RuneSelf</code>表示存在不是ASCII编码的数据，此时调用FieldsFunc方法来完成分割操作<ul>
+<li>FieldFunc传入的第二个参数为unicode.IsSpace，来判断一个字符是否为空白字符</li>
+<li>span用于记录各个分割出的Fied的起点和终点，从而组织输出数据</li>
+</ul>
+</li>
+<li>如果<code>setBits&lt;utf8.RuneSelf</code>则表示都是ASCII编码，而ASCII编码的空白字符为<code>[256]uint{&#39;\t&#39;: 1, &#39;\n&#39;: 1, &#39;\v&#39;: 1, &#39;\f&#39;: 1, &#39;\r&#39;: 1, &#39; &#39;: 1}</code>,可以快速进行分割</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Fields</span><span class="params">(s []<span class="keyword">byte</span>)</span> [][]<span class="title">byte</span></span> &#123;</div><div class="line">	n := <span class="number">0</span></div><div class="line">	wasSpace := <span class="number">1</span></div><div class="line">	<span class="comment">// setBits is used to track which bits are set in the bytes of s.</span></div><div class="line">	setBits := <span class="keyword">uint8</span>(<span class="number">0</span>)</div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(s); i++ &#123;</div><div class="line">		r := s[i]</div><div class="line">		setBits |= r</div><div class="line">		isSpace := <span class="keyword">int</span>(asciiSpace[r])</div><div class="line">		n += wasSpace &amp; ^isSpace</div><div class="line">		wasSpace = isSpace</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">if</span> setBits &gt;= utf8.RuneSelf &#123;</div><div class="line">		<span class="comment">// Some runes in the input slice are not ASCII.</span></div><div class="line">		<span class="keyword">return</span> FieldsFunc(s, unicode.IsSpace)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// ASCII fast path</span></div><div class="line">	a := <span class="built_in">make</span>([][]<span class="keyword">byte</span>, n)</div><div class="line">	na := <span class="number">0</span></div><div class="line">	fieldStart := <span class="number">0</span></div><div class="line">	i := <span class="number">0</span></div><div class="line">	<span class="comment">// Skip spaces in the front of the input.</span></div><div class="line">	<span class="keyword">for</span> i &lt; <span class="built_in">len</span>(s) &amp;&amp; asciiSpace[s[i]] != <span class="number">0</span> &#123;</div><div class="line">		i++</div><div class="line">	&#125;</div><div class="line">	fieldStart = i</div><div class="line">	<span class="keyword">for</span> i &lt; <span class="built_in">len</span>(s) &#123;</div><div class="line">		<span class="keyword">if</span> asciiSpace[s[i]] == <span class="number">0</span> &#123;</div><div class="line">			i++</div><div class="line">			<span class="keyword">continue</span></div><div class="line">		&#125;</div><div class="line">		a[na] = s[fieldStart:i:i]</div><div class="line">		na++</div><div class="line">		i++</div><div class="line">		<span class="comment">// Skip spaces in between fields.</span></div><div class="line">		<span class="keyword">for</span> i &lt; <span class="built_in">len</span>(s) &amp;&amp; asciiSpace[s[i]] != <span class="number">0</span> &#123;</div><div class="line">			i++</div><div class="line">		&#125;</div><div class="line">		fieldStart = i</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> fieldStart &lt; <span class="built_in">len</span>(s) &#123; <span class="comment">// Last field might end at EOF.</span></div><div class="line">		a[na] = s[fieldStart:<span class="built_in">len</span>(s):<span class="built_in">len</span>(s)]</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> a</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">FieldsFunc</span><span class="params">(s []<span class="keyword">byte</span>, f <span class="keyword">func</span>(<span class="keyword">rune</span>)</span> <span class="title">bool</span>) [][]<span class="title">byte</span></span> &#123;</div><div class="line">	<span class="comment">// A span is used to record a slice of s of the form s[start:end].</span></div><div class="line">	<span class="comment">// The start index is inclusive and the end index is exclusive.</span></div><div class="line">	<span class="keyword">type</span> span <span class="keyword">struct</span> &#123;</div><div class="line">		start <span class="keyword">int</span></div><div class="line">		end   <span class="keyword">int</span></div><div class="line">	&#125;</div><div class="line">	spans := <span class="built_in">make</span>([]span, <span class="number">0</span>, <span class="number">32</span>)</div><div class="line"></div><div class="line">	<span class="comment">// Find the field start and end indices.</span></div><div class="line">	wasField := <span class="literal">false</span></div><div class="line">	fromIndex := <span class="number">0</span></div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(s); &#123;</div><div class="line">		size := <span class="number">1</span></div><div class="line">		r := <span class="keyword">rune</span>(s[i])</div><div class="line">		<span class="keyword">if</span> r &gt;= utf8.RuneSelf &#123;</div><div class="line">			r, size = utf8.DecodeRune(s[i:])</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> f(r) &#123;</div><div class="line">			<span class="keyword">if</span> wasField &#123;</div><div class="line">				spans = <span class="built_in">append</span>(spans, span&#123;start: fromIndex, end: i&#125;)</div><div class="line">				wasField = <span class="literal">false</span></div><div class="line">			&#125;</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			<span class="keyword">if</span> !wasField &#123;</div><div class="line">				fromIndex = i</div><div class="line">				wasField = <span class="literal">true</span></div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		i += size</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// Last field might end at EOF.</span></div><div class="line">	<span class="keyword">if</span> wasField &#123;</div><div class="line">		spans = <span class="built_in">append</span>(spans, span&#123;fromIndex, <span class="built_in">len</span>(s)&#125;)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// Create subslices from recorded field indices.</span></div><div class="line">	a := <span class="built_in">make</span>([][]<span class="keyword">byte</span>, <span class="built_in">len</span>(spans))</div><div class="line">	<span class="keyword">for</span> i, span := <span class="keyword">range</span> spans &#123;</div><div class="line">		a[i] = s[span.start:span.end:span.end]</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">return</span> a</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Has函数"><a href="#Has函数" class="headerlink" title="Has函数"></a>Has函数</h3><ul>
+<li>HasPrefix，HasSuffix函数本质上是用Equals方法判断截取后的字节切片是否相等</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// HasPrefix tests whether the byte slice s begins with prefix.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">HasPrefix</span><span class="params">(s, prefix []<span class="keyword">byte</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> <span class="built_in">len</span>(s) &gt;= <span class="built_in">len</span>(prefix) &amp;&amp; Equal(s[<span class="number">0</span>:<span class="built_in">len</span>(prefix)], prefix)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// HasSuffix tests whether the byte slice s ends with suffix.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">HasSuffix</span><span class="params">(s, suffix []<span class="keyword">byte</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> <span class="built_in">len</span>(s) &gt;= <span class="built_in">len</span>(suffix) &amp;&amp; Equal(s[<span class="built_in">len</span>(s)-<span class="built_in">len</span>(suffix):], suffix)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Join"><a href="#Join" class="headerlink" title="Join"></a>Join</h3><ul>
+<li>Join函数，Fields的逆向操作，将二维字切片用sep切片拼接为一维字节切片</li>
+<li>对于二维切片数组不同的长度做了相应的拼接处理</li>
+<li>拼接过程中用内建函数copy来完成</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Join</span><span class="params">(s [][]<span class="keyword">byte</span>, sep []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(s) == <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">return</span> []<span class="keyword">byte</span>&#123;&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(s) == <span class="number">1</span> &#123;</div><div class="line">		<span class="comment">// Just return a copy.</span></div><div class="line">		<span class="keyword">return</span> <span class="built_in">append</span>([]<span class="keyword">byte</span>(<span class="literal">nil</span>), s[<span class="number">0</span>]...)</div><div class="line">	&#125;</div><div class="line">	n := <span class="built_in">len</span>(sep) * (<span class="built_in">len</span>(s) - <span class="number">1</span>)</div><div class="line">	<span class="keyword">for</span> _, v := <span class="keyword">range</span> s &#123;</div><div class="line">		n += <span class="built_in">len</span>(v)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	b := <span class="built_in">make</span>([]<span class="keyword">byte</span>, n)</div><div class="line">	bp := <span class="built_in">copy</span>(b, s[<span class="number">0</span>])</div><div class="line">	<span class="keyword">for</span> _, v := <span class="keyword">range</span> s[<span class="number">1</span>:] &#123;</div><div class="line">		bp += <span class="built_in">copy</span>(b[bp:], sep)</div><div class="line">		bp += <span class="built_in">copy</span>(b[bp:], v)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> b</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Last类函数"><a href="#Last类函数" class="headerlink" title="Last类函数"></a>Last类函数</h3><ul>
+<li>LastIndex函数返回s中sep最后一次出现的索引值</li>
+<li>LastIndexByte返回字节c在s中最后一次出现的索引值</li>
+<li>LastIndexAny返回s中最后一个出现的chars中的任意一个字符的索引值</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">LastIndex</span><span class="params">(s, sep []<span class="keyword">byte</span>)</span> <span class="title">int</span></span> &#123;</div><div class="line">	n := <span class="built_in">len</span>(sep)</div><div class="line">	<span class="keyword">if</span> n == <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="built_in">len</span>(s)</div><div class="line">	&#125;</div><div class="line">	c := sep[<span class="number">0</span>]</div><div class="line">	<span class="keyword">for</span> i := <span class="built_in">len</span>(s) - n; i &gt;= <span class="number">0</span>; i-- &#123;</div><div class="line">		<span class="keyword">if</span> s[i] == c &amp;&amp; (n == <span class="number">1</span> || Equal(s[i:i+n], sep)) &#123;</div><div class="line">			<span class="keyword">return</span> i</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">LastIndexByte</span><span class="params">(s []<span class="keyword">byte</span>, c <span class="keyword">byte</span>)</span> <span class="title">int</span></span> &#123;</div><div class="line">	<span class="keyword">for</span> i := <span class="built_in">len</span>(s) - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i-- &#123;</div><div class="line">		<span class="keyword">if</span> s[i] == c &#123;</div><div class="line">			<span class="keyword">return</span> i</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">LastIndexAny</span><span class="params">(s []<span class="keyword">byte</span>, chars <span class="keyword">string</span>)</span> <span class="title">int</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> chars == <span class="string">""</span> &#123;</div><div class="line">		<span class="comment">// Avoid scanning all of s.</span></div><div class="line">		<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(s) &gt; <span class="number">8</span> &#123;</div><div class="line">		<span class="keyword">if</span> as, isASCII := makeASCIISet(chars); isASCII &#123;</div><div class="line">			<span class="keyword">for</span> i := <span class="built_in">len</span>(s) - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i-- &#123;</div><div class="line">				<span class="keyword">if</span> as.contains(s[i]) &#123;</div><div class="line">					<span class="keyword">return</span> i</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">for</span> i := <span class="built_in">len</span>(s); i &gt; <span class="number">0</span>; &#123;</div><div class="line">		r, size := utf8.DecodeLastRune(s[:i])</div><div class="line">		i -= size</div><div class="line">		<span class="keyword">for</span> _, c := <span class="keyword">range</span> chars &#123;</div><div class="line">			<span class="keyword">if</span> r == c &#123;</div><div class="line">				<span class="keyword">return</span> i</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>LastIndexFunc返回满足函数f的最后一个字符的索引值</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">LastIndexFunc</span><span class="params">(s []<span class="keyword">byte</span>, f <span class="keyword">func</span>(r <span class="keyword">rune</span>)</span> <span class="title">bool</span>) <span class="title">int</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> lastIndexFunc(s, f, <span class="literal">true</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">lastIndexFunc</span><span class="params">(s []<span class="keyword">byte</span>, f <span class="keyword">func</span>(r <span class="keyword">rune</span>)</span> <span class="title">bool</span>, <span class="title">truth</span> <span class="title">bool</span>) <span class="title">int</span></span> &#123;</div><div class="line">	<span class="keyword">for</span> i := <span class="built_in">len</span>(s); i &gt; <span class="number">0</span>; &#123;</div><div class="line">		r, size := <span class="keyword">rune</span>(s[i<span class="number">-1</span>]), <span class="number">1</span></div><div class="line">		<span class="keyword">if</span> r &gt;= utf8.RuneSelf &#123;</div><div class="line">			r, size = utf8.DecodeLastRune(s[<span class="number">0</span>:i])</div><div class="line">		&#125;</div><div class="line">		i -= size</div><div class="line">		<span class="keyword">if</span> f(r) == truth &#123;</div><div class="line">			<span class="keyword">return</span> i</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h3><ul>
+<li>Map函数根据函数mapping完成s中字符的映射变换</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Map</span><span class="params">(mapping <span class="keyword">func</span>(r <span class="keyword">rune</span>)</span> <span class="title">rune</span>, <span class="title">s</span> []<span class="title">byte</span>) []<span class="title">byte</span></span> &#123;</div><div class="line">	maxbytes := <span class="built_in">len</span>(s) <span class="comment">// length of b</span></div><div class="line">	nbytes := <span class="number">0</span>        <span class="comment">// number of bytes encoded in b</span></div><div class="line">	b := <span class="built_in">make</span>([]<span class="keyword">byte</span>, maxbytes)</div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(s); &#123;</div><div class="line">		wid := <span class="number">1</span></div><div class="line">		r := <span class="keyword">rune</span>(s[i])</div><div class="line">		<span class="keyword">if</span> r &gt;= utf8.RuneSelf &#123;</div><div class="line">			r, wid = utf8.DecodeRune(s[i:])</div><div class="line">		&#125;</div><div class="line">		r = mapping(r)</div><div class="line">		<span class="keyword">if</span> r &gt;= <span class="number">0</span> &#123;</div><div class="line">			rl := utf8.RuneLen(r)</div><div class="line">			<span class="keyword">if</span> rl &lt; <span class="number">0</span> &#123;</div><div class="line">				rl = <span class="built_in">len</span>(<span class="keyword">string</span>(utf8.RuneError))</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">if</span> nbytes+rl &gt; maxbytes &#123;</div><div class="line">				<span class="comment">// Grow the buffer.</span></div><div class="line">				maxbytes = maxbytes*<span class="number">2</span> + utf8.UTFMax</div><div class="line">				nb := <span class="built_in">make</span>([]<span class="keyword">byte</span>, maxbytes)</div><div class="line">				<span class="built_in">copy</span>(nb, b[<span class="number">0</span>:nbytes])</div><div class="line">				b = nb</div><div class="line">			&#125;</div><div class="line">			nbytes += utf8.EncodeRune(b[nbytes:maxbytes], r)</div><div class="line">		&#125;</div><div class="line">		i += wid</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> b[<span class="number">0</span>:nbytes]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Repeat"><a href="#Repeat" class="headerlink" title="Repeat"></a>Repeat</h3><ul>
+<li>Repeat函数完成对s的多份复制，如{a,b}变为{a,b,a,b}</li>
+<li>程序中进行相乘的时候需要考虑溢出问题</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Repeat</span><span class="params">(b []<span class="keyword">byte</span>, count <span class="keyword">int</span>)</span> []<span class="title">byte</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> count &lt; <span class="number">0</span> &#123;</div><div class="line">		<span class="built_in">panic</span>(<span class="string">"bytes: negative Repeat count"</span>)</div><div class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> count &gt; <span class="number">0</span> &amp;&amp; <span class="built_in">len</span>(b)*count/count != <span class="built_in">len</span>(b) &#123;</div><div class="line">		<span class="built_in">panic</span>(<span class="string">"bytes: Repeat count causes overflow"</span>)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	nb := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="built_in">len</span>(b)*count)</div><div class="line">	bp := <span class="built_in">copy</span>(nb, b)</div><div class="line">	<span class="keyword">for</span> bp &lt; <span class="built_in">len</span>(nb) &#123;</div><div class="line">		<span class="built_in">copy</span>(nb[bp:], nb[:bp])</div><div class="line">		bp *= <span class="number">2</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> nb</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Replace"><a href="#Replace" class="headerlink" title="Replace"></a>Replace</h3><ul>
+<li>Replace函数完成字节切片替换，n为替换的个数，n&lt;0则替换全部</li>
+<li>Count函数用于计算old切片出现的次数</li>
+<li>Index用于查找要替换的旧切片old</li>
+<li>ReplaceAll将n设置为-1即可</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Replace</span><span class="params">(s, old, <span class="built_in">new</span> []<span class="keyword">byte</span>, n <span class="keyword">int</span>)</span> []<span class="title">byte</span></span> &#123;</div><div class="line">	m := <span class="number">0</span></div><div class="line">	<span class="keyword">if</span> n != <span class="number">0</span> &#123;</div><div class="line">		m = Count(s, old)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> m == <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="built_in">append</span>([]<span class="keyword">byte</span>(<span class="literal">nil</span>), s...)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> n &lt; <span class="number">0</span> || m &lt; n &#123;</div><div class="line">		n = m</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// Apply replacements to buffer.</span></div><div class="line">	t := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="built_in">len</span>(s)+n*(<span class="built_in">len</span>(<span class="built_in">new</span>)-<span class="built_in">len</span>(old)))</div><div class="line">	w := <span class="number">0</span></div><div class="line">	start := <span class="number">0</span></div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</div><div class="line">		j := start</div><div class="line">		<span class="keyword">if</span> <span class="built_in">len</span>(old) == <span class="number">0</span> &#123;</div><div class="line">			<span class="keyword">if</span> i &gt; <span class="number">0</span> &#123;</div><div class="line">				_, wid := utf8.DecodeRune(s[start:])</div><div class="line">				j += wid</div><div class="line">			&#125;</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			j += Index(s[start:], old)</div><div class="line">		&#125;</div><div class="line">		w += <span class="built_in">copy</span>(t[w:], s[start:j])</div><div class="line">		w += <span class="built_in">copy</span>(t[w:], <span class="built_in">new</span>)</div><div class="line">		start = j + <span class="built_in">len</span>(old)</div><div class="line">	&#125;</div><div class="line">	w += <span class="built_in">copy</span>(t[w:], s[start:])</div><div class="line">	<span class="keyword">return</span> t[<span class="number">0</span>:w]</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReplaceAll</span><span class="params">(s, old, <span class="built_in">new</span> []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> Replace(s, old, <span class="built_in">new</span>, <span class="number">-1</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Rune"><a href="#Rune" class="headerlink" title="Rune"></a>Rune</h3><ul>
+<li>Rune函数将字节数组转换成Rune切片，主要调用utf8编码的函数来实现</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Runes</span><span class="params">(s []<span class="keyword">byte</span>)</span> []<span class="title">rune</span></span> &#123;</div><div class="line">	t := <span class="built_in">make</span>([]<span class="keyword">rune</span>, utf8.RuneCount(s))</div><div class="line">	i := <span class="number">0</span></div><div class="line">	<span class="keyword">for</span> <span class="built_in">len</span>(s) &gt; <span class="number">0</span> &#123;</div><div class="line">		r, l := utf8.DecodeRune(s)</div><div class="line">		t[i] = r</div><div class="line">		i++</div><div class="line">		s = s[l:]</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> t</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Split函数"><a href="#Split函数" class="headerlink" title="Split函数"></a>Split函数</h3><ul>
+<li>SplitN函数表示将s按照分隔符sep分割成n份，不带分隔符，最后一份不再进行分割</li>
+<li>SplitAfterN表示将s按照分隔符sep分割成n份，最后一份不再进行分割，带分隔符</li>
+<li>Split函数将s按照分隔符sep进行分割，不带分隔符</li>
+<li>SplitAfter函数将s按照分隔符sep进行分割，带分隔符</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">SplitN</span><span class="params">(s, sep []<span class="keyword">byte</span>, n <span class="keyword">int</span>)</span> [][]<span class="title">byte</span></span> &#123; <span class="keyword">return</span> genSplit(s, sep, <span class="number">0</span>, n) &#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">SplitAfterN</span><span class="params">(s, sep []<span class="keyword">byte</span>, n <span class="keyword">int</span>)</span> [][]<span class="title">byte</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> genSplit(s, sep, <span class="built_in">len</span>(sep), n)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Split</span><span class="params">(s, sep []<span class="keyword">byte</span>)</span> [][]<span class="title">byte</span></span> &#123; <span class="keyword">return</span> genSplit(s, sep, <span class="number">0</span>, <span class="number">-1</span>) &#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">SplitAfter</span><span class="params">(s, sep []<span class="keyword">byte</span>)</span> [][]<span class="title">byte</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> genSplit(s, sep, <span class="built_in">len</span>(sep), <span class="number">-1</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Split类方法实际上都是对genSplit方法的封装</li>
+<li>sep为空的时候，用explode完成对字节切片的按照字符的分割</li>
+<li>索引定位的时候也是通过Index方法来实现的</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">genSplit</span><span class="params">(s, sep []<span class="keyword">byte</span>, sepSave, n <span class="keyword">int</span>)</span> [][]<span class="title">byte</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> n == <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(sep) == <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">return</span> explode(s, n)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> n &lt; <span class="number">0</span> &#123;</div><div class="line">		n = Count(s, sep) + <span class="number">1</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	a := <span class="built_in">make</span>([][]<span class="keyword">byte</span>, n)</div><div class="line">	n--</div><div class="line">	i := <span class="number">0</span></div><div class="line">	<span class="keyword">for</span> i &lt; n &#123;</div><div class="line">		m := Index(s, sep)</div><div class="line">		<span class="keyword">if</span> m &lt; <span class="number">0</span> &#123;</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		a[i] = s[: m+sepSave : m+sepSave]</div><div class="line">		s = s[m+<span class="built_in">len</span>(sep):]</div><div class="line">		i++</div><div class="line">	&#125;</div><div class="line">	a[i] = s</div><div class="line">	<span class="keyword">return</span> a[:i+<span class="number">1</span>]</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">explode</span><span class="params">(s []<span class="keyword">byte</span>, n <span class="keyword">int</span>)</span> [][]<span class="title">byte</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> n &lt;= <span class="number">0</span> &#123;</div><div class="line">		n = <span class="built_in">len</span>(s)</div><div class="line">	&#125;</div><div class="line">	a := <span class="built_in">make</span>([][]<span class="keyword">byte</span>, n)</div><div class="line">	<span class="keyword">var</span> size <span class="keyword">int</span></div><div class="line">	na := <span class="number">0</span></div><div class="line">	<span class="keyword">for</span> <span class="built_in">len</span>(s) &gt; <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">if</span> na+<span class="number">1</span> &gt;= n &#123;</div><div class="line">			a[na] = s</div><div class="line">			na++</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		_, size = utf8.DecodeRune(s)</div><div class="line">		a[na] = s[<span class="number">0</span>:size:size]</div><div class="line">		s = s[size:]</div><div class="line">		na++</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> a[<span class="number">0</span>:na]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Title"><a href="#Title" class="headerlink" title="Title"></a>Title</h3><ul>
+<li>Title方法利用Map完成对切片s首字母的大写转换</li>
+<li>isSeparator标识一个字符是否为边界字符</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Title</span><span class="params">(s []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123;</div><div class="line">	prev := <span class="string">' '</span></div><div class="line">	<span class="keyword">return</span> Map(</div><div class="line">		<span class="function"><span class="keyword">func</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">rune</span></span> &#123;</div><div class="line">			<span class="keyword">if</span> isSeparator(prev) &#123;</div><div class="line">				prev = r</div><div class="line">				<span class="keyword">return</span> unicode.ToTitle(r)</div><div class="line">			&#125;</div><div class="line">			prev = r</div><div class="line">			<span class="keyword">return</span> r</div><div class="line">		&#125;,</div><div class="line">		s)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">isSeparator</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	<span class="comment">// ASCII alphanumerics ad underscore are not separators</span></div><div class="line">	<span class="keyword">if</span> r &lt;= <span class="number">0x7F</span> &#123;</div><div class="line">		<span class="keyword">switch</span> &#123;</div><div class="line">		<span class="keyword">case</span> <span class="string">'0'</span> &lt;= r &amp;&amp; r &lt;= <span class="string">'9'</span>:</div><div class="line">			<span class="keyword">return</span> <span class="literal">false</span></div><div class="line">		<span class="keyword">case</span> <span class="string">'a'</span> &lt;= r &amp;&amp; r &lt;= <span class="string">'z'</span>:</div><div class="line">			<span class="keyword">return</span> <span class="literal">false</span></div><div class="line">		<span class="keyword">case</span> <span class="string">'A'</span> &lt;= r &amp;&amp; r &lt;= <span class="string">'Z'</span>:</div><div class="line">			<span class="keyword">return</span> <span class="literal">false</span></div><div class="line">		<span class="keyword">case</span> r == <span class="string">'_'</span>:</div><div class="line">			<span class="keyword">return</span> <span class="literal">false</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> <span class="literal">true</span></div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Letters and digits are not separators</span></div><div class="line">	<span class="keyword">if</span> unicode.IsLetter(r) || unicode.IsDigit(r) &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">false</span></div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Otherwise, all we can do for now is treat spaces as separators.</span></div><div class="line">	<span class="keyword">return</span> unicode.IsSpace(r)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="To类函数"><a href="#To类函数" class="headerlink" title="To类函数"></a>To类函数</h3><ul>
+<li>To类函数实际上都是对Map的一层封装，具体对字符的操作可以参照unicode包的方法</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">ToUpper</span><span class="params">(s []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123; <span class="keyword">return</span> Map(unicode.ToUpper, s) &#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">ToLower</span><span class="params">(s []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123; <span class="keyword">return</span> Map(unicode.ToLower, s) &#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">ToTitle</span><span class="params">(s []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123; <span class="keyword">return</span> Map(unicode.ToTitle, s) &#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">ToUpperSpecial</span><span class="params">(c unicode.SpecialCase, s []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> Map(c.ToUpper, s)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">ToLowerSpecial</span><span class="params">(c unicode.SpecialCase, s []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> Map(c.ToLower, s)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">ToTitleSpecial</span><span class="params">(c unicode.SpecialCase, s []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> Map(c.ToTitle, s)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Trim类函数"><a href="#Trim类函数" class="headerlink" title="Trim类函数"></a>Trim类函数</h3><ul>
+<li>Trim函数完成字节切片前后去除指定的字符数据</li>
+<li>Trim函数的实现是通过TrimFunc函数来实现的</li>
+<li>TrimFunc函数是通过组合TrimRightFunc和TrimLeftFunc来实现的</li>
+<li>TrimRightFunc完成右侧的字符截取，通过lastIndexFunc函数完成</li>
+<li>TrimLeftFunc完成左侧的字符截取，通过indexFunc函数完成</li>
+<li>Trim函数的筛选函数f是makeCutsetFunc函数的返回值</li>
+<li>makeCutsetFunc会分情况返回当前的字节是否属于该剔除的字符</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Trim</span><span class="params">(s []<span class="keyword">byte</span>, cutset <span class="keyword">string</span>)</span> []<span class="title">byte</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> TrimFunc(s, makeCutsetFunc(cutset))</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">TrimFunc</span><span class="params">(s []<span class="keyword">byte</span>, f <span class="keyword">func</span>(r <span class="keyword">rune</span>)</span> <span class="title">bool</span>) []<span class="title">byte</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> TrimRightFunc(TrimLeftFunc(s, f), f)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">TrimRightFunc</span><span class="params">(s []<span class="keyword">byte</span>, f <span class="keyword">func</span>(r <span class="keyword">rune</span>)</span> <span class="title">bool</span>) []<span class="title">byte</span></span> &#123;</div><div class="line">	i := lastIndexFunc(s, f, <span class="literal">false</span>)</div><div class="line">	<span class="keyword">if</span> i &gt;= <span class="number">0</span> &amp;&amp; s[i] &gt;= utf8.RuneSelf &#123;</div><div class="line">		_, wid := utf8.DecodeRune(s[i:])</div><div class="line">		i += wid</div><div class="line">	&#125; <span class="keyword">else</span> &#123;</div><div class="line">		i++</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> s[<span class="number">0</span>:i]</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">TrimLeftFunc</span><span class="params">(s []<span class="keyword">byte</span>, f <span class="keyword">func</span>(r <span class="keyword">rune</span>)</span> <span class="title">bool</span>) []<span class="title">byte</span></span> &#123;</div><div class="line">	i := indexFunc(s, f, <span class="literal">false</span>)</div><div class="line">	<span class="keyword">if</span> i == <span class="number">-1</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> s[i:]</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeCutsetFunc</span><span class="params">(cutset <span class="keyword">string</span>)</span> <span class="title">func</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(cutset) == <span class="number">1</span> &amp;&amp; cutset[<span class="number">0</span>] &lt; utf8.RuneSelf &#123;</div><div class="line">		<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">			<span class="keyword">return</span> r == <span class="keyword">rune</span>(cutset[<span class="number">0</span>])</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> as, isASCII := makeASCIISet(cutset); isASCII &#123;</div><div class="line">		<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">			<span class="keyword">return</span> r &lt; utf8.RuneSelf &amp;&amp; as.contains(<span class="keyword">byte</span>(r))</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">		<span class="keyword">for</span> _, c := <span class="keyword">range</span> cutset &#123;</div><div class="line">			<span class="keyword">if</span> c == r &#123;</div><div class="line">				<span class="keyword">return</span> <span class="literal">true</span></div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> <span class="literal">false</span></div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>TrimPrefix完成指定前缀的截取</li>
+<li>TrimSuffix完成指定后缀的截取</li>
+<li>TrimSpace完成对前后空白字符的截取</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">TrimPrefix</span><span class="params">(s, prefix []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> HasPrefix(s, prefix) &#123;</div><div class="line">		<span class="keyword">return</span> s[<span class="built_in">len</span>(prefix):]</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> s</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">TrimSuffix</span><span class="params">(s, suffix []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> HasSuffix(s, suffix) &#123;</div><div class="line">		<span class="keyword">return</span> s[:<span class="built_in">len</span>(s)-<span class="built_in">len</span>(suffix)]</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> s</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">TrimSpace</span><span class="params">(s []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> TrimFunc(s, unicode.IsSpace)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/go/" rel="tag"># go</a>
+          
+            <a href="/tags/源码解读/" rel="tag"># 源码解读</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/07/golang/源码解读/bytes/buffer/" rel="next" title="go源码解读-bytes.Buffer">
+                <i class="fa fa-chevron-left"></i> go源码解读-bytes.Buffer
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">90</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#bytes包常用函数"><span class="nav-number">1.</span> <span class="nav-text">bytes包常用函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Compare"><span class="nav-number">1.1.</span> <span class="nav-text">Compare</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Contains"><span class="nav-number">1.2.</span> <span class="nav-text">Contains</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Count"><span class="nav-number">1.3.</span> <span class="nav-text">Count</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Equal"><span class="nav-number">1.4.</span> <span class="nav-text">Equal</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EqualFold"><span class="nav-number">1.5.</span> <span class="nav-text">EqualFold</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fields"><span class="nav-number">1.6.</span> <span class="nav-text">Fields</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Has函数"><span class="nav-number">1.7.</span> <span class="nav-text">Has函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Join"><span class="nav-number">1.8.</span> <span class="nav-text">Join</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Last类函数"><span class="nav-number">1.9.</span> <span class="nav-text">Last类函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Map"><span class="nav-number">1.10.</span> <span class="nav-text">Map</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Repeat"><span class="nav-number">1.11.</span> <span class="nav-text">Repeat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Replace"><span class="nav-number">1.12.</span> <span class="nav-text">Replace</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Rune"><span class="nav-number">1.13.</span> <span class="nav-text">Rune</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Split函数"><span class="nav-number">1.14.</span> <span class="nav-text">Split函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Title"><span class="nav-number">1.15.</span> <span class="nav-text">Title</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#To类函数"><span class="nav-number">1.16.</span> <span class="nav-text">To类函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Trim类函数"><span class="nav-number">1.17.</span> <span class="nav-text">Trim类函数</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

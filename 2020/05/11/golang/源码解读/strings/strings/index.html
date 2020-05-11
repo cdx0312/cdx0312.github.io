@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="go,源码解读," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="strings包中的常用函数Contains类函数
+Contains函数返回字符串s中是否存在substr，具体实现的Index方法和bytes包中的实现类似，也是用了Rabin-Karp search进行字符匹配查找
+ContainsAny函数返回字符串s中是否存在chars中任意一个字符，实现中使用ASCiiSet的方法
+ContainsRune函数返回字符串s中是否包含字符r,通过Index">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go源码解读-strings包的工具函数">
+<meta property="og:url" content="http://yoursite.com/2020/05/11/golang/源码解读/strings/strings/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="strings包中的常用函数Contains类函数
+Contains函数返回字符串s中是否存在substr，具体实现的Index方法和bytes包中的实现类似，也是用了Rabin-Karp search进行字符匹配查找
+ContainsAny函数返回字符串s中是否存在chars中任意一个字符，实现中使用ASCiiSet的方法
+ContainsRune函数返回字符串s中是否包含字符r,通过Index">
+<meta property="og:updated_time" content="2020-05-11T09:31:20.868Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="go源码解读-strings包的工具函数">
+<meta name="twitter:description" content="strings包中的常用函数Contains类函数
+Contains函数返回字符串s中是否存在substr，具体实现的Index方法和bytes包中的实现类似，也是用了Rabin-Karp search进行字符匹配查找
+ContainsAny函数返回字符串s中是否存在chars中任意一个字符，实现中使用ASCiiSet的方法
+ContainsRune函数返回字符串s中是否包含字符r,通过Index">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/05/11/golang/源码解读/strings/strings/"/>
+
+
+
+
+
+  <title>go源码解读-strings包的工具函数 | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/11/golang/源码解读/strings/strings/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">go源码解读-strings包的工具函数</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-11T16:58:15+08:00">
+                2020-05-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/源码解读/" itemprop="url" rel="index">
+                    <span itemprop="name">源码解读</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="strings包中的常用函数"><a href="#strings包中的常用函数" class="headerlink" title="strings包中的常用函数"></a>strings包中的常用函数</h2><h3 id="Contains类函数"><a href="#Contains类函数" class="headerlink" title="Contains类函数"></a>Contains类函数</h3><ul>
+<li>Contains函数返回字符串s中是否存在substr，具体实现的Index方法和bytes包中的实现类似，也是用了Rabin-Karp search进行字符匹配查找</li>
+<li>ContainsAny函数返回字符串s中是否存在chars中任意一个字符，实现中使用ASCiiSet的方法</li>
+<li>ContainsRune函数返回字符串s中是否包含字符r,通过Index方法实现</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Contains reports whether substr is within s.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Contains</span><span class="params">(s, substr <span class="keyword">string</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> Index(s, substr) &gt;= <span class="number">0</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// ContainsAny reports whether any Unicode code points in chars are within s.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">ContainsAny</span><span class="params">(s, chars <span class="keyword">string</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> IndexAny(s, chars) &gt;= <span class="number">0</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">IndexAny</span><span class="params">(s, chars <span class="keyword">string</span>)</span> <span class="title">int</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> chars == <span class="string">""</span> &#123;</div><div class="line">		<span class="comment">// Avoid scanning all of s.</span></div><div class="line">		<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(s) &gt; <span class="number">8</span> &#123;</div><div class="line">		<span class="keyword">if</span> as, isASCII := makeASCIISet(chars); isASCII &#123;</div><div class="line">			<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(s); i++ &#123;</div><div class="line">				<span class="keyword">if</span> as.contains(s[i]) &#123;</div><div class="line">					<span class="keyword">return</span> i</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">for</span> i, c := <span class="keyword">range</span> s &#123;</div><div class="line">		<span class="keyword">for</span> _, m := <span class="keyword">range</span> chars &#123;</div><div class="line">			<span class="keyword">if</span> c == m &#123;</div><div class="line">				<span class="keyword">return</span> i</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// makeASCIISet creates a set of ASCII characters and reports whether all</span></div><div class="line"><span class="comment">// characters in chars are ASCII.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeASCIISet</span><span class="params">(chars <span class="keyword">string</span>)</span> <span class="params">(as asciiSet, ok <span class="keyword">bool</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(chars); i++ &#123;</div><div class="line">		c := chars[i]</div><div class="line">		<span class="keyword">if</span> c &gt;= utf8.RuneSelf &#123;</div><div class="line">			<span class="keyword">return</span> as, <span class="literal">false</span></div><div class="line">		&#125;</div><div class="line">		as[c&gt;&gt;<span class="number">5</span>] |= <span class="number">1</span> &lt;&lt; <span class="keyword">uint</span>(c&amp;<span class="number">31</span>)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> as, <span class="literal">true</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// ContainsRune reports whether the Unicode code point r is within s.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">ContainsRune</span><span class="params">(s <span class="keyword">string</span>, r <span class="keyword">rune</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> IndexRune(s, r) &gt;= <span class="number">0</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Fields"><a href="#Fields" class="headerlink" title="Fields"></a>Fields</h3><ul>
+<li>Fields函数将字符串按照空白字符进行切割，返回字符串数组</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Fields</span><span class="params">(s <span class="keyword">string</span>)</span> []<span class="title">string</span></span> &#123;</div><div class="line">	n := <span class="number">0</span></div><div class="line">	wasSpace := <span class="number">1</span></div><div class="line">	<span class="comment">// setBits is used to track which bits are set in the bytes of s.</span></div><div class="line">	setBits := <span class="keyword">uint8</span>(<span class="number">0</span>)</div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(s); i++ &#123;</div><div class="line">		r := s[i]</div><div class="line">		setBits |= r</div><div class="line">		isSpace := <span class="keyword">int</span>(asciiSpace[r])</div><div class="line">		n += wasSpace &amp; ^isSpace</div><div class="line">		wasSpace = isSpace</div><div class="line">	&#125;</div><div class="line"></div><div class="line">  <span class="comment">// ASCII编码的快捷返回</span></div><div class="line">	<span class="keyword">if</span> setBits &lt; utf8.RuneSelf &#123; <span class="comment">// ASCII fast path</span></div><div class="line">		a := <span class="built_in">make</span>([]<span class="keyword">string</span>, n)</div><div class="line">		na := <span class="number">0</span></div><div class="line">		fieldStart := <span class="number">0</span></div><div class="line">		i := <span class="number">0</span></div><div class="line">		<span class="comment">// Skip spaces in the front of the input.</span></div><div class="line">		<span class="keyword">for</span> i &lt; <span class="built_in">len</span>(s) &amp;&amp; asciiSpace[s[i]] != <span class="number">0</span> &#123;</div><div class="line">			i++</div><div class="line">		&#125;</div><div class="line">		fieldStart = i</div><div class="line">		<span class="keyword">for</span> i &lt; <span class="built_in">len</span>(s) &#123;</div><div class="line">			<span class="keyword">if</span> asciiSpace[s[i]] == <span class="number">0</span> &#123;</div><div class="line">				i++</div><div class="line">				<span class="keyword">continue</span></div><div class="line">			&#125;</div><div class="line">			a[na] = s[fieldStart:i]</div><div class="line">			na++</div><div class="line">			i++</div><div class="line">			<span class="comment">// Skip spaces in between fields.</span></div><div class="line">			<span class="keyword">for</span> i &lt; <span class="built_in">len</span>(s) &amp;&amp; asciiSpace[s[i]] != <span class="number">0</span> &#123;</div><div class="line">				i++</div><div class="line">			&#125;</div><div class="line">			fieldStart = i</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> fieldStart &lt; <span class="built_in">len</span>(s) &#123; <span class="comment">// Last field might end at EOF.</span></div><div class="line">			a[na] = s[fieldStart:]</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> a</div><div class="line">	&#125;</div><div class="line">  <span class="comment">// 调用FieldsFunc来完成字符串的分割操作</span></div><div class="line">	<span class="keyword">return</span> FieldsFunc(s, unicode.IsSpace)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">FieldsFunc</span><span class="params">(s <span class="keyword">string</span>, f <span class="keyword">func</span>(<span class="keyword">rune</span>)</span> <span class="title">bool</span>) []<span class="title">string</span></span> &#123;</div><div class="line">  <span class="comment">// 分割起点终点索引值</span></div><div class="line">	<span class="keyword">type</span> span <span class="keyword">struct</span> &#123;</div><div class="line">		start <span class="keyword">int</span></div><div class="line">		end   <span class="keyword">int</span></div><div class="line">	&#125;</div><div class="line">	spans := <span class="built_in">make</span>([]span, <span class="number">0</span>, <span class="number">32</span>)</div><div class="line"></div><div class="line">	<span class="comment">// Find the field start and end indices.</span></div><div class="line">	wasField := <span class="literal">false</span></div><div class="line">	fromIndex := <span class="number">0</span></div><div class="line">	<span class="keyword">for</span> i, <span class="keyword">rune</span> := <span class="keyword">range</span> s &#123;</div><div class="line">		<span class="keyword">if</span> f(<span class="keyword">rune</span>) &#123;</div><div class="line">			<span class="keyword">if</span> wasField &#123;</div><div class="line">				spans = <span class="built_in">append</span>(spans, span&#123;start: fromIndex, end: i&#125;)</div><div class="line">				wasField = <span class="literal">false</span></div><div class="line">			&#125;</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			<span class="keyword">if</span> !wasField &#123;</div><div class="line">				fromIndex = i</div><div class="line">				wasField = <span class="literal">true</span></div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// Last field might end at EOF.</span></div><div class="line">	<span class="keyword">if</span> wasField &#123;</div><div class="line">		spans = <span class="built_in">append</span>(spans, span&#123;fromIndex, <span class="built_in">len</span>(s)&#125;)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">  <span class="comment">// 返回结果值</span></div><div class="line">	a := <span class="built_in">make</span>([]<span class="keyword">string</span>, <span class="built_in">len</span>(spans))</div><div class="line">	<span class="keyword">for</span> i, span := <span class="keyword">range</span> spans &#123;</div><div class="line">		a[i] = s[span.start:span.end]</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">return</span> a</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Has函数"><a href="#Has函数" class="headerlink" title="Has函数"></a>Has函数</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// HasPrefix tests whether the string s begins with prefix.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">HasPrefix</span><span class="params">(s, prefix <span class="keyword">string</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> <span class="built_in">len</span>(s) &gt;= <span class="built_in">len</span>(prefix) &amp;&amp; s[<span class="number">0</span>:<span class="built_in">len</span>(prefix)] == prefix</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// HasSuffix tests whether the string s ends with suffix.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">HasSuffix</span><span class="params">(s, suffix <span class="keyword">string</span>)</span> <span class="title">bool</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> <span class="built_in">len</span>(s) &gt;= <span class="built_in">len</span>(suffix) &amp;&amp; s[<span class="built_in">len</span>(s)-<span class="built_in">len</span>(suffix):] == suffix</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Join函数"><a href="#Join函数" class="headerlink" title="Join函数"></a>Join函数</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Join</span><span class="params">(a []<span class="keyword">string</span>, sep <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</div><div class="line">	<span class="keyword">switch</span> <span class="built_in">len</span>(a) &#123;</div><div class="line">	<span class="keyword">case</span> <span class="number">0</span>:</div><div class="line">		<span class="keyword">return</span> <span class="string">""</span></div><div class="line">	<span class="keyword">case</span> <span class="number">1</span>:</div><div class="line">		<span class="keyword">return</span> a[<span class="number">0</span>]</div><div class="line">	&#125;</div><div class="line">  <span class="comment">// 计算结果需要的内存大小</span></div><div class="line">	n := <span class="built_in">len</span>(sep) * (<span class="built_in">len</span>(a) - <span class="number">1</span>)</div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(a); i++ &#123;</div><div class="line">		n += <span class="built_in">len</span>(a[i])</div><div class="line">	&#125;</div><div class="line"></div><div class="line">  <span class="comment">// 构建strings.Builder并分配内存</span></div><div class="line">	<span class="keyword">var</span> b Builder</div><div class="line">	b.Grow(n)</div><div class="line">  <span class="comment">// 将字符串数组s和sep逐个写入</span></div><div class="line">	b.WriteString(a[<span class="number">0</span>])</div><div class="line">	<span class="keyword">for</span> _, s := <span class="keyword">range</span> a[<span class="number">1</span>:] &#123;</div><div class="line">		b.WriteString(sep)</div><div class="line">		b.WriteString(s)</div><div class="line">	&#125;</div><div class="line">  <span class="comment">// 返回结果</span></div><div class="line">	<span class="keyword">return</span> b.String()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Last类函数"><a href="#Last类函数" class="headerlink" title="Last类函数"></a>Last类函数</h3><ul>
+<li>LastIndex函数返回最后一个匹配的substr的索引值，使用了Rabin-Karp算法</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">LastIndex</span><span class="params">(s, substr <span class="keyword">string</span>)</span> <span class="title">int</span></span> &#123;</div><div class="line">	n := <span class="built_in">len</span>(substr)</div><div class="line">	<span class="keyword">switch</span> &#123;</div><div class="line">	<span class="keyword">case</span> n == <span class="number">0</span>:</div><div class="line">		<span class="keyword">return</span> <span class="built_in">len</span>(s)</div><div class="line">	<span class="keyword">case</span> n == <span class="number">1</span>:</div><div class="line">		<span class="keyword">return</span> LastIndexByte(s, substr[<span class="number">0</span>])</div><div class="line">	<span class="keyword">case</span> n == <span class="built_in">len</span>(s):</div><div class="line">		<span class="keyword">if</span> substr == s &#123;</div><div class="line">			<span class="keyword">return</span> <span class="number">0</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">	<span class="keyword">case</span> n &gt; <span class="built_in">len</span>(s):</div><div class="line">		<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Rabin-Karp search from the end of the string</span></div><div class="line">	hashss, pow := hashStrRev(substr)</div><div class="line">	last := <span class="built_in">len</span>(s) - n</div><div class="line">	<span class="keyword">var</span> h <span class="keyword">uint32</span></div><div class="line">	<span class="keyword">for</span> i := <span class="built_in">len</span>(s) - <span class="number">1</span>; i &gt;= last; i-- &#123;</div><div class="line">		h = h*primeRK + <span class="keyword">uint32</span>(s[i])</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> h == hashss &amp;&amp; s[last:] == substr &#123;</div><div class="line">		<span class="keyword">return</span> last</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">for</span> i := last - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i-- &#123;</div><div class="line">		h *= primeRK</div><div class="line">		h += <span class="keyword">uint32</span>(s[i])</div><div class="line">		h -= pow * <span class="keyword">uint32</span>(s[i+n])</div><div class="line">		<span class="keyword">if</span> h == hashss &amp;&amp; s[i:i+n] == substr &#123;</div><div class="line">			<span class="keyword">return</span> i</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>LastIndexAny函数返回s中找到的最后一个chars中任意一个字符</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">LastIndexAny</span><span class="params">(s, chars <span class="keyword">string</span>)</span> <span class="title">int</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> chars == <span class="string">""</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(s) &gt; <span class="number">8</span> &#123;</div><div class="line">		<span class="keyword">if</span> as, isASCII := makeASCIISet(chars); isASCII &#123;</div><div class="line">			<span class="keyword">for</span> i := <span class="built_in">len</span>(s) - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i-- &#123;</div><div class="line">				<span class="keyword">if</span> as.contains(s[i]) &#123;</div><div class="line">					<span class="keyword">return</span> i</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">for</span> i := <span class="built_in">len</span>(s); i &gt; <span class="number">0</span>; &#123;</div><div class="line">		r, size := utf8.DecodeLastRuneInString(s[:i])</div><div class="line">		i -= size</div><div class="line">		<span class="keyword">for</span> _, c := <span class="keyword">range</span> chars &#123;</div><div class="line">			<span class="keyword">if</span> r == c &#123;</div><div class="line">				<span class="keyword">return</span> i</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>LastIndexByte返回s中匹配的最后一个字节c的索引值</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">LastIndexByte</span><span class="params">(s <span class="keyword">string</span>, c <span class="keyword">byte</span>)</span> <span class="title">int</span></span> &#123;</div><div class="line">	<span class="keyword">for</span> i := <span class="built_in">len</span>(s) - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i-- &#123;</div><div class="line">		<span class="keyword">if</span> s[i] == c &#123;</div><div class="line">			<span class="keyword">return</span> i</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Map函数"><a href="#Map函数" class="headerlink" title="Map函数"></a>Map函数</h3><ul>
+<li>Map函数根据映射规则函数mapping，完成对字符串s的字符替换</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Map</span><span class="params">(mapping <span class="keyword">func</span>(<span class="keyword">rune</span>)</span> <span class="title">rune</span>, <span class="title">s</span> <span class="title">string</span>) <span class="title">string</span></span> &#123;</div><div class="line">	<span class="keyword">var</span> b Builder</div><div class="line"></div><div class="line">	<span class="keyword">for</span> i, c := <span class="keyword">range</span> s &#123;</div><div class="line">		r := mapping(c)</div><div class="line">		<span class="keyword">if</span> r == c &amp;&amp; c != utf8.RuneError &#123;</div><div class="line">			<span class="keyword">continue</span></div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="keyword">var</span> width <span class="keyword">int</span></div><div class="line">		<span class="keyword">if</span> c == utf8.RuneError &#123;</div><div class="line">			c, width = utf8.DecodeRuneInString(s[i:])</div><div class="line">			<span class="keyword">if</span> width != <span class="number">1</span> &amp;&amp; r == c &#123;</div><div class="line">				<span class="keyword">continue</span></div><div class="line">			&#125;</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			width = utf8.RuneLen(c)</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		b.Grow(<span class="built_in">len</span>(s) + utf8.UTFMax)</div><div class="line">		b.WriteString(s[:i])</div><div class="line">		<span class="keyword">if</span> r &gt;= <span class="number">0</span> &#123;</div><div class="line">			b.WriteRune(r)</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		s = s[i+width:]</div><div class="line">		<span class="keyword">break</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">if</span> b.Cap() == <span class="number">0</span> &#123; <span class="comment">// didn't call b.Grow above</span></div><div class="line">		<span class="keyword">return</span> s</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">for</span> _, c := <span class="keyword">range</span> s &#123;</div><div class="line">		r := mapping(c)</div><div class="line"></div><div class="line">		<span class="keyword">if</span> r &gt;= <span class="number">0</span> &#123;</div><div class="line">			<span class="keyword">if</span> r &lt; utf8.RuneSelf &#123;</div><div class="line">				b.WriteByte(<span class="keyword">byte</span>(r))</div><div class="line">			&#125; <span class="keyword">else</span> &#123;</div><div class="line">				<span class="comment">// r is not a ASCII rune.</span></div><div class="line">				b.WriteRune(r)</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">return</span> b.String()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Repeat函数"><a href="#Repeat函数" class="headerlink" title="Repeat函数"></a>Repeat函数</h3><ul>
+<li>Repeat函数将字符串s复制count遍并组合到一起</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Repeat</span><span class="params">(s <span class="keyword">string</span>, count <span class="keyword">int</span>)</span> <span class="title">string</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> count == <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="string">""</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">if</span> count &lt; <span class="number">0</span> &#123;</div><div class="line">		<span class="built_in">panic</span>(<span class="string">"strings: negative Repeat count"</span>)</div><div class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> <span class="built_in">len</span>(s)*count/count != <span class="built_in">len</span>(s) &#123;</div><div class="line">		<span class="built_in">panic</span>(<span class="string">"strings: Repeat count causes overflow"</span>)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	n := <span class="built_in">len</span>(s) * count</div><div class="line">	<span class="keyword">var</span> b Builder</div><div class="line">	b.Grow(n)</div><div class="line">	b.WriteString(s)</div><div class="line">	<span class="keyword">for</span> b.Len() &lt; n &#123;</div><div class="line">		<span class="keyword">if</span> b.Len() &lt;= n/<span class="number">2</span> &#123;</div><div class="line">			b.WriteString(b.String())</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			b.WriteString(b.String()[:n-b.Len()])</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> b.String()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Replace"><a href="#Replace" class="headerlink" title="Replace"></a>Replace</h3><ul>
+<li>Replace方法完成对字符串的替换并制定替换的个数</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Replace</span><span class="params">(s, old, <span class="built_in">new</span> <span class="keyword">string</span>, n <span class="keyword">int</span>)</span> <span class="title">string</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> old == <span class="built_in">new</span> || n == <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">return</span> s <span class="comment">// avoid allocation</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// Compute number of replacements.</span></div><div class="line">	<span class="keyword">if</span> m := Count(s, old); m == <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">return</span> s <span class="comment">// avoid allocation</span></div><div class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> n &lt; <span class="number">0</span> || m &lt; n &#123;</div><div class="line">		n = m</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// Apply replacements to buffer.</span></div><div class="line">	t := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="built_in">len</span>(s)+n*(<span class="built_in">len</span>(<span class="built_in">new</span>)-<span class="built_in">len</span>(old)))</div><div class="line">	w := <span class="number">0</span></div><div class="line">	start := <span class="number">0</span></div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</div><div class="line">		j := start</div><div class="line">		<span class="keyword">if</span> <span class="built_in">len</span>(old) == <span class="number">0</span> &#123;</div><div class="line">			<span class="keyword">if</span> i &gt; <span class="number">0</span> &#123;</div><div class="line">				_, wid := utf8.DecodeRuneInString(s[start:])</div><div class="line">				j += wid</div><div class="line">			&#125;</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			j += Index(s[start:], old)</div><div class="line">		&#125;</div><div class="line">		w += <span class="built_in">copy</span>(t[w:], s[start:j])</div><div class="line">		w += <span class="built_in">copy</span>(t[w:], <span class="built_in">new</span>)</div><div class="line">		start = j + <span class="built_in">len</span>(old)</div><div class="line">	&#125;</div><div class="line">	w += <span class="built_in">copy</span>(t[w:], s[start:])</div><div class="line">	<span class="keyword">return</span> <span class="keyword">string</span>(t[<span class="number">0</span>:w])</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReplaceAll</span><span class="params">(s, old, <span class="built_in">new</span> <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> Replace(s, old, <span class="built_in">new</span>, <span class="number">-1</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Split方法"><a href="#Split方法" class="headerlink" title="Split方法"></a>Split方法</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Split</span><span class="params">(s, sep <span class="keyword">string</span>)</span> []<span class="title">string</span></span> &#123; <span class="keyword">return</span> genSplit(s, sep, <span class="number">0</span>, <span class="number">-1</span>) &#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">SplitAfter</span><span class="params">(s, sep <span class="keyword">string</span>)</span> []<span class="title">string</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> genSplit(s, sep, <span class="built_in">len</span>(sep), <span class="number">-1</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">SplitAfterN</span><span class="params">(s, sep <span class="keyword">string</span>, n <span class="keyword">int</span>)</span> []<span class="title">string</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> genSplit(s, sep, <span class="built_in">len</span>(sep), n)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">SplitN</span><span class="params">(s, sep <span class="keyword">string</span>, n <span class="keyword">int</span>)</span> []<span class="title">string</span></span> &#123; <span class="keyword">return</span> genSplit(s, sep, <span class="number">0</span>, n) &#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Split类函数实际上都是对genSplit函数的封装</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">genSplit</span><span class="params">(s, sep <span class="keyword">string</span>, sepSave, n <span class="keyword">int</span>)</span> []<span class="title">string</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> n == <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> sep == <span class="string">""</span> &#123;</div><div class="line">		<span class="keyword">return</span> explode(s, n)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> n &lt; <span class="number">0</span> &#123;</div><div class="line">		n = Count(s, sep) + <span class="number">1</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	a := <span class="built_in">make</span>([]<span class="keyword">string</span>, n)</div><div class="line">	n--</div><div class="line">	i := <span class="number">0</span></div><div class="line">	<span class="keyword">for</span> i &lt; n &#123;</div><div class="line">		m := Index(s, sep)</div><div class="line">		<span class="keyword">if</span> m &lt; <span class="number">0</span> &#123;</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		a[i] = s[:m+sepSave]</div><div class="line">		s = s[m+<span class="built_in">len</span>(sep):]</div><div class="line">		i++</div><div class="line">	&#125;</div><div class="line">	a[i] = s</div><div class="line">	<span class="keyword">return</span> a[:i+<span class="number">1</span>]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Title函数"><a href="#Title函数" class="headerlink" title="Title函数"></a>Title函数</h3><ul>
+<li>Title对Map进行了封装，将空白字符的下一个字符进行大写处理</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Title</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</div><div class="line">	prev := <span class="string">' '</span></div><div class="line">	<span class="keyword">return</span> Map(</div><div class="line">		<span class="function"><span class="keyword">func</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">rune</span></span> &#123;</div><div class="line">			<span class="keyword">if</span> isSeparator(prev) &#123;</div><div class="line">				prev = r</div><div class="line">				<span class="keyword">return</span> unicode.ToTitle(r)</div><div class="line">			&#125;</div><div class="line">			prev = r</div><div class="line">			<span class="keyword">return</span> r</div><div class="line">		&#125;,</div><div class="line">		s)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><em>To类方法和Trim类方法和bytes包中的类似，没有本质区别，不再赘述</em></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/go/" rel="tag"># go</a>
+          
+            <a href="/tags/源码解读/" rel="tag"># 源码解读</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/11/golang/源码解读/strings/search/" rel="next" title="go源码解读-strings.stringFinder">
+                <i class="fa fa-chevron-left"></i> go源码解读-strings.stringFinder
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/11/golang/源码解读/sort/sort/" rel="prev" title="go源码解读-sort">
+                go源码解读-sort <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">96</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#strings包中的常用函数"><span class="nav-number">1.</span> <span class="nav-text">strings包中的常用函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Contains类函数"><span class="nav-number">1.1.</span> <span class="nav-text">Contains类函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fields"><span class="nav-number">1.2.</span> <span class="nav-text">Fields</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Has函数"><span class="nav-number">1.3.</span> <span class="nav-text">Has函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Join函数"><span class="nav-number">1.4.</span> <span class="nav-text">Join函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Last类函数"><span class="nav-number">1.5.</span> <span class="nav-text">Last类函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Map函数"><span class="nav-number">1.6.</span> <span class="nav-text">Map函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Repeat函数"><span class="nav-number">1.7.</span> <span class="nav-text">Repeat函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Replace"><span class="nav-number">1.8.</span> <span class="nav-text">Replace</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Split方法"><span class="nav-number">1.9.</span> <span class="nav-text">Split方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Title函数"><span class="nav-number">1.10.</span> <span class="nav-text">Title函数</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

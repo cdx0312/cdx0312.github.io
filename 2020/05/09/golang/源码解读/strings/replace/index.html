@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="go,源码解读," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="Compare
+Compare只是提供一个方法，考虑性能的时候不建议调用
+建议使用内建操作符== &amp;gt; &amp;lt;进行字符串的比较，效率更高，性能更好
+
+123456789func Compare(a, b string) int &amp;#123;	if a == b &amp;#123;		return 0	&amp;#125;	if a &amp;lt; b &amp;#123;		return -1	&amp;#125;	retur">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go源码解读-strings.Compare、strings.Replace">
+<meta property="og:url" content="http://yoursite.com/2020/05/09/golang/源码解读/strings/replace/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="Compare
+Compare只是提供一个方法，考虑性能的时候不建议调用
+建议使用内建操作符== &amp;gt; &amp;lt;进行字符串的比较，效率更高，性能更好
+
+123456789func Compare(a, b string) int &amp;#123;	if a == b &amp;#123;		return 0	&amp;#125;	if a &amp;lt; b &amp;#123;		return -1	&amp;#125;	retur">
+<meta property="og:updated_time" content="2020-05-11T08:28:21.936Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="go源码解读-strings.Compare、strings.Replace">
+<meta name="twitter:description" content="Compare
+Compare只是提供一个方法，考虑性能的时候不建议调用
+建议使用内建操作符== &amp;gt; &amp;lt;进行字符串的比较，效率更高，性能更好
+
+123456789func Compare(a, b string) int &amp;#123;	if a == b &amp;#123;		return 0	&amp;#125;	if a &amp;lt; b &amp;#123;		return -1	&amp;#125;	retur">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/05/09/golang/源码解读/strings/replace/"/>
+
+
+
+
+
+  <title>go源码解读-strings.Compare、strings.Replace | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/09/golang/源码解读/strings/replace/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">go源码解读-strings.Compare、strings.Replace</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-09T11:14:43+08:00">
+                2020-05-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/源码解读/" itemprop="url" rel="index">
+                    <span itemprop="name">源码解读</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Compare"><a href="#Compare" class="headerlink" title="Compare"></a>Compare</h2><ul>
+<li>Compare只是提供一个方法，考虑性能的时候不建议调用</li>
+<li>建议使用内建操作符<code>== &gt; &lt;</code>进行字符串的比较，效率更高，性能更好</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Compare</span><span class="params">(a, b <span class="keyword">string</span>)</span> <span class="title">int</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> a == b &#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> a &lt; b &#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">-1</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> +<span class="number">1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="Replace"><a href="#Replace" class="headerlink" title="Replace"></a>Replace</h2><h3 id="replacer接口"><a href="#replacer接口" class="headerlink" title="replacer接口"></a>replacer接口</h3><ul>
+<li>抽象出来的所有replace方法都需要实现的接口</li>
+<li>包含Replace方法和WriteString方法</li>
+<li>Replace方法完成s中字符串的替换</li>
+<li>WriteString方法在将s写入w中完成s字符串的替换操作</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> replacer <span class="keyword">interface</span> &#123;</div><div class="line">	Replace(s <span class="keyword">string</span>) <span class="keyword">string</span></div><div class="line">	WriteString(w io.Writer, s <span class="keyword">string</span>) (n <span class="keyword">int</span>, err error)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Replace结构体"><a href="#Replace结构体" class="headerlink" title="Replace结构体"></a>Replace结构体</h3><ul>
+<li>Replacer结构体完成字符串切片的替换,第一个字符串是旧的，第二个是匹配到替换为新的字符串</li>
+<li>Replacer是线程安全的，可以用于并发编程中，通过once参数来实现</li>
+<li>NewReplacer完成Replacer结构体的初始化</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Replacer <span class="keyword">struct</span> &#123;</div><div class="line">	once   sync.Once <span class="comment">// guards buildOnce method</span></div><div class="line">	r      replacer</div><div class="line">	oldnew []<span class="keyword">string</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewReplacer</span><span class="params">(oldnew ...<span class="keyword">string</span>)</span> *<span class="title">Replacer</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(oldnew)%<span class="number">2</span> == <span class="number">1</span> &#123;</div><div class="line">		<span class="built_in">panic</span>(<span class="string">"strings.NewReplacer: odd argument count"</span>)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> &amp;Replacer&#123;oldnew: <span class="built_in">append</span>([]<span class="keyword">string</span>(<span class="literal">nil</span>), oldnew...)&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Replace本身实现了replacer接口</li>
+<li>实际上的替换操作是通过其参数r来完成的</li>
+<li>r.once.Do保证参数函数只被执行一次</li>
+<li>buildOnce函数完成对参数r的赋值，以及参数oldNew的置空操作</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Replacer)</span> <span class="title">Replace</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</div><div class="line">	r.once.Do(r.buildOnce)</div><div class="line">	<span class="keyword">return</span> r.r.Replace(s)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Replacer)</span> <span class="title">WriteString</span><span class="params">(w io.Writer, s <span class="keyword">string</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	r.once.Do(r.buildOnce)</div><div class="line">	<span class="keyword">return</span> r.r.WriteString(w, s)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Replacer)</span> <span class="title">buildOnce</span><span class="params">()</span></span> &#123;</div><div class="line">	r.r = r.build()</div><div class="line">	r.oldnew = <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="build方法"><a href="#build方法" class="headerlink" title="build方法"></a>build方法</h3><ul>
+<li>build函数完成Replace中r的构造，根据oldnew内容的不通进行筛选<ul>
+<li>如果替换的新旧字符串长度为2，且被替换的字符串的长度&gt;1，makeSingleStringReplacer完成替换</li>
+<li>如果被替换的字符串不是单字节数据，则调用函数makeGenericReplacer构建通用的替换器</li>
+<li>如果只是字节之间的替换，构造器为byteReplacer即可</li>
+<li>如果是将单个字节替换为string字符串的情况，则byteStringReplacer可以完成替换能力</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Replacer)</span> <span class="title">build</span><span class="params">()</span> <span class="title">replacer</span></span> &#123;</div><div class="line">	oldnew := b.oldnew</div><div class="line">  <span class="comment">// 如果替换的新旧字符串长度为2，且被替换的字符串的长度&gt;1，makeSingleStringReplacer完成替换</span></div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(oldnew) == <span class="number">2</span> &amp;&amp; <span class="built_in">len</span>(oldnew[<span class="number">0</span>]) &gt; <span class="number">1</span> &#123;</div><div class="line">		<span class="keyword">return</span> makeSingleStringReplacer(oldnew[<span class="number">0</span>], oldnew[<span class="number">1</span>])</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	allNewBytes := <span class="literal">true</span></div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(oldnew); i += <span class="number">2</span> &#123;</div><div class="line">    <span class="comment">// 如果被替换的字符串不是单字节数据，则调用函数makeGenericReplacer构建通用的替换器</span></div><div class="line">		<span class="keyword">if</span> <span class="built_in">len</span>(oldnew[i]) != <span class="number">1</span> &#123;</div><div class="line">			<span class="keyword">return</span> makeGenericReplacer(oldnew)</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> <span class="built_in">len</span>(oldnew[i+<span class="number">1</span>]) != <span class="number">1</span> &#123;</div><div class="line">			allNewBytes = <span class="literal">false</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">  <span class="comment">// 如果只是字节之间的替换，构造器为byteReplacer即可</span></div><div class="line">	<span class="keyword">if</span> allNewBytes &#123;</div><div class="line">		r := byteReplacer&#123;&#125;</div><div class="line">		<span class="keyword">for</span> i := <span class="keyword">range</span> r &#123;</div><div class="line">			r[i] = <span class="keyword">byte</span>(i)</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="keyword">for</span> i := <span class="built_in">len</span>(oldnew) - <span class="number">2</span>; i &gt;= <span class="number">0</span>; i -= <span class="number">2</span> &#123;</div><div class="line">			o := oldnew[i][<span class="number">0</span>]</div><div class="line">			n := oldnew[i+<span class="number">1</span>][<span class="number">0</span>]</div><div class="line">			r[o] = n</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> &amp;r</div><div class="line">	&#125;</div><div class="line"></div><div class="line">  <span class="comment">// 如果是将单个字节替换为string字符串的情况，则byteStringReplacer可以完成替换能力</span></div><div class="line">	r := byteStringReplacer&#123;toReplace: <span class="built_in">make</span>([]<span class="keyword">string</span>, <span class="number">0</span>, <span class="built_in">len</span>(oldnew)/<span class="number">2</span>)&#125;</div><div class="line">	<span class="keyword">for</span> i := <span class="built_in">len</span>(oldnew) - <span class="number">2</span>; i &gt;= <span class="number">0</span>; i -= <span class="number">2</span> &#123;</div><div class="line">		o := oldnew[i][<span class="number">0</span>]</div><div class="line">		n := oldnew[i+<span class="number">1</span>]</div><div class="line">		<span class="keyword">if</span> r.replacements[o] == <span class="literal">nil</span> &#123;</div><div class="line">      <span class="comment">// 这个地方用string([]byte&#123;o&#125;)是为了处理o为utf8编码的情况</span></div><div class="line">			r.toReplace = <span class="built_in">append</span>(r.toReplace, <span class="keyword">string</span>([]<span class="keyword">byte</span>&#123;o&#125;))</div><div class="line">		&#125;</div><div class="line">		r.replacements[o] = []<span class="keyword">byte</span>(n)</div><div class="line"></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> &amp;r</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="byteReplacer结构体"><a href="#byteReplacer结构体" class="headerlink" title="byteReplacer结构体"></a>byteReplacer结构体</h3><ul>
+<li>byteReplacer结构体完成单个ASCII编码字节的替换</li>
+<li>Replace方法利用一个256大小的字节数组来完成字节的替换工作</li>
+<li>WriteString完成替换，并将替换之后的数据写入到w中</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> byteReplacer [<span class="number">256</span>]<span class="keyword">byte</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *byteReplacer)</span> <span class="title">Replace</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</div><div class="line">	<span class="keyword">var</span> buf []<span class="keyword">byte</span> <span class="comment">// 懒初始化</span></div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(s); i++ &#123;</div><div class="line">		b := s[i]</div><div class="line">		<span class="keyword">if</span> r[b] != b &#123;</div><div class="line">			<span class="keyword">if</span> buf == <span class="literal">nil</span> &#123;</div><div class="line">				buf = []<span class="keyword">byte</span>(s)</div><div class="line">			&#125;</div><div class="line">			buf[i] = r[b]</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> buf == <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> s</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="keyword">string</span>(buf)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *byteReplacer)</span> <span class="title">WriteString</span><span class="params">(w io.Writer, s <span class="keyword">string</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	<span class="comment">// TODO(bradfitz): use io.WriteString with slices of s, avoiding allocation.</span></div><div class="line">	bufsize := <span class="number">32</span> &lt;&lt; <span class="number">10</span></div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(s) &lt; bufsize &#123;</div><div class="line">		bufsize = <span class="built_in">len</span>(s)</div><div class="line">	&#125;</div><div class="line">	buf := <span class="built_in">make</span>([]<span class="keyword">byte</span>, bufsize)</div><div class="line"></div><div class="line">	<span class="keyword">for</span> <span class="built_in">len</span>(s) &gt; <span class="number">0</span> &#123;</div><div class="line">		ncopy := <span class="built_in">copy</span>(buf, s)</div><div class="line">		s = s[ncopy:]</div><div class="line">    <span class="comment">// 替换操作</span></div><div class="line">		<span class="keyword">for</span> i, b := <span class="keyword">range</span> buf[:ncopy] &#123;</div><div class="line">			buf[i] = r[b]</div><div class="line">		&#125;</div><div class="line">    <span class="comment">// 写入操作</span></div><div class="line">		wn, err := w.Write(buf[:ncopy])</div><div class="line">		n += wn</div><div class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">return</span> n, err</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> n, <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="singleStringReplacer结构体"><a href="#singleStringReplacer结构体" class="headerlink" title="singleStringReplacer结构体"></a>singleStringReplacer结构体</h3><ul>
+<li>singleStringReplacer结构体包含两个参数<ul>
+<li>finder结构体用于进行字符串的查找</li>
+<li>value是查找到的字符串替换为的值</li>
+</ul>
+</li>
+<li>makeSingleStringReplacer完成singleStringReplacer的构建</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> singleStringReplacer <span class="keyword">struct</span> &#123;</div><div class="line">	finder *stringFinder</div><div class="line">	<span class="comment">// value is the new string that replaces that pattern when it's found.</span></div><div class="line">	value <span class="keyword">string</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeSingleStringReplacer</span><span class="params">(pattern <span class="keyword">string</span>, value <span class="keyword">string</span>)</span> *<span class="title">singleStringReplacer</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> &amp;singleStringReplacer&#123;finder: makeStringFinder(pattern), value: value&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Replace方法完成字符串的匹配替换</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *singleStringReplacer)</span> <span class="title">Replace</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</div><div class="line">	<span class="keyword">var</span> buf []<span class="keyword">byte</span></div><div class="line">	i, matched := <span class="number">0</span>, <span class="literal">false</span></div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">    <span class="comment">// 返回匹配到的起始位置</span></div><div class="line">		match := r.finder.next(s[i:])</div><div class="line">		<span class="keyword">if</span> match == <span class="number">-1</span> &#123;</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		matched = <span class="literal">true</span></div><div class="line">    <span class="comment">// 写入buf</span></div><div class="line">		buf = <span class="built_in">append</span>(buf, s[i:i+match]...)</div><div class="line">		buf = <span class="built_in">append</span>(buf, r.value...)</div><div class="line">		i += match + <span class="built_in">len</span>(r.finder.pattern)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> !matched &#123;</div><div class="line">		<span class="keyword">return</span> s</div><div class="line">	&#125;</div><div class="line">	buf = <span class="built_in">append</span>(buf, s[i:]...)</div><div class="line">	<span class="keyword">return</span> <span class="keyword">string</span>(buf)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>WriteString将匹配之后的结果写入w中</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *singleStringReplacer)</span> <span class="title">WriteString</span><span class="params">(w io.Writer, s <span class="keyword">string</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	sw := getStringWriter(w)</div><div class="line">	<span class="keyword">var</span> i, wn <span class="keyword">int</span></div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		match := r.finder.next(s[i:])</div><div class="line">		<span class="keyword">if</span> match == <span class="number">-1</span> &#123;</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		wn, err = sw.WriteString(s[i : i+match])</div><div class="line">		n += wn</div><div class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">return</span></div><div class="line">		&#125;</div><div class="line">		wn, err = sw.WriteString(r.value)</div><div class="line">		n += wn</div><div class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">return</span></div><div class="line">		&#125;</div><div class="line">		i += match + <span class="built_in">len</span>(r.finder.pattern)</div><div class="line">	&#125;</div><div class="line">	wn, err = sw.WriteString(s[i:])</div><div class="line">	n += wn</div><div class="line">	<span class="keyword">return</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">getStringWriter</span><span class="params">(w io.Writer)</span> <span class="title">io</span>.<span class="title">StringWriter</span></span> &#123;</div><div class="line">	sw, ok := w.(io.StringWriter)</div><div class="line">	<span class="keyword">if</span> !ok &#123;</div><div class="line">		sw = stringWriter&#123;w&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> sw</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// stringWriter实现了io.Writer接口</span></div><div class="line"><span class="keyword">type</span> stringWriter <span class="keyword">struct</span> &#123;</div><div class="line">	w io.Writer</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(w stringWriter)</span> <span class="title">WriteString</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">int</span>, error)</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> w.w.Write([]<span class="keyword">byte</span>(s))</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="byteStringReplacer-结构体"><a href="#byteStringReplacer-结构体" class="headerlink" title="byteStringReplacer 结构体"></a>byteStringReplacer 结构体</h3><ul>
+<li>byteStringReplacer完成字节替换成字符串的操作的结构体<ul>
+<li>replacements记录字符和字符串之间的替换映射关系</li>
+<li>toReplace记录待替换的字符数组，以[]string格式记录</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> byteStringReplacer <span class="keyword">struct</span> &#123;</div><div class="line">  <span class="comment">// 替换规则</span></div><div class="line">	replacements [<span class="number">256</span>][]<span class="keyword">byte</span></div><div class="line">  <span class="comment">// 待替换的字符串数组，实际上记录的是单个字符的字符串数组</span></div><div class="line">	toReplace []<span class="keyword">string</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">const</span> countCutOff = <span class="number">8</span></div></pre></td></tr></table></figure>
+<ul>
+<li>Replace方法替换中会根据字符串的长度采用效率更高的方法来确认替换后的字符串需要的空间</li>
+<li>然后遍历完成替换操作</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *byteStringReplacer)</span> <span class="title">Replace</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</div><div class="line">	newSize := <span class="built_in">len</span>(s)</div><div class="line">	anyChanges := <span class="literal">false</span></div><div class="line">	<span class="comment">// Is it faster to use Count?</span></div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(r.toReplace)*countCutOff &lt;= <span class="built_in">len</span>(s) &#123;</div><div class="line">		<span class="keyword">for</span> _, x := <span class="keyword">range</span> r.toReplace &#123;</div><div class="line">			<span class="keyword">if</span> c := Count(s, x); c != <span class="number">0</span> &#123;</div><div class="line">				<span class="comment">// The -1 is because we are replacing 1 byte with len(replacements[b]) bytes.</span></div><div class="line">				newSize += c * (<span class="built_in">len</span>(r.replacements[x[<span class="number">0</span>]]) - <span class="number">1</span>)</div><div class="line">				anyChanges = <span class="literal">true</span></div><div class="line">			&#125;</div><div class="line"></div><div class="line">		&#125;</div><div class="line">	&#125; <span class="keyword">else</span> &#123;</div><div class="line">		<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(s); i++ &#123;</div><div class="line">			b := s[i]</div><div class="line">			<span class="keyword">if</span> r.replacements[b] != <span class="literal">nil</span> &#123;</div><div class="line">				<span class="comment">// See above for explanation of -1</span></div><div class="line">				newSize += <span class="built_in">len</span>(r.replacements[b]) - <span class="number">1</span></div><div class="line">				anyChanges = <span class="literal">true</span></div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> !anyChanges &#123;</div><div class="line">		<span class="keyword">return</span> s</div><div class="line">	&#125;</div><div class="line">	buf := <span class="built_in">make</span>([]<span class="keyword">byte</span>, newSize)</div><div class="line">	j := <span class="number">0</span></div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(s); i++ &#123;</div><div class="line">		b := s[i]</div><div class="line">		<span class="keyword">if</span> r.replacements[b] != <span class="literal">nil</span> &#123;</div><div class="line">			j += <span class="built_in">copy</span>(buf[j:], r.replacements[b])</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			buf[j] = b</div><div class="line">			j++</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="keyword">string</span>(buf)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>WriteString则直接进行循环替换并写入w中</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *byteStringReplacer)</span> <span class="title">WriteString</span><span class="params">(w io.Writer, s <span class="keyword">string</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	sw := getStringWriter(w)</div><div class="line">	last := <span class="number">0</span></div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(s); i++ &#123;</div><div class="line">		b := s[i]</div><div class="line">		<span class="keyword">if</span> r.replacements[b] == <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">continue</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> last != i &#123;</div><div class="line">			nw, err := sw.WriteString(s[last:i])</div><div class="line">			n += nw</div><div class="line">			<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">				<span class="keyword">return</span> n, err</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		last = i + <span class="number">1</span></div><div class="line">		nw, err := w.Write(r.replacements[b])</div><div class="line">		n += nw</div><div class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">return</span> n, err</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> last != <span class="built_in">len</span>(s) &#123;</div><div class="line">		<span class="keyword">var</span> nw <span class="keyword">int</span></div><div class="line">		nw, err = sw.WriteString(s[last:])</div><div class="line">		n += nw</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="genericReplacer结构体"><a href="#genericReplacer结构体" class="headerlink" title="genericReplacer结构体"></a>genericReplacer结构体</h3><ul>
+<li>genericReplacer实际上是完整的通用算法，其余的各种分支是效率更高的快捷替换方法</li>
+<li>genericReplacer包含三个参数<ul>
+<li>root节点，，类型时trieNode，Trie树的根节点</li>
+<li>tableSize int类型 trie树的查找表大小</li>
+<li>mapping 完成字节到trie树索引的映射</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> genericReplacer <span class="keyword">struct</span> &#123;</div><div class="line">	root trieNode</div><div class="line">	<span class="comment">// tableSize is the size of a trie node's lookup table. It is the number</span></div><div class="line">	<span class="comment">// of unique key bytes.</span></div><div class="line">	tableSize <span class="keyword">int</span></div><div class="line">	<span class="comment">// mapping maps from key bytes to a dense index for trieNode.table.</span></div><div class="line">	mapping [<span class="number">256</span>]<span class="keyword">byte</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="trieNode结构体"><a href="#trieNode结构体" class="headerlink" title="trieNode结构体"></a>trieNode结构体</h4><ul>
+<li>trieNode是trie树的一个节点，含有5个参数<ul>
+<li>value为节点key/value对中的值，如果当前节点不是一个完整的key的话，value为空</li>
+<li>priority 优先值，当前节点为完整路径时大于0，否则优先级为0</li>
+<li>prefix,next，如果这两个非空，则当前节点有一个子节点</li>
+<li>table，如果table非空，则其中记录了所有的子节点</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> trieNode <span class="keyword">struct</span> &#123;</div><div class="line">	value <span class="keyword">string</span></div><div class="line">	priority <span class="keyword">int</span></div><div class="line">	prefix <span class="keyword">string</span></div><div class="line">	next   *trieNode</div><div class="line">	table []*trieNode</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>trieNode的add方法</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *trieNode)</span> <span class="title">add</span><span class="params">(key, val <span class="keyword">string</span>, priority <span class="keyword">int</span>, r *genericReplacer)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> key == <span class="string">""</span> &#123;</div><div class="line">		<span class="keyword">if</span> t.priority == <span class="number">0</span> &#123;</div><div class="line">			t.value = val</div><div class="line">			t.priority = priority</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">if</span> t.prefix != <span class="string">""</span> &#123;</div><div class="line">		<span class="comment">// n记录key和t.prefix的最大相同的前缀，也就是n之前是匹配的，n之后是不匹配的</span></div><div class="line">		<span class="keyword">var</span> n <span class="keyword">int</span></div><div class="line">		<span class="keyword">for</span> ; n &lt; <span class="built_in">len</span>(t.prefix) &amp;&amp; n &lt; <span class="built_in">len</span>(key); n++ &#123;</div><div class="line">			<span class="keyword">if</span> t.prefix[n] != key[n] &#123;</div><div class="line">				<span class="keyword">break</span></div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> n == <span class="built_in">len</span>(t.prefix) &#123;</div><div class="line">      <span class="comment">// 如果n和t.prefix的长度相等，也就是说key之后的部分都是没有的索引值</span></div><div class="line">			t.next.add(key[n:], val, priority, r)</div><div class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> n == <span class="number">0</span> &#123;</div><div class="line">      <span class="comment">// 首字母就不同，这时候需要在root节点创建个新的查找表</span></div><div class="line">			<span class="keyword">var</span> prefixNode *trieNode</div><div class="line">			<span class="keyword">if</span> <span class="built_in">len</span>(t.prefix) == <span class="number">1</span> &#123;</div><div class="line">				prefixNode = t.next</div><div class="line">			&#125; <span class="keyword">else</span> &#123;</div><div class="line">				prefixNode = &amp;trieNode&#123;</div><div class="line">					prefix: t.prefix[<span class="number">1</span>:],</div><div class="line">					next:   t.next,</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">			keyNode := <span class="built_in">new</span>(trieNode)</div><div class="line">			t.table = <span class="built_in">make</span>([]*trieNode, r.tableSize)</div><div class="line">			t.table[r.mapping[t.prefix[<span class="number">0</span>]]] = prefixNode</div><div class="line">			t.table[r.mapping[key[<span class="number">0</span>]]] = keyNode</div><div class="line">			t.prefix = <span class="string">""</span></div><div class="line">			t.next = <span class="literal">nil</span></div><div class="line">			keyNode.add(key[<span class="number">1</span>:], val, priority, r)</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">      <span class="comment">// 插入节点数据</span></div><div class="line">			next := &amp;trieNode&#123;</div><div class="line">				prefix: t.prefix[n:],</div><div class="line">				next:   t.next,</div><div class="line">			&#125;</div><div class="line">			t.prefix = t.prefix[:n]</div><div class="line">			t.next = next</div><div class="line">			next.add(key[n:], val, priority, r)</div><div class="line">		&#125;</div><div class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> t.table != <span class="literal">nil</span> &#123;</div><div class="line">    <span class="comment">// 插入已经存在table列表中心的节点</span></div><div class="line">		m := r.mapping[key[<span class="number">0</span>]]</div><div class="line">		<span class="keyword">if</span> t.table[m] == <span class="literal">nil</span> &#123;</div><div class="line">			t.table[m] = <span class="built_in">new</span>(trieNode)</div><div class="line">		&#125;</div><div class="line">		t.table[m].add(key[<span class="number">1</span>:], val, priority, r)</div><div class="line">	&#125; <span class="keyword">else</span> &#123;</div><div class="line">    <span class="comment">// 创建根节点</span></div><div class="line">		t.prefix = key</div><div class="line">		t.next = <span class="built_in">new</span>(trieNode)</div><div class="line">		t.next.add(<span class="string">""</span>, val, priority, r)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="Replace方法"><a href="#Replace方法" class="headerlink" title="Replace方法"></a>Replace方法</h4><ul>
+<li>Replace方法实际上是对WriteString方法的调用，将s替换之后的结果写入到buf中</li>
+<li>buf实际上是对io.Writer接口的实现</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *genericReplacer)</span> <span class="title">Replace</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</div><div class="line">	buf := <span class="built_in">make</span>(appendSliceWriter, <span class="number">0</span>, <span class="built_in">len</span>(s))</div><div class="line">	r.WriteString(&amp;buf, s)</div><div class="line">	<span class="keyword">return</span> <span class="keyword">string</span>(buf)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> appendSliceWriter []<span class="keyword">byte</span></div><div class="line"></div><div class="line"><span class="comment">// Write writes to the buffer to satisfy io.Writer.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(w *appendSliceWriter)</span> <span class="title">Write</span><span class="params">(p []<span class="keyword">byte</span>)</span> <span class="params">(<span class="keyword">int</span>, error)</span></span> &#123;</div><div class="line">	*w = <span class="built_in">append</span>(*w, p...)</div><div class="line">	<span class="keyword">return</span> <span class="built_in">len</span>(p), <span class="literal">nil</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// WriteString writes to the buffer without string-&gt;[]byte-&gt;string allocations.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(w *appendSliceWriter)</span> <span class="title">WriteString</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">int</span>, error)</span></span> &#123;</div><div class="line">	*w = <span class="built_in">append</span>(*w, s...)</div><div class="line">	<span class="keyword">return</span> <span class="built_in">len</span>(s), <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="WriteString方法"><a href="#WriteString方法" class="headerlink" title="WriteString方法"></a>WriteString方法</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *genericReplacer)</span> <span class="title">WriteString</span><span class="params">(w io.Writer, s <span class="keyword">string</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	sw := getStringWriter(w)</div><div class="line">	<span class="keyword">var</span> last, wn <span class="keyword">int</span></div><div class="line">	<span class="keyword">var</span> prevMatchEmpty <span class="keyword">bool</span></div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt;= <span class="built_in">len</span>(s); &#123;</div><div class="line">		<span class="keyword">if</span> i != <span class="built_in">len</span>(s) &amp;&amp; r.root.priority == <span class="number">0</span> &#123;</div><div class="line">			index := <span class="keyword">int</span>(r.mapping[s[i]])</div><div class="line">			<span class="keyword">if</span> index == r.tableSize || r.root.table[index] == <span class="literal">nil</span> &#123;</div><div class="line">				i++</div><div class="line">				<span class="keyword">continue</span></div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		val, keylen, match := r.lookup(s[i:], prevMatchEmpty)</div><div class="line">		prevMatchEmpty = match &amp;&amp; keylen == <span class="number">0</span></div><div class="line">		<span class="keyword">if</span> match &#123;</div><div class="line">			wn, err = sw.WriteString(s[last:i])</div><div class="line">			n += wn</div><div class="line">			<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">				<span class="keyword">return</span></div><div class="line">			&#125;</div><div class="line">			wn, err = sw.WriteString(val)</div><div class="line">			n += wn</div><div class="line">			<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">				<span class="keyword">return</span></div><div class="line">			&#125;</div><div class="line">			i += keylen</div><div class="line">			last = i</div><div class="line">			<span class="keyword">continue</span></div><div class="line">		&#125;</div><div class="line">		i++</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> last != <span class="built_in">len</span>(s) &#123;</div><div class="line">		wn, err = sw.WriteString(s[last:])</div><div class="line">		n += wn</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 查找方法</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *genericReplacer)</span> <span class="title">lookup</span><span class="params">(s <span class="keyword">string</span>, ignoreRoot <span class="keyword">bool</span>)</span> <span class="params">(val <span class="keyword">string</span>, keylen <span class="keyword">int</span>, found <span class="keyword">bool</span>)</span></span> &#123;</div><div class="line">	bestPriority := <span class="number">0</span></div><div class="line">	node := &amp;r.root</div><div class="line">	n := <span class="number">0</span></div><div class="line">	<span class="keyword">for</span> node != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">if</span> node.priority &gt; bestPriority &amp;&amp; !(ignoreRoot &amp;&amp; node == &amp;r.root) &#123;</div><div class="line">			bestPriority = node.priority</div><div class="line">			val = node.value</div><div class="line">			keylen = n</div><div class="line">			found = <span class="literal">true</span></div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="keyword">if</span> s == <span class="string">""</span> &#123;</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> node.table != <span class="literal">nil</span> &#123;</div><div class="line">			index := r.mapping[s[<span class="number">0</span>]]</div><div class="line">			<span class="keyword">if</span> <span class="keyword">int</span>(index) == r.tableSize &#123;</div><div class="line">				<span class="keyword">break</span></div><div class="line">			&#125;</div><div class="line">			node = node.table[index]</div><div class="line">			s = s[<span class="number">1</span>:]</div><div class="line">			n++</div><div class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> node.prefix != <span class="string">""</span> &amp;&amp; HasPrefix(s, node.prefix) &#123;</div><div class="line">			n += <span class="built_in">len</span>(node.prefix)</div><div class="line">			s = s[<span class="built_in">len</span>(node.prefix):]</div><div class="line">			node = node.next</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 创建通用的替换器，实际上是完成trie树的构建</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeGenericReplacer</span><span class="params">(oldnew []<span class="keyword">string</span>)</span> *<span class="title">genericReplacer</span></span> &#123;</div><div class="line">	r := <span class="built_in">new</span>(genericReplacer)</div><div class="line">	<span class="comment">// Find each byte used, then assign them each an index.</span></div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(oldnew); i += <span class="number">2</span> &#123;</div><div class="line">		key := oldnew[i]</div><div class="line">		<span class="keyword">for</span> j := <span class="number">0</span>; j &lt; <span class="built_in">len</span>(key); j++ &#123;</div><div class="line">			r.mapping[key[j]] = <span class="number">1</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">for</span> _, b := <span class="keyword">range</span> r.mapping &#123;</div><div class="line">		r.tableSize += <span class="keyword">int</span>(b)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">var</span> index <span class="keyword">byte</span></div><div class="line">	<span class="keyword">for</span> i, b := <span class="keyword">range</span> r.mapping &#123;</div><div class="line">		<span class="keyword">if</span> b == <span class="number">0</span> &#123;</div><div class="line">			r.mapping[i] = <span class="keyword">byte</span>(r.tableSize)</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			r.mapping[i] = index</div><div class="line">			index++</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Ensure root node uses a lookup table (for performance).</span></div><div class="line">	r.root.table = <span class="built_in">make</span>([]*trieNode, r.tableSize)</div><div class="line"></div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(oldnew); i += <span class="number">2</span> &#123;</div><div class="line">		r.root.add(oldnew[i], oldnew[i+<span class="number">1</span>], <span class="built_in">len</span>(oldnew)-i, r)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> r</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/go/" rel="tag"># go</a>
+          
+            <a href="/tags/源码解读/" rel="tag"># 源码解读</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/09/golang/源码解读/strings/reader/" rel="next" title="go源码解读-strings.Reader">
+                <i class="fa fa-chevron-left"></i> go源码解读-strings.Reader
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/11/golang/源码解读/strings/search/" rel="prev" title="go源码解读-strings.stringFinder">
+                go源码解读-strings.stringFinder <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">96</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Compare"><span class="nav-number">1.</span> <span class="nav-text">Compare</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Replace"><span class="nav-number">2.</span> <span class="nav-text">Replace</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#replacer接口"><span class="nav-number">2.1.</span> <span class="nav-text">replacer接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Replace结构体"><span class="nav-number">2.2.</span> <span class="nav-text">Replace结构体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#build方法"><span class="nav-number">2.3.</span> <span class="nav-text">build方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#byteReplacer结构体"><span class="nav-number">2.4.</span> <span class="nav-text">byteReplacer结构体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#singleStringReplacer结构体"><span class="nav-number">2.5.</span> <span class="nav-text">singleStringReplacer结构体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#byteStringReplacer-结构体"><span class="nav-number">2.6.</span> <span class="nav-text">byteStringReplacer 结构体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#genericReplacer结构体"><span class="nav-number">2.7.</span> <span class="nav-text">genericReplacer结构体</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#trieNode结构体"><span class="nav-number">2.7.1.</span> <span class="nav-text">trieNode结构体</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Replace方法"><span class="nav-number">2.7.2.</span> <span class="nav-text">Replace方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#WriteString方法"><span class="nav-number">2.7.3.</span> <span class="nav-text">WriteString方法</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

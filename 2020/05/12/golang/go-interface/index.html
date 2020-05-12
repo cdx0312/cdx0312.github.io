@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="go," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="interface概念
+go中的接口使用隐式实现的
+LSP里式替换-一个类型可以自由的使用另一个满足相同接口的类型来进行替换
+接口类型具体描述了一系列方法的集合，一个实现了这些方法的具体类型时这个接口类型的实例
+go标准库存在大量的单方法接口的命名习惯
+  12345678package iotype Reader interface &amp;#123;    Read(p []byte) (n int">
+<meta property="og:type" content="article">
+<meta property="og:title" content="golang interface学习">
+<meta property="og:url" content="http://yoursite.com/2020/05/12/golang/go-interface/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="interface概念
+go中的接口使用隐式实现的
+LSP里式替换-一个类型可以自由的使用另一个满足相同接口的类型来进行替换
+接口类型具体描述了一系列方法的集合，一个实现了这些方法的具体类型时这个接口类型的实例
+go标准库存在大量的单方法接口的命名习惯
+  12345678package iotype Reader interface &amp;#123;    Read(p []byte) (n int">
+<meta property="og:updated_time" content="2020-05-12T09:37:03.432Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="golang interface学习">
+<meta name="twitter:description" content="interface概念
+go中的接口使用隐式实现的
+LSP里式替换-一个类型可以自由的使用另一个满足相同接口的类型来进行替换
+接口类型具体描述了一系列方法的集合，一个实现了这些方法的具体类型时这个接口类型的实例
+go标准库存在大量的单方法接口的命名习惯
+  12345678package iotype Reader interface &amp;#123;    Read(p []byte) (n int">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/05/12/golang/go-interface/"/>
+
+
+
+
+
+  <title>golang interface学习 | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/12/golang/go-interface/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">golang interface学习</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-12T17:36:31+08:00">
+                2020-05-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="interface"><a href="#interface" class="headerlink" title="interface"></a>interface</h1><h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><ul>
+<li>go中的接口使用隐式实现的</li>
+<li>LSP里式替换-一个类型可以自由的使用另一个满足相同接口的类型来进行替换</li>
+<li>接口类型具体描述了一系列方法的集合，一个实现了这些方法的具体类型时这个接口类型的实例</li>
+<li><p>go标准库存在大量的单方法接口的命名习惯</p>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> io</div><div class="line"><span class="keyword">type</span> Reader <span class="keyword">interface</span> &#123;</div><div class="line">    Read(p []<span class="keyword">byte</span>) (n <span class="keyword">int</span>, err error)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> Closer <span class="keyword">interface</span> &#123;</div><div class="line">    Close() error</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>接口内嵌，关注的是内嵌的方法，和组合的设计模式思想类似</p>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> ReadWriterCloser <span class="keyword">interface</span> &#123;</div><div class="line">    Reader</div><div class="line">    Writer</div><div class="line">    Closer</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>一个类型持有一个方法，对于一个具体类型T，其一些方法的接收者可以是T也可以是T的指针，是因为比那一起隐式的获取了变量的地址。但是实际上T类型的值是不拥有所有*T指针的方法，这样就可能其实现更少的接口</p>
+<ul>
+<li><p>IntSet类型的String方法的接收者是一个指针类型，则不能在一个不能寻址的IntSet值上调用这个方法</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">type IntSet struct &#123;/* ... */&#125;</div><div class="line">func (*IntSet) String() string</div><div class="line">var _ = IntSet&#123;&#125;.String() // compile error : String requires *IntSet receiver</div></pre></td></tr></table></figure>
+</li>
+<li><p>但是可以在一个IntSet值上调用这个方法</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var s IntSet</div><div class="line">var _ = s.String() // ok</div></pre></td></tr></table></figure>
+</li>
+<li><p>同时只有IntSet类型有String类型，也只有IntSet类型实现了fmt.Stringer接口</p>
+</li>
+</ul>
+</li>
+<li><p>接口类型封装和隐藏了具体类型和它的值，及时具体类型有其他方法也只有接口类型暴露出来的方法会被调用，也就是说一个具体的类型可以实现很多的接口，在调用的时候看持有这个变量的类型时哪个接口，就可以调用该接口的方法，而其他接口在该类型中实现的方法是被隐藏的。</p>
+</li>
+<li><p>空接口interface{}可以承接任意的值</p>
+</li>
+<li><p>每一个具体类型的组基于他们相同的行为可以表示成一个接口类型，不需要修改具体类型的定义，这个地方感觉还是组合的思想</p>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 出售数字文化产品如音乐，书籍，电影等</span></div><div class="line"><span class="keyword">type</span> Artifact <span class="keyword">interface</span> &#123;</div><div class="line">    Title() <span class="keyword">string</span></div><div class="line">    Creator() []<span class="keyword">string</span></div><div class="line">    Created() time.Time</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> Text <span class="keyword">interface</span> &#123;</div><div class="line">    Pages() <span class="keyword">int</span></div><div class="line">    Words() <span class="keyword">int</span></div><div class="line">    PageSize() <span class="keyword">int</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> Audio <span class="keyword">interface</span> &#123;</div><div class="line">    Stream() (io.Readerclose, error)</div><div class="line">    RunningTime() time.Duration</div><div class="line">    Format() <span class="keyword">string</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> Video <span class="keyword">interface</span> &#123;</div><div class="line">    Stream() (io.ReadCloser, error)</div><div class="line">    RunningTime() time.Duration</div><div class="line">    Format() <span class="keyword">string</span></div><div class="line">    Resolution() (x, y <span class="keyword">int</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="flag-Value接口"><a href="#flag-Value接口" class="headerlink" title="flag.Value接口"></a>flag.Value接口</h2><h3 id="flag-Duration方法"><a href="#flag-Duration方法" class="headerlink" title="flag.Duration方法"></a>flag.Duration方法</h3><ul>
+<li>flag可以为程序预设命令行参数，会有一个参数缺省默认值</li>
+<li>flag.Duration函数创建一个time.Duration类型的标记变量并且允许用户通过多种用户友好的方式来设置这个值的大小</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> period = flag.Duration(<span class="string">"period"</span>, <span class="number">1</span> * time.Second, <span class="string">"Sleep duration"</span>)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	flag.Parse()</div><div class="line">	fmt.Printf(<span class="string">"Sleeping for %v..."</span>, *period)</div><div class="line">	time.Sleep(*period)</div><div class="line">	fmt.Println(<span class="string">"end"</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>首先看flag.Duration方法，返回的是一个地址指着</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Duration</span><span class="params">(name <span class="keyword">string</span>, value time.Duration, usage <span class="keyword">string</span>)</span> *<span class="title">time</span>.<span class="title">Duration</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> CommandLine.Duration(name, value, usage)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>然后看CommandLine的结构体和其Duration方法</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> CommandLine = NewFlagSet(os.Args[<span class="number">0</span>], ExitOnError)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewFlagSet</span><span class="params">(name <span class="keyword">string</span>, errorHandling ErrorHandling)</span> *<span class="title">FlagSet</span></span> &#123;</div><div class="line">	f := &amp;FlagSet&#123;</div><div class="line">		name:          name,</div><div class="line">		errorHandling: errorHandling,</div><div class="line">	&#125;</div><div class="line">	f.Usage = f.defaultUsage</div><div class="line">	<span class="keyword">return</span> f</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *FlagSet)</span> <span class="title">Duration</span><span class="params">(name <span class="keyword">string</span>, value time.Duration, usage <span class="keyword">string</span>)</span> *<span class="title">time</span>.<span class="title">Duration</span></span> &#123;</div><div class="line">	p := <span class="built_in">new</span>(time.Duration)</div><div class="line">	f.DurationVar(p, name, value, usage)</div><div class="line">	<span class="keyword">return</span> p</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *FlagSet)</span> <span class="title">DurationVar</span><span class="params">(p *time.Duration, name <span class="keyword">string</span>, value time.Duration, usage <span class="keyword">string</span>)</span></span> &#123;</div><div class="line">	f.Var(newDurationValue(value, p), name, usage)</div><div class="line">&#125;</div><div class="line"><span class="comment">// 真正实现值注入的地方</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *FlagSet)</span> <span class="title">Var</span><span class="params">(value Value, name <span class="keyword">string</span>, usage <span class="keyword">string</span>)</span></span> &#123;</div><div class="line">	<span class="comment">// Remember the default value as a string; it won't change.</span></div><div class="line">	flag := &amp;Flag&#123;name, usage, value, value.String()&#125;</div><div class="line">	_, alreadythere := f.formal[name]</div><div class="line">	<span class="keyword">if</span> alreadythere &#123;</div><div class="line">		<span class="keyword">var</span> msg <span class="keyword">string</span></div><div class="line">		<span class="keyword">if</span> f.name == <span class="string">""</span> &#123;</div><div class="line">			msg = fmt.Sprintf(<span class="string">"flag redefined: %s"</span>, name)</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			msg = fmt.Sprintf(<span class="string">"%s flag redefined: %s"</span>, f.name, name)</div><div class="line">		&#125;</div><div class="line">		fmt.Fprintln(f.Output(), msg)</div><div class="line">		<span class="built_in">panic</span>(msg) <span class="comment">// Happens only if flags are declared with identical names</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> f.formal == <span class="literal">nil</span> &#123;</div><div class="line">		f.formal = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]*Flag)</div><div class="line">	&#125;</div><div class="line">	f.formal[name] = flag</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>实际上所有的Flag值保存在FlagSet结构体中的formal（map[string] *Flag）中</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> FlagSet <span class="keyword">struct</span> &#123;</div><div class="line">	<span class="comment">// Usage is the function called when an error occurs while parsing flags.</span></div><div class="line">	Usage <span class="function"><span class="keyword">func</span><span class="params">()</span></span></div><div class="line"><span class="function"></span></div><div class="line"><span class="function">	<span class="title">name</span>          <span class="title">string</span></span></div><div class="line"><span class="function">	<span class="title">parsed</span>        <span class="title">bool</span></span></div><div class="line"><span class="function">	<span class="title">actual</span>        <span class="title">map</span>[<span class="title">string</span>]*<span class="title">Flag</span></span></div><div class="line"><span class="function">	<span class="title">formal</span>        <span class="title">map</span>[<span class="title">string</span>]*<span class="title">Flag</span></span></div><div class="line"><span class="function">	<span class="title">args</span>          []<span class="title">string</span> // <span class="title">arguments</span> <span class="title">after</span> <span class="title">flags</span></span></div><div class="line"><span class="function">	<span class="title">errorHandling</span> <span class="title">ErrorHandling</span></span></div><div class="line"><span class="function">	<span class="title">output</span>        <span class="title">io</span>.<span class="title">Writer</span> // <span class="title">nil</span> <span class="title">means</span> <span class="title">stderr</span>; <span class="title">use</span> <span class="title">out</span><span class="params">()</span> <span class="title">accessor</span></span></div><div class="line"><span class="function">&#125;</span></div><div class="line"><span class="function"></span></div><div class="line"><span class="function">// <span class="title">A</span> <span class="title">Flag</span> <span class="title">represents</span> <span class="title">the</span> <span class="title">state</span> <span class="title">of</span> <span class="title">a</span> <span class="title">flag</span>.</span></div><div class="line"><span class="function"><span class="title">type</span> <span class="title">Flag</span> <span class="title">struct</span></span> &#123;</div><div class="line">	Name     <span class="keyword">string</span> <span class="comment">// name as it appears on command line</span></div><div class="line">	Usage    <span class="keyword">string</span> <span class="comment">// help message</span></div><div class="line">	Value    Value  <span class="comment">// value as set</span></div><div class="line">	DefValue <span class="keyword">string</span> <span class="comment">// default value (as text); for usage message</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Value is the interface to the dynamic value stored in a flag.</span></div><div class="line"><span class="keyword">type</span> Value <span class="keyword">interface</span> &#123;</div><div class="line">	String() <span class="keyword">string</span></div><div class="line">	Set(<span class="keyword">string</span>) error</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="flag-Parse-方法"><a href="#flag-Parse-方法" class="headerlink" title="flag.Parse()方法"></a>flag.Parse()方法</h3><ul>
+<li>首先看Parse()方法的实现</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Parse</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="comment">// Ignore errors; CommandLine is set for ExitOnError.</span></div><div class="line">	CommandLine.Parse(os.Args[<span class="number">1</span>:])</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// flags初始化默认值之后，flag值使用之前，实际上是从命令行读取参数值对默认值进行覆盖操作</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *FlagSet)</span> <span class="title">Parse</span><span class="params">(arguments []<span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</div><div class="line">	f.parsed = <span class="literal">true</span></div><div class="line">	f.args = arguments</div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		seen, err := f.parseOne()</div><div class="line">		<span class="keyword">if</span> seen &#123;</div><div class="line">			<span class="keyword">continue</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">switch</span> f.errorHandling &#123;</div><div class="line">		<span class="keyword">case</span> ContinueOnError:</div><div class="line">			<span class="keyword">return</span> err</div><div class="line">		<span class="keyword">case</span> ExitOnError:</div><div class="line">			os.Exit(<span class="number">2</span>)</div><div class="line">		<span class="keyword">case</span> PanicOnError:</div><div class="line">			<span class="built_in">panic</span>(err)</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">&#125;</div><div class="line"><span class="comment">//</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *FlagSet)</span> <span class="title">parseOne</span><span class="params">()</span> <span class="params">(<span class="keyword">bool</span>, error)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(f.args) == <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">false</span>, <span class="literal">nil</span></div><div class="line">	&#125;</div><div class="line">	s := f.args[<span class="number">0</span>]</div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(s) &lt; <span class="number">2</span> || s[<span class="number">0</span>] != <span class="string">'-'</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">false</span>, <span class="literal">nil</span></div><div class="line">	&#125;</div><div class="line">	numMinuses := <span class="number">1</span></div><div class="line">	<span class="keyword">if</span> s[<span class="number">1</span>] == <span class="string">'-'</span> &#123;</div><div class="line">		numMinuses++</div><div class="line">		<span class="keyword">if</span> <span class="built_in">len</span>(s) == <span class="number">2</span> &#123; <span class="comment">// "--" terminates the flags</span></div><div class="line">			f.args = f.args[<span class="number">1</span>:]</div><div class="line">			<span class="keyword">return</span> <span class="literal">false</span>, <span class="literal">nil</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	name := s[numMinuses:]</div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(name) == <span class="number">0</span> || name[<span class="number">0</span>] == <span class="string">'-'</span> || name[<span class="number">0</span>] == <span class="string">'='</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">false</span>, f.failf(<span class="string">"bad flag syntax: %s"</span>, s)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// it's a flag. does it have an argument?</span></div><div class="line">	f.args = f.args[<span class="number">1</span>:]</div><div class="line">	hasValue := <span class="literal">false</span></div><div class="line">	value := <span class="string">""</span></div><div class="line">	<span class="keyword">for</span> i := <span class="number">1</span>; i &lt; <span class="built_in">len</span>(name); i++ &#123; <span class="comment">// equals cannot be first</span></div><div class="line">		<span class="keyword">if</span> name[i] == <span class="string">'='</span> &#123;</div><div class="line">			value = name[i+<span class="number">1</span>:]</div><div class="line">			hasValue = <span class="literal">true</span></div><div class="line">			name = name[<span class="number">0</span>:i]</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	m := f.formal</div><div class="line">	flag, alreadythere := m[name] <span class="comment">// BUG</span></div><div class="line">	<span class="keyword">if</span> !alreadythere &#123;</div><div class="line">		<span class="keyword">if</span> name == <span class="string">"help"</span> || name == <span class="string">"h"</span> &#123; <span class="comment">// special case for nice help message.</span></div><div class="line">			f.usage()</div><div class="line">			<span class="keyword">return</span> <span class="literal">false</span>, ErrHelp</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> <span class="literal">false</span>, f.failf(<span class="string">"flag provided but not defined: -%s"</span>, name)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">if</span> fv, ok := flag.Value.(boolFlag); ok &amp;&amp; fv.IsBoolFlag() &#123; <span class="comment">// special case: doesn't need an arg</span></div><div class="line">		<span class="keyword">if</span> hasValue &#123;</div><div class="line">			<span class="keyword">if</span> err := fv.Set(value); err != <span class="literal">nil</span> &#123;</div><div class="line">				<span class="keyword">return</span> <span class="literal">false</span>, f.failf(<span class="string">"invalid boolean value %q for -%s: %v"</span>, value, name, err)</div><div class="line">			&#125;</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			<span class="keyword">if</span> err := fv.Set(<span class="string">"true"</span>); err != <span class="literal">nil</span> &#123;</div><div class="line">				<span class="keyword">return</span> <span class="literal">false</span>, f.failf(<span class="string">"invalid boolean flag %s: %v"</span>, name, err)</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125; <span class="keyword">else</span> &#123;</div><div class="line">		<span class="comment">// It must have a value, which might be the next argument.</span></div><div class="line">		<span class="comment">// 在这里进行解析替换</span></div><div class="line">		<span class="keyword">if</span> !hasValue &amp;&amp; <span class="built_in">len</span>(f.args) &gt; <span class="number">0</span> &#123;</div><div class="line">			<span class="comment">// value is the next arg</span></div><div class="line">			hasValue = <span class="literal">true</span></div><div class="line">			value, f.args = f.args[<span class="number">0</span>], f.args[<span class="number">1</span>:]</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> !hasValue &#123;</div><div class="line">			<span class="keyword">return</span> <span class="literal">false</span>, f.failf(<span class="string">"flag needs an argument: -%s"</span>, name)</div><div class="line">		&#125;</div><div class="line">		<span class="comment">// set设置</span></div><div class="line">		<span class="keyword">if</span> err := flag.Value.Set(value); err != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">return</span> <span class="literal">false</span>, f.failf(<span class="string">"invalid value %q for flag -%s: %v"</span>, value, name, err)</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> f.actual == <span class="literal">nil</span> &#123;</div><div class="line">		f.actual = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]*Flag)</div><div class="line">	&#125;</div><div class="line">	f.actual[name] = flag</div><div class="line">	<span class="keyword">return</span> <span class="literal">true</span>, <span class="literal">nil</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Duration的Set方法</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(d *durationValue)</span> <span class="title">Set</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</div><div class="line">	v, err := time.ParseDuration(s)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		err = errParse</div><div class="line">	&#125;</div><div class="line">	*d = durationValue(v)</div><div class="line">	<span class="keyword">return</span> err</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">ParseDuration</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="params">(Duration, error)</span></span> &#123;</div><div class="line">	<span class="comment">// [-+]?([0-9]*(\.[0-9]*)?[a-z]+)+</span></div><div class="line">	orig := s</div><div class="line">	<span class="keyword">var</span> d <span class="keyword">int64</span></div><div class="line">	neg := <span class="literal">false</span></div><div class="line"></div><div class="line">	<span class="comment">// Consume [-+]?</span></div><div class="line">	<span class="keyword">if</span> s != <span class="string">""</span> &#123;</div><div class="line">		c := s[<span class="number">0</span>]</div><div class="line">		<span class="keyword">if</span> c == <span class="string">'-'</span> || c == <span class="string">'+'</span> &#123;</div><div class="line">			neg = c == <span class="string">'-'</span></div><div class="line">			s = s[<span class="number">1</span>:]</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Special case: if all that is left is "0", this is zero.</span></div><div class="line">	<span class="keyword">if</span> s == <span class="string">"0"</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, <span class="literal">nil</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> s == <span class="string">""</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"time: invalid duration "</span> + orig)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">for</span> s != <span class="string">""</span> &#123;</div><div class="line">		<span class="keyword">var</span> (</div><div class="line">			v, f  <span class="keyword">int64</span>       <span class="comment">// integers before, after decimal point</span></div><div class="line">			scale <span class="keyword">float64</span> = <span class="number">1</span> <span class="comment">// value = v + f/scale</span></div><div class="line">		)</div><div class="line"></div><div class="line">		<span class="keyword">var</span> err error</div><div class="line"></div><div class="line">		<span class="comment">// The next character must be [0-9.]</span></div><div class="line">		<span class="keyword">if</span> !(s[<span class="number">0</span>] == <span class="string">'.'</span> || <span class="string">'0'</span> &lt;= s[<span class="number">0</span>] &amp;&amp; s[<span class="number">0</span>] &lt;= <span class="string">'9'</span>) &#123;</div><div class="line">			<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"time: invalid duration "</span> + orig)</div><div class="line">		&#125;</div><div class="line">		<span class="comment">// Consume [0-9]*</span></div><div class="line">		pl := <span class="built_in">len</span>(s)</div><div class="line">		v, s, err = leadingInt(s)</div><div class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"time: invalid duration "</span> + orig)</div><div class="line">		&#125;</div><div class="line">		pre := pl != <span class="built_in">len</span>(s) <span class="comment">// whether we consumed anything before a period</span></div><div class="line"></div><div class="line">		<span class="comment">// Consume (\.[0-9]*)?</span></div><div class="line">		post := <span class="literal">false</span></div><div class="line">		<span class="keyword">if</span> s != <span class="string">""</span> &amp;&amp; s[<span class="number">0</span>] == <span class="string">'.'</span> &#123;</div><div class="line">			s = s[<span class="number">1</span>:]</div><div class="line">			pl := <span class="built_in">len</span>(s)</div><div class="line">			f, scale, s = leadingFraction(s)</div><div class="line">			post = pl != <span class="built_in">len</span>(s)</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> !pre &amp;&amp; !post &#123;</div><div class="line">			<span class="comment">// no digits (e.g. ".s" or "-.s")</span></div><div class="line">			<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"time: invalid duration "</span> + orig)</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="comment">// Consume unit.</span></div><div class="line">		i := <span class="number">0</span></div><div class="line">		<span class="keyword">for</span> ; i &lt; <span class="built_in">len</span>(s); i++ &#123;</div><div class="line">			c := s[i]</div><div class="line">			<span class="keyword">if</span> c == <span class="string">'.'</span> || <span class="string">'0'</span> &lt;= c &amp;&amp; c &lt;= <span class="string">'9'</span> &#123;</div><div class="line">				<span class="keyword">break</span></div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> i == <span class="number">0</span> &#123;</div><div class="line">			<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"time: missing unit in duration "</span> + orig)</div><div class="line">		&#125;</div><div class="line">		u := s[:i]</div><div class="line">		s = s[i:]</div><div class="line">		unit, ok := unitMap[u]</div><div class="line">		<span class="keyword">if</span> !ok &#123;</div><div class="line">			<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"time: unknown unit "</span> + u + <span class="string">" in duration "</span> + orig)</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> v &gt; (<span class="number">1</span>&lt;&lt;<span class="number">63</span><span class="number">-1</span>)/unit &#123;</div><div class="line">			<span class="comment">// overflow</span></div><div class="line">			<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"time: invalid duration "</span> + orig)</div><div class="line">		&#125;</div><div class="line">		v *= unit</div><div class="line">		<span class="keyword">if</span> f &gt; <span class="number">0</span> &#123;</div><div class="line">			<span class="comment">// float64 is needed to be nanosecond accurate for fractions of hours.</span></div><div class="line">			<span class="comment">// v &gt;= 0 &amp;&amp; (f*unit/scale) &lt;= 3.6e+12 (ns/h, h is the largest unit)</span></div><div class="line">			v += <span class="keyword">int64</span>(<span class="keyword">float64</span>(f) * (<span class="keyword">float64</span>(unit) / scale))</div><div class="line">			<span class="keyword">if</span> v &lt; <span class="number">0</span> &#123;</div><div class="line">				<span class="comment">// overflow</span></div><div class="line">				<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"time: invalid duration "</span> + orig)</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		d += v</div><div class="line">		<span class="keyword">if</span> d &lt; <span class="number">0</span> &#123;</div><div class="line">			<span class="comment">// overflow</span></div><div class="line">			<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"time: invalid duration "</span> + orig)</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">if</span> neg &#123;</div><div class="line">		d = -d</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> Duration(d), <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="接口值"><a href="#接口值" class="headerlink" title="接口值"></a>接口值</h2><ul>
+<li>接口值指一个具体的类型和那个类型的值，也称为接口的动态类型和动态值</li>
+<li>go中提供类型信息的值实际上是类型描述符，类型时编译期的概念</li>
+<li>接口的零值指的是期类型和值的部分都是nil</li>
+<li>不包含任何值的nil接口和一个刚好包含nil指针的接口值是不同的</li>
+</ul>
+<h2 id="go中排序算法的实现"><a href="#go中排序算法的实现" class="headerlink" title="go中排序算法的实现"></a>go中排序算法的实现</h2><h3 id="sort接口"><a href="#sort接口" class="headerlink" title="sort接口"></a>sort接口</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> sort</div><div class="line"><span class="comment">// 排序接口只规定了三个方法，序列长度，两个元素的比较结果，交换两个元素的方式</span></div><div class="line"><span class="keyword">type</span> Interface <span class="keyword">interface</span> &#123;</div><div class="line">	Len() <span class="keyword">int</span></div><div class="line">	Less(i, j <span class="keyword">int</span>) <span class="keyword">bool</span></div><div class="line">	Swap(i, j <span class="keyword">int</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="go中排序函数的实现"><a href="#go中排序函数的实现" class="headerlink" title="go中排序函数的实现"></a>go中排序函数的实现</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 实现了前面Interface的结构体都可以进行排序，go中排序使用的是改进后的快排</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Sort</span><span class="params">(data Interface)</span></span> &#123;</div><div class="line">	n := data.Len()</div><div class="line">	quickSort(data, <span class="number">0</span>, n, maxDepth(n))</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 堆排序最大深度</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">maxDepth</span><span class="params">(n <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</div><div class="line">	<span class="keyword">var</span> depth <span class="keyword">int</span></div><div class="line">	<span class="keyword">for</span> i := n; i &gt; <span class="number">0</span>; i &gt;&gt;= <span class="number">1</span> &#123;</div><div class="line">		depth++</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> depth * <span class="number">2</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">quickSort</span><span class="params">(data Interface, a, b, maxDepth <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">for</span> b-a &gt; <span class="number">12</span> &#123; <span class="comment">// Use ShellSort for slices &lt;= 12 elements</span></div><div class="line">		<span class="keyword">if</span> maxDepth == <span class="number">0</span> &#123;</div><div class="line">		    <span class="comment">// 进行堆排序</span></div><div class="line">			heapSort(data, a, b)</div><div class="line">			<span class="keyword">return</span></div><div class="line">		&#125;</div><div class="line">		maxDepth--</div><div class="line">		<span class="comment">// 获取pivot，进行快排</span></div><div class="line">		mlo, mhi := doPivot(data, a, b)</div><div class="line">		<span class="comment">// Avoiding recursion on the larger subproblem guarantees</span></div><div class="line">		<span class="comment">// a stack depth of at most lg(b-a).</span></div><div class="line">		<span class="keyword">if</span> mlo-a &lt; b-mhi &#123;</div><div class="line">			quickSort(data, a, mlo, maxDepth)</div><div class="line">			a = mhi <span class="comment">// i.e., quickSort(data, mhi, b)</span></div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			quickSort(data, mhi, b, maxDepth)</div><div class="line">			b = mlo <span class="comment">// i.e., quickSort(data, a, mlo)</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> b-a &gt; <span class="number">1</span> &#123;</div><div class="line">		<span class="comment">// 希尔排序</span></div><div class="line">		<span class="comment">// It could be written in this simplified form cause b-a &lt;= 12</span></div><div class="line">		<span class="keyword">for</span> i := a + <span class="number">6</span>; i &lt; b; i++ &#123;</div><div class="line">			<span class="keyword">if</span> data.Less(i, i<span class="number">-6</span>) &#123;</div><div class="line">				data.Swap(i, i<span class="number">-6</span>)</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		insertionSort(data, a, b)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>interface是一种类型</li>
+<li>interfacde{}是空接口，和Java中Object类似，所有的结构体都实现了空接口</li>
+<li>如果一个类型实现了一个interface的所有方法，则该类型实现了该接口</li>
+<li>interface变量存储的是实现结构体的值，并且只会暴露接口公开的值和方法</li>
+<li>判断interface存储的类型可以使用断言来实现。value, ok := interfaceObject.(assertType)</li>
+<li><p>interface的接收者是类型值还是指针在定义的时候没有严格规定，但是go语言实际上是只支持值传递。golang的语法糖会将函数里调用的指针进行隐式的转换成值，但是反过来是不行的。函数调用优先使用指针就OK了。</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">type I interface &#123;</div><div class="line">	Get() int</div><div class="line">	Set(int)</div><div class="line">&#125;</div><div class="line"></div><div class="line">type SS struct &#123;</div><div class="line">	Age int</div><div class="line">&#125;</div><div class="line"></div><div class="line">func (s SS) Get() int &#123;</div><div class="line">	return s.Age</div><div class="line">&#125;</div><div class="line"></div><div class="line">func (s SS) Set(age int) &#123;</div><div class="line">	s.Age = age</div><div class="line">&#125;</div><div class="line"></div><div class="line">func f(i I) &#123;</div><div class="line">	i.Set(10)</div><div class="line">	fmt.Println(i.Get())</div><div class="line">&#125;</div><div class="line"></div><div class="line">func main() &#123;</div><div class="line">	ss := SS&#123;&#125;</div><div class="line">	f(&amp;ss) //指针参数，无论函数的接收者是值还是指针都不会保存</div><div class="line">	f(ss)  //值参数，函数的接收者是值不会报错，是指针会编译报错</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/go/" rel="tag"># go</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/12/golang/源码解读/io/io/" rel="next" title="go源码解读-io包">
+                <i class="fa fa-chevron-left"></i> go源码解读-io包
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/12/golang/goroutine&channel/" rel="prev" title="goroutine&channel学习">
+                goroutine&channel学习 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">99</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#interface"><span class="nav-number">1.</span> <span class="nav-text">interface</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#概念"><span class="nav-number">1.1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#flag-Value接口"><span class="nav-number">1.2.</span> <span class="nav-text">flag.Value接口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#flag-Duration方法"><span class="nav-number">1.2.1.</span> <span class="nav-text">flag.Duration方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flag-Parse-方法"><span class="nav-number">1.2.2.</span> <span class="nav-text">flag.Parse()方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#接口值"><span class="nav-number">1.3.</span> <span class="nav-text">接口值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#go中排序算法的实现"><span class="nav-number">1.4.</span> <span class="nav-text">go中排序算法的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sort接口"><span class="nav-number">1.4.1.</span> <span class="nav-text">sort接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#go中排序函数的实现"><span class="nav-number">1.4.2.</span> <span class="nav-text">go中排序函数的实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">1.5.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

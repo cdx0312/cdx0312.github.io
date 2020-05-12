@@ -277,7 +277,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/算法/算法之堆栈相关/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/算法/算法之查找/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="cdx">
@@ -296,7 +296,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/04/21/算法/算法之堆栈相关/" itemprop="url">算法-堆栈</a></h1>
+                <a class="post-title-link" href="/2019/04/21/算法/算法之查找/" itemprop="url">算法-查找</a></h1>
         
 
         <div class="post-meta">
@@ -381,17 +381,197 @@
       
         
           
-            <h1 id="二叉树遍历"><a href="#二叉树遍历" class="headerlink" title="二叉树遍历"></a>二叉树遍历</h1><p>模拟操作系统中堆栈，创建一个Command类，封装了一个string和treenode，string指定command执行的操作，treenode保存数据，则前中后遍历只需要调整很少的顺序就可以了。</p>
-<p>中序遍历：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line">package leetcode.stack;</div><div class="line"></div><div class="line">import java.awt.event.ComponentAdapter;</div><div class="line">import java.util.ArrayList;</div><div class="line">import java.util.Collections;</div><div class="line">import java.util.List;</div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class BinaryTreeInOrderTraversal_94 &#123;</div><div class="line">    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    //递归方法</div><div class="line">    public List&lt;Integer&gt; inorderTraversal(TreeNode root) &#123;</div><div class="line">        if (root != null) &#123;</div><div class="line">            inorderTraversal(root.left);</div><div class="line">            res.add(root.val);</div><div class="line">            inorderTraversal(root.right);</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line">    //非递归方法</div><div class="line">    public List&lt;Integer&gt; inorderTraversal1(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return res;</div><div class="line">        Stack&lt;Command&gt; stack = new Stack&lt;&gt;();</div><div class="line">        stack.push(new Command(&quot;go&quot;, root));</div><div class="line">        while (!stack.isEmpty()) &#123;</div><div class="line">            Command command = stack.pop();</div><div class="line">            if (command.s.equals(&quot;print&quot;))</div><div class="line">                res.add(command.node.val);</div><div class="line">            else &#123;</div><div class="line">                if (command.node.right != null)</div><div class="line">                    stack.push(new Command(&quot;go&quot;, command.node.right));</div><div class="line">                stack.push(new Command(&quot;print&quot;, command.node));</div><div class="line">                if (command.node.left != null)</div><div class="line">                    stack.push(new Command(&quot;go&quot;, command.node.left));</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    class Command&#123;</div><div class="line">        String s;  //print,go</div><div class="line">        TreeNode node;</div><div class="line">        public Command(String s, TreeNode node) &#123;</div><div class="line">            this.s = s;</div><div class="line">            this.node = node;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>前序–这个没有改，用的经典算法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">package leetcode.stack;</div><div class="line"></div><div class="line">import java.util.ArrayList;</div><div class="line">import java.util.List;</div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class BinaryTreePrecoderTraversal_144 &#123;</div><div class="line">    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    //递归方法</div><div class="line">    public List&lt;Integer&gt; preorderTraversal(TreeNode root) &#123;</div><div class="line">        if (root != null) &#123;</div><div class="line">            res.add(root.val);</div><div class="line">            preorderTraversal(root.left);</div><div class="line">            preorderTraversal(root.right);</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line">    //非递归方法</div><div class="line">    public List&lt;Integer&gt; preorderTraversal1(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return res;</div><div class="line">        Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();</div><div class="line">        stack.push(root);</div><div class="line">        while (!stack.isEmpty()) &#123;</div><div class="line">            TreeNode node = stack.pop();</div><div class="line">            res.add(node.val);</div><div class="line">            if (node.right != null)</div><div class="line">                stack.push(node.right);</div><div class="line">            if (node.left != null)</div><div class="line">                stack.push(node.left);</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>后序：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">package leetcode.stack;</div><div class="line"></div><div class="line">import java.util.ArrayList;</div><div class="line">import java.util.List;</div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class BinaryTreePostorderTraversal_145 &#123;</div><div class="line">    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();</div><div class="line">    public List&lt;Integer&gt; postorderTraversal(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return res;</div><div class="line">        Stack&lt;Command&gt; stack = new Stack&lt;&gt;();</div><div class="line">        stack.push(new Command(&quot;go&quot;, root));</div><div class="line">        while (!stack.isEmpty()) &#123;</div><div class="line">            Command command = stack.pop();</div><div class="line">            if (command.s.equals(&quot;print&quot;))</div><div class="line">                res.add(command.node.val);</div><div class="line">            else &#123;</div><div class="line">                stack.push(new Command(&quot;print&quot;, command.node));</div><div class="line">                if (command.node.right != null)</div><div class="line">                    stack.push(new Command(&quot;go&quot;, command.node.right));</div><div class="line">                if (command.node.left != null)</div><div class="line">                    stack.push(new Command(&quot;go&quot;, command.node.left));</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    class Command &#123;</div><div class="line">        String s;//print, go</div><div class="line">        TreeNode node;</div><div class="line">        public Command(String s, TreeNode node) &#123;</div><div class="line">            this.s = s;</div><div class="line">            this.node = node;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="逆波兰表达式计算"><a href="#逆波兰表达式计算" class="headerlink" title="逆波兰表达式计算"></a>逆波兰表达式计算</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">package leetcode.stack;</div><div class="line"></div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class EvaluateReversePolishNotation_150 &#123;</div><div class="line">    public int evalRPN(String[] tokens) &#123;</div><div class="line">        Stack&lt;Integer&gt; number = new Stack&lt;&gt;();</div><div class="line">        Stack&lt;Character&gt; operators = new Stack&lt;&gt;();</div><div class="line">        for (String s : tokens) &#123;</div><div class="line">            switch (s) &#123;</div><div class="line">                case &quot;*&quot;:</div><div class="line">                    number.push(number.pop() * number.pop());</div><div class="line">                    break;</div><div class="line">                case &quot;+&quot;:</div><div class="line">                    number.push(number.pop() + number.pop());</div><div class="line">                    break;</div><div class="line">                case &quot;-&quot;:</div><div class="line">                    number.push(-(number.pop() - number.pop()));</div><div class="line">                    break;</div><div class="line">                case &quot;/&quot;:</div><div class="line">                    int tmp1 = number.pop();</div><div class="line">                    int tmp2 = number.pop();</div><div class="line">                    number.push(tmp2 / tmp1);</div><div class="line">                    break;</div><div class="line">                default:</div><div class="line">                    number.push(Integer.valueOf(s));</div><div class="line">                    break;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return number.pop();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="地址简化"><a href="#地址简化" class="headerlink" title="地址简化"></a>地址简化</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line">package leetcode.stack;</div><div class="line"></div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class SimplifyPath_71 &#123;</div><div class="line">    public String simplifyPath(String path) &#123;</div><div class="line">        Stack&lt;String&gt; stack = new Stack&lt;&gt;();</div><div class="line">        String[] strings = path.split(&quot;/&quot;);</div><div class="line">        for (String s : strings) &#123;</div><div class="line">            switch (s) &#123;</div><div class="line">                case &quot;.&quot; :</div><div class="line">                    break;</div><div class="line">                case &quot;..&quot;:</div><div class="line">                    if (!stack.isEmpty())</div><div class="line">                        stack.pop();</div><div class="line">                    break;</div><div class="line">                default:</div><div class="line">                    if (!s.equals(&quot;&quot;))</div><div class="line">                        stack.push(s);</div><div class="line">                    break;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        StringBuilder sb = new StringBuilder();</div><div class="line"></div><div class="line">        if (stack.isEmpty())</div><div class="line">            return &quot;/&quot;;</div><div class="line">        while (!stack.isEmpty()) &#123;</div><div class="line">            sb.insert(0,  &quot;/&quot; + stack.pop());</div><div class="line">        &#125;</div><div class="line">        return sb.toString();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        SimplifyPath_71 simplifyPath_71 = new SimplifyPath_71();</div><div class="line">        String s = &quot;/...&quot;;</div><div class="line">        System.out.println(simplifyPath_71.simplifyPath(s));</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="FlattenNestedListIterator-341"><a href="#FlattenNestedListIterator-341" class="headerlink" title="FlattenNestedListIterator_341"></a>FlattenNestedListIterator_341</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">package leetcode.stack;</div><div class="line"></div><div class="line">import java.util.Iterator;</div><div class="line">import java.util.List;</div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class FlattenNestedListIterator_341 implements Iterator&lt;Integer&gt;&#123;</div><div class="line">    Stack&lt;NestedInteger&gt; stack = new Stack&lt;&gt;();</div><div class="line">    Stack&lt;Integer&gt; integers = new Stack&lt;&gt;();</div><div class="line">    public FlattenNestedListIterator_341(List&lt;NestedInteger&gt; nestedList) &#123;</div><div class="line">        for (NestedInteger i : nestedList) &#123;</div><div class="line">            stack.push(i);</div><div class="line">        &#125;</div><div class="line">        while (!stack.isEmpty()) &#123;</div><div class="line">            NestedInteger nestedInteger = stack.pop();</div><div class="line">            if (nestedInteger.isInteger()) &#123;</div><div class="line">                integers.push(nestedInteger.getInteger());</div><div class="line">            &#125; else &#123;</div><div class="line">                for (NestedInteger j : nestedInteger.getList())&#123;</div><div class="line">                    stack.push(j);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public boolean hasNext() &#123;</div><div class="line">        return !integers.isEmpty();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Integer next() &#123;</div><div class="line">        return integers.pop();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="符号匹配"><a href="#符号匹配" class="headerlink" title="符号匹配"></a>符号匹配</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">package leetcode.stack;</div><div class="line"></div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/7</div><div class="line"> */</div><div class="line">public class ValidParentheses_20 &#123;</div><div class="line">    public boolean isValid(String s) &#123;</div><div class="line">        Stack&lt;Character&gt; stack = new Stack&lt;&gt;();</div><div class="line">        for (int i = 0; i &lt; s.length(); i++) &#123;</div><div class="line">            char ch = s.charAt(i);</div><div class="line">            if (ch == &apos;(&apos; || ch ==&apos;&#123;&apos; || ch == &apos;[&apos;)</div><div class="line">                stack.push(ch);</div><div class="line">            else &#123;</div><div class="line">                if (stack.isEmpty())</div><div class="line">                    return false;</div><div class="line">                char cha = stack.pop();</div><div class="line">                char match;</div><div class="line">                switch (ch) &#123;</div><div class="line">                    case &apos;(&apos; :</div><div class="line">                        match = &apos;)&apos;;</div><div class="line">                        break;</div><div class="line">                    case &apos;[&apos;:</div><div class="line">                        match=&apos;]&apos;;</div><div class="line">                        break;</div><div class="line">                    default:</div><div class="line">                        match=&apos;&#125;&apos;;</div><div class="line">                        break;</div><div class="line">                &#125;</div><div class="line">                if (cha != match)</div><div class="line">                    return false;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return stack.isEmpty();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+            <h1 id="数组重复元素问题"><a href="#数组重复元素问题" class="headerlink" title="数组重复元素问题"></a>数组重复元素问题</h1><h2 id="给定一个数组，查看数组是否存在重复元素"><a href="#给定一个数组，查看数组是否存在重复元素" class="headerlink" title="给定一个数组，查看数组是否存在重复元素"></a>给定一个数组，查看数组是否存在重复元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashSet;</div><div class="line">import java.util.Set;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/6</div><div class="line"> */</div><div class="line">public class ContainsDuplicate_217 &#123;</div><div class="line">    public boolean containsDuplicate(int[] nums) &#123;</div><div class="line">        Set&lt;Integer&gt; record = new HashSet&lt;&gt;();</div><div class="line">        for (int i = 0; i &lt; nums.length; i++) &#123;</div><div class="line">            if (record.contains(nums[i]))</div><div class="line">                return true;</div><div class="line">            record.add(nums[i]);</div><div class="line">        &#125;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="给定一个数组，是否存在两个元素重复，并且两个元素下标之差的绝对值小于等于k。"><a href="#给定一个数组，是否存在两个元素重复，并且两个元素下标之差的绝对值小于等于k。" class="headerlink" title="给定一个数组，是否存在两个元素重复，并且两个元素下标之差的绝对值小于等于k。"></a>给定一个数组，是否存在两个元素重复，并且两个元素下标之差的绝对值小于等于k。</h2><p>维持set的长度为K</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line">import java.util.HashSet;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/6</div><div class="line"> */</div><div class="line">public class ContainsDuplicateII &#123;</div><div class="line">    public boolean containsNearbyDuplicate(int[] nums, int k) &#123;</div><div class="line">        HashSet&lt;Integer&gt; record = new HashSet&lt;&gt;();</div><div class="line">        for (int i = 0; i &lt; nums.length; i++) &#123;</div><div class="line">            if (record.contains(nums[i]))</div><div class="line">                return true;</div><div class="line">            record.add(nums[i]);</div><div class="line">            if (record.size() == k + 1)</div><div class="line">                record.remove(nums[i-k]);</div><div class="line">        &#125;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="给定一个数组，是否存在两个元素的之差的绝对值小于等于t，并且两个元素下标之差的绝对值小于等于k。"><a href="#给定一个数组，是否存在两个元素的之差的绝对值小于等于t，并且两个元素下标之差的绝对值小于等于k。" class="headerlink" title="给定一个数组，是否存在两个元素的之差的绝对值小于等于t，并且两个元素下标之差的绝对值小于等于k。"></a>给定一个数组，是否存在两个元素的之差的绝对值小于等于t，并且两个元素下标之差的绝对值小于等于k。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashSet;</div><div class="line">import java.util.TreeSet;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/6</div><div class="line"> */</div><div class="line">public class ContainsDuplicateIII &#123;</div><div class="line">    public boolean containsNearbyAlmostDuplicate(int[] nums, int k, int t) &#123;</div><div class="line">        if (nums.length &lt; 2 || k == 0) &#123;</div><div class="line">            return false;</div><div class="line">        &#125;</div><div class="line">        TreeSet&lt;Long&gt; set = new TreeSet&lt;&gt;();</div><div class="line"></div><div class="line">        int i = 0;</div><div class="line">        while (i &lt; nums.length) &#123;</div><div class="line">            Long floor = set.floor((long) nums[i]);</div><div class="line">            Long ceiling = set.ceiling((long) nums[i]);</div><div class="line">            if ((floor != null &amp;&amp; nums[i] - floor &lt;= t ) ||</div><div class="line">                    (ceiling != null &amp;&amp; ceiling - nums[i] &lt;= t)) &#123;</div><div class="line">                return true;</div><div class="line">            &#125;</div><div class="line">            set.add((long) nums[i++]);</div><div class="line">            if (i &gt; k) &#123;</div><div class="line">                set.remove((long) nums[i - k - 1]);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="数组和问题"><a href="#数组和问题" class="headerlink" title="数组和问题"></a>数组和问题</h1><h2 id="数组中查找是否存在和为target的问题"><a href="#数组中查找是否存在和为target的问题" class="headerlink" title="数组中查找是否存在和为target的问题"></a>数组中查找是否存在和为target的问题</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class TwoSum_1 &#123;</div><div class="line">    //1、暴力O(N^2)</div><div class="line">    public int[] twoSum3(int[] nums, int target) &#123;</div><div class="line">        int[] res = new int[2];</div><div class="line">        for (int i = 0; i &lt; nums.length-1; i++) &#123;</div><div class="line">            for (int j = i + 1; j &lt; nums.length; j++) &#123;</div><div class="line">                if (nums[i] + nums[j] == target) &#123;</div><div class="line">                    res[0] = i;</div><div class="line">                    res[1] = j;</div><div class="line">                    return res;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //O(N) O(N)</div><div class="line">    public int[] twoSum(int[] nums, int target) &#123;</div><div class="line">        int[] res = new int[2];</div><div class="line">        HashMap&lt;Integer, Integer&gt; record = new HashMap&lt;&gt;();</div><div class="line">        for (int i = 0; i &lt; nums.length; i++) &#123;</div><div class="line">            int complement = target - nums[i];</div><div class="line">            if (record.containsKey(complement)) &#123;</div><div class="line">                res[1] = i;</div><div class="line">                res[0] = record.get(complement);</div><div class="line">                return res;</div><div class="line">            &#125;</div><div class="line">            record.put(nums[i], i);</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="查找表问题"><a href="#查找表问题" class="headerlink" title="查找表问题"></a>查找表问题</h1><h2 id="给定四个整形列表，A-i-B-j-C-k-D-l-0-找出所有的i-j-k-l的个数。"><a href="#给定四个整形列表，A-i-B-j-C-k-D-l-0-找出所有的i-j-k-l的个数。" class="headerlink" title="给定四个整形列表，A[i] + B[j] + C[k] + D[l] = 0,找出所有的i,j,k,l的个数。"></a>给定四个整形列表，A[i] + B[j] + C[k] + D[l] = 0,找出所有的i,j,k,l的个数。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/5</div><div class="line"> */</div><div class="line">public class FourSumII_454 &#123;</div><div class="line">    //查找表中记录C,D中任意两个和的可能次数O(N^2)</div><div class="line">    public int fourSumCount(int[] A, int[] B, int[] C, int[] D) &#123;</div><div class="line">        HashMap&lt;Integer, Integer&gt; record = new HashMap&lt;&gt;();</div><div class="line">        for (int aC : C) &#123;</div><div class="line">            for (int aD : D) &#123;</div><div class="line">                int tmp = aC + aD;</div><div class="line">                if (record.containsKey(tmp)) &#123;</div><div class="line">                    record.put(tmp, record.get(tmp) + 1);</div><div class="line">                &#125; else &#123;</div><div class="line">                    record.put(tmp, 1);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        int count = 0;</div><div class="line">        for (int i = 0; i &lt; A.length; i++) &#123;</div><div class="line">            for (int j = 0; j &lt; B.length; j++) &#123;</div><div class="line">                int tmp = 0 - A[i] - B[j];</div><div class="line">                if (record.containsKey(tmp)) &#123;</div><div class="line">                    count += record.get(tmp);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return count;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="返回两个数组的交集"><a href="#返回两个数组的交集" class="headerlink" title="返回两个数组的交集"></a>返回两个数组的交集</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashSet;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class IntersectoionOfTwoArray &#123;</div><div class="line">    public int[] intersection(int[] num1, int[] num2) &#123;</div><div class="line">        HashSet&lt;Integer&gt; record = new HashSet&lt;&gt;();</div><div class="line">        HashSet&lt;Integer&gt; result = new HashSet&lt;&gt;();</div><div class="line"></div><div class="line">        for (int aNum1 : num1) &#123;</div><div class="line">            record.add(aNum1);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        for (int aNum1 : num2) &#123;</div><div class="line">            if (record.contains(aNum1))</div><div class="line">                result.add(aNum1);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        int[] resultA = new int[result.size()];</div><div class="line"></div><div class="line">        int j = 0;</div><div class="line">        for (int i : result) &#123;</div><div class="line">            resultA[j++] = i;</div><div class="line">        &#125;</div><div class="line">        return resultA;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="给定两个字符串s-t，确定s是否可以通过替换变成t。Given-“egg”-“add”-return-true-Given-“foo”-“bar”-return-false-Given-“paper”-“title”-return-true"><a href="#给定两个字符串s-t，确定s是否可以通过替换变成t。Given-“egg”-“add”-return-true-Given-“foo”-“bar”-return-false-Given-“paper”-“title”-return-true" class="headerlink" title="给定两个字符串s,t，确定s是否可以通过替换变成t。Given “egg”, “add”, return true.Given “foo”, “bar”, return false.Given “paper”, “title”, return true."></a>给定两个字符串s,t，确定s是否可以通过替换变成t。Given “egg”, “add”, return true.Given “foo”, “bar”, return false.Given “paper”, “title”, return true.</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashSet;</div><div class="line">import java.util.Set;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class IsomorphicStrings_205 &#123;</div><div class="line">    public boolean isIsomorphic(String s, String t) &#123;</div><div class="line">        int[] num = new int[256];</div><div class="line">        Set&lt;Integer&gt; set = new HashSet&lt;&gt;();</div><div class="line">        for (int i = 0; i &lt; num.length; i++)</div><div class="line">            num[i] = Integer.MAX_VALUE;</div><div class="line">        for (int i = 0; i &lt; s.length(); i++) &#123;</div><div class="line">            int tmp = t.charAt(i);</div><div class="line">            if (num[s.charAt(i)] == Integer.MAX_VALUE) &#123;</div><div class="line">                num[s.charAt(i)] = tmp;</div><div class="line">                if (set.contains(tmp))</div><div class="line">                    return false;</div><div class="line">                else</div><div class="line">                    set.add(tmp);</div><div class="line">            &#125; else &#123;</div><div class="line">                if (tmp != num[s.charAt(i)])</div><div class="line">                    return false;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="i和j的距离与i和k的距离相等"><a href="#i和j的距离与i和k的距离相等" class="headerlink" title="i和j的距离与i和k的距离相等"></a>i和j的距离与i和k的距离相等</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/5</div><div class="line"> */</div><div class="line">public class NumberOfBoomerangs_447 &#123;</div><div class="line">    public int numberOfBoomerangs(int[][] points) &#123;</div><div class="line">        int res = 0;</div><div class="line">        for (int i = 0; i &lt; points.length; i++) &#123;</div><div class="line">            //和i点的距离，距离出现的频率</div><div class="line">            HashMap&lt;Integer, Integer&gt; record = new HashMap&lt;&gt;();</div><div class="line">            for (int j = 0; j &lt; points.length; j++) &#123;</div><div class="line">                if (j != i) &#123;</div><div class="line">                    int dis = dis(points[i], points[j]);</div><div class="line">                    if (record.containsKey(dis))&#123;</div><div class="line">                        record.put(dis, record.get(dis)+1);</div><div class="line">                    &#125; else &#123;</div><div class="line">                        record.put(dis, 1);</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            for (Integer integer : record.keySet()) &#123;</div><div class="line">                if (record.get(integer) &gt;= 2) &#123;</div><div class="line">                    res += record.get(integer) * (record.get(integer)-1);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private int dis(int[] point, int[] point1) &#123;</div><div class="line">        return (point[0] - point1[0]) * (point[0] - point1[0])</div><div class="line">                + (point[1] - point1[1]) * (point[1] - point1[1]);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="按照字符串的频率逆序排列"><a href="#按照字符串的频率逆序排列" class="headerlink" title="按照字符串的频率逆序排列"></a>按照字符串的频率逆序排列</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.*;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class SortCharactersByFrequency_451 &#123;</div><div class="line">    public String frequencySort(String s) &#123;</div><div class="line">        HashMap&lt;Character, Integer&gt; map = new HashMap&lt;&gt;();</div><div class="line">        for (char c : s.toCharArray()) &#123;</div><div class="line">            if (map.containsKey(c))</div><div class="line">                map.put(c, map.get(c) + 1);</div><div class="line">            else</div><div class="line">                map.put(c, 1);</div><div class="line">        &#125;</div><div class="line">        List&lt;Character&gt; [] bucket = new List[s.length() + 1];</div><div class="line">        for (char key : map.keySet()) &#123;</div><div class="line">            int freq = map.get(key);</div><div class="line">            if (bucket[freq] == null)</div><div class="line">                bucket[freq] = new ArrayList&lt;&gt;();</div><div class="line">            bucket[freq].add(key);</div><div class="line">        &#125;</div><div class="line">        StringBuilder sb = new StringBuilder();</div><div class="line">        for (int j = bucket.length - 1; j &gt;= 0; j--) &#123;</div><div class="line">            if (bucket[j] != null) &#123;</div><div class="line">                for (char ch : bucket[j]) &#123;</div><div class="line">                    for (int i = 0; i &lt; map.get(ch); i++)</div><div class="line">                        sb.append(ch);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return sb.toString();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="判断t和S是否由相同的char组成"><a href="#判断t和S是否由相同的char组成" class="headerlink" title="判断t和S是否由相同的char组成"></a>判断t和S是否由相同的char组成</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class ValidAnagram_242 &#123;</div><div class="line">    public boolean isAnagram(String s, String t) &#123;</div><div class="line">        if (s == null &amp;&amp; t == null)</div><div class="line">            return true;</div><div class="line">        if (s == null || t == null)</div><div class="line">            return false;</div><div class="line">        if (s.length() != t.length())</div><div class="line">            return false;</div><div class="line">        HashMap&lt;Character, Integer&gt; sMap = new HashMap&lt;&gt;();</div><div class="line">        for (int i = 0; i &lt; s.length(); i++) &#123;</div><div class="line">            char s1 = s.charAt(i);</div><div class="line">            char t1 = t.charAt(i);</div><div class="line">            if (sMap.containsKey(s1))</div><div class="line">                sMap.put(s1, sMap.get(s1)+1);</div><div class="line">            else</div><div class="line">                sMap.put(s1,1);</div><div class="line">            if (sMap.containsKey(t1))</div><div class="line">                sMap.put(t1, sMap.get(t1)-1);</div><div class="line">            else</div><div class="line">                sMap.put(t1, -1);</div><div class="line">        &#125;</div><div class="line">        for (Character ch : sMap.keySet()) &#123;</div><div class="line">            if (sMap.get(ch) != 0)</div><div class="line">                return false;</div><div class="line">        &#125;</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public boolean isAnagram1(String s, String t) &#123;</div><div class="line">        int[] chars = new int[26];</div><div class="line">        for (char c : s.toCharArray()) &#123;</div><div class="line">            chars[c-&apos;a&apos;]++;</div><div class="line">        &#125;</div><div class="line">        for (char c : t.toCharArray()) &#123;</div><div class="line">            chars[c-&apos;a&apos;]--;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        for (int i : chars) &#123;</div><div class="line">            if (i != 0)</div><div class="line">                return false;</div><div class="line">        &#125;</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="判断一个字符串是否遵循固定的样式，如pattern-“abba”-str-“dog-cat-cat-dog”-should-return-true"><a href="#判断一个字符串是否遵循固定的样式，如pattern-“abba”-str-“dog-cat-cat-dog”-should-return-true" class="headerlink" title="判断一个字符串是否遵循固定的样式，如pattern = “abba”, str = “dog cat cat dog” should return true."></a>判断一个字符串是否遵循固定的样式，如pattern = “abba”, str = “dog cat cat dog” should return true.</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashMap;</div><div class="line">import java.util.HashSet;</div><div class="line">import java.util.Objects;</div><div class="line">import java.util.Set;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class WordPattern_290 &#123;</div><div class="line">    public boolean wordPattern(String pattern, String str) &#123;</div><div class="line">        if (pattern == null || str == null)</div><div class="line">            return false;</div><div class="line">        HashMap&lt;Object, Integer&gt; map = new HashMap&lt;&gt;();</div><div class="line">        char[] chars = pattern.toCharArray();</div><div class="line">        String[] strings = str.split(&quot; &quot;);</div><div class="line">        if (chars.length != strings.length)</div><div class="line">            return false;</div><div class="line">        for (int i = 0; i &lt; chars.length; i++) &#123;</div><div class="line">            if (!Objects.equals(map.put(chars[i], i), map.put(strings[i], i)))</div><div class="line">                return false;</div><div class="line">        &#125;</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public boolean wordPattern1(String pattern, String str) &#123;</div><div class="line">        char[] chars = pattern.toCharArray();</div><div class="line">        String[] strings = str.split(&quot; &quot;);</div><div class="line">        String[] pat = new String[26];</div><div class="line">        if (chars.length != strings.length)</div><div class="line">            return false;</div><div class="line">        Set&lt;String&gt; set = new HashSet&lt;&gt;();</div><div class="line"></div><div class="line">        for (int i = 0; i &lt; chars.length; i++) &#123;</div><div class="line">            if (pat[chars[i]-&apos;a&apos;] == null) &#123;</div><div class="line">                pat[chars[i]-&apos;a&apos;] = strings[i];</div><div class="line">                if (set.contains(strings[i]))</div><div class="line">                    return false;</div><div class="line">                else</div><div class="line">                    set.add(strings[i]);</div><div class="line">            &#125; else &#123;</div><div class="line">                if (!strings[i].equals(pat[chars[i]-&apos;a&apos;]))</div><div class="line">                    return false;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="happy-Number判定"><a href="#happy-Number判定" class="headerlink" title="happy Number判定"></a>happy Number判定</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">package leetcode.search;</div><div class="line"></div><div class="line">import java.util.HashSet;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/4</div><div class="line"> */</div><div class="line">public class HappyNum_202 &#123;</div><div class="line">    public boolean isHappy(int n) &#123;</div><div class="line">        HashSet&lt;Integer&gt; set = new HashSet&lt;&gt;();</div><div class="line">        int sum = 0;</div><div class="line">        while (n != 1) &#123;</div><div class="line">            set.add(n);</div><div class="line">            while (n != 0) &#123;</div><div class="line">                sum += (n % 10) * (n % 10);</div><div class="line">                n = n / 10;</div><div class="line">            &#125;</div><div class="line">            n = sum;</div><div class="line">            sum = 0;</div><div class="line">            if (set.contains(n))</div><div class="line">                return false;</div><div class="line">        &#125;</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/算法/算法之链表/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/21/算法/算法之链表/" itemprop="url">算法-链表</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/algorithms/" itemprop="url" rel="index">
+                    <span itemprop="name">algorithms</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="链表和问题"><a href="#链表和问题" class="headerlink" title="链表和问题"></a>链表和问题</h1><h2 id="两个非空链表表示两个数，数字倒叙排列，比如-2-gt-4-gt-3-5-gt-6-gt-4-表示-342-465-807-，-最后输出应该为7-gt-0-gt-8。"><a href="#两个非空链表表示两个数，数字倒叙排列，比如-2-gt-4-gt-3-5-gt-6-gt-4-表示-342-465-807-，-最后输出应该为7-gt-0-gt-8。" class="headerlink" title="两个非空链表表示两个数，数字倒叙排列，比如 (2 -&gt; 4 -&gt; 3) + (5 -&gt; 6 -&gt; 4) 表示 342 + 465 = 807.， 最后输出应该为7 -&gt; 0 -&gt; 8。"></a>两个非空链表表示两个数，数字倒叙排列，比如 (2 -&gt; 4 -&gt; 3) + (5 -&gt; 6 -&gt; 4) 表示 342 + 465 = 807.， 最后输出应该为7 -&gt; 0 -&gt; 8。</h2><p>注意进位问题就好了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">package leetcode.linkedList;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/7</div><div class="line"> */</div><div class="line">public class AddTwoNumber_2 &#123;</div><div class="line">    public ListNode addTwoNumbers(ListNode l1, ListNode l2) &#123;</div><div class="line">        ListNode h1 = l1, h2 = l2;</div><div class="line">        ListNode result = new ListNode(0);</div><div class="line">        ListNode cur;</div><div class="line">        int c = 0;</div><div class="line">        cur = result;</div><div class="line">        while (h1 != null || h2 != null || c == 1) &#123;</div><div class="line">            int tmp;</div><div class="line">            if (h1 == null &amp;&amp; h2 == null) &#123;</div><div class="line">                tmp = c;</div><div class="line">            &#125; else if (h1 == null) &#123;</div><div class="line">                tmp = c + h2.val;</div><div class="line">            &#125; else if (h2 == null) &#123;</div><div class="line">                tmp = c + h1.val;</div><div class="line">            &#125; else &#123;</div><div class="line">                tmp = c + h1.val + h2.val;</div><div class="line">            &#125;</div><div class="line">            cur.next = new ListNode(tmp % 10);</div><div class="line">            c = tmp / 10;</div><div class="line">            cur = cur.next;</div><div class="line">            if (h1 != null)</div><div class="line">                h1 = h1.next;</div><div class="line">            if (h2 != null)</div><div class="line">                h2 = h2.next;</div><div class="line">        &#125;</div><div class="line">        return result.next;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="和上题类似，只是数字存储为顺序存储，解决方法为引入栈和dummy头节点。"><a href="#和上题类似，只是数字存储为顺序存储，解决方法为引入栈和dummy头节点。" class="headerlink" title="和上题类似，只是数字存储为顺序存储，解决方法为引入栈和dummy头节点。"></a>和上题类似，只是数字存储为顺序存储，解决方法为引入栈和dummy头节点。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">package leetcode.linkedList;</div><div class="line"></div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/7</div><div class="line"> */</div><div class="line">public class AddTwoNumbersII_445 &#123;</div><div class="line">    public ListNode addTwoNumbers(ListNode l1, ListNode l2) &#123;</div><div class="line">        Stack&lt;Integer&gt; stack1 = new Stack&lt;&gt;();</div><div class="line">        Stack&lt;Integer&gt; stack2 = new Stack&lt;&gt;();</div><div class="line">        ListNode cur1 = l1, cur2 = l2;</div><div class="line">        while (cur1 != null) &#123;</div><div class="line">            stack1.push(cur1.val);</div><div class="line">            cur1 = cur1.next;</div><div class="line">        &#125;</div><div class="line">        while (cur2 != null) &#123;</div><div class="line">            stack2.push(cur2.val);</div><div class="line">            cur2 = cur2.next;</div><div class="line">        &#125;</div><div class="line">        int c = 0;</div><div class="line">        ListNode result = new ListNode(0);</div><div class="line">        while (!stack1.isEmpty() || !stack2.isEmpty() || c == 1) &#123;</div><div class="line">            int tmp = 0;</div><div class="line">            if (stack1.isEmpty() &amp;&amp; stack2.isEmpty())</div><div class="line">                tmp = c;</div><div class="line">            else if (stack1.isEmpty())</div><div class="line">                tmp = c + stack2.pop();</div><div class="line">            else if (stack2.isEmpty())</div><div class="line">                tmp = c + stack1.pop();</div><div class="line">            else</div><div class="line">                tmp = stack1.pop() + stack2.pop() + c;</div><div class="line">            ListNode node = new ListNode(tmp % 10);</div><div class="line">            c = tmp / 10;</div><div class="line">            node.next = result.next;</div><div class="line">            result.next = node;</div><div class="line">        &#125;</div><div class="line">        return result.next;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="删除链表中的节点"><a href="#删除链表中的节点" class="headerlink" title="删除链表中的节点"></a>删除链表中的节点</h1><p>由于给出的是要删除的节点，无法获取其上一个节点，因此将其下一个节点的值复制过来，删除其下一个节点。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">package leetcode.linkedList;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/7</div><div class="line"> */</div><div class="line">public class DeleteNodeInALinkedList_237 &#123;</div><div class="line">    public void deleteNode(ListNode node) &#123;</div><div class="line">        if (node == null)</div><div class="line">            return;</div><div class="line">        if (node.next == null) &#123;</div><div class="line">            node = null;</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line">        node.val = node.next.val;</div><div class="line">        node.next = node.next.next;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="链表中删除一个节点"><a href="#链表中删除一个节点" class="headerlink" title="链表中删除一个节点"></a>链表中删除一个节点</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">package leetcode.linkedList;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/7</div><div class="line"> */</div><div class="line">public class RemoveLinkedListElement_203 &#123;</div><div class="line">    public ListNode removeElements(ListNode head, int val) &#123;</div><div class="line">        ListNode dummy = new ListNode(0);</div><div class="line">        dummy.next = head;</div><div class="line">        ListNode cur = head, pre = dummy;</div><div class="line">        while (cur != null) &#123;</div><div class="line">            if (cur.val == val) &#123;</div><div class="line">                pre.next = cur.next;</div><div class="line">            &#125; else &#123;</div><div class="line">                pre = pre.next;</div><div class="line">            &#125;</div><div class="line">            cur = cur.next;</div><div class="line">        &#125;</div><div class="line">        return dummy.next;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="删除链表中离end第N的节点"><a href="#删除链表中离end第N的节点" class="headerlink" title="删除链表中离end第N的节点"></a>删除链表中离end第N的节点</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">package leetcode.linkedList;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/7</div><div class="line"> */</div><div class="line">public class RemoveNthNodeFromEndOfList_19 &#123;</div><div class="line">    public ListNode removeNthFromEnd(ListNode head, int n) &#123;</div><div class="line">        ListNode dummy = new ListNode(0);</div><div class="line">        dummy.next = head;</div><div class="line">        ListNode l = dummy;</div><div class="line">        ListNode r =dummy;</div><div class="line">        for (int i = 0; i &lt; n + 1; i++) &#123;</div><div class="line">            r = r.next;</div><div class="line">        &#125;</div><div class="line">        while (r != null) &#123;</div><div class="line">            l = l. next;</div><div class="line">            r = r.next;</div><div class="line">        &#125;</div><div class="line">        l.next = l.next.next;</div><div class="line">        return dummy.next;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="链表排序问题"><a href="#链表排序问题" class="headerlink" title="链表排序问题"></a>链表排序问题</h1><h2 id="对一个链表进行插入排序"><a href="#对一个链表进行插入排序" class="headerlink" title="对一个链表进行插入排序"></a>对一个链表进行插入排序</h2><p>设置dummy头节点，然后找到当前节点需要插入的位置。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">package leetcode.linkedList;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/7</div><div class="line"> */</div><div class="line">public class InsertionSortList_147 &#123;</div><div class="line">    public ListNode insertionSortList(ListNode head) &#123;</div><div class="line">        if (head == null || head.next == null)</div><div class="line">            return head;</div><div class="line">        ListNode dummy = new ListNode(0);</div><div class="line">        dummy.next = head;</div><div class="line">        ListNode pre = dummy;</div><div class="line">        ListNode cur = head;</div><div class="line">        while (cur != null) &#123;</div><div class="line">            if (cur.next != null &amp;&amp; cur.next.val &lt; cur.val) &#123;</div><div class="line">                while (pre.next.val &lt; cur.next.val)</div><div class="line">                    pre = pre.next;</div><div class="line">                ListNode tmp = cur.next;</div><div class="line">                cur.next = cur.next.next;</div><div class="line">                tmp.next = pre.next;</div><div class="line">                pre.next = tmp;</div><div class="line">                pre = dummy;</div><div class="line">            &#125;  else &#123;</div><div class="line">                cur = cur.next;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return dummy.next;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="合并两个有序链表"><a href="#合并两个有序链表" class="headerlink" title="合并两个有序链表"></a>合并两个有序链表</h2><p>百度二面遇到了,这个解法是设置dummy头节点，当时自己选择的是递归方法，比较好想。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">package leetcode.linkedList;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/7</div><div class="line"> */</div><div class="line">public class MergeTwoSortedLists_21 &#123;</div><div class="line">    public ListNode mergeTwoLists(ListNode l1, ListNode l2) &#123;</div><div class="line">        ListNode dummy = new ListNode(0);</div><div class="line">        ListNode node1 = l1;</div><div class="line">        ListNode node2 = l2;</div><div class="line">        ListNode curr = dummy;</div><div class="line">        while (node1 != null || node2 != null) &#123;</div><div class="line">            if (node1 == null) &#123;</div><div class="line">                curr.next = node2;</div><div class="line">                break;</div><div class="line">            &#125; else if (node2 == null) &#123;</div><div class="line">                curr.next = node1;</div><div class="line">                break;</div><div class="line">            &#125; else &#123;</div><div class="line">                if (node1.val &lt;= node2.val) &#123;</div><div class="line">                    curr.next = node1;</div><div class="line">                    node1 = node1.next;</div><div class="line">                &#125; else &#123;</div><div class="line">                    curr.next = node2;</div><div class="line">                    node2 = node2.next;</div><div class="line">                &#125;</div><div class="line">                curr = curr.next;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return dummy.next;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h2><p>快慢指针将链表分为两部分，对两部分进行继续拆分，然后返回其合并结果。复杂度为O(NlogN)。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line">package leetcode.linkedList;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/7</div><div class="line"> */</div><div class="line">public class SortList_148 &#123;</div><div class="line">    public ListNode sortList(ListNode head) &#123;</div><div class="line">        if (head == null || head.next == null)</div><div class="line">            return head;</div><div class="line">        ListNode fast = head, slow = head;</div><div class="line">        ListNode prev = null, left, right;</div><div class="line">        while (fast != null &amp;&amp; fast.next != null) &#123;</div><div class="line">            prev = slow;</div><div class="line">            slow = slow.next;</div><div class="line">            fast = fast.next.next;</div><div class="line">        &#125;</div><div class="line">        prev.next = null;</div><div class="line">        left = sortList(head);</div><div class="line">        right = sortList(slow);</div><div class="line">        return mergeTwoList(left, right);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public ListNode mergeTwoList(ListNode l1, ListNode l2) &#123;</div><div class="line">        ListNode dummy = new ListNode(0);</div><div class="line">        ListNode prev = dummy;</div><div class="line">        while (l1 != null &amp;&amp; l2 != null) &#123;</div><div class="line">            if (l1.val &lt;= l2.val) &#123;</div><div class="line">                prev.next = l1;</div><div class="line">                l1 = l1.next;</div><div class="line">            &#125; else &#123;</div><div class="line">                prev.next = l2;</div><div class="line">                l2 = l2.next;</div><div class="line">            &#125;</div><div class="line">            prev = prev.next;</div><div class="line">        &#125;</div><div class="line">        if (l1 != null)</div><div class="line">            prev.next = l1;</div><div class="line">        if (l2 != null)</div><div class="line">            prev.next = l2;</div><div class="line">        return dummy.next;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="链表调整问题"><a href="#链表调整问题" class="headerlink" title="链表调整问题"></a>链表调整问题</h1><h2 id="奇数前偶数后的问题"><a href="#奇数前偶数后的问题" class="headerlink" title="奇数前偶数后的问题"></a>奇数前偶数后的问题</h2><p>创建两个dummy节点，最后两个连接起来就可以了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">package leetcode.linkedList;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/7</div><div class="line"> */</div><div class="line">public class OddEvenLinkedList_328 &#123;</div><div class="line">    public ListNode oddEvenList(ListNode head) &#123;</div><div class="line">        if (head == null || head.next == null)</div><div class="line">            return head;</div><div class="line">        ListNode odd = new ListNode(0);</div><div class="line">        ListNode even = new ListNode(0);</div><div class="line">        ListNode lastOdd = odd;</div><div class="line">        ListNode lastEven = even;</div><div class="line">        ListNode cur = head;</div><div class="line">        int i = 1;</div><div class="line">        while (cur != null) &#123;</div><div class="line">            if (i % 2 == 0) &#123;</div><div class="line">                lastEven.next = cur;</div><div class="line">                lastEven = lastEven.next;</div><div class="line">            &#125; else &#123;</div><div class="line">                lastOdd.next = cur;</div><div class="line">                lastOdd = lastOdd.next;</div><div class="line">            &#125;</div><div class="line">            cur = cur.next;</div><div class="line">            i++;</div><div class="line">        &#125;</div><div class="line">        lastEven.next = null;</div><div class="line">        lastOdd.next = even.next;</div><div class="line">        return odd.next;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="partion问题-将链表中小于target值的节点放在前面。解决思路还是两个dummy节点。"><a href="#partion问题-将链表中小于target值的节点放在前面。解决思路还是两个dummy节点。" class="headerlink" title="partion问题,将链表中小于target值的节点放在前面。解决思路还是两个dummy节点。"></a>partion问题,将链表中小于target值的节点放在前面。解决思路还是两个dummy节点。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">package leetcode.linkedList;</div><div class="line"></div><div class="line">import java.util.List;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/7</div><div class="line"> */</div><div class="line">public class PartitionList_86 &#123;</div><div class="line">    public ListNode partition(ListNode head, int x) &#123;</div><div class="line">        if (head == null || head.next == null)</div><div class="line">            return head;</div><div class="line">        ListNode smaller = new ListNode(0);</div><div class="line">        ListNode bigger = new ListNode(0);</div><div class="line">        ListNode lastSmall = smaller;</div><div class="line">        ListNode lastbig = bigger;</div><div class="line">        ListNode cur = head;</div><div class="line">        while (cur != null) &#123;</div><div class="line">            if (cur.val &lt; x)&#123;</div><div class="line">                lastSmall.next = cur;</div><div class="line">                lastSmall = lastSmall.next;</div><div class="line">            &#125;</div><div class="line">            if (cur.val &gt;= x) &#123;</div><div class="line">                lastbig.next = cur;</div><div class="line">                lastbig = lastbig.next;</div><div class="line">            &#125;</div><div class="line">            cur = cur.next;</div><div class="line">        &#125;</div><div class="line">        lastbig.next = null;</div><div class="line">        lastSmall.next = bigger.next;</div><div class="line">        return smaller.next;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="将链表-L-L0→L1→…→Ln-1→Ln-变为-L0→Ln→L1→Ln-1→L2→Ln-2→…解决思路，快慢指针加上链表反转。"><a href="#将链表-L-L0→L1→…→Ln-1→Ln-变为-L0→Ln→L1→Ln-1→L2→Ln-2→…解决思路，快慢指针加上链表反转。" class="headerlink" title="将链表 L: L0→L1→…→Ln-1→Ln 变为 L0→Ln→L1→Ln-1→L2→Ln-2→…解决思路，快慢指针加上链表反转。"></a>将链表 L: L0→L1→…→Ln-1→Ln 变为 L0→Ln→L1→Ln-1→L2→Ln-2→…解决思路，快慢指针加上链表反转。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">package leetcode.linkedList;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/7</div><div class="line"> */</div><div class="line">public class RecordList_143 &#123;</div><div class="line">    public void reorderList(ListNode head) &#123;</div><div class="line">        if (head == null || head.next == null)</div><div class="line">            return;</div><div class="line">        ListNode slow = head, fast = head;</div><div class="line">        while (fast.next != null &amp;&amp; fast.next.next != null) &#123;</div><div class="line">            slow = slow.next;</div><div class="line">            fast = fast.next.next;</div><div class="line">        &#125;</div><div class="line">        slow.next = reverseList(slow.next);</div><div class="line">        fast = slow.next;</div><div class="line">        ListNode node = head;</div><div class="line">        while (node != slow) &#123;</div><div class="line">            slow.next = fast.next;</div><div class="line">            fast.next = node.next;</div><div class="line">            node.next = fast;</div><div class="line">            node = fast.next;</div><div class="line">            fast = slow.next;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private ListNode reverseList(ListNode head) &#123;</div><div class="line">        if (head == null)</div><div class="line">            return head;</div><div class="line">        ListNode p = head.next;</div><div class="line">        head.next = null;</div><div class="line">        while (p != null) &#123;</div><div class="line">            ListNode tmp = p;</div><div class="line">            p = p.next;</div><div class="line">            tmp.next = head;</div><div class="line">            head = tmp;</div><div class="line">        &#125;</div><div class="line">        return head;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="排序链表中删除重复节点，要求保留一个"><a href="#排序链表中删除重复节点，要求保留一个" class="headerlink" title="排序链表中删除重复节点，要求保留一个"></a>排序链表中删除重复节点，要求保留一个</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">package leetcode.linkedList;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/7</div><div class="line"> */</div><div class="line">public class RemoveDuplicatesFromSortedList &#123;</div><div class="line">    public ListNode deleteDuplicates(ListNode head) &#123;</div><div class="line">        if (head == null || head.next == null)</div><div class="line">            return head;</div><div class="line">        ListNode pre = head;</div><div class="line">        ListNode cur = head.next;</div><div class="line">        while (cur != null) &#123;</div><div class="line">            if (cur.val == pre.val)</div><div class="line">                pre.next = cur.next;</div><div class="line">            else &#123;</div><div class="line">                pre.next = cur;</div><div class="line">                pre = pre.next;</div><div class="line">            &#125;</div><div class="line">            cur = cur.next;</div><div class="line">        &#125;</div><div class="line">        return head;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="排序链表中删除重复节点，要求删除所有重复的"><a href="#排序链表中删除重复节点，要求删除所有重复的" class="headerlink" title="排序链表中删除重复节点，要求删除所有重复的"></a>排序链表中删除重复节点，要求删除所有重复的</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">package leetcode.linkedList;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/7</div><div class="line"> */</div><div class="line">public class RemoveDuplicatesFromSortedListII_82 &#123;</div><div class="line">    public ListNode deleteDuplicates(ListNode head) &#123;</div><div class="line">        if(head == null) return head;</div><div class="line">        ListNode dummy = new ListNode(0);</div><div class="line">        dummy.next = head;</div><div class="line">        ListNode pre = dummy, cur = head;</div><div class="line"></div><div class="line">        boolean repeat = false;</div><div class="line">        while(cur.next != null)&#123;</div><div class="line">            if(cur.val == cur.next.val)&#123;</div><div class="line">                repeat = true;</div><div class="line">                cur = cur.next;</div><div class="line">            &#125; else &#123;</div><div class="line">                cur = cur.next;</div><div class="line">                if(!repeat)&#123;</div><div class="line">                    pre = pre.next;</div><div class="line">                &#125;</div><div class="line">                pre.next = cur;</div><div class="line">                repeat = false;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        if(repeat) pre.next = null;</div><div class="line">        return dummy.next;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="反转一个链表"><a href="#反转一个链表" class="headerlink" title="反转一个链表"></a>反转一个链表</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div></pre></td><td class="code"><pre><div class="line">package leetcode.linkedList;</div><div class="line"></div><div class="line">import java.util.List;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/7</div><div class="line"> */</div><div class="line">public class ReverseLinkedList_206 &#123;</div><div class="line">    public ListNode reverseList(ListNode head) &#123;</div><div class="line">        if (head == null || head.next == null)</div><div class="line">            return head;</div><div class="line">        ListNode pre = null;</div><div class="line">        ListNode cur = head;</div><div class="line">        while (cur != null) &#123;</div><div class="line">            ListNode next = cur.next;</div><div class="line">            cur.next = pre;</div><div class="line">            pre = cur;</div><div class="line">            cur = next;</div><div class="line">        &#125;</div><div class="line">        return pre;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 创建一个链表</div><div class="line">     * @param arr</div><div class="line">     * @param n</div><div class="line">     * @return</div><div class="line">     */</div><div class="line">    public static ListNode createLinkedList(int arr[], int n) &#123;</div><div class="line">        if (n == 0)</div><div class="line">            return null;</div><div class="line">        ListNode head = new ListNode(arr[0]);</div><div class="line">        ListNode curNode = head;</div><div class="line">        for (int i = 1; i &lt; n; i++) &#123;</div><div class="line">            curNode.next = new ListNode(arr[i]);</div><div class="line">            curNode = curNode.next;</div><div class="line">        &#125;</div><div class="line">        return head;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void printLinkedList(ListNode head) &#123;</div><div class="line">        ListNode cur = head;</div><div class="line">        while (cur != null) &#123;</div><div class="line">            System.out.print(cur.val + &quot; -&gt; &quot;);</div><div class="line">            cur = cur.next;</div><div class="line">        &#125;</div><div class="line">        System.out.println(&quot;NULL&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        int arr[] = &#123;1, 2, 3, 4, 5&#125;;</div><div class="line">        int n = arr.length;</div><div class="line">        ListNode head = createLinkedList(arr, n);</div><div class="line">        printLinkedList(head);</div><div class="line">        head = new ReverseLinkedList_206().reverseList(head);</div><div class="line">        printLinkedList(head);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="反转指定位置的链表-解决思路，添加dummy节点，找到位置即可。"><a href="#反转指定位置的链表-解决思路，添加dummy节点，找到位置即可。" class="headerlink" title="反转指定位置的链表,解决思路，添加dummy节点，找到位置即可。"></a>反转指定位置的链表,解决思路，添加dummy节点，找到位置即可。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">package leetcode.linkedList;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/7</div><div class="line"> */</div><div class="line">public class ReverseLinkedListII_92 &#123;</div><div class="line">    public ListNode reverseBetween(ListNode head, int m, int n) &#123;</div><div class="line">        if (head == null)</div><div class="line">            return null;</div><div class="line">        ListNode newHead = new ListNode(0);</div><div class="line">        newHead.next = head;</div><div class="line">        ListNode pre= newHead;</div><div class="line">        for (int i = 0; i &lt; m-1; i++) &#123;</div><div class="line">            pre = pre.next;</div><div class="line">        &#125;</div><div class="line">        ListNode cur = pre.next;</div><div class="line">        ListNode next = cur.next;</div><div class="line">        for (int j = 0; j &lt; n-m; j++) &#123;</div><div class="line">           cur.next = next.next;</div><div class="line">           next.next = pre.next;</div><div class="line">           pre.next = next;</div><div class="line">           next = cur.next;</div><div class="line">        &#125;</div><div class="line">        return newHead.next;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="以K个为一组来反转链表-添加dummy节点，K个节点处理一次，不足k个不处理"><a href="#以K个为一组来反转链表-添加dummy节点，K个节点处理一次，不足k个不处理" class="headerlink" title="以K个为一组来反转链表,添加dummy节点，K个节点处理一次，不足k个不处理"></a>以K个为一组来反转链表,添加dummy节点，K个节点处理一次，不足k个不处理</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">package leetcode.linkedList;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/7</div><div class="line"> */</div><div class="line">public class ReverseNodesInKGroup_25 &#123;</div><div class="line">    public ListNode reverseKGroup(ListNode head, int k) &#123;</div><div class="line">        ListNode dummy = new ListNode(0);</div><div class="line">        ListNode start = dummy;</div><div class="line">        dummy.next = head;</div><div class="line">        while (true) &#123;</div><div class="line">            ListNode node = start, cur, n = node;</div><div class="line">            start = node.next;</div><div class="line">            for (int i = 0; i &lt; k &amp;&amp; n != null; i++)</div><div class="line">                n = n.next;</div><div class="line">            if (n == null)</div><div class="line">                break;</div><div class="line">            for (int i = 0; i &lt; k - 1; i++) &#123;</div><div class="line">                cur = node.next;</div><div class="line">                node.next = cur.next;</div><div class="line">                cur.next = n.next;</div><div class="line">                n.next = cur;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return dummy.next;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="链表旋转问题"><a href="#链表旋转问题" class="headerlink" title="链表旋转问题"></a>链表旋转问题</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">package leetcode.linkedList;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/7</div><div class="line"> */</div><div class="line">public class RotateLIst_61 &#123;</div><div class="line">    public ListNode rotateRight(ListNode head, int k) &#123;</div><div class="line">        if (head == null || head.next == null)</div><div class="line">            return head;</div><div class="line">        ListNode dummy = new ListNode(0);</div><div class="line">        dummy.next = head;</div><div class="line">        ListNode left = dummy, right = dummy, br = dummy;</div><div class="line">        int length = 0;</div><div class="line">        while (right.next != null) &#123;</div><div class="line">            length++;</div><div class="line">            right = right.next;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        for (int j = length - k%length; j&gt; 0; j--)</div><div class="line">            left = left.next;</div><div class="line"></div><div class="line">        right.next = dummy.next;</div><div class="line">        dummy.next = left.next;</div><div class="line">        left.next = null;</div><div class="line">        return dummy.next;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="成对交换节点-添加dummy节点，"><a href="#成对交换节点-添加dummy节点，" class="headerlink" title="成对交换节点, 添加dummy节点，"></a>成对交换节点, 添加dummy节点，</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">package leetcode.linkedList;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/7</div><div class="line"> */</div><div class="line">public class SwapNodewsInPairs_24 &#123;</div><div class="line">    public ListNode swapPairs(ListNode head) &#123;</div><div class="line">        ListNode dummy = new ListNode(0);</div><div class="line">        dummy.next = head;</div><div class="line">        ListNode pre = dummy;</div><div class="line">        ListNode node1, node2, next;</div><div class="line">        while (pre.next != null &amp;&amp; pre.next.next != null) &#123;</div><div class="line">            node1 = pre.next;</div><div class="line">            node2 = node1.next;</div><div class="line">            next = node2.next;</div><div class="line">            node2.next = node1;</div><div class="line">            node1.next = next;</div><div class="line">            pre.next = node2;</div><div class="line">            //靠后的一对节点</div><div class="line">            pre = node1;</div><div class="line">        &#125;</div><div class="line">        return dummy.next;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="链表是否为回文链表"><a href="#链表是否为回文链表" class="headerlink" title="链表是否为回文链表"></a>链表是否为回文链表</h1><p>快慢指针定位，反转后半部分，然后逐一对比。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">package leetcode.linkedList;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/7</div><div class="line"> */</div><div class="line">public class PalindromeLinkedList_234 &#123;</div><div class="line">    public boolean isPalindrome(ListNode head) &#123;</div><div class="line">        if (head == null || head.next == null)</div><div class="line">            return true;</div><div class="line">        ListNode slow = head, fast = head;</div><div class="line">        while (fast.next != null &amp;&amp; fast.next.next != null) &#123;</div><div class="line">            slow = slow.next;</div><div class="line">            fast = fast.next.next;</div><div class="line">        &#125;</div><div class="line">        slow.next = reverseList(slow.next);</div><div class="line">        fast = slow.next;</div><div class="line">        ListNode node = head;</div><div class="line">        while (fast != null) &#123;</div><div class="line">            if (node.val != fast.val)</div><div class="line">                return false;</div><div class="line">            node = node.next;</div><div class="line">            fast = fast.next;</div><div class="line">        &#125;</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private ListNode reverseList(ListNode head) &#123;</div><div class="line">        if (head == null)</div><div class="line">            return head;</div><div class="line">        ListNode p = head.next;</div><div class="line">        head.next = null;</div><div class="line">        while (p != null) &#123;</div><div class="line">            ListNode tmp = p;</div><div class="line">            p = p.next;</div><div class="line">            tmp.next = head;</div><div class="line">            head = tmp;</div><div class="line">        &#125;</div><div class="line">        return head;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
           
         
@@ -562,6 +742,169 @@
 <li>选定一个合适的值</li>
 </ul>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">package sort;</div><div class="line"></div><div class="line">import java.util.Arrays;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/3/28</div><div class="line"> */</div><div class="line">public class QuickSort &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        int[] arr = &#123;53, 23, 45, 86, 12, 33, 10, 90, 36, 70, 43, 88, 60, 29&#125;;</div><div class="line">        System.out.println(&quot;排序之前： &quot; + Arrays.toString(arr));</div><div class="line">        quickSort(arr);</div><div class="line">        System.out.println(&quot;排序之后： &quot; + Arrays.toString(arr));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void quickSort(int[] arr) &#123;</div><div class="line">        quickSortHelp(arr, 0, arr.length - 1);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void quickSortHelp(int[] arr, int low, int high) &#123;</div><div class="line">        if (low &lt; high) &#123;</div><div class="line">            int pivot = partition(arr, low, high);</div><div class="line">            quickSortHelp(arr, low, pivot - 1);</div><div class="line">            quickSortHelp(arr, pivot + 1, high);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static int partition(int[] arr, int low, int high) &#123;</div><div class="line">        int pivot = arr[low];</div><div class="line">        while (low &lt; high) &#123;</div><div class="line">            while (low &lt; high &amp;&amp; arr[high] &gt;= pivot)</div><div class="line">                high--;</div><div class="line">            arr[low] = arr[high];</div><div class="line">            while (low &lt; high &amp;&amp; arr[low] &lt;= pivot)</div><div class="line">                low++;</div><div class="line">            arr[high] = arr[low];</div><div class="line">        &#125;</div><div class="line">        arr[low] = pivot;</div><div class="line">        return low;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void swap(int[] arr, int low, int high) &#123;</div><div class="line">        int temp = arr[low];</div><div class="line">        arr[low] = arr[high];</div><div class="line">        arr[high] = temp;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/算法/算法之堆栈相关/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/21/算法/算法之堆栈相关/" itemprop="url">算法-堆栈</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/algorithms/" itemprop="url" rel="index">
+                    <span itemprop="name">algorithms</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="二叉树遍历"><a href="#二叉树遍历" class="headerlink" title="二叉树遍历"></a>二叉树遍历</h1><p>模拟操作系统中堆栈，创建一个Command类，封装了一个string和treenode，string指定command执行的操作，treenode保存数据，则前中后遍历只需要调整很少的顺序就可以了。</p>
+<p>中序遍历：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line">package leetcode.stack;</div><div class="line"></div><div class="line">import java.awt.event.ComponentAdapter;</div><div class="line">import java.util.ArrayList;</div><div class="line">import java.util.Collections;</div><div class="line">import java.util.List;</div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class BinaryTreeInOrderTraversal_94 &#123;</div><div class="line">    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    //递归方法</div><div class="line">    public List&lt;Integer&gt; inorderTraversal(TreeNode root) &#123;</div><div class="line">        if (root != null) &#123;</div><div class="line">            inorderTraversal(root.left);</div><div class="line">            res.add(root.val);</div><div class="line">            inorderTraversal(root.right);</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line">    //非递归方法</div><div class="line">    public List&lt;Integer&gt; inorderTraversal1(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return res;</div><div class="line">        Stack&lt;Command&gt; stack = new Stack&lt;&gt;();</div><div class="line">        stack.push(new Command(&quot;go&quot;, root));</div><div class="line">        while (!stack.isEmpty()) &#123;</div><div class="line">            Command command = stack.pop();</div><div class="line">            if (command.s.equals(&quot;print&quot;))</div><div class="line">                res.add(command.node.val);</div><div class="line">            else &#123;</div><div class="line">                if (command.node.right != null)</div><div class="line">                    stack.push(new Command(&quot;go&quot;, command.node.right));</div><div class="line">                stack.push(new Command(&quot;print&quot;, command.node));</div><div class="line">                if (command.node.left != null)</div><div class="line">                    stack.push(new Command(&quot;go&quot;, command.node.left));</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    class Command&#123;</div><div class="line">        String s;  //print,go</div><div class="line">        TreeNode node;</div><div class="line">        public Command(String s, TreeNode node) &#123;</div><div class="line">            this.s = s;</div><div class="line">            this.node = node;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>前序–这个没有改，用的经典算法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">package leetcode.stack;</div><div class="line"></div><div class="line">import java.util.ArrayList;</div><div class="line">import java.util.List;</div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class BinaryTreePrecoderTraversal_144 &#123;</div><div class="line">    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    //递归方法</div><div class="line">    public List&lt;Integer&gt; preorderTraversal(TreeNode root) &#123;</div><div class="line">        if (root != null) &#123;</div><div class="line">            res.add(root.val);</div><div class="line">            preorderTraversal(root.left);</div><div class="line">            preorderTraversal(root.right);</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line">    //非递归方法</div><div class="line">    public List&lt;Integer&gt; preorderTraversal1(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return res;</div><div class="line">        Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();</div><div class="line">        stack.push(root);</div><div class="line">        while (!stack.isEmpty()) &#123;</div><div class="line">            TreeNode node = stack.pop();</div><div class="line">            res.add(node.val);</div><div class="line">            if (node.right != null)</div><div class="line">                stack.push(node.right);</div><div class="line">            if (node.left != null)</div><div class="line">                stack.push(node.left);</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>后序：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">package leetcode.stack;</div><div class="line"></div><div class="line">import java.util.ArrayList;</div><div class="line">import java.util.List;</div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class BinaryTreePostorderTraversal_145 &#123;</div><div class="line">    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();</div><div class="line">    public List&lt;Integer&gt; postorderTraversal(TreeNode root) &#123;</div><div class="line">        if (root == null)</div><div class="line">            return res;</div><div class="line">        Stack&lt;Command&gt; stack = new Stack&lt;&gt;();</div><div class="line">        stack.push(new Command(&quot;go&quot;, root));</div><div class="line">        while (!stack.isEmpty()) &#123;</div><div class="line">            Command command = stack.pop();</div><div class="line">            if (command.s.equals(&quot;print&quot;))</div><div class="line">                res.add(command.node.val);</div><div class="line">            else &#123;</div><div class="line">                stack.push(new Command(&quot;print&quot;, command.node));</div><div class="line">                if (command.node.right != null)</div><div class="line">                    stack.push(new Command(&quot;go&quot;, command.node.right));</div><div class="line">                if (command.node.left != null)</div><div class="line">                    stack.push(new Command(&quot;go&quot;, command.node.left));</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    class Command &#123;</div><div class="line">        String s;//print, go</div><div class="line">        TreeNode node;</div><div class="line">        public Command(String s, TreeNode node) &#123;</div><div class="line">            this.s = s;</div><div class="line">            this.node = node;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="逆波兰表达式计算"><a href="#逆波兰表达式计算" class="headerlink" title="逆波兰表达式计算"></a>逆波兰表达式计算</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">package leetcode.stack;</div><div class="line"></div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class EvaluateReversePolishNotation_150 &#123;</div><div class="line">    public int evalRPN(String[] tokens) &#123;</div><div class="line">        Stack&lt;Integer&gt; number = new Stack&lt;&gt;();</div><div class="line">        Stack&lt;Character&gt; operators = new Stack&lt;&gt;();</div><div class="line">        for (String s : tokens) &#123;</div><div class="line">            switch (s) &#123;</div><div class="line">                case &quot;*&quot;:</div><div class="line">                    number.push(number.pop() * number.pop());</div><div class="line">                    break;</div><div class="line">                case &quot;+&quot;:</div><div class="line">                    number.push(number.pop() + number.pop());</div><div class="line">                    break;</div><div class="line">                case &quot;-&quot;:</div><div class="line">                    number.push(-(number.pop() - number.pop()));</div><div class="line">                    break;</div><div class="line">                case &quot;/&quot;:</div><div class="line">                    int tmp1 = number.pop();</div><div class="line">                    int tmp2 = number.pop();</div><div class="line">                    number.push(tmp2 / tmp1);</div><div class="line">                    break;</div><div class="line">                default:</div><div class="line">                    number.push(Integer.valueOf(s));</div><div class="line">                    break;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return number.pop();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="地址简化"><a href="#地址简化" class="headerlink" title="地址简化"></a>地址简化</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line">package leetcode.stack;</div><div class="line"></div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class SimplifyPath_71 &#123;</div><div class="line">    public String simplifyPath(String path) &#123;</div><div class="line">        Stack&lt;String&gt; stack = new Stack&lt;&gt;();</div><div class="line">        String[] strings = path.split(&quot;/&quot;);</div><div class="line">        for (String s : strings) &#123;</div><div class="line">            switch (s) &#123;</div><div class="line">                case &quot;.&quot; :</div><div class="line">                    break;</div><div class="line">                case &quot;..&quot;:</div><div class="line">                    if (!stack.isEmpty())</div><div class="line">                        stack.pop();</div><div class="line">                    break;</div><div class="line">                default:</div><div class="line">                    if (!s.equals(&quot;&quot;))</div><div class="line">                        stack.push(s);</div><div class="line">                    break;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        StringBuilder sb = new StringBuilder();</div><div class="line"></div><div class="line">        if (stack.isEmpty())</div><div class="line">            return &quot;/&quot;;</div><div class="line">        while (!stack.isEmpty()) &#123;</div><div class="line">            sb.insert(0,  &quot;/&quot; + stack.pop());</div><div class="line">        &#125;</div><div class="line">        return sb.toString();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        SimplifyPath_71 simplifyPath_71 = new SimplifyPath_71();</div><div class="line">        String s = &quot;/...&quot;;</div><div class="line">        System.out.println(simplifyPath_71.simplifyPath(s));</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="FlattenNestedListIterator-341"><a href="#FlattenNestedListIterator-341" class="headerlink" title="FlattenNestedListIterator_341"></a>FlattenNestedListIterator_341</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">package leetcode.stack;</div><div class="line"></div><div class="line">import java.util.Iterator;</div><div class="line">import java.util.List;</div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/8</div><div class="line"> */</div><div class="line">public class FlattenNestedListIterator_341 implements Iterator&lt;Integer&gt;&#123;</div><div class="line">    Stack&lt;NestedInteger&gt; stack = new Stack&lt;&gt;();</div><div class="line">    Stack&lt;Integer&gt; integers = new Stack&lt;&gt;();</div><div class="line">    public FlattenNestedListIterator_341(List&lt;NestedInteger&gt; nestedList) &#123;</div><div class="line">        for (NestedInteger i : nestedList) &#123;</div><div class="line">            stack.push(i);</div><div class="line">        &#125;</div><div class="line">        while (!stack.isEmpty()) &#123;</div><div class="line">            NestedInteger nestedInteger = stack.pop();</div><div class="line">            if (nestedInteger.isInteger()) &#123;</div><div class="line">                integers.push(nestedInteger.getInteger());</div><div class="line">            &#125; else &#123;</div><div class="line">                for (NestedInteger j : nestedInteger.getList())&#123;</div><div class="line">                    stack.push(j);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public boolean hasNext() &#123;</div><div class="line">        return !integers.isEmpty();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Integer next() &#123;</div><div class="line">        return integers.pop();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="符号匹配"><a href="#符号匹配" class="headerlink" title="符号匹配"></a>符号匹配</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">package leetcode.stack;</div><div class="line"></div><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/7</div><div class="line"> */</div><div class="line">public class ValidParentheses_20 &#123;</div><div class="line">    public boolean isValid(String s) &#123;</div><div class="line">        Stack&lt;Character&gt; stack = new Stack&lt;&gt;();</div><div class="line">        for (int i = 0; i &lt; s.length(); i++) &#123;</div><div class="line">            char ch = s.charAt(i);</div><div class="line">            if (ch == &apos;(&apos; || ch ==&apos;&#123;&apos; || ch == &apos;[&apos;)</div><div class="line">                stack.push(ch);</div><div class="line">            else &#123;</div><div class="line">                if (stack.isEmpty())</div><div class="line">                    return false;</div><div class="line">                char cha = stack.pop();</div><div class="line">                char match;</div><div class="line">                switch (ch) &#123;</div><div class="line">                    case &apos;(&apos; :</div><div class="line">                        match = &apos;)&apos;;</div><div class="line">                        break;</div><div class="line">                    case &apos;[&apos;:</div><div class="line">                        match=&apos;]&apos;;</div><div class="line">                        break;</div><div class="line">                    default:</div><div class="line">                        match=&apos;&#125;&apos;;</div><div class="line">                        break;</div><div class="line">                &#125;</div><div class="line">                if (cha != match)</div><div class="line">                    return false;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return stack.isEmpty();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
           
         
@@ -1617,526 +1960,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/算法/数据结构-两个栈实现一个队列以及两个队列实现一个栈/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/算法/数据结构-两个栈实现一个队列以及两个队列实现一个栈/" itemprop="url">数据结构-两个栈实现一个队列和两个队列实现一个栈</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/数据结构/" itemprop="url" rel="index">
-                    <span itemprop="name">数据结构</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="两个栈实现一个队列"><a href="#两个栈实现一个队列" class="headerlink" title="两个栈实现一个队列"></a>两个栈实现一个队列</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">import java.util.Stack;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/13</div><div class="line"> */</div><div class="line">public class TwoStackImpQueue &#123;</div><div class="line">    private Stack&lt;Integer&gt; stack1 = new Stack&lt;&gt;();</div><div class="line">    private Stack&lt;Integer&gt; stack2 = new Stack&lt;&gt;();</div><div class="line"></div><div class="line">    public void push(int node) &#123;</div><div class="line">        stack1.push(node);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public Integer pop() &#123;</div><div class="line">        if (stack2.size() &lt;= 0) &#123;</div><div class="line">            while (stack1.size() &gt; 0) &#123;</div><div class="line">                stack2.push(stack1.pop());</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        if (stack2.isEmpty()) &#123;</div><div class="line">            try &#123;</div><div class="line">                throw new Exception(&quot;queue is empty&quot;);</div><div class="line">            &#125; catch (Exception e)&#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return stack2.pop();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="两个队列实现一个栈"><a href="#两个队列实现一个栈" class="headerlink" title="两个队列实现一个栈"></a>两个队列实现一个栈</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line">import java.util.LinkedList;</div><div class="line">import java.util.Queue;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/13</div><div class="line"> */</div><div class="line">public class TwoListImpStack &#123;</div><div class="line">    private Queue&lt;Integer&gt; list1 = new LinkedList&lt;&gt;();</div><div class="line">    private Queue&lt;Integer&gt; list2 = new LinkedList&lt;&gt;();</div><div class="line"></div><div class="line">    public void push(int node) &#123;</div><div class="line">        if (list1.isEmpty() &amp;&amp; list2.isEmpty())&#123;</div><div class="line">            list1.add(node);</div><div class="line">        &#125; else if (list1.isEmpty()) &#123;</div><div class="line">            list2.add(node);</div><div class="line">        &#125; else &#123;</div><div class="line">            list2.add(node);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public Integer pop() &#123;</div><div class="line">        if (list1.isEmpty() &amp;&amp; list2.isEmpty())&#123;</div><div class="line">            try &#123;</div><div class="line">                throw new Exception(&quot;stack is Empty!&quot;);</div><div class="line">            &#125; catch (Exception e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">        &#125; else if (list1.isEmpty()) &#123;</div><div class="line">            while (list2.size() &gt; 1) &#123;</div><div class="line">                list1.add(list2.poll());</div><div class="line">            &#125;</div><div class="line">            return list2.poll();</div><div class="line">        &#125; else &#123;</div><div class="line">            while (list1.size() &gt; 1) &#123;</div><div class="line">                list2.add(list1.poll());</div><div class="line">            &#125;</div><div class="line">            return list1.poll();</div><div class="line">        &#125;</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/数据库/数据库整理/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/数据库/数据库整理/" itemprop="url">数据库整理</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/database/" itemprop="url" rel="index">
-                    <span itemprop="name">database</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="什么是存储过程？有什么优缺点？"><a href="#什么是存储过程？有什么优缺点？" class="headerlink" title="什么是存储过程？有什么优缺点？"></a>什么是存储过程？有什么优缺点？</h1><p>存储过程是一些预编译的SQL语句。也就是说存储过程是一个记录集，它是由一些T-SQL语句组成的代码块，这些T-SQL语句代码像一个方法一样实现一些功能（比如对单表的CRUD），然后再给这个代码块取一个名字，在用到这个功能的时候调用就可以。</p>
-<ul>
-<li>存储过程是一个预编译的代码块，执行效率比较高</li>
-<li>一个存储过程替代大量T-SQL语句，可以降低网络通信量，提高通信速率。</li>
-<li>可以一定程度上确保数据安全。</li>
-</ul>
-<h1 id="索引是什么？有什么作用及优缺点？"><a href="#索引是什么？有什么作用及优缺点？" class="headerlink" title="索引是什么？有什么作用及优缺点？"></a>索引是什么？有什么作用及优缺点？</h1><ul>
-<li><p>索引是对数据库表中一列或多列的值进行排序的结构，是帮助MySQL高效获取数据的数据结构。</p>
-</li>
-<li><p>索引就是加快检索表中数据的方法。数据库的索引类似于书籍的索引。在书籍中，索引允许用户不必翻阅整个书就能迅速地找到所需要的信息。在数据库中，索引也允许数据库程序迅速地找到表中的数据，而不必扫描整个数据库。</p>
-</li>
-<li><p>MySQL数据库几个基本的索引类型：</p>
-<ul>
-<li><p>普通索引：没有任何限制，最基本的索引，创建方式有以下几种</p>
-<ul>
-<li><p>直接创建索引：<code>CREATE INDEX index_name ON table(column(length))</code></p>
-</li>
-<li><p>修改表结构的方式添加索引：<code>ALTER TABLE table_name ADD INDEX index_name ON (column(length))</code></p>
-</li>
-<li><p>创建表的时候创建索引：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">CREATE TABLE `table` (</div><div class="line">  `id` int(11) NOT NULL AUTO_INCREMENT ,</div><div class="line">  `title` char(255) CHARACTER NOT NULL ,</div><div class="line">  `content` text CHARACTER NULL ,</div><div class="line">  `time` int(10) NULL DEFAULT NULL ,</div><div class="line">  PRIMARY KEY (`id`),</div><div class="line">  INDEX index_name (title(length))</div><div class="line">  )</div></pre></td></tr></table></figure>
-</li>
-<li><p>删除索引：<code>DROP INDEX index_name ON table</code></p>
-</li>
-</ul>
-</li>
-<li><p>主键索引：一种特殊的唯一索引，一个表只能有一个主键，不允许有空值。一般在建表的同时创建主键索引：</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">CREATE TABLE `table` (</div><div class="line">    `id` int(11) NOT NULL AUTO_INCREMENT ,</div><div class="line">    `title` char(255) NOT NULL ,</div><div class="line">    PRIMARY KEY (`id`)</div><div class="line">);</div></pre></td></tr></table></figure>
-</li>
-<li><p>唯一索引：索引列的值必须是唯一的，允许有控制。如果是组合索引，则列的组合必须唯一，创建方式：</p>
-<ul>
-<li><p>创建唯一索引：<code>CREATE UNIQUE INDEX indexName ON table(column(length))</code></p>
-</li>
-<li><p>修改表结构的时候指定唯一索引：<code>ALTER TABLE table_name ADD UNIQUE indexName ON (column(length))</code>  </p>
-</li>
-<li><p>创建表的时候直接指定：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">CREATE TABLE `table` (</div><div class="line">    `id` int(11) NOT NULL AUTO_INCREMENT ,</div><div class="line">    `title` char(255) CHARACTER NOT NULL ,</div><div class="line">    `content` text CHARACTER NULL ,</div><div class="line">    `time` int(10) NULL DEFAULT NULL ,</div><div class="line">    UNIQUE indexName (title(length))</div><div class="line">);</div></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-<li><p>组合索引：多个字段上创建的索引，只有在查询条件中使用了创建索引时的第一个字段，索引才会被使用，使用组合索引时遵循最左前缀集合：<code>ALTER TABLE</code>table<code>ADD INDEX name_city_age (name,city,age);</code></p>
-</li>
-<li><p>全文索引:主要用来查找文本中的关键字，而不是直接参与索引中的值的比较。fulltext索引和其他索引不太一样，更像一个搜索引擎，而不是一个简单的where语句的参数匹配。fulltext索引配合match against操作使用，而不是一般的where语句加like。全文索引可以在建表，修改表，创建索引中使用，不过目前只有cahr,varchar,text列上可以创建全文索引。而当数据量较大时，将现有数据放入一个没有全局索引的表中，然后再create index创建全文索引，要比先为一张表创建全文索引然后再将数据写入速度快很多。</p>
-<ul>
-<li><p>创建表时添加全文索引:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">CREATE TABLE `table` (</div><div class="line">    `id` int(11) NOT NULL AUTO_INCREMENT ,</div><div class="line">    `title` char(255) CHARACTER NOT NULL ,</div><div class="line">    `content` text CHARACTER NULL ,</div><div class="line">    `time` int(10) NULL DEFAULT NULL ,</div><div class="line">    PRIMARY KEY (`id`),</div><div class="line">    FULLTEXT (content)</div><div class="line">);</div></pre></td></tr></table></figure>
-</li>
-<li><p>修改表结构添加全文索引：<code>ALTER TABLE article ADD FULLTEXT index_content(content)</code></p>
-</li>
-<li><p>直接创建索引：<code>CREATE FULLTEXT INDEX index_content ON article(content)</code></p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>优缺点：</p>
-<ul>
-<li>索引加快数据库的检索速度</li>
-<li>索引降低了插入，删除，修改等维护任务的速度</li>
-<li>唯一索引可以确保每一行数据的唯一性</li>
-<li>通过使用索引，可以在查询的过程中使用优化隐藏器，提高系统的性能。</li>
-<li>索引需要占物理和数据空间</li>
-</ul>
-</li>
-</ul>
-<h1 id="什么是事务？"><a href="#什么是事务？" class="headerlink" title="什么是事务？"></a>什么是事务？</h1><ul>
-<li>事务是并发控制的基本单位。所谓的事务，它指的是一个操作序列，这些操作要么都执行，要么都不执行。它是一个不可分割的工作单位。事务是数据库维护数据一致性的单位，在每个事务结束时，都能保持数据的一致性。</li>
-</ul>
-<h1 id="数据库的乐观锁AND悲观锁是什么？"><a href="#数据库的乐观锁AND悲观锁是什么？" class="headerlink" title="数据库的乐观锁AND悲观锁是什么？"></a>数据库的乐观锁AND悲观锁是什么？</h1><ul>
-<li>数据库管理系统DBMS中并发控制的任务是确保在多个事务同时存取数据库中同一数据时不破坏事务的隔离性和统一性以及数据库的统一性。</li>
-<li>乐观锁和悲观锁是并发控制主要采用的技术手段：<ul>
-<li>乐观锁：假定不会发生并发冲突，只在提交操作时检查是否违反数据完整性。</li>
-<li>悲观锁：假定会发生并发冲突，屏蔽一切可能违反数据完整性的操作。</li>
-</ul>
-</li>
-</ul>
-<h1 id="使用索引查询一定能提高查询的性能吗？为什么？"><a href="#使用索引查询一定能提高查询的性能吗？为什么？" class="headerlink" title="使用索引查询一定能提高查询的性能吗？为什么？"></a>使用索引查询一定能提高查询的性能吗？为什么？</h1><ul>
-<li>通常来说，通过索引查询数据比全表扫描要快。</li>
-<li>但是索引需要空间来存储，也需要定期维护。每当有记录在表中增减或者索引列被修改时，索引本身也会被修改。意味着每条记录的insert，delete，update方法将会为此多付出4,5次的磁盘IO。</li>
-<li>因为索引需要额外的存储空间和处理，那些不必要的索引反而会使查询反应时间变慢。使用索引不一定能提高查询性能。</li>
-<li><p>索引范围性查找适用于两种情况：</p>
-<ul>
-<li>基于一个范围的检索，一般返回结果集小于表中记录的30%。</li>
-<li>基于唯一性索引的检索。</li>
-</ul>
-</li>
-</ul>
-<h1 id="MySQL数据库索引失效的原因："><a href="#MySQL数据库索引失效的原因：" class="headerlink" title="MySQL数据库索引失效的原因："></a>MySQL数据库索引失效的原因：</h1><ul>
-<li>对单字段建立了索引，where条件多字段</li>
-<li>建立了联合索引，where条件单字段</li>
-<li>对索引列运算，运算包括（+、-、*、/、！、&lt;&gt;、%、like’%_‘、or、in、exist）导致索引失效</li>
-<li>类型错误，如字段类型为varchar，where条件用number</li>
-<li>对应索引内部函数，这种情况下应该建立基于函数的索引</li>
-<li>查询表的效率要比查询索引快的情况</li>
-<li>is null索引失效，is not null betree索引生效。</li>
-</ul>
-<h1 id="说一下drop、delete、truncate的区别："><a href="#说一下drop、delete、truncate的区别：" class="headerlink" title="说一下drop、delete、truncate的区别："></a>说一下drop、delete、truncate的区别：</h1><ul>
-<li>delete和truncate只删除表的数据不删除表的结构</li>
-<li>速度来说：drop&gt;truncate&gt;delete</li>
-<li>delete语句是dml，这个操作会放到rollback segment中，事务提交之后才生效。如果有相应的trigger，执行的时候将被出发。truncate和drop是ddl，操作立即生效，原数据不放到rollback segment中，不能回滚也不能触发trigger。</li>
-</ul>
-<h1 id="drop、delete、truncate的使用场景？"><a href="#drop、delete、truncate的使用场景？" class="headerlink" title="drop、delete、truncate的使用场景？"></a>drop、delete、truncate的使用场景？</h1><ul>
-<li>drop，不再需要一张表时</li>
-<li>delete，向删除部分数据行时，并带上where子句</li>
-<li>truncate，保留表结构而删除所有数据的时候</li>
-</ul>
-<h1 id="超键，候选键，主键，外键分别是什么"><a href="#超键，候选键，主键，外键分别是什么" class="headerlink" title="超键，候选键，主键，外键分别是什么"></a>超键，候选键，主键，外键分别是什么</h1><table>
-<thead>
-<tr>
-<th></th>
-<th style="text-align:center">GET</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>超键</td>
-<td style="text-align:center">在关系中能唯一标识元组的属性集成为关系模式的超键。一个属性可以作为一个超键，多个属性组合在一起也可以作为一个超键。超键包含候选键和主键</td>
-</tr>
-<tr>
-<td>候选键</td>
-<td style="text-align:center">是最小的超键，即没有冗余元素的超键</td>
-</tr>
-<tr>
-<td>主键</td>
-<td style="text-align:center">数据库表中对存储数据对象给予唯一和完整标识的数据列或者属性的集合。一个数据列只能有一个主键，且主键的取值不能缺少，即不能为空值（null）</td>
-</tr>
-<tr>
-<td>外键</td>
-<td style="text-align:center">在一个表中存在另一个表的主键称为此表的外键</td>
-</tr>
-</tbody>
-</table>
-<h1 id="什么是视图？以及视图的使用场景？"><a href="#什么是视图？以及视图的使用场景？" class="headerlink" title="什么是视图？以及视图的使用场景？"></a>什么是视图？以及视图的使用场景？</h1><ul>
-<li><p>视图是一张虚拟的表，具有和物理表相同的功能。可以对视图进行CRUD，视图通常是由一个表或者多个表的行或列的子集。对视图的修改不影响基本表。它使得我们获取数据更容易，相比多表查询。</p>
-</li>
-<li><p>只暴露部分字段给访问者，所以就建一个虚表，也就是一个视图。</p>
-</li>
-<li>查询的数据来源于不同的表，而查询者希望以统一的方式查询，这样可以建立一个视图，把多个表查询结果联合起来，查询者只需要直接从视图中获取数据，不必考虑数据来源于不同表中的差异。</li>
-</ul>
-<h1 id="数据库三范式"><a href="#数据库三范式" class="headerlink" title="数据库三范式"></a>数据库三范式</h1><ul>
-<li><p>1NF：数据库表中的字段都是单一属性，不可再分。这个单一属性由基本类型构成，包括整形，实数，字符型，逻辑型，日期型等。</p>
-</li>
-<li><p>2NF：数据库表中不存在非关键字段对任意候选关键字段的部分依赖（部分依赖指的是存在组合关键字中的某些字段决定非关键字段的情况），也即所有非关键字段都完全依赖于任意一组候选关键字。</p>
-</li>
-<li><p>3NF：数据表中不存在非关键字段对任一候选关键字段的传递依赖。传递依赖指的数据库中不存在如下依赖关系：关键字段-&gt;非关键字段X-&gt;非关键字段Y</p>
-</li>
-</ul>
-<h1 id="SQL语句总结"><a href="#SQL语句总结" class="headerlink" title="SQL语句总结"></a>SQL语句总结</h1><ol>
-<li><p>SELECT：将数据从数据库中的表中取出，<code>SELECT &quot;列名&quot; FROM &quot;表名&quot;</code>。</p>
-</li>
-<li><p>DISTINCT：去重，在上述 SELECT 关键词后加上一个 DISTINCT 就可以去除选择出来的重复，从而完成求得这个表格中该字段有哪些不同的值的功能。语法为<code>SELECT DISTINCT &quot;列名&quot; FROM &quot;表名&quot;</code>。</p>
-</li>
-<li><p>WHERE：这个关键词可以帮助我们选择性地获取数据，而不是全取出来。语法为<code>SELECT &quot;列名&quot; FROM &quot;表名&quot; WHERE &quot;条件&quot;</code></p>
-</li>
-<li><p>AND OR：上例中的 WHERE 指令可以被用来由表格中有条件地选取资料。这个条件可能是简单的，也可能是复杂的。复杂条件是由二或多个简单条件透过 AND 或是 OR 的连接而成。语法为：<code>SELECT &quot;列名&quot;  FROM &quot;表名&quot;  WHERE &quot;简单条件&quot;  {[AND|OR] &quot;简单条件&quot;}+</code></p>
-</li>
-<li><p>IN：在SQL中，与 WHERE一起使用，我们事先已知道至少一个我们需要的值，而我们将这些知道的值都放入 IN  这个子句。语法为：<code>SELECT &quot;列名&quot;  FROM &quot;表名&quot;  WHERE &quot;列名&quot; IN (&#39;值一&#39;, &#39;值二&#39;, ...)</code>  </p>
-</li>
-<li><p>BETWEEN：IN 这个指令可以让我们依照一或数个不连续 (discrete)的值的限制之内获取数据，而 BETWEEN 则是让我们可以运用一个范围 (range)获取数据，语法为：<br><code>SELECT &quot;列名&quot;  FROM &quot;表名&quot; WHERE &quot;列名&quot; BETWEEN &#39;值一&#39; AND &#39;值二&#39;</code></p>
-</li>
-<li><p>LIKE：LIKE 是另一个在 WHERE子句中会用到的指令。LIKE依据一个模式(pattern)来找出我们要的数据。语法为：<br><code>SELECT &quot;列名&quot;  FROM &quot;表名&quot;  WHERE &quot;列名&quot; LIKE {模式}</code></p>
-</li>
-<li><p>ORDER BY：排序指令。语法为：<code>SELECT &quot;列名&quot;  FROM &quot;表名 [WHERE &quot;条件&quot;] ORDER BY &quot;列名&quot; [ASC, DESC]</code></p>
-</li>
-<li><p>函数: 函数允许我们能够对这些数字的型态存在的行或者列做运算，包括 AVG (平均)、COUNT (计数)、MAX (最大值)、MIN (最小值)、SUM (总合)。语法为：<code>SELECT &quot;函数名&quot;(&quot;列名&quot;) FROM &quot;表名&quot;</code></p>
-</li>
-<li><p>COUNT：这个关键词能够帮我我们统计有多少个数据被选出来，语法为：<code>SELECT COUNT(&quot;列名&quot;) FROM &quot;表名&quot;</code></p>
-</li>
-<li><p>GROUP BY：GROUP BY 语句用于结合合计函数，根据一个或多个列对结果集进行分组。语法为：<code>SELECT &quot;列1&quot;, SUM(&quot;列2&quot;)  FROM &quot;表名&quot;  GROUP BY &quot;列1&quot;</code></p>
-</li>
-<li><p>HAVING：该关键词可以帮助我们对函数产生的值来设定条件。语法为：<code>SELECT &quot;；列1&quot;, SUM(&quot;列2&quot;)  FROM &quot;表格名&quot;  GROUP BY &quot;列1&quot;  HAVING (函数条件)</code></p>
-</li>
-<li><p>ALIAS：我们可以通过ALIAS为列名称和表名称指定别名，语法为：<code>SELECT &quot;表格别名&quot;.&quot;列1&quot; &quot;；列1别名&quot;  FROM &quot;表格名&quot; &quot;表格别名&quot;</code></p>
-</li>
-</ol>
-<ul>
-<li>实战，数据库结构如下</li>
-</ul>
-<p>Student(S#,Sname,Sage,Ssex) 学生表<br>Course(C#,Cname,T#) 课程表<br>SC(S#,C#,score) 成绩表<br>Teacher(T#,Tname) 教师表</p>
-<pre><code>1. 查询“001”课程比“002”课程成绩高的所有学生的学号：
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">SELECT a.S# from (select s#,score from SC where C#=&apos;001&apos;) a,</div><div class="line">(select s#,score from SC where C#=&apos;002&apos;) b</div><div class="line">WHERE a.score &gt; b.score and a.S#=b.S#;</div></pre></td></tr></table></figure>
-
-2. 查询平均成绩大于60分的同学的学号和平均成绩：
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">SELECT S#, AVG(score)</div><div class="line">FROM SC</div><div class="line">GROUP by S# HAVING AVG(score) &gt; 60;</div></pre></td></tr></table></figure>
-
-3. 查询所有同学的学号、姓名、选课数、总成绩:
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">select Student.S#, Student.Sname, COUNT(SC.C#), SUM(score)</div><div class="line">from Student left Outer join SC on Student.S#=SC.S#</div><div class="line">GROUP by Student.S#, Sname;</div></pre></td></tr></table></figure>
-
-4. 查询姓“李”的老师的个数:
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">select COUNT(distinct(Tname))</div><div class="line">from Teacher</div><div class="line">WHERE Tname LIKE &apos;李%&apos;；</div></pre></td></tr></table></figure>
-
-5. 查询没学过“叶平”老师课的同学的学号、姓名；
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">select Student.S#,Student.Sname</div><div class="line">from Student</div><div class="line">where S# not in (select distinct( SC.S#) from SC,Course,Teacher where SC.C#=Course.C# and Teacher.T#=Course.T# and Teacher.Tname=’叶平’);</div></pre></td></tr></table></figure>
-
-6. 查询学过“001”并且也学过编号“002”课程的同学的学号、姓名:
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">select Student.S#,Student.Sname</div><div class="line">from Student,SC</div><div class="line">where Student.S#=SC.S# and SC.C#=’001′and exists( Select * from SC as SC_2 where SC_2.S#=SC.S# and SC_2.C#=’002′);</div></pre></td></tr></table></figure>
-
-7. 查询学过“叶平”老师所教的所有课的同学的学号、姓名:
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">select S#,Sname</div><div class="line">from Student</div><div class="line">where S# in</div><div class="line">(select S#</div><div class="line">from SC ,Course ,Teacher</div><div class="line">where SC.C#=Course.C# and Teacher.T#=Course.T# and Teacher.Tname=’叶平’ group by S# having count(SC.C#)=(select count(C#) from Course,Teacher where Teacher.T#=Course.T# and Tname=’叶平’));</div></pre></td></tr></table></figure>
-
-8. 查询所有课程成绩小于60分的同学的学号、姓名:
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">select S#,Sname</div><div class="line">from Student</div><div class="line">where S# not in (select Student.S# from Student,SC where S.S#=SC.S# and score&gt;60);</div></pre></td></tr></table></figure>
-
-9. 查询没有学全所有课的同学的学号、姓名:
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">select Student.S#,Student.Sname</div><div class="line">from Student,SC</div><div class="line">where Student.S#=SC.S#</div><div class="line">group by Student.S#,Student.Sname having count(C#) &lt;(select count(C#) from Course);</div></pre></td></tr></table></figure>
-
-10. 查询至少有一门课与学号为“1001”的同学所学相同的同学的学号和姓名:
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">select S#,Sname</div><div class="line">from Student,SC</div><div class="line">where Student.S#=SC.S# and C# in （select C# from SC where S#=&apos;1001&apos;）;</div></pre></td></tr></table></figure>
-
-11. 删除学习“叶平”老师课的SC表记录:
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Delect SC</div><div class="line">from course ,Teacher</div><div class="line">where Course.C#=SC.C# and Course.T#= Teacher.T# and Tname=&apos;叶平&apos;;</div></pre></td></tr></table></figure>
-
-12. 查询各科成绩最高和最低的分：以如下形式显示：课程ID，最高分，最低分
-
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">SELECT L.C# 课程ID,L.score 最高分,R.score 最低分</div><div class="line">FROM SC L ,SC R</div><div class="line">WHERE L.C# = R.C#</div><div class="line">and</div><div class="line">L.score = (SELECT MAX(IL.score)</div><div class="line">FROM SC IL,Student IM</div><div class="line">WHERE IL.C# = L.C# and IM.S#=IL.S#</div><div class="line">GROUP BY IL.C#)</div><div class="line">and</div><div class="line">R.Score = (SELECT MIN(IR.score)</div><div class="line">FROM SC IR</div><div class="line">WHERE IR.C# = R.C#</div><div class="line">GROUP BY IR.C# );</div></pre></td></tr></table></figure>
-
-  13. 查询学生平均成绩及其名次:
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">SELECT 1+(SELECT COUNT( distinct 平均成绩)</div><div class="line">FROM (SELECT S#,AVG(score) 平均成绩</div><div class="line">FROM SC</div><div class="line">GROUP BY S# ) T1</div><div class="line">WHERE 平均成绩 &gt; T2.平均成绩) 名次, S# 学生学号,平均成绩</div><div class="line">FROM (SELECT S#,AVG(score) 平均成绩 FROM SC GROUP BY S# ) T2</div><div class="line">ORDER BY 平均成绩 desc;</div></pre></td></tr></table></figure>
-
-  14. 查询各科成绩前三名的记录:(不考虑成绩并列情况)
-
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">SELECT t1.S# as 学生ID,t1.C# as 课程ID,Score as 分数</div><div class="line">FROM SC t1</div><div class="line">WHERE score IN (SELECT TOP 3 score</div><div class="line">FROM SC</div><div class="line">WHERE t1.C#= C#</div><div class="line">ORDER BY score DESC)</div><div class="line">ORDER BY t1.C#;</div></pre></td></tr></table></figure>
-
-  15. 查询每门功成绩最好的前两名
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">SELECT t1.S# as 学生ID,t1.C# as 课程ID,Score as 分数</div><div class="line">FROM SC t1</div><div class="line">WHERE score IN (SELECT TOP 2 score</div><div class="line">FROM SC</div><div class="line">WHERE t1.C#= C#</div><div class="line">ORDER BY score DESC )</div><div class="line">ORDER BY t1.C#;</div></pre></td></tr></table></figure>
-</code></pre>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2190,7 +2013,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">97</span>
+                <span class="site-state-item-count">99</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

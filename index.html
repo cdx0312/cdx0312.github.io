@@ -277,6 +277,462 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/12/golang/goroutine&channel/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/05/12/golang/goroutine&channel/" itemprop="url">goroutine&channel学习</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-12T17:37:17+08:00">
+                2020-05-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="goroutine-amp-channel"><a href="#goroutine-amp-channel" class="headerlink" title="goroutine &amp; channel"></a>goroutine &amp; channel</h2><ul>
+<li>不需要共享内存来通信，而是通过通信来共享内存。</li>
+</ul>
+<h3 id="1-channel关键的概念总结"><a href="#1-channel关键的概念总结" class="headerlink" title="1. channel关键的概念总结"></a>1. channel关键的概念总结</h3><ul>
+<li>通道（channel），就像一个可以用于发送类型化数据的管道，由其负责协程之间的通信，从而避开所有由共享内存导致的陷阱；这种通过通道进行通信的方式保证了同步性。数据在通道中进行传递：在任何给定时间，一个数据被设计为只有一个协程可以对其访问，所以不会发生数据竞争。 数据的所有权（可以读写数据的能力）也因此被传递。</li>
+<li>channel零值nil</li>
+<li>channel只能传递一种类型的数据</li>
+<li>channel实际上是类型化消息的队列，使数据得以传输。它是先进先出（FIFO）的结构所以可以保证发送给他们的元素的顺序</li>
+<li>channel是引用类型，make来初始化 <code>ch1 := make(chan string)</code></li>
+<li>通信操作符<code>&lt;-</code><ul>
+<li><code>ch &lt;-int1</code> 写入</li>
+<li><code>int2 := &lt;- ch</code> 写出</li>
+<li><code>&lt;-ch</code> 写出</li>
+</ul>
+</li>
+<li><p>channel的收发都是原子操作</p>
+</li>
+<li><p>channel默认是同步且无缓冲的：接收者接收数据之前，发送不会结束。channel的发送和接收操作都是在对方准备好之前是阻塞的</p>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">    ch1 := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</div><div class="line">    <span class="keyword">go</span> pump(ch1)       <span class="comment">// pump hangs</span></div><div class="line">    fmt.Println(&lt;-ch1) <span class="comment">// prints only 0</span></div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">pump</span><span class="params">(ch <span class="keyword">chan</span> <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; ; i++ &#123;</div><div class="line">        ch &lt;- i</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="comment">// 0</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="2-通过channel进行协程同步"><a href="#2-通过channel进行协程同步" class="headerlink" title="2. 通过channel进行协程同步"></a>2. 通过channel进行协程同步</h3><pre><code><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">f1</span><span class="params">(in <span class="keyword">chan</span> <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">    fmt.Println(&lt;-in)</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">    out := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</div><div class="line">    out &lt;- <span class="number">2</span></div><div class="line">    <span class="keyword">go</span> f1(out)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</code></pre><h3 id="3-channel可以用来完成协程间的通信"><a href="#3-channel可以用来完成协程间的通信" class="headerlink" title="3. channel可以用来完成协程间的通信"></a>3. channel可以用来完成协程间的通信</h3><ul>
+<li><code>ch1 := make(chan string, buf)</code> buf为个数</li>
+<li>在缓冲满载之前，给通道发送数据是不会被阻塞的</li>
+<li>在缓冲空之前，读取是不会阻塞的</li>
+<li>协程通过在channel中放置一个值来发出处理结束的信号</li>
+<li><p>信号量是实现互斥锁常见的同步机制</p>
+<ul>
+<li>带缓冲通道的容量和要同步的资源容量相同</li>
+<li>通道的长度（当前存放的元素个数）与当前资源被使用的数量相同</li>
+<li><p>容量减去通道的长度就是未处理的资源个数（标准信号量的整数值）</p>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">    stream := pump()</div><div class="line">    <span class="keyword">go</span> suck(stream)</div><div class="line">    time.Sleep(<span class="number">1e9</span>)</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">pump</span><span class="params">()</span> <span class="title">chan</span> <span class="title">int</span></span> &#123;</div><div class="line">    ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</div><div class="line">    <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="keyword">for</span> i := <span class="number">0</span>; ; i++ &#123;</div><div class="line">            ch &lt;- i</div><div class="line">        &#125;</div><div class="line">    &#125;()</div><div class="line">    <span class="keyword">return</span> ch</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">suck</span><span class="params">(ch <span class="keyword">chan</span> <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">    <span class="keyword">for</span> &#123;</div><div class="line">        fmt.Println(&lt;-ch)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>channel可以用for关键字循环</p>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">    suck(pump())</div><div class="line">    time.Sleep(<span class="number">1e9</span>)</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">pump</span><span class="params">()</span> <span class="title">chan</span> <span class="title">int</span></span> &#123;</div><div class="line">    ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</div><div class="line">    <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="keyword">for</span> i := <span class="number">0</span>; ; i++ &#123;</div><div class="line">            ch &lt;- i</div><div class="line">        &#125;</div><div class="line">    &#125;()</div><div class="line">    <span class="keyword">return</span> ch</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">suck</span><span class="params">(ch <span class="keyword">chan</span> <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">    <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="keyword">for</span> v := <span class="keyword">range</span> ch &#123;</div><div class="line">            fmt.Println(v)</div><div class="line">        &#125;</div><div class="line">    &#125;()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>channel可以指定数据流动方向</p>
+<ul>
+<li>只接收：<code>var recv_noly &lt;-chan int</code></li>
+<li>只发送：<code>var send_only chan&lt;- int</code></li>
+</ul>
+</li>
+<li><p>channel关闭 <code>defer close(ch)</code></p>
+</li>
+<li><p>使用select切换协程,select 被称为通信开关,select可以处理多个通信中的一个</p>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">    ch1 := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</div><div class="line">    ch2 := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</div><div class="line">    <span class="keyword">go</span> pump1(ch1)</div><div class="line">    <span class="keyword">go</span> pump2(ch2)</div><div class="line">    <span class="keyword">go</span> suck(ch1, ch2)</div><div class="line">    time.Sleep(<span class="number">1e9</span>)</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">pump1</span><span class="params">(ch <span class="keyword">chan</span> <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; ; i++ &#123;</div><div class="line">        ch &lt;- i * <span class="number">2</span></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">pump2</span><span class="params">(ch <span class="keyword">chan</span> <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; ; i++ &#123;</div><div class="line">        ch &lt;- i + <span class="number">5</span></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">suck</span><span class="params">(ch1, ch2 <span class="keyword">chan</span> <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">    <span class="keyword">for</span> &#123;</div><div class="line">        <span class="keyword">select</span> &#123;</div><div class="line">        <span class="keyword">case</span> v := &lt;-ch1:</div><div class="line">            fmt.Printf(<span class="string">"Received on channel 1: %d\n"</span>, v)</div><div class="line">        <span class="keyword">case</span> v := &lt;-ch2:</div><div class="line">            fmt.Printf(<span class="string">"Received on channel 2: %d\n"</span>, v)</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>goroutine recover机制，保证一个协程出错会继续执行其他的协程</p>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">server</span><span class="params">(workChan &lt;-<span class="keyword">chan</span> *Work)</span></span> &#123;</div><div class="line">    <span class="keyword">for</span> work := <span class="keyword">range</span> workChan &#123;</div><div class="line">        <span class="keyword">go</span> safelyDo(work)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">safelyDo</span><span class="params">(work *Work)</span></span> &#123;</div><div class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="keyword">if</span> err := revocer(); err != <span class="literal">nil</span> &#123;</div><div class="line">            log.Printf(<span class="string">""</span>)</div><div class="line">        &#125;</div><div class="line">    &#125;()</div><div class="line">    do(work)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="4-channel通信方式和传统共享内存方式的对比"><a href="#4-channel通信方式和传统共享内存方式的对比" class="headerlink" title="4. channel通信方式和传统共享内存方式的对比"></a>4. channel通信方式和传统共享内存方式的对比</h2><ul>
+<li>使用共享内存来进行同步：<ul>
+<li>首先定义一个结构体处理一个任务</li>
+<li>各个任务组成任务池来共享内存，引入锁机制</li>
+<li>任务数量巨大，则锁机制的开销会导致效率急剧下降</li>
+</ul>
+</li>
+<li><p>channel方式</p>
+<ul>
+<li>使用一个通道接受需要处理的任务，一个通道接受处理完成的任务及其结果。worker在协程中启动，数量N可以调整</li>
+<li>不使用锁的机制，因为从通道获取到新任务不存在竞争关系</li>
+<li><p>我理解实际上锁机制是实现在了channel中，一个channel的获取是原子性的，从而提高性能</p>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//Worker的写法, Master -&gt; Workers</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Worker</span><span class="params">(in, out <span class="keyword">chan</span> *Task)</span></span> &#123;</div><div class="line">    <span class="keyword">for</span> &#123;</div><div class="line">        t := &lt;- in</div><div class="line">        process(t)</div><div class="line">        out &lt;- t</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>使用锁的情景：</p>
+<ul>
+<li>访问共享数据结构中的缓存信息</li>
+<li>保存应用程序上下文和状态信息数据</li>
+</ul>
+</li>
+<li>使用通道的情景<ul>
+<li>与异步操作的结果进行交互</li>
+<li>分发任务</li>
+<li>传递数据所有权</li>
+</ul>
+</li>
+</ul>
+<h2 id="5-int-channel实现惰性生成器"><a href="#5-int-channel实现惰性生成器" class="headerlink" title="5. int channel实现惰性生成器"></a>5. int channel实现惰性生成器</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> resume <span class="keyword">chan</span> <span class="keyword">int</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">integers</span><span class="params">()</span> <span class="title">chan</span> <span class="title">int</span></span> &#123;</div><div class="line">    yield := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</div><div class="line">    count := <span class="number">0</span></div><div class="line">    <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="keyword">for</span> &#123;</div><div class="line">            yield &lt;- count</div><div class="line">            count++</div><div class="line">        &#125;</div><div class="line">    &#125;()</div><div class="line">    <span class="keyword">return</span> yield</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">generateInteger</span><span class="params">()</span> <span class="title">int</span></span> &#123;</div><div class="line">    resume = integers()</div><div class="line">    <span class="keyword">return</span> &lt;- resume</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><p>使用空接口，闭包和高阶函数可以实现一个通用的惰性生产期的工厂函数</p>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Any <span class="keyword">interface</span>&#123;&#125;</div><div class="line"><span class="keyword">type</span> EvalFunc <span class="function"><span class="keyword">func</span><span class="params">(Any)</span> <span class="params">(Any, Any)</span></span></div><div class="line"><span class="function"><span class="title">func</span> <span class="title">BuildLazyEvaluator</span><span class="params">(evalFunc, initState Any)</span> <span class="title">func</span><span class="params">()</span> <span class="title">Any</span></span> &#123;</div><div class="line">    retValChan := <span class="built_in">make</span>(<span class="keyword">chan</span> Any)</div><div class="line">    loopFunc := <span class="function"><span class="keyword">func</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">var</span> actState Any = initState</div><div class="line">        <span class="keyword">var</span> retVal</div><div class="line">        <span class="keyword">for</span> &#123;</div><div class="line">            retVal, actState = evalFunc(actState)</div><div class="line">            retValChan &lt;- retVal</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    retFunc := <span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="title">Any</span></span> &#123;</div><div class="line">        <span class="keyword">return</span> &lt;- retValChan</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">go</span> loopFunc()</div><div class="line">    <span class="keyword">return</span> retFunc</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">BuildLazyIntEvaluator</span><span class="params">(evalFunc EvalFunc, initState Any)</span> <span class="title">func</span><span class="params">()</span> <span class="title">int</span></span> &#123;</div><div class="line">    ef := BuildLazyIntEvaluator(evalFunc, initState)</div><div class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="title">int</span></span> &#123;</div><div class="line">        <span class="keyword">return</span> ef().(<span class="keyword">int</span>)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">    evenFunc := <span class="function"><span class="keyword">func</span><span class="params">(state Any)</span> <span class="params">(Any, Any)</span></span> &#123;</div><div class="line">        os := state.(<span class="keyword">int</span>)</div><div class="line">        ns := os + <span class="number">2</span></div><div class="line">        <span class="keyword">return</span> os, ns</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    even := BuildLazyIntEvaluator(evenFunc, <span class="number">0</span>)</div><div class="line"></div><div class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</div><div class="line">        fmt.</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="6-带缓冲的channel可以用于降频"><a href="#6-带缓冲的channel可以用于降频" class="headerlink" title="6. 带缓冲的channel可以用于降频"></a>6. 带缓冲的channel可以用于降频</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> MAXREQS = <span class="number">50</span></div><div class="line"><span class="keyword">var</span> sem = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, MAXREQS)</div><div class="line"><span class="keyword">type</span> Request <span class="keyword">struct</span> &#123;</div><div class="line">    a, b <span class="keyword">int</span></div><div class="line">    replyc <span class="keyword">chan</span> <span class="keyword">int</span></div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">process</span><span class="params">(r *Request)</span></span> &#123;</div><div class="line"><span class="comment">//    ...</span></div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">handle</span><span class="params">(r *Request)</span></span> &#123;</div><div class="line">    sem &lt;- <span class="number">1</span></div><div class="line">    process(r)</div><div class="line">    &lt;- sem</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">server</span><span class="params">(service <span class="keyword">chan</span> *Request)</span></span> &#123;</div><div class="line">    <span class="keyword">for</span> &#123;</div><div class="line">        request := &lt;- service</div><div class="line">        <span class="keyword">go</span> handler(request)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">    service := <span class="built_in">make</span>(<span class="keyword">chan</span> *Request)</div><div class="line">    <span class="keyword">go</span> server(service)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>链式协程，海量协程的创建和运行</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> ngoroutine = flag.Int(<span class="string">"n"</span>, <span class="number">100000</span>, <span class="string">"how many goroutines"</span>)</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">(left, right <span class="keyword">chan</span> <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">    left &lt;- <span class="number">1</span> + &lt;- right</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">    flag.Parse()</div><div class="line">    leftmost := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</div><div class="line">    <span class="keyword">var</span> left, right <span class="keyword">chan</span> <span class="keyword">int</span> = <span class="literal">nil</span>, leftmost</div><div class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; *ngoroutine; i++ &#123;</div><div class="line">        left, right = right, <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</div><div class="line">        <span class="keyword">go</span> f(left, right)</div><div class="line">    &#125;</div><div class="line">    right &lt;- <span class="number">0</span></div><div class="line">    x := &lt;-leftmost</div><div class="line">    fmt.Println(x)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="并行化大量数据的计算"><a href="#并行化大量数据的计算" class="headerlink" title="并行化大量数据的计算"></a>并行化大量数据的计算</h2><ul>
+<li><p>串行处理流水线</p>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">SerialProcessData</span><span class="params">(in &lt;- <span class="keyword">chan</span> *Data, out <span class="keyword">chan</span> &lt;- *Data)</span></span> &#123;</div><div class="line">    <span class="keyword">for</span> data := <span class="keyword">range</span> in &#123;</div><div class="line">        tmpA := PreproceeData(data)</div><div class="line">        tmpB := ProcessStepA(tmpA)</div><div class="line">        tmpC := ProcessStepB(tmpB)</div><div class="line">        out &lt;- PostProcessData(tmpC)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p>并行计算</p>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">ParallelProcessData</span><span class="params">(in &lt;-<span class="keyword">chan</span> *Data, out <span class="keyword">chan</span>&lt;- *Data)</span></span> &#123;</div><div class="line">    <span class="comment">// make channels:</span></div><div class="line">    preOut := <span class="built_in">make</span>(<span class="keyword">chan</span> *Data, <span class="number">100</span>)</div><div class="line">    stepAOut := <span class="built_in">make</span>(<span class="keyword">chan</span> *Data, <span class="number">100</span>)</div><div class="line">    stepBOut := <span class="built_in">make</span>(<span class="keyword">chan</span> *Data, <span class="number">100</span>)</div><div class="line">    stepCOut := <span class="built_in">make</span>(<span class="keyword">chan</span> *Data, <span class="number">100</span>)</div><div class="line">    <span class="comment">// start parallel computations:</span></div><div class="line">    <span class="keyword">go</span> PreprocessData(in, preOut)</div><div class="line">    <span class="keyword">go</span> ProcessStepA(preOut,StepAOut)</div><div class="line">    <span class="keyword">go</span> ProcessStepB(StepAOut,StepBOut)</div><div class="line">    <span class="keyword">go</span> ProcessStepC(StepBOut,StepCOut)</div><div class="line">    <span class="keyword">go</span> PostProcessData(StepCOut,out)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="8-使用channel并发访问对象"><a href="#8-使用channel并发访问对象" class="headerlink" title="8. 使用channel并发访问对象"></a>8. 使用channel并发访问对象</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</div><div class="line">	Name   <span class="keyword">string</span></div><div class="line">	salary <span class="keyword">float64</span></div><div class="line">	chF    <span class="keyword">chan</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span></div><div class="line"><span class="function">&#125;</span></div><div class="line"><span class="function"></span></div><div class="line"><span class="function"><span class="title">func</span> <span class="title">NewPerson</span><span class="params">(name <span class="keyword">string</span>, salary <span class="keyword">float64</span>)</span> *<span class="title">Person</span></span> &#123;</div><div class="line">	p := &amp;Person&#123;name, salary, <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="function"><span class="keyword">func</span><span class="params">()</span>)&#125;</span></div><div class="line"><span class="function">	<span class="title">go</span> <span class="title">p</span>.<span class="title">backend</span><span class="params">()</span></span></div><div class="line"><span class="function">	<span class="title">return</span> <span class="title">p</span></span></div><div class="line"><span class="function">&#125;</span></div><div class="line"><span class="function"></span></div><div class="line"><span class="function"><span class="title">func</span> <span class="params">(p *Person)</span> <span class="title">backend</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="keyword">for</span> f := <span class="keyword">range</span> p.chF &#123;</div><div class="line">		f()</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Set salary.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Person)</span> <span class="title">SetSalary</span><span class="params">(sal <span class="keyword">float64</span>)</span></span> &#123;</div><div class="line">	p.chF &lt;- <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; p.salary = sal &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Retrieve salary.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Person)</span> <span class="title">Salary</span><span class="params">()</span> <span class="title">float64</span></span> &#123;</div><div class="line">	fChan := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">float64</span>)</div><div class="line">	p.chF &lt;- <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; fChan &lt;- p.salary &#125;</div><div class="line">	<span class="keyword">return</span> &lt;-fChan</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Person)</span> <span class="title">String</span><span class="params">()</span> <span class="title">string</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> <span class="string">"Person - name is: "</span> + p.Name + <span class="string">" - salary is: "</span> + strconv.FormatFloat(p.Salary(), <span class="string">'f'</span>, <span class="number">2</span>, <span class="number">64</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	bs := NewPerson(<span class="string">"Smith Bill"</span>, <span class="number">2500.5</span>)</div><div class="line">	fmt.Println(bs)</div><div class="line">	bs.SetSalary(<span class="number">4000.25</span>)</div><div class="line">	fmt.Println(<span class="string">"Salary changed:"</span>)</div><div class="line">	fmt.Println(bs)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/12/golang/go-interface/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/05/12/golang/go-interface/" itemprop="url">golang interface学习</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-12T17:36:31+08:00">
+                2020-05-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="interface"><a href="#interface" class="headerlink" title="interface"></a>interface</h1><h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><ul>
+<li>go中的接口使用隐式实现的</li>
+<li>LSP里式替换-一个类型可以自由的使用另一个满足相同接口的类型来进行替换</li>
+<li>接口类型具体描述了一系列方法的集合，一个实现了这些方法的具体类型时这个接口类型的实例</li>
+<li><p>go标准库存在大量的单方法接口的命名习惯</p>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> io</div><div class="line"><span class="keyword">type</span> Reader <span class="keyword">interface</span> &#123;</div><div class="line">    Read(p []<span class="keyword">byte</span>) (n <span class="keyword">int</span>, err error)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> Closer <span class="keyword">interface</span> &#123;</div><div class="line">    Close() error</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>接口内嵌，关注的是内嵌的方法，和组合的设计模式思想类似</p>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> ReadWriterCloser <span class="keyword">interface</span> &#123;</div><div class="line">    Reader</div><div class="line">    Writer</div><div class="line">    Closer</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>一个类型持有一个方法，对于一个具体类型T，其一些方法的接收者可以是T也可以是T的指针，是因为比那一起隐式的获取了变量的地址。但是实际上T类型的值是不拥有所有*T指针的方法，这样就可能其实现更少的接口</p>
+<ul>
+<li><p>IntSet类型的String方法的接收者是一个指针类型，则不能在一个不能寻址的IntSet值上调用这个方法</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">type IntSet struct &#123;/* ... */&#125;</div><div class="line">func (*IntSet) String() string</div><div class="line">var _ = IntSet&#123;&#125;.String() // compile error : String requires *IntSet receiver</div></pre></td></tr></table></figure>
+</li>
+<li><p>但是可以在一个IntSet值上调用这个方法</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var s IntSet</div><div class="line">var _ = s.String() // ok</div></pre></td></tr></table></figure>
+</li>
+<li><p>同时只有IntSet类型有String类型，也只有IntSet类型实现了fmt.Stringer接口</p>
+</li>
+</ul>
+</li>
+<li><p>接口类型封装和隐藏了具体类型和它的值，及时具体类型有其他方法也只有接口类型暴露出来的方法会被调用，也就是说一个具体的类型可以实现很多的接口，在调用的时候看持有这个变量的类型时哪个接口，就可以调用该接口的方法，而其他接口在该类型中实现的方法是被隐藏的。</p>
+</li>
+<li><p>空接口interface{}可以承接任意的值</p>
+</li>
+<li><p>每一个具体类型的组基于他们相同的行为可以表示成一个接口类型，不需要修改具体类型的定义，这个地方感觉还是组合的思想</p>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 出售数字文化产品如音乐，书籍，电影等</span></div><div class="line"><span class="keyword">type</span> Artifact <span class="keyword">interface</span> &#123;</div><div class="line">    Title() <span class="keyword">string</span></div><div class="line">    Creator() []<span class="keyword">string</span></div><div class="line">    Created() time.Time</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> Text <span class="keyword">interface</span> &#123;</div><div class="line">    Pages() <span class="keyword">int</span></div><div class="line">    Words() <span class="keyword">int</span></div><div class="line">    PageSize() <span class="keyword">int</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> Audio <span class="keyword">interface</span> &#123;</div><div class="line">    Stream() (io.Readerclose, error)</div><div class="line">    RunningTime() time.Duration</div><div class="line">    Format() <span class="keyword">string</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> Video <span class="keyword">interface</span> &#123;</div><div class="line">    Stream() (io.ReadCloser, error)</div><div class="line">    RunningTime() time.Duration</div><div class="line">    Format() <span class="keyword">string</span></div><div class="line">    Resolution() (x, y <span class="keyword">int</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="flag-Value接口"><a href="#flag-Value接口" class="headerlink" title="flag.Value接口"></a>flag.Value接口</h2><h3 id="flag-Duration方法"><a href="#flag-Duration方法" class="headerlink" title="flag.Duration方法"></a>flag.Duration方法</h3><ul>
+<li>flag可以为程序预设命令行参数，会有一个参数缺省默认值</li>
+<li>flag.Duration函数创建一个time.Duration类型的标记变量并且允许用户通过多种用户友好的方式来设置这个值的大小</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> period = flag.Duration(<span class="string">"period"</span>, <span class="number">1</span> * time.Second, <span class="string">"Sleep duration"</span>)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	flag.Parse()</div><div class="line">	fmt.Printf(<span class="string">"Sleeping for %v..."</span>, *period)</div><div class="line">	time.Sleep(*period)</div><div class="line">	fmt.Println(<span class="string">"end"</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>首先看flag.Duration方法，返回的是一个地址指着</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Duration</span><span class="params">(name <span class="keyword">string</span>, value time.Duration, usage <span class="keyword">string</span>)</span> *<span class="title">time</span>.<span class="title">Duration</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> CommandLine.Duration(name, value, usage)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>然后看CommandLine的结构体和其Duration方法</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> CommandLine = NewFlagSet(os.Args[<span class="number">0</span>], ExitOnError)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewFlagSet</span><span class="params">(name <span class="keyword">string</span>, errorHandling ErrorHandling)</span> *<span class="title">FlagSet</span></span> &#123;</div><div class="line">	f := &amp;FlagSet&#123;</div><div class="line">		name:          name,</div><div class="line">		errorHandling: errorHandling,</div><div class="line">	&#125;</div><div class="line">	f.Usage = f.defaultUsage</div><div class="line">	<span class="keyword">return</span> f</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *FlagSet)</span> <span class="title">Duration</span><span class="params">(name <span class="keyword">string</span>, value time.Duration, usage <span class="keyword">string</span>)</span> *<span class="title">time</span>.<span class="title">Duration</span></span> &#123;</div><div class="line">	p := <span class="built_in">new</span>(time.Duration)</div><div class="line">	f.DurationVar(p, name, value, usage)</div><div class="line">	<span class="keyword">return</span> p</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *FlagSet)</span> <span class="title">DurationVar</span><span class="params">(p *time.Duration, name <span class="keyword">string</span>, value time.Duration, usage <span class="keyword">string</span>)</span></span> &#123;</div><div class="line">	f.Var(newDurationValue(value, p), name, usage)</div><div class="line">&#125;</div><div class="line"><span class="comment">// 真正实现值注入的地方</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *FlagSet)</span> <span class="title">Var</span><span class="params">(value Value, name <span class="keyword">string</span>, usage <span class="keyword">string</span>)</span></span> &#123;</div><div class="line">	<span class="comment">// Remember the default value as a string; it won't change.</span></div><div class="line">	flag := &amp;Flag&#123;name, usage, value, value.String()&#125;</div><div class="line">	_, alreadythere := f.formal[name]</div><div class="line">	<span class="keyword">if</span> alreadythere &#123;</div><div class="line">		<span class="keyword">var</span> msg <span class="keyword">string</span></div><div class="line">		<span class="keyword">if</span> f.name == <span class="string">""</span> &#123;</div><div class="line">			msg = fmt.Sprintf(<span class="string">"flag redefined: %s"</span>, name)</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			msg = fmt.Sprintf(<span class="string">"%s flag redefined: %s"</span>, f.name, name)</div><div class="line">		&#125;</div><div class="line">		fmt.Fprintln(f.Output(), msg)</div><div class="line">		<span class="built_in">panic</span>(msg) <span class="comment">// Happens only if flags are declared with identical names</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> f.formal == <span class="literal">nil</span> &#123;</div><div class="line">		f.formal = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]*Flag)</div><div class="line">	&#125;</div><div class="line">	f.formal[name] = flag</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>实际上所有的Flag值保存在FlagSet结构体中的formal（map[string] *Flag）中</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> FlagSet <span class="keyword">struct</span> &#123;</div><div class="line">	<span class="comment">// Usage is the function called when an error occurs while parsing flags.</span></div><div class="line">	Usage <span class="function"><span class="keyword">func</span><span class="params">()</span></span></div><div class="line"><span class="function"></span></div><div class="line"><span class="function">	<span class="title">name</span>          <span class="title">string</span></span></div><div class="line"><span class="function">	<span class="title">parsed</span>        <span class="title">bool</span></span></div><div class="line"><span class="function">	<span class="title">actual</span>        <span class="title">map</span>[<span class="title">string</span>]*<span class="title">Flag</span></span></div><div class="line"><span class="function">	<span class="title">formal</span>        <span class="title">map</span>[<span class="title">string</span>]*<span class="title">Flag</span></span></div><div class="line"><span class="function">	<span class="title">args</span>          []<span class="title">string</span> // <span class="title">arguments</span> <span class="title">after</span> <span class="title">flags</span></span></div><div class="line"><span class="function">	<span class="title">errorHandling</span> <span class="title">ErrorHandling</span></span></div><div class="line"><span class="function">	<span class="title">output</span>        <span class="title">io</span>.<span class="title">Writer</span> // <span class="title">nil</span> <span class="title">means</span> <span class="title">stderr</span>; <span class="title">use</span> <span class="title">out</span><span class="params">()</span> <span class="title">accessor</span></span></div><div class="line"><span class="function">&#125;</span></div><div class="line"><span class="function"></span></div><div class="line"><span class="function">// <span class="title">A</span> <span class="title">Flag</span> <span class="title">represents</span> <span class="title">the</span> <span class="title">state</span> <span class="title">of</span> <span class="title">a</span> <span class="title">flag</span>.</span></div><div class="line"><span class="function"><span class="title">type</span> <span class="title">Flag</span> <span class="title">struct</span></span> &#123;</div><div class="line">	Name     <span class="keyword">string</span> <span class="comment">// name as it appears on command line</span></div><div class="line">	Usage    <span class="keyword">string</span> <span class="comment">// help message</span></div><div class="line">	Value    Value  <span class="comment">// value as set</span></div><div class="line">	DefValue <span class="keyword">string</span> <span class="comment">// default value (as text); for usage message</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Value is the interface to the dynamic value stored in a flag.</span></div><div class="line"><span class="keyword">type</span> Value <span class="keyword">interface</span> &#123;</div><div class="line">	String() <span class="keyword">string</span></div><div class="line">	Set(<span class="keyword">string</span>) error</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="flag-Parse-方法"><a href="#flag-Parse-方法" class="headerlink" title="flag.Parse()方法"></a>flag.Parse()方法</h3><ul>
+<li>首先看Parse()方法的实现</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Parse</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="comment">// Ignore errors; CommandLine is set for ExitOnError.</span></div><div class="line">	CommandLine.Parse(os.Args[<span class="number">1</span>:])</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// flags初始化默认值之后，flag值使用之前，实际上是从命令行读取参数值对默认值进行覆盖操作</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *FlagSet)</span> <span class="title">Parse</span><span class="params">(arguments []<span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</div><div class="line">	f.parsed = <span class="literal">true</span></div><div class="line">	f.args = arguments</div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		seen, err := f.parseOne()</div><div class="line">		<span class="keyword">if</span> seen &#123;</div><div class="line">			<span class="keyword">continue</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">switch</span> f.errorHandling &#123;</div><div class="line">		<span class="keyword">case</span> ContinueOnError:</div><div class="line">			<span class="keyword">return</span> err</div><div class="line">		<span class="keyword">case</span> ExitOnError:</div><div class="line">			os.Exit(<span class="number">2</span>)</div><div class="line">		<span class="keyword">case</span> PanicOnError:</div><div class="line">			<span class="built_in">panic</span>(err)</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">&#125;</div><div class="line"><span class="comment">//</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *FlagSet)</span> <span class="title">parseOne</span><span class="params">()</span> <span class="params">(<span class="keyword">bool</span>, error)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(f.args) == <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">false</span>, <span class="literal">nil</span></div><div class="line">	&#125;</div><div class="line">	s := f.args[<span class="number">0</span>]</div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(s) &lt; <span class="number">2</span> || s[<span class="number">0</span>] != <span class="string">'-'</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">false</span>, <span class="literal">nil</span></div><div class="line">	&#125;</div><div class="line">	numMinuses := <span class="number">1</span></div><div class="line">	<span class="keyword">if</span> s[<span class="number">1</span>] == <span class="string">'-'</span> &#123;</div><div class="line">		numMinuses++</div><div class="line">		<span class="keyword">if</span> <span class="built_in">len</span>(s) == <span class="number">2</span> &#123; <span class="comment">// "--" terminates the flags</span></div><div class="line">			f.args = f.args[<span class="number">1</span>:]</div><div class="line">			<span class="keyword">return</span> <span class="literal">false</span>, <span class="literal">nil</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	name := s[numMinuses:]</div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(name) == <span class="number">0</span> || name[<span class="number">0</span>] == <span class="string">'-'</span> || name[<span class="number">0</span>] == <span class="string">'='</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">false</span>, f.failf(<span class="string">"bad flag syntax: %s"</span>, s)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// it's a flag. does it have an argument?</span></div><div class="line">	f.args = f.args[<span class="number">1</span>:]</div><div class="line">	hasValue := <span class="literal">false</span></div><div class="line">	value := <span class="string">""</span></div><div class="line">	<span class="keyword">for</span> i := <span class="number">1</span>; i &lt; <span class="built_in">len</span>(name); i++ &#123; <span class="comment">// equals cannot be first</span></div><div class="line">		<span class="keyword">if</span> name[i] == <span class="string">'='</span> &#123;</div><div class="line">			value = name[i+<span class="number">1</span>:]</div><div class="line">			hasValue = <span class="literal">true</span></div><div class="line">			name = name[<span class="number">0</span>:i]</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	m := f.formal</div><div class="line">	flag, alreadythere := m[name] <span class="comment">// BUG</span></div><div class="line">	<span class="keyword">if</span> !alreadythere &#123;</div><div class="line">		<span class="keyword">if</span> name == <span class="string">"help"</span> || name == <span class="string">"h"</span> &#123; <span class="comment">// special case for nice help message.</span></div><div class="line">			f.usage()</div><div class="line">			<span class="keyword">return</span> <span class="literal">false</span>, ErrHelp</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> <span class="literal">false</span>, f.failf(<span class="string">"flag provided but not defined: -%s"</span>, name)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">if</span> fv, ok := flag.Value.(boolFlag); ok &amp;&amp; fv.IsBoolFlag() &#123; <span class="comment">// special case: doesn't need an arg</span></div><div class="line">		<span class="keyword">if</span> hasValue &#123;</div><div class="line">			<span class="keyword">if</span> err := fv.Set(value); err != <span class="literal">nil</span> &#123;</div><div class="line">				<span class="keyword">return</span> <span class="literal">false</span>, f.failf(<span class="string">"invalid boolean value %q for -%s: %v"</span>, value, name, err)</div><div class="line">			&#125;</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			<span class="keyword">if</span> err := fv.Set(<span class="string">"true"</span>); err != <span class="literal">nil</span> &#123;</div><div class="line">				<span class="keyword">return</span> <span class="literal">false</span>, f.failf(<span class="string">"invalid boolean flag %s: %v"</span>, name, err)</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125; <span class="keyword">else</span> &#123;</div><div class="line">		<span class="comment">// It must have a value, which might be the next argument.</span></div><div class="line">		<span class="comment">// 在这里进行解析替换</span></div><div class="line">		<span class="keyword">if</span> !hasValue &amp;&amp; <span class="built_in">len</span>(f.args) &gt; <span class="number">0</span> &#123;</div><div class="line">			<span class="comment">// value is the next arg</span></div><div class="line">			hasValue = <span class="literal">true</span></div><div class="line">			value, f.args = f.args[<span class="number">0</span>], f.args[<span class="number">1</span>:]</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> !hasValue &#123;</div><div class="line">			<span class="keyword">return</span> <span class="literal">false</span>, f.failf(<span class="string">"flag needs an argument: -%s"</span>, name)</div><div class="line">		&#125;</div><div class="line">		<span class="comment">// set设置</span></div><div class="line">		<span class="keyword">if</span> err := flag.Value.Set(value); err != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">return</span> <span class="literal">false</span>, f.failf(<span class="string">"invalid value %q for flag -%s: %v"</span>, value, name, err)</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> f.actual == <span class="literal">nil</span> &#123;</div><div class="line">		f.actual = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]*Flag)</div><div class="line">	&#125;</div><div class="line">	f.actual[name] = flag</div><div class="line">	<span class="keyword">return</span> <span class="literal">true</span>, <span class="literal">nil</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Duration的Set方法</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(d *durationValue)</span> <span class="title">Set</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</div><div class="line">	v, err := time.ParseDuration(s)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		err = errParse</div><div class="line">	&#125;</div><div class="line">	*d = durationValue(v)</div><div class="line">	<span class="keyword">return</span> err</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">ParseDuration</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="params">(Duration, error)</span></span> &#123;</div><div class="line">	<span class="comment">// [-+]?([0-9]*(\.[0-9]*)?[a-z]+)+</span></div><div class="line">	orig := s</div><div class="line">	<span class="keyword">var</span> d <span class="keyword">int64</span></div><div class="line">	neg := <span class="literal">false</span></div><div class="line"></div><div class="line">	<span class="comment">// Consume [-+]?</span></div><div class="line">	<span class="keyword">if</span> s != <span class="string">""</span> &#123;</div><div class="line">		c := s[<span class="number">0</span>]</div><div class="line">		<span class="keyword">if</span> c == <span class="string">'-'</span> || c == <span class="string">'+'</span> &#123;</div><div class="line">			neg = c == <span class="string">'-'</span></div><div class="line">			s = s[<span class="number">1</span>:]</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Special case: if all that is left is "0", this is zero.</span></div><div class="line">	<span class="keyword">if</span> s == <span class="string">"0"</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, <span class="literal">nil</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> s == <span class="string">""</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"time: invalid duration "</span> + orig)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">for</span> s != <span class="string">""</span> &#123;</div><div class="line">		<span class="keyword">var</span> (</div><div class="line">			v, f  <span class="keyword">int64</span>       <span class="comment">// integers before, after decimal point</span></div><div class="line">			scale <span class="keyword">float64</span> = <span class="number">1</span> <span class="comment">// value = v + f/scale</span></div><div class="line">		)</div><div class="line"></div><div class="line">		<span class="keyword">var</span> err error</div><div class="line"></div><div class="line">		<span class="comment">// The next character must be [0-9.]</span></div><div class="line">		<span class="keyword">if</span> !(s[<span class="number">0</span>] == <span class="string">'.'</span> || <span class="string">'0'</span> &lt;= s[<span class="number">0</span>] &amp;&amp; s[<span class="number">0</span>] &lt;= <span class="string">'9'</span>) &#123;</div><div class="line">			<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"time: invalid duration "</span> + orig)</div><div class="line">		&#125;</div><div class="line">		<span class="comment">// Consume [0-9]*</span></div><div class="line">		pl := <span class="built_in">len</span>(s)</div><div class="line">		v, s, err = leadingInt(s)</div><div class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"time: invalid duration "</span> + orig)</div><div class="line">		&#125;</div><div class="line">		pre := pl != <span class="built_in">len</span>(s) <span class="comment">// whether we consumed anything before a period</span></div><div class="line"></div><div class="line">		<span class="comment">// Consume (\.[0-9]*)?</span></div><div class="line">		post := <span class="literal">false</span></div><div class="line">		<span class="keyword">if</span> s != <span class="string">""</span> &amp;&amp; s[<span class="number">0</span>] == <span class="string">'.'</span> &#123;</div><div class="line">			s = s[<span class="number">1</span>:]</div><div class="line">			pl := <span class="built_in">len</span>(s)</div><div class="line">			f, scale, s = leadingFraction(s)</div><div class="line">			post = pl != <span class="built_in">len</span>(s)</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> !pre &amp;&amp; !post &#123;</div><div class="line">			<span class="comment">// no digits (e.g. ".s" or "-.s")</span></div><div class="line">			<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"time: invalid duration "</span> + orig)</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="comment">// Consume unit.</span></div><div class="line">		i := <span class="number">0</span></div><div class="line">		<span class="keyword">for</span> ; i &lt; <span class="built_in">len</span>(s); i++ &#123;</div><div class="line">			c := s[i]</div><div class="line">			<span class="keyword">if</span> c == <span class="string">'.'</span> || <span class="string">'0'</span> &lt;= c &amp;&amp; c &lt;= <span class="string">'9'</span> &#123;</div><div class="line">				<span class="keyword">break</span></div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> i == <span class="number">0</span> &#123;</div><div class="line">			<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"time: missing unit in duration "</span> + orig)</div><div class="line">		&#125;</div><div class="line">		u := s[:i]</div><div class="line">		s = s[i:]</div><div class="line">		unit, ok := unitMap[u]</div><div class="line">		<span class="keyword">if</span> !ok &#123;</div><div class="line">			<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"time: unknown unit "</span> + u + <span class="string">" in duration "</span> + orig)</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> v &gt; (<span class="number">1</span>&lt;&lt;<span class="number">63</span><span class="number">-1</span>)/unit &#123;</div><div class="line">			<span class="comment">// overflow</span></div><div class="line">			<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"time: invalid duration "</span> + orig)</div><div class="line">		&#125;</div><div class="line">		v *= unit</div><div class="line">		<span class="keyword">if</span> f &gt; <span class="number">0</span> &#123;</div><div class="line">			<span class="comment">// float64 is needed to be nanosecond accurate for fractions of hours.</span></div><div class="line">			<span class="comment">// v &gt;= 0 &amp;&amp; (f*unit/scale) &lt;= 3.6e+12 (ns/h, h is the largest unit)</span></div><div class="line">			v += <span class="keyword">int64</span>(<span class="keyword">float64</span>(f) * (<span class="keyword">float64</span>(unit) / scale))</div><div class="line">			<span class="keyword">if</span> v &lt; <span class="number">0</span> &#123;</div><div class="line">				<span class="comment">// overflow</span></div><div class="line">				<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"time: invalid duration "</span> + orig)</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		d += v</div><div class="line">		<span class="keyword">if</span> d &lt; <span class="number">0</span> &#123;</div><div class="line">			<span class="comment">// overflow</span></div><div class="line">			<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"time: invalid duration "</span> + orig)</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">if</span> neg &#123;</div><div class="line">		d = -d</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> Duration(d), <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="接口值"><a href="#接口值" class="headerlink" title="接口值"></a>接口值</h2><ul>
+<li>接口值指一个具体的类型和那个类型的值，也称为接口的动态类型和动态值</li>
+<li>go中提供类型信息的值实际上是类型描述符，类型时编译期的概念</li>
+<li>接口的零值指的是期类型和值的部分都是nil</li>
+<li>不包含任何值的nil接口和一个刚好包含nil指针的接口值是不同的</li>
+</ul>
+<h2 id="go中排序算法的实现"><a href="#go中排序算法的实现" class="headerlink" title="go中排序算法的实现"></a>go中排序算法的实现</h2><h3 id="sort接口"><a href="#sort接口" class="headerlink" title="sort接口"></a>sort接口</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> sort</div><div class="line"><span class="comment">// 排序接口只规定了三个方法，序列长度，两个元素的比较结果，交换两个元素的方式</span></div><div class="line"><span class="keyword">type</span> Interface <span class="keyword">interface</span> &#123;</div><div class="line">	Len() <span class="keyword">int</span></div><div class="line">	Less(i, j <span class="keyword">int</span>) <span class="keyword">bool</span></div><div class="line">	Swap(i, j <span class="keyword">int</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="go中排序函数的实现"><a href="#go中排序函数的实现" class="headerlink" title="go中排序函数的实现"></a>go中排序函数的实现</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 实现了前面Interface的结构体都可以进行排序，go中排序使用的是改进后的快排</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Sort</span><span class="params">(data Interface)</span></span> &#123;</div><div class="line">	n := data.Len()</div><div class="line">	quickSort(data, <span class="number">0</span>, n, maxDepth(n))</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 堆排序最大深度</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">maxDepth</span><span class="params">(n <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</div><div class="line">	<span class="keyword">var</span> depth <span class="keyword">int</span></div><div class="line">	<span class="keyword">for</span> i := n; i &gt; <span class="number">0</span>; i &gt;&gt;= <span class="number">1</span> &#123;</div><div class="line">		depth++</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> depth * <span class="number">2</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">quickSort</span><span class="params">(data Interface, a, b, maxDepth <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">for</span> b-a &gt; <span class="number">12</span> &#123; <span class="comment">// Use ShellSort for slices &lt;= 12 elements</span></div><div class="line">		<span class="keyword">if</span> maxDepth == <span class="number">0</span> &#123;</div><div class="line">		    <span class="comment">// 进行堆排序</span></div><div class="line">			heapSort(data, a, b)</div><div class="line">			<span class="keyword">return</span></div><div class="line">		&#125;</div><div class="line">		maxDepth--</div><div class="line">		<span class="comment">// 获取pivot，进行快排</span></div><div class="line">		mlo, mhi := doPivot(data, a, b)</div><div class="line">		<span class="comment">// Avoiding recursion on the larger subproblem guarantees</span></div><div class="line">		<span class="comment">// a stack depth of at most lg(b-a).</span></div><div class="line">		<span class="keyword">if</span> mlo-a &lt; b-mhi &#123;</div><div class="line">			quickSort(data, a, mlo, maxDepth)</div><div class="line">			a = mhi <span class="comment">// i.e., quickSort(data, mhi, b)</span></div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			quickSort(data, mhi, b, maxDepth)</div><div class="line">			b = mlo <span class="comment">// i.e., quickSort(data, a, mlo)</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> b-a &gt; <span class="number">1</span> &#123;</div><div class="line">		<span class="comment">// 希尔排序</span></div><div class="line">		<span class="comment">// It could be written in this simplified form cause b-a &lt;= 12</span></div><div class="line">		<span class="keyword">for</span> i := a + <span class="number">6</span>; i &lt; b; i++ &#123;</div><div class="line">			<span class="keyword">if</span> data.Less(i, i<span class="number">-6</span>) &#123;</div><div class="line">				data.Swap(i, i<span class="number">-6</span>)</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		insertionSort(data, a, b)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>interface是一种类型</li>
+<li>interfacde{}是空接口，和Java中Object类似，所有的结构体都实现了空接口</li>
+<li>如果一个类型实现了一个interface的所有方法，则该类型实现了该接口</li>
+<li>interface变量存储的是实现结构体的值，并且只会暴露接口公开的值和方法</li>
+<li>判断interface存储的类型可以使用断言来实现。value, ok := interfaceObject.(assertType)</li>
+<li><p>interface的接收者是类型值还是指针在定义的时候没有严格规定，但是go语言实际上是只支持值传递。golang的语法糖会将函数里调用的指针进行隐式的转换成值，但是反过来是不行的。函数调用优先使用指针就OK了。</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">type I interface &#123;</div><div class="line">	Get() int</div><div class="line">	Set(int)</div><div class="line">&#125;</div><div class="line"></div><div class="line">type SS struct &#123;</div><div class="line">	Age int</div><div class="line">&#125;</div><div class="line"></div><div class="line">func (s SS) Get() int &#123;</div><div class="line">	return s.Age</div><div class="line">&#125;</div><div class="line"></div><div class="line">func (s SS) Set(age int) &#123;</div><div class="line">	s.Age = age</div><div class="line">&#125;</div><div class="line"></div><div class="line">func f(i I) &#123;</div><div class="line">	i.Set(10)</div><div class="line">	fmt.Println(i.Get())</div><div class="line">&#125;</div><div class="line"></div><div class="line">func main() &#123;</div><div class="line">	ss := SS&#123;&#125;</div><div class="line">	f(&amp;ss) //指针参数，无论函数的接收者是值还是指针都不会保存</div><div class="line">	f(ss)  //值参数，函数的接收者是值不会报错，是指针会编译报错</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/12/golang/源码解读/io/io/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2123,409 +2579,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/07/golang/源码解读/bytes/buffer/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/05/07/golang/源码解读/bytes/buffer/" itemprop="url">go源码解读-bytes.Buffer</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-07T17:28:50+08:00">
-                2020-05-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/" itemprop="url" rel="index">
-                    <span itemprop="name">go</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/源码解读/" itemprop="url" rel="index">
-                    <span itemprop="name">源码解读</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="bytes-Buffer"><a href="#bytes-Buffer" class="headerlink" title="bytes.Buffer"></a>bytes.Buffer</h2><ul>
-<li>Buffer结构体<ul>
-<li>bytes.Buffer实际上就是长度可变的，可读可写的数组buffer</li>
-<li>bytes.Buffer的零值为一个可用的buffer</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Buffer <span class="keyword">struct</span> &#123;</div><div class="line">	buf      []<span class="keyword">byte</span> <span class="comment">// 字节切片，Buffer中的内容为切片[off: len(buf)]</span></div><div class="line">	off      <span class="keyword">int</span>    <span class="comment">// 读取索引 &amp;buf[off], 写入从&amp;buf[len(buf)]写入</span></div><div class="line">	lastRead readOp <span class="comment">// 记录上一次对buffer的操作，从而实现撤销操作</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 最后一次操作buffer的行为</span></div><div class="line"><span class="keyword">type</span> readOp <span class="keyword">int8</span></div><div class="line"></div><div class="line"><span class="keyword">const</span> (</div><div class="line">	opRead      readOp = <span class="number">-1</span> <span class="comment">// Any other read operation.</span></div><div class="line">	opInvalid   readOp = <span class="number">0</span>  <span class="comment">// Non-read operation.</span></div><div class="line">	opReadRune1 readOp = <span class="number">1</span>  <span class="comment">// Read rune of size 1.</span></div><div class="line">	opReadRune2 readOp = <span class="number">2</span>  <span class="comment">// Read rune of size 2.</span></div><div class="line">	opReadRune3 readOp = <span class="number">3</span>  <span class="comment">// Read rune of size 3.</span></div><div class="line">	opReadRune4 readOp = <span class="number">4</span>  <span class="comment">// Read rune of size 4.</span></div><div class="line">)</div></pre></td></tr></table></figure>
-<h3 id="Buffer结构体的方法"><a href="#Buffer结构体的方法" class="headerlink" title="Buffer结构体的方法"></a>Buffer结构体的方法</h3><ul>
-<li>Bytes方法返回Buffer未读取的字节数组</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">Bytes</span><span class="params">()</span> []<span class="title">byte</span></span> &#123; <span class="keyword">return</span> b.buf[b.off:] &#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>String方法以字符串的格式返回未读取的buffer数据</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">String</span><span class="params">()</span> <span class="title">string</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> b == <span class="literal">nil</span> &#123;</div><div class="line">		<span class="comment">// Special case, useful in debugging.</span></div><div class="line">		<span class="keyword">return</span> <span class="string">"&lt;nil&gt;"</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="keyword">string</span>(b.buf[b.off:])</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>Len方法返回未读取的字节数</li>
-<li>Cap方法返回buffer数据分配的内存大小</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">Len</span><span class="params">()</span> <span class="title">int</span></span> &#123; <span class="keyword">return</span> <span class="built_in">len</span>(b.buf) - b.off &#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">Cap</span><span class="params">()</span> <span class="title">int</span></span> &#123; <span class="keyword">return</span> <span class="built_in">cap</span>(b.buf) &#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>Truncate截取<code>b.buf[:b.off+n]</code>为新的buf</li>
-<li>Reset方法为重置操作，创建一个零值的Buffer</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">Truncate</span><span class="params">(n <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> n == <span class="number">0</span> &#123;</div><div class="line">		b.Reset()</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line">	b.lastRead = opInvalid</div><div class="line">	<span class="keyword">if</span> n &lt; <span class="number">0</span> || n &gt; b.Len() &#123;</div><div class="line">		<span class="built_in">panic</span>(<span class="string">"bytes.Buffer: truncation out of range"</span>)</div><div class="line">	&#125;</div><div class="line">	b.buf = b.buf[:b.off+n]</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">Reset</span><span class="params">()</span></span> &#123;</div><div class="line">	b.buf = b.buf[:<span class="number">0</span>]</div><div class="line">	b.off = <span class="number">0</span></div><div class="line">	b.lastRead = opInvalid</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>Grow方法对buffer的容量进行扩容，n指定扩容的字节数大小</li>
-<li>n为负数会panic, buffer不能扩容也会报错</li>
-<li>grow方法返回的m为写入数据的起点</li>
-<li>tryGrowByReslice方法是在buf本身容量是足够的情况下的扩容操作，只需要重新获取切片接口</li>
-<li>扩容时是有最小扩容空间的，为64字节，n&lt;64则会被赋值为64，避免小尺度多次扩容的情况</li>
-<li>扩容时，会优先考虑复用已经分配的切片空间，不能满足其需求则会重新扩容</li>
-<li>makeSlice创建一个新的slice并分配空间，扩容尺寸为原来分配的内存空间的2倍+n个字节</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">Grow</span><span class="params">(n <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> n &lt; <span class="number">0</span> &#123;</div><div class="line">		<span class="built_in">panic</span>(<span class="string">"bytes.Buffer.Grow: negative count"</span>)</div><div class="line">	&#125;</div><div class="line">	m := b.grow(n)</div><div class="line">	b.buf = b.buf[:m]</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">grow</span><span class="params">(n <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</div><div class="line">	m := b.Len()</div><div class="line">	<span class="comment">// If buffer is empty, reset to recover space.</span></div><div class="line">	<span class="keyword">if</span> m == <span class="number">0</span> &amp;&amp; b.off != <span class="number">0</span> &#123;</div><div class="line">		b.Reset()</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Try to grow by means of a reslice.</span></div><div class="line">	<span class="keyword">if</span> i, ok := b.tryGrowByReslice(n); ok &#123;</div><div class="line">		<span class="keyword">return</span> i</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> b.buf == <span class="literal">nil</span> &amp;&amp; n &lt;= smallBufferSize &#123;</div><div class="line">		b.buf = <span class="built_in">make</span>([]<span class="keyword">byte</span>, n, smallBufferSize)</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span></div><div class="line">	&#125;</div><div class="line">	c := <span class="built_in">cap</span>(b.buf)</div><div class="line">	<span class="keyword">if</span> n &lt;= c/<span class="number">2</span>-m &#123;</div><div class="line">		<span class="comment">// We can slide things down instead of allocating a new</span></div><div class="line">		<span class="comment">// slice. We only need m+n &lt;= c to slide, but</span></div><div class="line">		<span class="comment">// we instead let capacity get twice as large so we</span></div><div class="line">		<span class="comment">// don't spend all our time copying.</span></div><div class="line">		<span class="built_in">copy</span>(b.buf, b.buf[b.off:])</div><div class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> c &gt; maxInt-c-n &#123;</div><div class="line">		<span class="built_in">panic</span>(ErrTooLarge)</div><div class="line">	&#125; <span class="keyword">else</span> &#123;</div><div class="line">		<span class="comment">// Not enough space anywhere, we need to allocate.</span></div><div class="line">		buf := makeSlice(<span class="number">2</span>*c + n)</div><div class="line">		<span class="built_in">copy</span>(buf, b.buf[b.off:])</div><div class="line">		b.buf = buf</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Restore b.off and len(b.buf).</span></div><div class="line">	b.off = <span class="number">0</span></div><div class="line">	b.buf = b.buf[:m+n]</div><div class="line">	<span class="keyword">return</span> m</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">tryGrowByReslice</span><span class="params">(n <span class="keyword">int</span>)</span> <span class="params">(<span class="keyword">int</span>, <span class="keyword">bool</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> l := <span class="built_in">len</span>(b.buf); n &lt;= <span class="built_in">cap</span>(b.buf)-l &#123;</div><div class="line">		b.buf = b.buf[:l+n]</div><div class="line">		<span class="keyword">return</span> l, <span class="literal">true</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>, <span class="literal">false</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// makeSlice allocates a slice of size n. If the allocation fails, it panics</span></div><div class="line"><span class="comment">// with ErrTooLarge.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeSlice</span><span class="params">(n <span class="keyword">int</span>)</span> []<span class="title">byte</span></span> &#123;</div><div class="line">	<span class="comment">// If the make fails, give a known error.</span></div><div class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</div><div class="line">		<span class="keyword">if</span> <span class="built_in">recover</span>() != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="built_in">panic</span>(ErrTooLarge)</div><div class="line">		&#125;</div><div class="line">	&#125;()</div><div class="line">	<span class="keyword">return</span> <span class="built_in">make</span>([]<span class="keyword">byte</span>, n)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>Write方法向buf中写入字节数组p</li>
-<li>WriteString向buf中写入字符串，内建方法copy支持复制字符串到字节数组中</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">Write</span><span class="params">(p []<span class="keyword">byte</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	b.lastRead = opInvalid</div><div class="line">	m, ok := b.tryGrowByReslice(<span class="built_in">len</span>(p))</div><div class="line">	<span class="keyword">if</span> !ok &#123;</div><div class="line">		m = b.grow(<span class="built_in">len</span>(p))</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="built_in">copy</span>(b.buf[m:], p), <span class="literal">nil</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">WriteString</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	b.lastRead = opInvalid</div><div class="line">	m, ok := b.tryGrowByReslice(<span class="built_in">len</span>(s))</div><div class="line">	<span class="keyword">if</span> !ok &#123;</div><div class="line">		m = b.grow(<span class="built_in">len</span>(s))</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="built_in">copy</span>(b.buf[m:], s), <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>MinRead为ReadFrom最少读入的字节数</li>
-<li>ReadFrom从实现了io.Reader接口的结构体中读取数据</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> MinRead = <span class="number">512</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">ReadFrom</span><span class="params">(r io.Reader)</span> <span class="params">(n <span class="keyword">int64</span>, err error)</span></span> &#123;</div><div class="line">	b.lastRead = opInvalid</div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		i := b.grow(MinRead)</div><div class="line">		b.buf = b.buf[:i]</div><div class="line">		m, e := r.Read(b.buf[i:<span class="built_in">cap</span>(b.buf)])</div><div class="line">		<span class="keyword">if</span> m &lt; <span class="number">0</span> &#123;</div><div class="line">			<span class="built_in">panic</span>(errNegativeRead)</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		b.buf = b.buf[:i+m]</div><div class="line">		n += <span class="keyword">int64</span>(m)</div><div class="line">		<span class="keyword">if</span> e == io.EOF &#123;</div><div class="line">			<span class="keyword">return</span> n, <span class="literal">nil</span> <span class="comment">// e is EOF, so return nil explicitly</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> e != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">return</span> n, e</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>WriteTo 将数据写入到,直到Buffer中数据为空</li>
-<li>WriteByte方法将字节c写入到buffer中</li>
-<li>WriteRune方法将字符r写入到buffer中</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">WriteTo</span><span class="params">(w io.Writer)</span> <span class="params">(n <span class="keyword">int64</span>, err error)</span></span> &#123;</div><div class="line">	b.lastRead = opInvalid</div><div class="line">	<span class="keyword">if</span> nBytes := b.Len(); nBytes &gt; <span class="number">0</span> &#123;</div><div class="line">		m, e := w.Write(b.buf[b.off:])</div><div class="line">		<span class="keyword">if</span> m &gt; nBytes &#123;</div><div class="line">			<span class="built_in">panic</span>(<span class="string">"bytes.Buffer.WriteTo: invalid Write count"</span>)</div><div class="line">		&#125;</div><div class="line">		b.off += m</div><div class="line">		n = <span class="keyword">int64</span>(m)</div><div class="line">		<span class="keyword">if</span> e != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">return</span> n, e</div><div class="line">		&#125;</div><div class="line">		<span class="comment">// all bytes should have been written, by definition of</span></div><div class="line">		<span class="comment">// Write method in io.Writer</span></div><div class="line">		<span class="keyword">if</span> m != nBytes &#123;</div><div class="line">			<span class="keyword">return</span> n, io.ErrShortWrite</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Buffer is now empty; reset.</span></div><div class="line">	b.Reset()</div><div class="line">	<span class="keyword">return</span> n, <span class="literal">nil</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">WriteByte</span><span class="params">(c <span class="keyword">byte</span>)</span> <span class="title">error</span></span> &#123;</div><div class="line">	b.lastRead = opInvalid</div><div class="line">	m, ok := b.tryGrowByReslice(<span class="number">1</span>)</div><div class="line">	<span class="keyword">if</span> !ok &#123;</div><div class="line">		m = b.grow(<span class="number">1</span>)</div><div class="line">	&#125;</div><div class="line">	b.buf[m] = c</div><div class="line">	<span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>Read方法从buffer中读取len(p)个字节到字节切片p中</li>
-<li>Next返回从buffer中将要读取到的n个字节切片</li>
-<li>ReadByte从buffer中读取一个字节</li>
-<li>ReadRune从buffer中读取一个字符</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">Read</span><span class="params">(p []<span class="keyword">byte</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	b.lastRead = opInvalid</div><div class="line">	<span class="keyword">if</span> b.empty() &#123;</div><div class="line">		<span class="comment">// Buffer is empty, reset to recover space.</span></div><div class="line">		b.Reset()</div><div class="line">		<span class="keyword">if</span> <span class="built_in">len</span>(p) == <span class="number">0</span> &#123;</div><div class="line">			<span class="keyword">return</span> <span class="number">0</span>, <span class="literal">nil</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, io.EOF</div><div class="line">	&#125;</div><div class="line">	n = <span class="built_in">copy</span>(p, b.buf[b.off:])</div><div class="line">	b.off += n</div><div class="line">	<span class="keyword">if</span> n &gt; <span class="number">0</span> &#123;</div><div class="line">		b.lastRead = opRead</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> n, <span class="literal">nil</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">Next</span><span class="params">(n <span class="keyword">int</span>)</span> []<span class="title">byte</span></span> &#123;</div><div class="line">	b.lastRead = opInvalid</div><div class="line">	m := b.Len()</div><div class="line">	<span class="keyword">if</span> n &gt; m &#123;</div><div class="line">		n = m</div><div class="line">	&#125;</div><div class="line">	data := b.buf[b.off : b.off+n]</div><div class="line">	b.off += n</div><div class="line">	<span class="keyword">if</span> n &gt; <span class="number">0</span> &#123;</div><div class="line">		b.lastRead = opRead</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> data</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">ReadByte</span><span class="params">()</span> <span class="params">(<span class="keyword">byte</span>, error)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> b.empty() &#123;</div><div class="line">		<span class="comment">// Buffer is empty, reset to recover space.</span></div><div class="line">		b.Reset()</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, io.EOF</div><div class="line">	&#125;</div><div class="line">	c := b.buf[b.off]</div><div class="line">	b.off++</div><div class="line">	b.lastRead = opRead</div><div class="line">	<span class="keyword">return</span> c, <span class="literal">nil</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">ReadRune</span><span class="params">()</span> <span class="params">(r <span class="keyword">rune</span>, size <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> b.empty() &#123;</div><div class="line">		<span class="comment">// Buffer is empty, reset to recover space.</span></div><div class="line">		b.Reset()</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, <span class="number">0</span>, io.EOF</div><div class="line">	&#125;</div><div class="line">	c := b.buf[b.off]</div><div class="line">	<span class="keyword">if</span> c &lt; utf8.RuneSelf &#123;</div><div class="line">		b.off++</div><div class="line">		b.lastRead = opReadRune1</div><div class="line">		<span class="keyword">return</span> <span class="keyword">rune</span>(c), <span class="number">1</span>, <span class="literal">nil</span></div><div class="line">	&#125;</div><div class="line">	r, n := utf8.DecodeRune(b.buf[b.off:])</div><div class="line">	b.off += n</div><div class="line">	b.lastRead = readOp(n)</div><div class="line">	<span class="keyword">return</span> r, n, <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>UnreadRune,撤销ReadRune方法的操作</li>
-<li>UnreadByte,撤销ReadByte方法的操作</li>
-<li>UnreadRune,撤销ReadRune方法的操作</li>
-<li>UnreadRune,撤销ReadRune方法的操作</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">UnreadRune</span><span class="params">()</span> <span class="title">error</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> b.lastRead &lt;= opInvalid &#123;</div><div class="line">		<span class="keyword">return</span> errors.New(<span class="string">"bytes.Buffer: UnreadRune: previous operation was not a successful ReadRune"</span>)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> b.off &gt;= <span class="keyword">int</span>(b.lastRead) &#123;</div><div class="line">		b.off -= <span class="keyword">int</span>(b.lastRead)</div><div class="line">	&#125;</div><div class="line">	b.lastRead = opInvalid</div><div class="line">	<span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// bytes, UnreadByte returns an error.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">UnreadByte</span><span class="params">()</span> <span class="title">error</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> b.lastRead == opInvalid &#123;</div><div class="line">		<span class="keyword">return</span> errors.New(<span class="string">"bytes.Buffer: UnreadByte: previous operation was not a successful read"</span>)</div><div class="line">	&#125;</div><div class="line">	b.lastRead = opInvalid</div><div class="line">	<span class="keyword">if</span> b.off &gt; <span class="number">0</span> &#123;</div><div class="line">		b.off--</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>ReadBytes从buffer中读取字节切片直到遇到delim字节，返回结果中包含delim字节</li>
-<li>ReadString从buffer中读取字符串，直到遇到delim字节</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">ReadBytes</span><span class="params">(delim <span class="keyword">byte</span>)</span> <span class="params">(line []<span class="keyword">byte</span>, err error)</span></span> &#123;</div><div class="line">	slice, err := b.readSlice(delim)</div><div class="line">	<span class="comment">// return a copy of slice. The buffer's backing array may</span></div><div class="line">	<span class="comment">// be overwritten by later calls.</span></div><div class="line">	line = <span class="built_in">append</span>(line, slice...)</div><div class="line">	<span class="keyword">return</span> line, err</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// readSlice is like ReadBytes but returns a reference to internal buffer data.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">readSlice</span><span class="params">(delim <span class="keyword">byte</span>)</span> <span class="params">(line []<span class="keyword">byte</span>, err error)</span></span> &#123;</div><div class="line">	i := IndexByte(b.buf[b.off:], delim)</div><div class="line">	end := b.off + i + <span class="number">1</span></div><div class="line">	<span class="keyword">if</span> i &lt; <span class="number">0</span> &#123;</div><div class="line">		end = <span class="built_in">len</span>(b.buf)</div><div class="line">		err = io.EOF</div><div class="line">	&#125;</div><div class="line">	line = b.buf[b.off:end]</div><div class="line">	b.off = end</div><div class="line">	b.lastRead = opRead</div><div class="line">	<span class="keyword">return</span> line, err</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">ReadString</span><span class="params">(delim <span class="keyword">byte</span>)</span> <span class="params">(line <span class="keyword">string</span>, err error)</span></span> &#123;</div><div class="line">	slice, err := b.readSlice(delim)</div><div class="line">	<span class="keyword">return</span> <span class="keyword">string</span>(slice), err</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="初始化方法"><a href="#初始化方法" class="headerlink" title="初始化方法"></a>初始化方法</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewBuffer</span><span class="params">(buf []<span class="keyword">byte</span>)</span> *<span class="title">Buffer</span></span> &#123; <span class="keyword">return</span> &amp;Buffer&#123;buf: buf&#125; &#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewBufferString</span><span class="params">(s <span class="keyword">string</span>)</span> *<span class="title">Buffer</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> &amp;Buffer&#123;buf: []<span class="keyword">byte</span>(s)&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/07/golang/源码解读/strings/builder/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/05/07/golang/源码解读/strings/builder/" itemprop="url">go源码解读-strings.Builder</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-07T17:26:49+08:00">
-                2020-05-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/" itemprop="url" rel="index">
-                    <span itemprop="name">go</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/源码解读/" itemprop="url" rel="index">
-                    <span itemprop="name">源码解读</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="builder"><a href="#builder" class="headerlink" title="builder"></a>builder</h2><ul>
-<li>Builder是效率最高，内存使用最少的创建一个字符串的方法</li>
-<li>Builder结构体包含两个参数<ul>
-<li>addr 字符串的地址</li>
-<li>buf 字节数组</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// A Builder is used to efficiently build a string using Write methods.</span></div><div class="line"><span class="comment">// It minimizes memory copying. The zero value is ready to use.</span></div><div class="line"><span class="comment">// Do not copy a non-zero Builder.</span></div><div class="line"><span class="keyword">type</span> Builder <span class="keyword">struct</span> &#123;</div><div class="line">	addr *Builder <span class="comment">// of receiver, to detect copies by value</span></div><div class="line">	buf  []<span class="keyword">byte</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h3><ul>
-<li>String方法返回Builder构建的数据</li>
-<li>Len方法返回字节数组占据的字节数，1个汉字三个字节</li>
-<li>Cap方法返回字节数组分配的内存空间大小</li>
-<li>Reset方法将Builder重置为初始状态</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// String returns the accumulated string.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span> <span class="title">String</span><span class="params">()</span> <span class="title">string</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> *(*<span class="keyword">string</span>)(unsafe.Pointer(&amp;b.buf))</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Len returns the number of accumulated bytes; b.Len() == len(b.String()).</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span> <span class="title">Len</span><span class="params">()</span> <span class="title">int</span></span> &#123; <span class="keyword">return</span> <span class="built_in">len</span>(b.buf) &#125;</div><div class="line"></div><div class="line"><span class="comment">// Cap returns the capacity of the builder's underlying byte slice. It is the</span></div><div class="line"><span class="comment">// total space allocated for the string being built and includes any bytes</span></div><div class="line"><span class="comment">// already written.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span> <span class="title">Cap</span><span class="params">()</span> <span class="title">int</span></span> &#123; <span class="keyword">return</span> <span class="built_in">cap</span>(b.buf) &#125;</div><div class="line"></div><div class="line"><span class="comment">// Reset resets the Builder to be empty.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span> <span class="title">Reset</span><span class="params">()</span></span> &#123;</div><div class="line">	b.addr = <span class="literal">nil</span></div><div class="line">	b.buf = <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="Grow方法"><a href="#Grow方法" class="headerlink" title="Grow方法"></a>Grow方法</h3><ul>
-<li>Grow方法来扩展buf数组的分配内存的大小</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// grow copies the buffer to a new, larger buffer so that there are at least n</span></div><div class="line"><span class="comment">// bytes of capacity beyond len(b.buf).</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span> <span class="title">grow</span><span class="params">(n <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	buf := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="built_in">len</span>(b.buf), <span class="number">2</span>*<span class="built_in">cap</span>(b.buf)+n)</div><div class="line">	<span class="built_in">copy</span>(buf, b.buf)</div><div class="line">	b.buf = buf</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Grow grows b's capacity, if necessary, to guarantee space for</span></div><div class="line"><span class="comment">// another n bytes. After Grow(n), at least n bytes can be written to b</span></div><div class="line"><span class="comment">// without another allocation. If n is negative, Grow panics.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span> <span class="title">Grow</span><span class="params">(n <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	b.copyCheck()</div><div class="line">	<span class="keyword">if</span> n &lt; <span class="number">0</span> &#123;</div><div class="line">		<span class="built_in">panic</span>(<span class="string">"strings.Builder.Grow: negative count"</span>)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> <span class="built_in">cap</span>(b.buf)-<span class="built_in">len</span>(b.buf) &lt; n &#123;</div><div class="line">		b.grow(n)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span> <span class="title">copyCheck</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> b.addr == <span class="literal">nil</span> &#123;</div><div class="line">		<span class="comment">// This hack works around a failing of Go's escape analysis</span></div><div class="line">		<span class="comment">// that was causing b to escape and be heap allocated.</span></div><div class="line">		<span class="comment">// See issue 23382.</span></div><div class="line">		<span class="comment">// <span class="doctag">TODO:</span> once issue 7921 is fixed, this should be reverted to</span></div><div class="line">		<span class="comment">// just "b.addr = b".</span></div><div class="line">		b.addr = (*Builder)(noescape(unsafe.Pointer(b)))</div><div class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> b.addr != b &#123;</div><div class="line">		<span class="built_in">panic</span>(<span class="string">"strings: illegal use of non-zero Builder copied by value"</span>)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">noescape</span><span class="params">(p unsafe.Pointer)</span> <span class="title">unsafe</span>.<span class="title">Pointer</span></span> &#123;</div><div class="line">	x := <span class="keyword">uintptr</span>(p)</div><div class="line">	<span class="keyword">return</span> unsafe.Pointer(x ^ <span class="number">0</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="Write相关方法"><a href="#Write相关方法" class="headerlink" title="Write相关方法"></a>Write相关方法</h3><ul>
-<li>Write方法将字节数组加添加到buf数组后面</li>
-<li>WriteByte将字节c添加到buf数组后边</li>
-<li>WriteRune将rune字符添加到buf数组后面</li>
-<li>WriteString将字符串添加到buf数组后面</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Write appends the contents of p to b's buffer.</span></div><div class="line"><span class="comment">// Write always returns len(p), nil.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span> <span class="title">Write</span><span class="params">(p []<span class="keyword">byte</span>)</span> <span class="params">(<span class="keyword">int</span>, error)</span></span> &#123;</div><div class="line">	b.copyCheck()</div><div class="line">	b.buf = <span class="built_in">append</span>(b.buf, p...)</div><div class="line">	<span class="keyword">return</span> <span class="built_in">len</span>(p), <span class="literal">nil</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// WriteByte appends the byte c to b's buffer.</span></div><div class="line"><span class="comment">// The returned error is always nil.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span> <span class="title">WriteByte</span><span class="params">(c <span class="keyword">byte</span>)</span> <span class="title">error</span></span> &#123;</div><div class="line">	b.copyCheck()</div><div class="line">	b.buf = <span class="built_in">append</span>(b.buf, c)</div><div class="line">	<span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// WriteRune appends the UTF-8 encoding of Unicode code point r to b's buffer.</span></div><div class="line"><span class="comment">// It returns the length of r and a nil error.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span> <span class="title">WriteRune</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="params">(<span class="keyword">int</span>, error)</span></span> &#123;</div><div class="line">	b.copyCheck()</div><div class="line">	<span class="keyword">if</span> r &lt; utf8.RuneSelf &#123;</div><div class="line">		b.buf = <span class="built_in">append</span>(b.buf, <span class="keyword">byte</span>(r))</div><div class="line">		<span class="keyword">return</span> <span class="number">1</span>, <span class="literal">nil</span></div><div class="line">	&#125;</div><div class="line">	l := <span class="built_in">len</span>(b.buf)</div><div class="line">	<span class="keyword">if</span> <span class="built_in">cap</span>(b.buf)-l &lt; utf8.UTFMax &#123;</div><div class="line">		b.grow(utf8.UTFMax)</div><div class="line">	&#125;</div><div class="line">	n := utf8.EncodeRune(b.buf[l:l+utf8.UTFMax], r)</div><div class="line">	b.buf = b.buf[:l+n]</div><div class="line">	<span class="keyword">return</span> n, <span class="literal">nil</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// WriteString appends the contents of s to b's buffer.</span></div><div class="line"><span class="comment">// It returns the length of s and a nil error.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span> <span class="title">WriteString</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">int</span>, error)</span></span> &#123;</div><div class="line">	b.copyCheck()</div><div class="line">	b.buf = <span class="built_in">append</span>(b.buf, s...)</div><div class="line">	<span class="keyword">return</span> <span class="built_in">len</span>(s), <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2579,7 +2632,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">97</span>
+                <span class="site-state-item-count">99</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

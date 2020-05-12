@@ -277,6 +277,268 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/python/16.Web编程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/21/python/16.Web编程/" itemprop="url">16. Web编程</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="Web开发"><a href="#Web开发" class="headerlink" title="Web开发"></a>Web开发</h1><p>随着互联网的兴起，人们发现CS架构不适合Web，最大的原因是Web应用程序的修改和升级非常迅速，而CS架构需要每个客户端逐个升级桌面APP，因此BS架构开始流行。</p>
+<p>在BS架构下，客户端只需浏览器，应用程序的逻辑和数据都存储在服务器端。浏览器只需要请求服务器获取Web页面，并把Web页面展示给用户即可。Web页面也具有极强的交互性。由于Web页面使用HTML编写的，而HTML具备超强的表现力，并且服务端升级后，客户端无需任何部署就可以使用到最新的版本，因此BS架构迅速流行起来。</p>
+<p>Web开发的阶段：<br>1、静态Web页面<br>2、CGI：Common Gateway Interface<br>3、ASP/JSP/PHP：脚本语言开发与HTML结合紧密。<br>4、MVC：Model-View-Controller的模式，ASP发展为ASP.Net，JSP和PHP也有一大堆MVC框架。</p>
+<p>Python是一种解释型脚本语言，开发效率高，所以很适合来做WEB开发。Python有上百种Web开发框架，有很多成熟的模板技术。</p>
+<h2 id="HTTP协议简介"><a href="#HTTP协议简介" class="headerlink" title="HTTP协议简介"></a>HTTP协议简介</h2><p>在Web应用中，服务器把网页传给浏览器，实际上就是把网页的HTML代码发送给浏览器，让浏览器显示出来。而浏览器和服务器之间的传输协议就是HTTP，所以：</p>
+<blockquote>
+<p>HTML是一种用来定义网页的文本，会HTML，就可以编写网页<br>HTTP是在网络上传输HTML的协议，用于浏览器和服务器的通信。</p>
+</blockquote>
+<p>chrome浏览器视图，开发者，开发者工具，就可以显示开发者工具：<br><img src="/img/1478682531152.png" alt="Alt text"></p>
+<p><code>Elements</code>显示网页的结构，<code>Network</code>显示浏览器和服务器的通信。我们点<code>Network</code>，确保第一个小红灯亮着，Chrome就会记录所有浏览器和服务器之间的通信：<br><img src="/img/1478682659522.png" alt="Alt text"></p>
+<p>当我们在地址栏输入<code>www.sina.com.cn</code>时，浏览器将显示新浪的首页。在<code>Network</code>中，定位到第一条记录，点击，右侧将显示<code>Request Headers</code>，点击右侧的<code>view source</code>，我们就可以看到浏览器发给新浪服务器的请求了：<br><img src="/img/1478691391893.png" alt="Alt text"></p>
+<p>最主要的头两行分析如下，第一行为</p>
+<blockquote>
+<p>GET / HTTP/1.1</p>
+</blockquote>
+<p>GET表示一个读取请求，将从服务器获得网页数据，<code>/</code>表示URL的路径，URL总是以<code>/</code>开头，<code>/</code>就表示首页，最后的<code>HTTP/1.1</code>表示采用的HTTP版本是1.1。目前HTTP协议的版本就是1.1，但是大部分服务器也支持1.0版本，主要区别在于1.1版本允许多个HTTP请求复用一个TCP连接，以加快传输速度。</p>
+<p>第二行开始，每一行都类似于<code>Xxx：abcdefg</code>：</p>
+<blockquote>
+<p>Host: www.sina.com.cn</p>
+</blockquote>
+<p>表示请求的域名是<code>www.sina.com.cn</code>，如果一天服务器有多个网站，服务器就需要通过Host来区分浏览器请求的是哪个网站。</p>
+<p>继续往下找到<code>Response Headers</code>，点击<code>view source</code>，显示服务器返回的原始相应数据：<br><img src="/img/1478692170995.png" alt="Alt text"></p>
+<p>HTTP相应分为Header和Body两部分，我们在Network中看到的Header最重要的几行如下：</p>
+<blockquote>
+<p>200 OK</p>
+</blockquote>
+<p><code>200</code>表示一个成功的响应，后面的<code>OK</code>是说明。失败的响应有<code>404 Not Found</code>，<code>500Internal Server Error</code>等。</p>
+<blockquote>
+<p>Content-Type：text/html</p>
+</blockquote>
+<p><code>Content-Type</code>指示响应的内容，这里是<code>text/html</code>表示HTML网页。请注意浏览器就是靠<code>Content-Type</code>来判断响应的内容是网页还是图片，是时频还是音乐，不是靠URL来判断响应的内容的。</p>
+<p>HTTP响应的Body就是HTML源码，我们可以直接查看：<br><img src="/img/1478692487428.png" alt="Alt text"></p>
+<p>当浏览器读取到新浪首页的HTML源码后，它会解析HTML，显示页面，然后根据HTML里面的各种链接，再发送HTTP请求到新浪服务器，拿到相应的图片、时频、Flash。JavaScript脚本、CSS等各种资源，最终显示出一个完整的页面。我们在Network下回看到很多额外的请求。</p>
+<h3 id="HTTP请求"><a href="#HTTP请求" class="headerlink" title="HTTP请求"></a>HTTP请求</h3><blockquote>
+<p>1、浏览器首先向服务器发送HTTP请求，请求包括：</p>
+<blockquote>
+<p>方法：GET–仅请求资源、POST–附带用户数据<br>路径：由Host头指定–Host：www.sina.com.cn<br>以及其他相关的Header</p>
+</blockquote>
+<p>2、服务器向浏览器返回HTTP相应，相应包括：</p>
+<blockquote>
+<p>响应代码：200表示成功，3xx表示重定向，4xx表示客户端发送的请求有错误，5xx表示服务器端处理时发生了错误；<br>响应类型：由Content-Type指定；<br>以及其他相关的Header；<br>通常服务器的HTTP响应会携带内容，也就是有一个Body，包含响应的内容，网页的HTML源码就在Body中。</p>
+</blockquote>
+<p>3、如果浏览器还需要继续向服务器请求其他资源，比如图片，就再次发出HTTP请求，重复步骤1、2。</p>
+</blockquote>
+<p>Web采用的HTTP协议采用了非常简单的请求-响应模式，从而大大简化了开发。当我们编写一个页面时，我们只需要在HTTP请求中把HTML发送出去，不需要考虑如何附带图片、视频等，浏览器如果需要请求图片和视频，它会发送另一个HTTP请求，因此，一个HTTP请求只处理一个资源。</p>
+<p>HTTP协议同时具备极强的扩展性，虽然浏览器请求的是<a href="http://www.sina.com.cn/的首页，但是新浪在HTML中可以链入其他服务器的资源，比如`" target="_blank" rel="external">http://www.sina.com.cn/的首页，但是新浪在HTML中可以链入其他服务器的资源，比如`</a><img src="http://i1.sinaimg.cn/home/2013/1008/U8455P30DT20131008135420.png">`=&gt;<img src="http://i1.sinaimg.cn/home/2013/1008/U8455P30DT20131008135420.png">，从而将请求压力分散到各个服务器上，并且，一个站点可以链接到其他站点，无数个站点互相链接起来，就形成了World Wide Web，简称WWW。</p>
+<h3 id="HTTP格式"><a href="#HTTP格式" class="headerlink" title="HTTP格式"></a>HTTP格式</h3><p>每个HTTP请求和相应都遵循相同的格式，一个HTTP包含Header和Body两部分，其中Body是可选的。</p>
+<p>HTTP协议是一种文本协议，所以它的格式非常简单。HTTP　GET请求的格式：<br><figure class="highlight http"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">GET</span> <span class="string">/path</span> HTTP/1.1</div><div class="line"><span class="attribute">Header1</span>: Value1</div><div class="line"><span class="attribute">Header2</span>: Value2</div><div class="line"><span class="attribute">Header3</span>: Value3</div></pre></td></tr></table></figure></p>
+<p>每个Header一行一个，换行符是<code>\r\n</code>。HTTP POST请求的格式是：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">POST</span> <span class="string">/path</span> HTTP/1.1</div><div class="line"><span class="attribute">Header1</span>: Value1</div><div class="line"><span class="attribute">Header2</span>: Value2</div><div class="line"><span class="attribute">Header3</span>: Value3</div><div class="line"></div><div class="line">body data goes here...</div></pre></td></tr></table></figure></p>
+<p>当遇到连续两个<code>\r\n</code>时，Header部分结束，后面的数据都是Body。</p>
+<p>HTTP相应的格式：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">200 OK</div><div class="line"><span class="attribute">Header1</span>: Value1</div><div class="line"><span class="attribute">Header2</span>: Value2</div><div class="line"><span class="attribute">Header3</span>: Value3</div><div class="line"></div><div class="line">body data goes here...</div></pre></td></tr></table></figure></p>
+<p>HTTP响应如果包含body，也是通过<code>\r\n\r\n</code>来分割的。Body数据类型是由<code>Content-Type</code>来确定的。</p>
+<hr>
+<h2 id="HTML简介"><a href="#HTML简介" class="headerlink" title="HTML简介"></a>HTML简介</h2><p>ＨＴＭＬ定义了一套语法规则，来告诉浏览器如何把一个丰富多彩的页面显示出来。最简单的HTML长这样：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">  &lt;title&gt;Hello&lt;/title&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">  &lt;h1&gt;Hello, world!&lt;/h1&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
+<p>可以用文本编辑器编写HTML，然后保存为<code>hello.html</code>，双击或者把文件拖到浏览器中，就可以看到效果：<br><img src="/img/1478694755907.png" alt="Alt text"><br>HTML文档就是一些列的Tag组成的，最外层的Tag是<code>&lt;html&gt;</code>。规范的HTML也包含<code>&lt;head&gt;...&lt;/head&gt;</code>和<code>&lt;body&gt;...&lt;body&gt;</code>注意不要和HTTP中的Header和Body搞混了。由于HTML是富文档模型，所以还有一系列的Tag来表示链接、图片、表格、表单等等。</p>
+<h3 id="CSS简介"><a href="#CSS简介" class="headerlink" title="CSS简介"></a>CSS简介</h3><p>CSS是Cascading Style Sheets(层叠样式表)，CSS用来控制HTML里的所有元素如何展现，比如，给标题元素<code>&lt;h1&gt;</code>加一个样式，变成48号字体，灰色，带阴影。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">  &lt;title&gt;Hello&lt;/title&gt;</div><div class="line">  &lt;style&gt;</div><div class="line">    h1 &#123;</div><div class="line">      color: #333333;</div><div class="line">      font-size: 48px;</div><div class="line">      text-shadow: 3px 3px 3px #666666;</div><div class="line">    &#125;</div><div class="line">  &lt;/style&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">  &lt;h1&gt;Hello, world!&lt;/h1&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
+<p>效果如下：<br><img src="/img/1478696324582.png" alt="Alt text"></p>
+<h3 id="JavaScript简介"><a href="#JavaScript简介" class="headerlink" title="JavaScript简介"></a>JavaScript简介</h3><p>JavaScript和Java没有关系。JavaScript是为了让HTML具有交互性而作为脚本语言添加的，JavaScript既可以内嵌到HTML中，也可以从外部链接到HTML中。如果我们希望当用户点击标题时把标题变为红色，就必须通过JavaScript来实现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">  &lt;title&gt;Hello&lt;/title&gt;</div><div class="line">  &lt;style&gt;</div><div class="line">    h1 &#123;</div><div class="line">      color: #333333;</div><div class="line">      font-size: 48px;</div><div class="line">      text-shadow: 3px 3px 3px #666666;</div><div class="line">    &#125;</div><div class="line">  &lt;/style&gt;</div><div class="line">   &lt;script&gt;</div><div class="line">    function change() &#123;</div><div class="line">      document.getElementsByTagName(&apos;h1&apos;)[0].style.color = &apos;#ff0000&apos;;</div><div class="line">    &#125;</div><div class="line">  &lt;/script&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">  &lt;h1 onclick=&quot;change()&quot;&gt;Hello, world!&lt;/h1&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
+<p><img src="/img/1478696913936.png" alt="Alt text"></p>
+<p>如果要学习Web开发，首先要对HTML、CSS和JavaScript作一定的了解。HTML定义了页面的内容，CSS来控制页面元素的样式，而JavaScript负责页面的交互逻辑。</p>
+<hr>
+<h2 id="WSGI接口"><a href="#WSGI接口" class="headerlink" title="WSGI接口"></a>WSGI接口</h2><p>了解HTTP协议和HTML文档，一个Web应用的本质是：</p>
+<blockquote>
+<p>浏览器发送一个请求—&gt;服务器收到请求，生成一个HTML文档—&gt;服务器把HTML文档作为HTTP相应的Body发送给浏览器—&gt;浏览器收到HTTP响应，从HTTP Body中取出HTML并显示。</p>
+</blockquote>
+<p>最简单的WEB应用就是先把HTML用文件保存好，用一个线程的HTTP服务器软件接收用户请求，从文件中读取HTML，返回。Apache、Nginx、Lighttpd等这些常见的静态服务器就是做这件事情的。</p>
+<p> 如果要动态生成HTML，就需要把上述步骤自己实现。不过那些工作量很大，所以底层的代码由专门的服务器软件实现，我们用python专注于生成HTML文档。我们不希望接触到TCP连接。HTTP原始请求和响应格式，所以需要一个统一的接口，让我们专心用Python编写Web业务。</p>
+<p>这个接口就是WSGI：Web Server Gateway Interface，只要求开发者实现一个函数，就可以相应HTTP请求。最简单的实例如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">application</span><span class="params">(envision, start_response)</span>:</span></div><div class="line"><span class="meta">... </span>    start_response(<span class="string">'200 OK'</span>,[(<span class="string">'Content-Type'</span>, <span class="string">'text/html'</span>)])</div><div class="line"><span class="meta">... </span>    <span class="keyword">return</span> [<span class="string">b'&lt;h1&gt;Hello, world!&lt;/h1&gt;'</span>]</div><div class="line">...</div></pre></td></tr></table></figure></p>
+<p>上面的<code>application()</code>函数就是符合WSGI标准的一个HTTP处理函数，它接收两个参数：</p>
+<blockquote>
+<p>environ：一个包含所有HTTP请求信息的<code>dict</code>对象<br>start_response：一个发送HTTP响应的函数。</p>
+</blockquote>
+<p>在<code>application()</code>函数中，调用：</p>
+<blockquote>
+<p>start_response(‘200 OK’,[(‘Content-Type’, ‘text/html’)])</p>
+</blockquote>
+<p>就发送了HTTP响应的Header，注意Header只能发送一次，也就是只能调用一次<code>start_response()</code>函数。<code>start_response()</code>函数接收两个参数，一个是HTTP响应码，一个是一组<code>list</code>表示的HTTP Header，每个Header用一个包含两个<code>str</code>的<code>tuple</code>表示。</p>
+<p>通常情况下，都应该把<code>Connect-Type</code>头发送给浏览器。其他很多常用的HTTP Header也应该发送。</p>
+<p>然后函数的返回值<code>b&#39;&lt;h1&gt;Hello, world!&lt;/h1&gt;&#39;</code>将作为HTTP响应的Body发送给浏览器。</p>
+<p>有了WSGI，我们关心的就是如何从<code>environ</code>这个<code>dict</code>对象中拿到HTTP请求信息然后构造HTML，通过<code>start_response()</code>函数发送Header，最后返回Body。</p>
+<p>整个<code>application()</code>函数本身并没有涉及到任何解析HTTP的部分，也就是说，底层代码不需要我们自己编写，我们只负责在更高层次上考虑如何响应请求就可以了。并且<code>application()</code>必须由WSGI服务器来调用。有很多符合WSGI规范的服务器，我们可以挑选一个来用。Python内置了一个WSGI服务器，这个模块叫wsgiref，它是用纯Python编写的WSGI服务器的参考实现。</p>
+<h3 id="运行WSGI服务"><a href="#运行WSGI服务" class="headerlink" title="运行WSGI服务"></a>运行WSGI服务</h3><p>我们先编写hello.py，实现WEB应用程序的WSGI处理函数：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">application</span><span class="params">(environ, start_response)</span>:</span></div><div class="line">	start_response(<span class="string">'200 OK'</span>,[(<span class="string">'Content-Type'</span>,<span class="string">'text/html'</span>)])</div><div class="line">	<span class="keyword">return</span> [<span class="string">b'&lt;h1&gt;Hello, world!&lt;/h1&gt;'</span>]</div></pre></td></tr></table></figure></p>
+<p>然后再编写一个<code>server.py</code>，负责启动WSGI服务器，加载<code>application()</code>函数：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> wsgiref.simple_server <span class="keyword">import</span> make_server</div><div class="line"></div><div class="line"><span class="keyword">from</span> hello <span class="keyword">import</span> application</div><div class="line"></div><div class="line"><span class="comment">#创建一个服务器，IP地址为空，端口为8000，处理函数是application</span></div><div class="line">httpd = make_server(<span class="string">''</span>, <span class="number">8000</span>, application)</div><div class="line">print(<span class="string">'Serving HTTP on port 8000...'</span>)</div><div class="line"></div><div class="line">httpd.serve_forever()</div></pre></td></tr></table></figure></p>
+<p>两个文件在一个目录下，执行服务器程序：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++&gt;python server.py</div><div class="line">Serving HTTP on port <span class="number">8000.</span>..</div><div class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> - - [<span class="number">10</span>/Nov/<span class="number">2016</span> <span class="number">20</span>:<span class="number">47</span>:<span class="number">17</span>] <span class="string">"GET / HTTP/1.1"</span> <span class="number">200</span> <span class="number">22</span></div><div class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> - - [<span class="number">10</span>/Nov/<span class="number">2016</span> <span class="number">20</span>:<span class="number">47</span>:<span class="number">17</span>] <span class="string">"GET /favicon.ico HTTP/1.1"</span> <span class="number">200</span> <span class="number">22</span></div></pre></td></tr></table></figure></p>
+<p> 启动成功后，打开浏览器，输入<code>http://localhost:8000/</code>就可以看到结果了。<br> <img src="/img/1478782158828.png" alt="Alt text"></p>
+<p>按<code>Ctrl+c</code>终止服务器。</p>
+<p>为了丰富WEB内容，可以在<code>environ</code>里读取<code>PATH_INFO</code>,这样可以显示更加动态的内容：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">application</span><span class="params">(environ, start_response)</span>:</span></div><div class="line">	start_response(<span class="string">'200 OK'</span>,[(<span class="string">'Content-Type'</span>,<span class="string">'text/html'</span>)])</div><div class="line">	body=<span class="string">'&lt;h1&gt;Hello, %s!&lt;/h1&gt;'</span> % (environ[<span class="string">'PATH_INFO'</span>][<span class="number">1</span>:] <span class="keyword">or</span> <span class="string">'web'</span>)</div><div class="line">	<span class="keyword">return</span> [body.encode(<span class="string">'utf-8'</span>)]</div></pre></td></tr></table></figure></p>
+<p>你可以在地址栏输入用户名作为URL的一部分，将返回<code>Hello,xx!</code>：<br><img src="/img/1478782836071.png" alt="Alt text"></p>
+<p>无论多么复杂的WEB应用程序，入口都是一个WSGI处理函数。HTTP请求的所有输入信息都可以通过<code>environ</code>获得，HTTP响应的输出都可以通过<code>start_response()</code>加上函数返回值作为Body。复杂的Web应用程序，光靠一个WSGI函数来处理还是太底层了，我们需要在WSGI之上再抽象出Web框架，进一步简化开发。</p>
+<hr>
+<h2 id="使用Web框架"><a href="#使用Web框架" class="headerlink" title="使用Web框架"></a>使用Web框架</h2><p>了解了WSGI框架，我们发现：其实一个WebAPP就是写一个WSGI的处理函数，针对每个HTTP请求进行相应。</p>
+<p>但是如何处理HTTP请求不是问题，问题是如何处理100个不同的URL。</p>
+<p>每一个URL可以对应GET和POST请求，当然还有PUT、DELETE等请求，但是通常我们只考虑最常见的GET和POST请求。</p>
+<p>一个最简单的想法是从<code>environ</code>变量里取出HTTP请求的信息，然后逐个判断：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">application</span><span class="params">(environ, start_response)</span>:</span></div><div class="line">    method = environ[<span class="string">'REQUEST_METHOD'</span>]</div><div class="line">    path = environ[<span class="string">'PATH_INFO'</span>]</div><div class="line">    <span class="keyword">if</span> method==<span class="string">'GET'</span> <span class="keyword">and</span> path==<span class="string">'/'</span>:</div><div class="line">        <span class="keyword">return</span> handle_home(environ, start_response)</div><div class="line">    <span class="keyword">if</span> method==<span class="string">'POST'</span> <span class="keyword">and</span> path=<span class="string">'/signin'</span>:</div><div class="line">        <span class="keyword">return</span> handle_signin(environ, start_response)</div><div class="line">    ...</div></pre></td></tr></table></figure></p>
+<p>这样写下去代码是没法维护的，因为WSGI提供的接口虽然比HTTP接口高级了不少，但是和Web APP的处理逻辑相比，还是比较低级的，我们需要在WSGI接口之上能进一步抽象，让我们专注于用一个函数处理一个URL，至于URL到函数 的映射就交给WEB框架来做。</p>
+<p>Python提供了上百个开源的框架，最流行的为<a href="http://flask.pocoo.org/" target="_blank" rel="external">flask</a>。</p>
+<p>写一个<code>app.py</code>，处理三个URL，分别是：</p>
+<blockquote>
+<p>1、<code>GET /</code>：首页，返回<code>Home</code><br>2、<code>GET /signin</code>:登录页，显示登录表单<br>3、<code>POST /signin</code>：处理登录表单，显示登录结果。</p>
+</blockquote>
+<p>同一个URL<code>/signin</code>分别有GET和POST两种请求，映射到两个处理函数争取。Flask通过Python的装饰器在内部自动地把URL和函数关联起来：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</div><div class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> request</div><div class="line"></div><div class="line">app=Flask(__name__)</div><div class="line"></div><div class="line"><span class="meta">@app.route('/',methods=['GET', 'Post'])</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">home</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">return</span> <span class="string">'&lt;h1&gt;Home&lt;/h1&gt;'</span></div><div class="line"></div><div class="line"><span class="meta">@app.route('/signin', methods=['GET'])</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">signin_form</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">return</span> <span class="string">'''&lt;form action="/signin" method="post"&gt;</span></div><div class="line"><span class="string">			  &lt;p&gt;&lt;input name="username"&gt;&lt;/p&gt;</span></div><div class="line"><span class="string">			  &lt;p&gt;&lt;input name="password" type="password"&gt;&lt;/p&gt;</span></div><div class="line"><span class="string">			  &lt;p&gt;&lt;button type="submit"&gt;Sign In&lt;/p&gt;</span></div><div class="line"><span class="string">			  &lt;/form&gt;'''</span></div><div class="line"></div><div class="line"><span class="meta">@app.route('/signin', methods=['POST'])</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">signin</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">if</span> request.form[<span class="string">'username'</span>]==<span class="string">'admin'</span> <span class="keyword">and</span> request.form[<span class="string">'password'</span>]==<span class="string">'password'</span>:</div><div class="line">		<span class="keyword">return</span> <span class="string">'&lt;h3&gt;Hello, admin!&lt;/h3&gt;'</span></div><div class="line">	<span class="keyword">return</span> <span class="string">'&lt;h3&gt;Bad username or password.&lt;/h3&gt;'</span></div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</div><div class="line">	app.run()</div></pre></td></tr></table></figure></p>
+<p>运行<code>python app.py</code>，Flask自带的Server在端口5000上监听：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++&gt;python app.py</div><div class="line"> * Running on http://<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">5000</span>/ (Press CTRL+C to quit)</div><div class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> - - [<span class="number">11</span>/Nov/<span class="number">2016</span> <span class="number">18</span>:<span class="number">07</span>:<span class="number">12</span>] <span class="string">"GET / HTTP/1.1"</span> <span class="number">200</span> -</div><div class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> - - [<span class="number">11</span>/Nov/<span class="number">2016</span> <span class="number">18</span>:<span class="number">07</span>:<span class="number">12</span>] <span class="string">"GET /favicon.ico HTTP/1.1"</span> <span class="number">404</span> -</div></pre></td></tr></table></figure></p>
+<p>在浏览器首页输入：<code>http://localhost:5000/</code>:<br><img src="/img/1478858951071.png" alt="Alt text"></p>
+<p>首页显示正确，地址栏输入:<code>http://localhost:5000/signin</code>:<br><img src="/img/1478859009824.png" alt="Alt text"></p>
+<p>输入预设的用户名和口令：<br><img src="/img/1478859057990.png" alt="Alt text"><br><img src="/img/1478859073699.png" alt="Alt text"></p>
+<p>实际的Web APP应该拿到用户名和口令后，去数据库查询再对比，来判断用户是否能登录成功。除了Flask，常见的python框架还有：Django、web.py、Bottle、Tornado</p>
+<p>有了Web框架，我们在编写Web应用时，注意力就从WSGI处理函数转移到URL+对应的处理函数，编写变得简单。在编写URL处理函数时，除了配置URL外，从HTTP请求拿到用户数据也是非常重要的。Web框架都提供了自己的API来实现这些功能。Flask通过<code>request.form[&#39;name&#39;]</code>来获取表单的内容。</p>
+<hr>
+<h2 id="使用模板"><a href="#使用模板" class="headerlink" title="使用模板"></a>使用模板</h2><p>Web框架把我们从WSGI中拯救出来了，我们只需要不断地编写函数，带上URL，就可以继续Web APP的开发了。Web App最复杂的部分在HTML页面。HTML不仅要正确，还要通过CSS美化，再加上复杂的JavaScript脚本来实现各种交互和动画效果。用python的字符串是无法实现的。所以出现了模板技术。</p>
+<p>使用模板首先需要预先准备一个HTML文档，这个HTMl文档不是普通的HTML，而是嵌入了一些变量和指令，然后根据我们传入的数据，替换后得到最终的HTMl，发送给用户：<br><img src="/img/1478859739321.png" alt="Alt text"></p>
+<p>这就是传说中的MVC：Model-View-Controller，模型-视图-控制器</p>
+<p>Python处理URL的函数就是C：Controller，Controller负责业务逻辑，比如检查用户名是否存在，取出用户信息等等。包含变量<code></code>的模板就是V：View，View负责显示逻辑，通过简单地替换一些变量，View最终输出的就是用户看到的HTML。</p>
+<p>上面的例子中，Model就是一个<code>dict</code>：</p>
+<blockquote>
+<p>{ ‘name’: ‘Michael’}</p>
+</blockquote>
+<p>因为Python支持关键字参数，很多Web框架允许传入关键字参数，然后在框架内部组装出一个<code>dict</code>作为Model。</p>
+<p>对之前的app.py进行改写：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</div><div class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> request, render_template</div><div class="line"></div><div class="line">app=Flask(__name__)</div><div class="line"></div><div class="line"><span class="meta">@app.route('/',methods=['GET', 'Post'])</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">home</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">return</span> render_template(<span class="string">'home.html'</span>)</div><div class="line"></div><div class="line"><span class="meta">@app.route('/signin', methods=['GET'])</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">signin_form</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">return</span> render_template(<span class="string">'form.html'</span>)</div><div class="line"></div><div class="line"><span class="meta">@app.route('/signin', methods=['POST'])</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">signin</span><span class="params">()</span>:</span></div><div class="line">	username=request.form[<span class="string">'username'</span>]</div><div class="line">	password=request.form[<span class="string">'password'</span>]</div><div class="line">	<span class="keyword">if</span> username==<span class="string">'admin'</span> <span class="keyword">and</span> password==<span class="string">'password'</span>:</div><div class="line">		<span class="keyword">return</span> render_template(<span class="string">'signin-ok.html'</span>, username=username)</div><div class="line">	<span class="keyword">return</span> render_template(<span class="string">'form.html'</span>, message=<span class="string">'Bad username or password'</span>,username=username)</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</div><div class="line">	app.run()</div></pre></td></tr></table></figure></p>
+<p>Flask通过<code>render_template()</code>函数来实现模板的渲染。和Web框架类似，Python的模板也有很多中。Flask默认支持的模板是jinja2，用jinja2来编写模板home.html、显示首页：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">  &lt;title&gt;Home&lt;/title&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">  &lt;h1 style=&quot;font-style:italic&quot;&gt;Home&lt;/h1&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html</div></pre></td></tr></table></figure></p>
+<p>form.html:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">  &lt;title&gt;Please Sign In&lt;/title&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">  &#123;% if message %&#125;</div><div class="line">  &lt;p style=&quot;color:red&quot;&gt;&#123;&#123; message &#125;&#125;&lt;/p&gt;</div><div class="line">  &#123;% endif %&#125;</div><div class="line">  &lt;form action=&quot;/signin&quot; method=&quot;post&quot;&gt;</div><div class="line">    &lt;legend&gt;Please sign in:&lt;/legend&gt;</div><div class="line">    &lt;p&gt;&lt;input name=&quot;username&quot; placeholder=&quot;Username&quot; value=&quot;&#123;&#123; username &#125;&#125;&quot;&gt;&lt;/p&gt;</div><div class="line">    &lt;p&gt;&lt;input name=&quot;password&quot; placeholder=&quot;Password&quot; type=&quot;password&quot;&gt;&lt;/p&gt;</div><div class="line">    &lt;p&gt;&lt;button type=&quot;submit&quot;&gt;Sign In&lt;/button&gt;&lt;/p&gt;</div><div class="line">  &lt;/form&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
+<p>signin-ok.html:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">  &lt;title&gt;Welcome, &#123;&#123; username &#125;&#125;&lt;/title&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">  &lt;p&gt;Welcome, &#123;&#123; username &#125;&#125;!&lt;/p&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/python/14.网络编程/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -566,7 +828,7 @@
 <p><code>msg[&#39;To&#39;]</code>发送的是字符串而不是list，如果有多个地址邮件，用，分隔即可。发送邮箱显示：<br><img src="/img/1478864121047.png" alt="Alt text"></p>
 <p>你看到的收件人的名字可能不是我们传入的管理员，因为很多邮件服务商在显示邮件时会把收件人名字自动替换为用户注册的名字。我们插卡Email原始内容如下：</p>
 <blockquote>
-<p>From: =?utf-8?b?UHl0aG9u54ix5aW96ICF?= <a href="&#109;&#x61;&#105;&#x6c;&#x74;&#111;&#58;&#x78;&#120;&#120;&#x78;&#120;&#120;&#x40;&#x31;&#x36;&#x33;&#46;&#99;&#x6f;&#x6d;">&#x78;&#120;&#120;&#x78;&#120;&#120;&#x40;&#x31;&#x36;&#x33;&#46;&#99;&#x6f;&#x6d;</a><br>To: =?utf-8?b?566h55CG5ZGY?= <a href="&#109;&#97;&#x69;&#108;&#116;&#x6f;&#x3a;&#120;&#x78;&#120;&#120;&#x78;&#120;&#64;&#x71;&#x71;&#x2e;&#99;&#x6f;&#109;">&#120;&#x78;&#120;&#120;&#x78;&#120;&#64;&#x71;&#x71;&#x2e;&#99;&#x6f;&#109;</a><br>Subject: =?utf-8?b?5p2l6IeqU01UUOeahOmXruWAmeKApuKApg==?=</p>
+<p>From: =?utf-8?b?UHl0aG9u54ix5aW96ICF?= <a href="&#109;&#x61;&#105;&#108;&#116;&#x6f;&#x3a;&#120;&#120;&#120;&#x78;&#120;&#120;&#x40;&#x31;&#54;&#x33;&#x2e;&#x63;&#111;&#x6d;">&#120;&#120;&#120;&#x78;&#120;&#120;&#x40;&#x31;&#54;&#x33;&#x2e;&#x63;&#111;&#x6d;</a><br>To: =?utf-8?b?566h55CG5ZGY?= <a href="&#109;&#97;&#105;&#108;&#116;&#x6f;&#x3a;&#120;&#x78;&#x78;&#x78;&#x78;&#x78;&#64;&#113;&#113;&#x2e;&#99;&#x6f;&#x6d;">&#120;&#x78;&#x78;&#x78;&#x78;&#x78;&#64;&#113;&#113;&#x2e;&#99;&#x6f;&#x6d;</a><br>Subject: =?utf-8?b?5p2l6IeqU01UUOeahOmXruWAmeKApuKApg==?=</p>
 </blockquote>
 <h3 id="发送HTML邮件"><a href="#发送HTML邮件" class="headerlink" title="发送HTML邮件"></a>发送HTML邮件</h3><p>如果我们要发送HTML邮件而不是普通的纯文本文件怎么办，就在构造<code>MIMEText</code>对象时，把HTML字符串传进去，再把第二个参数由plain改为plain就可以了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">msg=MIMEText(&apos;&lt;html&gt;&lt;body&gt;&lt;h1&gt;Hello&lt;/h1&gt;&apos; + &apos;&lt;p&gt;send by &lt;a href=&quot;http://www.python.org&quot;&gt;Python&lt;/a&gt;...&lt;/p&gt;&apos;+&apos;&lt;/body&gt;&lt;/html&gt;&apos;, &apos;html&apos;, &apos;utf-8&apos;)</div></pre></td></tr></table></figure></p>
 <p>再发送一遍邮件：<br><img src="/img/1478864651325.png" alt="Alt text"></p>
@@ -596,6 +858,154 @@
 <p><code>decode_header()</code>返回一个list，因为像<code>Cc``Bcc</code>这样的字段可能包含多个邮件地址，所以解析出来的会有多个元素。上面的代码我们只取了第一个元素。文本邮件的内容也是str，还需要检测编码，否则非UTF-8编码的邮件都无法正常显示：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">gusee_charset</span><span class="params">(msg)</span>:</span></div><div class="line">	charset = msg.get_charset()</div><div class="line">	<span class="keyword">if</span> charset <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">		content_type = msg.get(<span class="string">'Content-Type'</span>, <span class="string">''</span>).lower()</div><div class="line">		pos = content_type.find(<span class="string">'charset='</span>)</div><div class="line">		<span class="keyword">if</span> pos &gt;= <span class="number">0</span>:</div><div class="line">			charset = content_type[pos + <span class="number">8</span>:].strip()</div><div class="line">	<span class="keyword">return</span> charset</div></pre></td></tr></table></figure></p>
 <p>把上面的代码整理好，我们就可以来试试获取一封邮件。先往自己的邮箱发送一封邮件，然后用Python程序把它收到本地：<br><img src="/img/1478954102163.png" alt="Alt text"></p>
 <p>源码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python3</span></div><div class="line"><span class="comment"># -*- coding: utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="keyword">from</span> email.parser <span class="keyword">import</span> Parser</div><div class="line"><span class="keyword">from</span> email.header <span class="keyword">import</span> decode_header</div><div class="line"><span class="keyword">from</span> email.utils <span class="keyword">import</span> parseaddr</div><div class="line"></div><div class="line"><span class="keyword">import</span> poplib</div><div class="line"></div><div class="line"><span class="comment"># 输入邮件地址, 口令和POP3服务器地址:</span></div><div class="line">email = input(<span class="string">'Email: '</span>)</div><div class="line">password = input(<span class="string">'Password: '</span>)</div><div class="line">pop3_server = input(<span class="string">'POP3 server: '</span>)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">guess_charset</span><span class="params">(msg)</span>:</span></div><div class="line">    charset = msg.get_charset()</div><div class="line">    <span class="keyword">if</span> charset <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">        content_type = msg.get(<span class="string">'Content-Type'</span>, <span class="string">''</span>).lower()</div><div class="line">        pos = content_type.find(<span class="string">'charset='</span>)</div><div class="line">        <span class="keyword">if</span> pos &gt;= <span class="number">0</span>:</div><div class="line">            charset = content_type[pos + <span class="number">8</span>:].strip()</div><div class="line">    <span class="keyword">return</span> charset</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">decode_str</span><span class="params">(s)</span>:</span></div><div class="line">    value, charset = decode_header(s)[<span class="number">0</span>]</div><div class="line">    <span class="keyword">if</span> charset:</div><div class="line">        value = value.decode(charset)</div><div class="line">    <span class="keyword">return</span> value</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">print_info</span><span class="params">(msg, indent=<span class="number">0</span>)</span>:</span></div><div class="line">    <span class="keyword">if</span> indent == <span class="number">0</span>:</div><div class="line">        <span class="keyword">for</span> header <span class="keyword">in</span> [<span class="string">'From'</span>, <span class="string">'To'</span>, <span class="string">'Subject'</span>]:</div><div class="line">            value = msg.get(header, <span class="string">''</span>)</div><div class="line">            <span class="keyword">if</span> value:</div><div class="line">                <span class="keyword">if</span> header==<span class="string">'Subject'</span>:</div><div class="line">                    value = decode_str(value)</div><div class="line">                <span class="keyword">else</span>:</div><div class="line">                    hdr, addr = parseaddr(value)</div><div class="line">                    name = decode_str(hdr)</div><div class="line">                    value = <span class="string">u'%s &lt;%s&gt;'</span> % (name, addr)</div><div class="line">            print(<span class="string">'%s%s: %s'</span> % (<span class="string">'  '</span> * indent, header, value))</div><div class="line">    <span class="keyword">if</span> (msg.is_multipart()):</div><div class="line">        parts = msg.get_payload()</div><div class="line">        <span class="keyword">for</span> n, part <span class="keyword">in</span> enumerate(parts):</div><div class="line">            print(<span class="string">'%spart %s'</span> % (<span class="string">'  '</span> * indent, n))</div><div class="line">            print(<span class="string">'%s--------------------'</span> % (<span class="string">'  '</span> * indent))</div><div class="line">            print_info(part, indent + <span class="number">1</span>)</div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        content_type = msg.get_content_type()</div><div class="line">        <span class="keyword">if</span> content_type==<span class="string">'text/plain'</span> <span class="keyword">or</span> content_type==<span class="string">'text/html'</span>:</div><div class="line">            content = msg.get_payload(decode=<span class="keyword">True</span>)</div><div class="line">            charset = guess_charset(msg)</div><div class="line">            <span class="keyword">if</span> charset:</div><div class="line">                content = content.decode(charset)</div><div class="line">            print(<span class="string">'%sText: %s'</span> % (<span class="string">'  '</span> * indent, content + <span class="string">'...'</span>))</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            print(<span class="string">'%sAttachment: %s'</span> % (<span class="string">'  '</span> * indent, content_type))</div><div class="line"></div><div class="line"><span class="comment"># 连接到POP3服务器:</span></div><div class="line">server = poplib.POP3(pop3_server)</div><div class="line"><span class="comment"># 可以打开或关闭调试信息:</span></div><div class="line">server.set_debuglevel(<span class="number">1</span>)</div><div class="line"><span class="comment"># 可选:打印POP3服务器的欢迎文字:</span></div><div class="line">print(server.getwelcome().decode(<span class="string">'utf-8'</span>))</div><div class="line"><span class="comment"># 身份认证:</span></div><div class="line">server.user(email)</div><div class="line">server.pass_(password)</div><div class="line"><span class="comment"># stat()返回邮件数量和占用空间:</span></div><div class="line">print(<span class="string">'Messages: %s. Size: %s'</span> % server.stat())</div><div class="line"><span class="comment"># list()返回所有邮件的编号:</span></div><div class="line">resp, mails, octets = server.list()</div><div class="line"><span class="comment"># 可以查看返回的列表类似[b'1 82923', b'2 2184', ...]</span></div><div class="line">print(mails)</div><div class="line"><span class="comment"># 获取最新一封邮件, 注意索引号从1开始:</span></div><div class="line">index = len(mails)</div><div class="line">resp, lines, octets = server.retr(index)</div><div class="line"><span class="comment"># lines存储了邮件的原始文本的每一行,</span></div><div class="line"><span class="comment"># 可以获得整个邮件的原始文本:</span></div><div class="line">msg_content = <span class="string">b'\r\n'</span>.join(lines).decode(<span class="string">'utf-8'</span>)</div><div class="line"><span class="comment"># 稍后解析出邮件:</span></div><div class="line">msg = Parser().parsestr(msg_content)</div><div class="line">print_info(msg)</div><div class="line"><span class="comment"># 可以根据邮件索引号直接从服务器删除邮件:</span></div><div class="line"><span class="comment"># server.dele(index)</span></div><div class="line"><span class="comment"># 关闭连接:</span></div><div class="line">server.quit()</div></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/python/12.常用第三方模块/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/21/python/12.常用第三方模块/" itemprop="url">12. 常用第三方模块</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:13+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="常用第三方模块"><a href="#常用第三方模块" class="headerlink" title="常用第三方模块"></a>常用第三方模块</h1><p>除了内建的模块，Python还有很多的第三方模块，在<a href="https://pypi.python.org/pypi" target="_blank" rel="external">PyPI-the Python Package Index</a>注册。</p>
+<h2 id="PIL"><a href="#PIL" class="headerlink" title="PIL"></a>PIL</h2><p>PIL：Python Imaging Library，已经是Python平台事实上的图像处理标准库了。PIL的功能非常强大，API却非常简单易用。PIL只支持到2.7，PIL上的兼容版本Pillow，加了很多新特性，可以支持到3.x。</p>
+<h3 id="操作图像"><a href="#操作图像" class="headerlink" title="操作图像"></a>操作图像</h3><p>图像缩放操作：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>im=Image.open(<span class="string">'1.jpg'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>w,h=im.size</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(<span class="string">'Original image size: %sx%s'</span> %(w,h))</div><div class="line">Original image size: <span class="number">600</span>x337</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>im.thumbnail((w//<span class="number">2</span>, h//<span class="number">2</span>))</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(<span class="string">'Resize image to: %sx%s'</span> %(w//<span class="number">2</span>,h//<span class="number">2</span>))</div><div class="line">Resize image to: <span class="number">300</span>x168</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>im.save(<span class="string">'thumbnail.jpg'</span>,<span class="string">'jpeg'</span>)</div></pre></td></tr></table></figure></p>
+<p>其他功能如切片、旋转、滤镜、输出文字、调色板等一应俱全。比如，模糊效果：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> PIL <span class="keyword">import</span> Image,ImageFilter</div><div class="line">&gt;&gt;&gt;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>im=Image.open(<span class="string">'1.jpg'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>im2=im.filter(ImageFilter.BLUR)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>im2.save(<span class="string">'blur.jpg'</span>,<span class="string">'jpeg'</span>)</div></pre></td></tr></table></figure></p>
+<p>PIL的<code>ImageDraw</code>提供了一系列绘图的方法，让我们可以直接绘图。如生成字幕验证码的图片：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python3</span></div><div class="line"><span class="comment">#-*- coding: utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image, ImageDraw, ImageFont, ImageFilter</div><div class="line"></div><div class="line"><span class="keyword">import</span> random</div><div class="line"></div><div class="line"><span class="comment">#随机字母：</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">rndChar</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">return</span> chr(random.randint(<span class="number">65</span>,<span class="number">90</span>))</div><div class="line"></div><div class="line"><span class="comment">#随机颜色1：</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">rndColor</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">return</span> (random.randint(<span class="number">64</span>,<span class="number">255</span>),random.randint(<span class="number">64</span>,<span class="number">255</span>),random.randint(<span class="number">64</span>,<span class="number">255</span>))</div><div class="line"></div><div class="line"><span class="comment">#随机颜色2：</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">rndColor2</span><span class="params">()</span>:</span></div><div class="line">		<span class="keyword">return</span> (random.randint(<span class="number">32</span>,<span class="number">217</span>),random.randint(<span class="number">32</span>,<span class="number">217</span>),random.randint(<span class="number">32</span>,<span class="number">217</span>))</div><div class="line"></div><div class="line"><span class="comment">#240*60</span></div><div class="line">width=<span class="number">60</span>*<span class="number">4</span></div><div class="line">height=<span class="number">60</span></div><div class="line">image=Image.new(<span class="string">'RGB'</span>,(width,height),(<span class="number">255</span>,<span class="number">255</span>,<span class="number">255</span>))</div><div class="line"><span class="comment">#创建Font、Draw对象：</span></div><div class="line">font=ImageFont.truetype(<span class="string">'C:\Windows\Fonts\Arial.ttf'</span>,<span class="number">36</span>)</div><div class="line">draw=ImageDraw.Draw(image)</div><div class="line"><span class="comment">#填充：</span></div><div class="line"><span class="keyword">for</span> x <span class="keyword">in</span> range(width):</div><div class="line">	<span class="keyword">for</span> y <span class="keyword">in</span> range(height):</div><div class="line">		draw.point((x,y),fill=rndColor())</div><div class="line"><span class="comment">#输出文字：</span></div><div class="line"><span class="keyword">for</span> t <span class="keyword">in</span> range(<span class="number">4</span>):</div><div class="line">	draw.text((<span class="number">60</span>*t+<span class="number">10</span>,<span class="number">10</span>),rndChar(),font=font,fill=rndColor2())</div><div class="line"><span class="comment">#模糊</span></div><div class="line">image=image.filter(ImageFilter.BLUR)</div><div class="line">image.save(<span class="string">'code.jpg'</span>,<span class="string">'jpeg'</span>)</div></pre></td></tr></table></figure></p>
+<p>得到的验证码图片如下：<br><img src="/img/1478431423817.png" alt="Alt text"></p>
+<p><a href="https://pillow.readthedocs.org/" target="_blank" rel="external">详细的Pillow官方文档：</a></p>
 
           
         
@@ -754,154 +1164,6 @@
 <p>点击Quit按钮或者窗口的x结束程序。</p>
 <h3 id="输入文本"><a href="#输入文本" class="headerlink" title="输入文本"></a>输入文本</h3><p>我们再对这个GUI程序改进一下，加入一个文本框，让用户可以输入文本，然后点按钮后，弹出消息对话框。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python3</span></div><div class="line"><span class="comment">#-*- coding: utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="keyword">from</span> tkinter <span class="keyword">import</span> *</div><div class="line"><span class="keyword">import</span> tkinter.messagebox <span class="keyword">as</span> messagebox</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Application</span><span class="params">(Frame)</span>:</span></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,master=None)</span>:</span></div><div class="line">		Frame.__init__(self,master)</div><div class="line">		self.pack()</div><div class="line">		self.createWidgets()</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">createWidgets</span><span class="params">(self)</span>:</span></div><div class="line">		self.nameInput=Entry(self)</div><div class="line">		self.nameInput.pack()</div><div class="line">		self.alterButton=Button(self, text=<span class="string">'Hello'</span>, command=self.hello)</div><div class="line">		self.alterButton.pack()</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">hello</span><span class="params">(self)</span>:</span></div><div class="line">		name=self.nameInput.get() <span class="keyword">or</span> <span class="string">'world'</span></div><div class="line">		messagebox.showinfo(<span class="string">'Message'</span>,<span class="string">'Hello, %s'</span> %name)</div><div class="line"></div><div class="line">app=Application()</div><div class="line">app.master.title(<span class="string">'Hello World'</span>)</div><div class="line">app.mainloop()</div></pre></td></tr></table></figure></p>
 <p>当用户点击按钮时，出发<code>hello()</code>,通过<code>self.nameInput.get()</code>获得用户输入的文本后，使用<code>tkMessageBox.showinfo()</code>可以弹出消息对话框：<br><img src="/img/1478440468867.png" alt="Alt text"><br><img src="/img/1478440493401.png" alt="Alt text"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/python/12.常用第三方模块/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/python/12.常用第三方模块/" itemprop="url">12. 常用第三方模块</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:13+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="常用第三方模块"><a href="#常用第三方模块" class="headerlink" title="常用第三方模块"></a>常用第三方模块</h1><p>除了内建的模块，Python还有很多的第三方模块，在<a href="https://pypi.python.org/pypi" target="_blank" rel="external">PyPI-the Python Package Index</a>注册。</p>
-<h2 id="PIL"><a href="#PIL" class="headerlink" title="PIL"></a>PIL</h2><p>PIL：Python Imaging Library，已经是Python平台事实上的图像处理标准库了。PIL的功能非常强大，API却非常简单易用。PIL只支持到2.7，PIL上的兼容版本Pillow，加了很多新特性，可以支持到3.x。</p>
-<h3 id="操作图像"><a href="#操作图像" class="headerlink" title="操作图像"></a>操作图像</h3><p>图像缩放操作：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>im=Image.open(<span class="string">'1.jpg'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>w,h=im.size</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(<span class="string">'Original image size: %sx%s'</span> %(w,h))</div><div class="line">Original image size: <span class="number">600</span>x337</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>im.thumbnail((w//<span class="number">2</span>, h//<span class="number">2</span>))</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(<span class="string">'Resize image to: %sx%s'</span> %(w//<span class="number">2</span>,h//<span class="number">2</span>))</div><div class="line">Resize image to: <span class="number">300</span>x168</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>im.save(<span class="string">'thumbnail.jpg'</span>,<span class="string">'jpeg'</span>)</div></pre></td></tr></table></figure></p>
-<p>其他功能如切片、旋转、滤镜、输出文字、调色板等一应俱全。比如，模糊效果：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> PIL <span class="keyword">import</span> Image,ImageFilter</div><div class="line">&gt;&gt;&gt;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>im=Image.open(<span class="string">'1.jpg'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>im2=im.filter(ImageFilter.BLUR)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>im2.save(<span class="string">'blur.jpg'</span>,<span class="string">'jpeg'</span>)</div></pre></td></tr></table></figure></p>
-<p>PIL的<code>ImageDraw</code>提供了一系列绘图的方法，让我们可以直接绘图。如生成字幕验证码的图片：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python3</span></div><div class="line"><span class="comment">#-*- coding: utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image, ImageDraw, ImageFont, ImageFilter</div><div class="line"></div><div class="line"><span class="keyword">import</span> random</div><div class="line"></div><div class="line"><span class="comment">#随机字母：</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">rndChar</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">return</span> chr(random.randint(<span class="number">65</span>,<span class="number">90</span>))</div><div class="line"></div><div class="line"><span class="comment">#随机颜色1：</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">rndColor</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">return</span> (random.randint(<span class="number">64</span>,<span class="number">255</span>),random.randint(<span class="number">64</span>,<span class="number">255</span>),random.randint(<span class="number">64</span>,<span class="number">255</span>))</div><div class="line"></div><div class="line"><span class="comment">#随机颜色2：</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">rndColor2</span><span class="params">()</span>:</span></div><div class="line">		<span class="keyword">return</span> (random.randint(<span class="number">32</span>,<span class="number">217</span>),random.randint(<span class="number">32</span>,<span class="number">217</span>),random.randint(<span class="number">32</span>,<span class="number">217</span>))</div><div class="line"></div><div class="line"><span class="comment">#240*60</span></div><div class="line">width=<span class="number">60</span>*<span class="number">4</span></div><div class="line">height=<span class="number">60</span></div><div class="line">image=Image.new(<span class="string">'RGB'</span>,(width,height),(<span class="number">255</span>,<span class="number">255</span>,<span class="number">255</span>))</div><div class="line"><span class="comment">#创建Font、Draw对象：</span></div><div class="line">font=ImageFont.truetype(<span class="string">'C:\Windows\Fonts\Arial.ttf'</span>,<span class="number">36</span>)</div><div class="line">draw=ImageDraw.Draw(image)</div><div class="line"><span class="comment">#填充：</span></div><div class="line"><span class="keyword">for</span> x <span class="keyword">in</span> range(width):</div><div class="line">	<span class="keyword">for</span> y <span class="keyword">in</span> range(height):</div><div class="line">		draw.point((x,y),fill=rndColor())</div><div class="line"><span class="comment">#输出文字：</span></div><div class="line"><span class="keyword">for</span> t <span class="keyword">in</span> range(<span class="number">4</span>):</div><div class="line">	draw.text((<span class="number">60</span>*t+<span class="number">10</span>,<span class="number">10</span>),rndChar(),font=font,fill=rndColor2())</div><div class="line"><span class="comment">#模糊</span></div><div class="line">image=image.filter(ImageFilter.BLUR)</div><div class="line">image.save(<span class="string">'code.jpg'</span>,<span class="string">'jpeg'</span>)</div></pre></td></tr></table></figure></p>
-<p>得到的验证码图片如下：<br><img src="/img/1478431423817.png" alt="Alt text"></p>
-<p><a href="https://pillow.readthedocs.org/" target="_blank" rel="external">详细的Pillow官方文档：</a></p>
 
           
         
@@ -1446,7 +1708,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">96</span>
+                <span class="site-state-item-count">97</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

@@ -277,6 +277,361 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/12/golang/源码解读/io/io/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/05/12/golang/源码解读/io/io/" itemprop="url">go源码解读-io包</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-12T09:56:01+08:00">
+                2020-05-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/源码解读/" itemprop="url" rel="index">
+                    <span itemprop="name">源码解读</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="io包中的接口定义"><a href="#io包中的接口定义" class="headerlink" title="io包中的接口定义"></a>io包中的接口定义</h2><ul>
+<li>io包中提供了IO操作相关的一系列接口</li>
+<li>io包可以理解对os包中底层操作的封装</li>
+<li>由于是对底层进行封装，除非特殊提及，否则io包下的函数是线程不安全的</li>
+</ul>
+<h3 id="Reader接口"><a href="#Reader接口" class="headerlink" title="Reader接口"></a>Reader接口</h3><ul>
+<li>Reader接口只包含一个Read方法</li>
+<li>Read方法最多读取len(p)个字节到p中，返回读取到p中的字节数及过程中的错误</li>
+<li>Read方法读取过程中出错，会返回已经读取到的字节数</li>
+<li>Read出错的时候可以返回已经读取到的字节数和nil错误或者返回遇到的错误，而再下次调用Read方法的时候返回0, err即可</li>
+<li>Read方法的调用者需要先处理n&gt;0的情况下的数据，而后考虑err的值，防止读取的数据丢失</li>
+<li>Read方法不鼓励返回0，nil样式的返回值，除非len(p) == 0</li>
+<li>p不能作为实现Reader接口的结构体的成员变量</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Reader <span class="keyword">interface</span> &#123;</div><div class="line">	Read(p []<span class="keyword">byte</span>) (n <span class="keyword">int</span>, err error)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Writer接口"><a href="#Writer接口" class="headerlink" title="Writer接口"></a>Writer接口</h3><ul>
+<li>Writer接口只包含Write方法</li>
+<li>Write方法完成从p中写入len(p)个字节到数据流中，返回的是写入的字节数及遇到的错误</li>
+<li>Write方法如果返回的<code>n&lt;len(p)</code>，则必须返回个非空的错误</li>
+<li>Write方法不允许调整p中的数据，临时调整也不可以</li>
+<li>p不能作为实现Writer接口的结构体的成员变量</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Writer <span class="keyword">interface</span> &#123;</div><div class="line">	Write(p []<span class="keyword">byte</span>) (n <span class="keyword">int</span>, err error)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Closer接口"><a href="#Closer接口" class="headerlink" title="Closer接口"></a>Closer接口</h3><ul>
+<li>Closer接口只包含Close方法</li>
+<li>Closer接口返回关闭对象中遇到的错误</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Closer <span class="keyword">interface</span> &#123;</div><div class="line">	Close() error</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Seeker接口"><a href="#Seeker接口" class="headerlink" title="Seeker接口"></a>Seeker接口</h3><ul>
+<li>Seeker接口只含有一个Seek方法</li>
+<li>Seek方法根据whence的值计算出下一个读取或者写入的偏移量<ul>
+<li>SeekStart对起始文件的偏移量</li>
+<li>SeekCurrent对当前索引的偏移量</li>
+<li>SeekEnd对结尾的偏移量</li>
+</ul>
+</li>
+<li>Seek方法返回相对于起始位置的偏移量，和遇到的错误</li>
+<li>实际上返回的偏移量小于文件的起始索引会产生错误</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> (</div><div class="line">	SeekStart   = <span class="number">0</span> <span class="comment">// seek relative to the origin of the file</span></div><div class="line">	SeekCurrent = <span class="number">1</span> <span class="comment">// seek relative to the current offset</span></div><div class="line">	SeekEnd     = <span class="number">2</span> <span class="comment">// seek relative to the end</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="keyword">type</span> Seeker <span class="keyword">interface</span> &#123;</div><div class="line">	Seek(offset <span class="keyword">int64</span>, whence <span class="keyword">int</span>) (<span class="keyword">int64</span>, error)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="组合接口"><a href="#组合接口" class="headerlink" title="组合接口"></a>组合接口</h3><ul>
+<li>对于上述的接口进行组合会产生一系列新的接口</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// ReadWriter is the interface that groups the basic Read and Write methods.</span></div><div class="line"><span class="keyword">type</span> ReadWriter <span class="keyword">interface</span> &#123;</div><div class="line">	Reader</div><div class="line">	Writer</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// ReadCloser is the interface that groups the basic Read and Close methods.</span></div><div class="line"><span class="keyword">type</span> ReadCloser <span class="keyword">interface</span> &#123;</div><div class="line">	Reader</div><div class="line">	Closer</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// WriteCloser is the interface that groups the basic Write and Close methods.</span></div><div class="line"><span class="keyword">type</span> WriteCloser <span class="keyword">interface</span> &#123;</div><div class="line">	Writer</div><div class="line">	Closer</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// ReadWriteCloser is the interface that groups the basic Read, Write and Close methods.</span></div><div class="line"><span class="keyword">type</span> ReadWriteCloser <span class="keyword">interface</span> &#123;</div><div class="line">	Reader</div><div class="line">	Writer</div><div class="line">	Closer</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// ReadSeeker is the interface that groups the basic Read and Seek methods.</span></div><div class="line"><span class="keyword">type</span> ReadSeeker <span class="keyword">interface</span> &#123;</div><div class="line">	Reader</div><div class="line">	Seeker</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// WriteSeeker is the interface that groups the basic Write and Seek methods.</span></div><div class="line"><span class="keyword">type</span> WriteSeeker <span class="keyword">interface</span> &#123;</div><div class="line">	Writer</div><div class="line">	Seeker</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// ReadWriteSeeker is the interface that groups the basic Read, Write and Seek methods.</span></div><div class="line"><span class="keyword">type</span> ReadWriteSeeker <span class="keyword">interface</span> &#123;</div><div class="line">	Reader</div><div class="line">	Writer</div><div class="line">	Seeker</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="ReaderFrom接口"><a href="#ReaderFrom接口" class="headerlink" title="ReaderFrom接口"></a>ReaderFrom接口</h3><ul>
+<li>ReaderFrom接口只包含ReadFrom方法</li>
+<li>ReadFrom方法从r中读取数据直到遇到EOF或者error</li>
+<li>ReadFrom方法返回读取到的字节数和遇到的错误</li>
+<li>io.Copy函数会优先使用</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> ReaderFrom <span class="keyword">interface</span> &#123;</div><div class="line">	ReadFrom(r Reader) (n <span class="keyword">int64</span>, err error)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="WriteTo接口"><a href="#WriteTo接口" class="headerlink" title="WriteTo接口"></a>WriteTo接口</h3><ul>
+<li>WriteTo接口只包含WriteTo方法</li>
+<li>WriteTo方法向w中写入数据，直到没有数据可以写入或者遇到了错误</li>
+<li>WriteTo方法返回写入的字节数和遇到的问题</li>
+<li>io.Copy函数会优先使用</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> WriterTo <span class="keyword">interface</span> &#123;</div><div class="line">	WriteTo(w Writer) (n <span class="keyword">int64</span>, err error)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="ReaderAt接口"><a href="#ReaderAt接口" class="headerlink" title="ReaderAt接口"></a>ReaderAt接口</h3><ul>
+<li>ReaderAt接口只包含ReadAt方法</li>
+<li>ReadAt方法在实现的结构体的输入流中，在偏移量offset的位置读取len(p)个字节数据导p中</li>
+<li>ReadAt方法在读取到的字节小于len(p)时会返回一个非空错误来解释为什么没有读取完全，这个地方的要求比Reader接口更加严格</li>
+<li>ReadAt方法在调用过程中会占据p的全部内存空间，即使读取到的n小于p的长度</li>
+<li>ReadAt如果读取到的数据小于len(p),则ReadAt方法会等待更多的数据到来或者返回一个错误，这个地方要求也是比Reader更加严格</li>
+<li>ReadAt如果读取完最后一个数据之后，刚好读取了len(p)个字节，则可以返回的err为nil或者EOF</li>
+<li>ReadAt方法如果读取的是一个实现了Seek接口的结构体，那么ReadAt的offset和seek的offset不应该相互影响</li>
+<li>读取的数据流可以支持多个ReadAt方法并发读取，也就是ReadAt是线程安全的</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> ReaderAt <span class="keyword">interface</span> &#123;</div><div class="line">	ReadAt(p []<span class="keyword">byte</span>, off <span class="keyword">int64</span>) (n <span class="keyword">int</span>, err error)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="WriteAt接口"><a href="#WriteAt接口" class="headerlink" title="WriteAt接口"></a>WriteAt接口</h3><ul>
+<li>WriterAt接口只包含WriteAt方法</li>
+<li>WriteAt方法完成向数据流的写入，写入的起点为输入流的offset位置</li>
+<li>WriteAt方法返回向数据流写入的数据和遇到的错误</li>
+<li>WriteAt方法当写入的数据小于len(p)时，返回的错误不能为nil</li>
+<li>WriteAt方法写入的数据流实现了Seek方法，则Seek方法的offset和WriteAt方法的offset互不影响</li>
+<li>在数据流不溢出的情况下，WriteAt方法可以并发写入，是线程安全的<br>-</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> WriterAt <span class="keyword">interface</span> &#123;</div><div class="line">	WriteAt(p []<span class="keyword">byte</span>, off <span class="keyword">int64</span>) (n <span class="keyword">int</span>, err error)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="ByteReader接口"><a href="#ByteReader接口" class="headerlink" title="ByteReader接口"></a>ByteReader接口</h3><ul>
+<li>ByteReader接口只包含ReadByte方法</li>
+<li>ReadByte方法读取一个字节，返回从input数据流中读取到的下一个字节或者遇到的错误</li>
+<li>如果返回了一个错误，则input数据流没有字节被读取消费掉，并且返回的字节值为undefined</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> ByteReader <span class="keyword">interface</span> &#123;</div><div class="line">	ReadByte() (<span class="keyword">byte</span>, error)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="ByteScanner接口"><a href="#ByteScanner接口" class="headerlink" title="ByteScanner接口"></a>ByteScanner接口</h3><ul>
+<li>ByteScanner接口封装了ByteReader接口和UnreadByte方法</li>
+<li>UnreadByte方法在ReadByte方法之后调用，会重置ReadByte方法的操作</li>
+<li>如果在没调用ReadByte方法时，调用UnreadByte方法会报错</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> ByteScanner <span class="keyword">interface</span> &#123;</div><div class="line">	ByteReader</div><div class="line">	UnreadByte() error</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="ByteWriter接口"><a href="#ByteWriter接口" class="headerlink" title="ByteWriter接口"></a>ByteWriter接口</h3><ul>
+<li>ByteWriter接口只包含WriteByte方法</li>
+<li>WriteByte方法完成对数据流的字节写入</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> ByteWriter <span class="keyword">interface</span> &#123;</div><div class="line">	WriteByte(c <span class="keyword">byte</span>) error</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="RuneReader接口"><a href="#RuneReader接口" class="headerlink" title="RuneReader接口"></a>RuneReader接口</h3><ul>
+<li>RuneReader接口包含ReadRune方法</li>
+<li>Readrune方法从数据流中读取一个UTF-8编码的Unicode字符，返回读取到的字符，字符的大小和遇到的错误</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> RuneReader <span class="keyword">interface</span> &#123;</div><div class="line">	ReadRune() (r <span class="keyword">rune</span>, size <span class="keyword">int</span>, err error)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="RuneScanner接口"><a href="#RuneScanner接口" class="headerlink" title="RuneScanner接口"></a>RuneScanner接口</h3><ul>
+<li>RuneScanner接口封装了RuneReader接口和UnreadRune方法</li>
+<li>UnreadRune方法实际上是重置ReadRune方法的操作，需要在ReadRune方法之后调用</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> RuneScanner <span class="keyword">interface</span> &#123;</div><div class="line">	RuneReader</div><div class="line">	UnreadRune() error</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="StringWriter接口"><a href="#StringWriter接口" class="headerlink" title="StringWriter接口"></a>StringWriter接口</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> StringWriter <span class="keyword">interface</span> &#123;</div><div class="line">	WriteString(s <span class="keyword">string</span>) (n <span class="keyword">int</span>, err error)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="io包中的错误定义"><a href="#io包中的错误定义" class="headerlink" title="io包中的错误定义"></a>io包中的错误定义</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> ErrShortWrite = errors.New(<span class="string">"short write"</span>)</div><div class="line"></div><div class="line"><span class="keyword">var</span> ErrShortBuffer = errors.New(<span class="string">"short buffer"</span>)</div><div class="line"></div><div class="line"><span class="keyword">var</span> EOF = errors.New(<span class="string">"EOF"</span>)</div><div class="line"></div><div class="line"><span class="keyword">var</span> ErrUnexpectedEOF = errors.New(<span class="string">"unexpected EOF"</span>)</div><div class="line"></div><div class="line"><span class="keyword">var</span> ErrNoProgress = errors.New(<span class="string">"multiple Read calls return no data or error"</span>)</div></pre></td></tr></table></figure>
+<h2 id="io包中定义的结构体"><a href="#io包中定义的结构体" class="headerlink" title="io包中定义的结构体"></a>io包中定义的结构体</h2><h3 id="LimitedReader"><a href="#LimitedReader" class="headerlink" title="LimitedReader"></a>LimitedReader</h3><ul>
+<li>LimitedReader读入数据到R中，限制读入的字节数为N</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> LimitedReader <span class="keyword">struct</span> &#123;</div><div class="line">	R Reader <span class="comment">// underlying reader</span></div><div class="line">	N <span class="keyword">int64</span>  <span class="comment">// max bytes remaining</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 初始化方法</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">LimitReader</span><span class="params">(r Reader, n <span class="keyword">int64</span>)</span> <span class="title">Reader</span></span> &#123; <span class="keyword">return</span> &amp;LimitedReader&#123;r, n&#125; &#125;</div><div class="line"></div><div class="line"><span class="comment">// 实现Reader接口</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *LimitedReader)</span> <span class="title">Read</span><span class="params">(p []<span class="keyword">byte</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> l.N &lt;= <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, EOF</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> <span class="keyword">int64</span>(<span class="built_in">len</span>(p)) &gt; l.N &#123;</div><div class="line">		p = p[<span class="number">0</span>:l.N]</div><div class="line">	&#125;</div><div class="line">	n, err = l.R.Read(p)</div><div class="line">	l.N -= <span class="keyword">int64</span>(n)</div><div class="line">	<span class="keyword">return</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="SectionReader"><a href="#SectionReader" class="headerlink" title="SectionReader"></a>SectionReader</h3><ul>
+<li>SectionReader完成数据的部分读取</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> SectionReader <span class="keyword">struct</span> &#123;</div><div class="line">	r     ReaderAt</div><div class="line">	base  <span class="keyword">int64</span></div><div class="line">	off   <span class="keyword">int64</span></div><div class="line">	limit <span class="keyword">int64</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 初始化</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewSectionReader</span><span class="params">(r ReaderAt, off <span class="keyword">int64</span>, n <span class="keyword">int64</span>)</span> *<span class="title">SectionReader</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> &amp;SectionReader&#123;r, off, off, off + n&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 实现Reader接口</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *SectionReader)</span> <span class="title">Read</span><span class="params">(p []<span class="keyword">byte</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> s.off &gt;= s.limit &#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, EOF</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> max := s.limit - s.off; <span class="keyword">int64</span>(<span class="built_in">len</span>(p)) &gt; max &#123;</div><div class="line">		p = p[<span class="number">0</span>:max]</div><div class="line">	&#125;</div><div class="line">	n, err = s.r.ReadAt(p, s.off)</div><div class="line">	s.off += <span class="keyword">int64</span>(n)</div><div class="line">	<span class="keyword">return</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 实现Seeker接口</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *SectionReader)</span> <span class="title">Seek</span><span class="params">(offset <span class="keyword">int64</span>, whence <span class="keyword">int</span>)</span> <span class="params">(<span class="keyword">int64</span>, error)</span></span> &#123;</div><div class="line">	<span class="keyword">switch</span> whence &#123;</div><div class="line">	<span class="keyword">default</span>:</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, errWhence</div><div class="line">	<span class="keyword">case</span> SeekStart:</div><div class="line">		offset += s.base</div><div class="line">	<span class="keyword">case</span> SeekCurrent:</div><div class="line">		offset += s.off</div><div class="line">	<span class="keyword">case</span> SeekEnd:</div><div class="line">		offset += s.limit</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> offset &lt; s.base &#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, errOffset</div><div class="line">	&#125;</div><div class="line">	s.off = offset</div><div class="line">	<span class="keyword">return</span> offset - s.base, <span class="literal">nil</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 实现ReaderAt接口</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *SectionReader)</span> <span class="title">ReadAt</span><span class="params">(p []<span class="keyword">byte</span>, off <span class="keyword">int64</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> off &lt; <span class="number">0</span> || off &gt;= s.limit-s.base &#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, EOF</div><div class="line">	&#125;</div><div class="line">	off += s.base</div><div class="line">	<span class="keyword">if</span> max := s.limit - off; <span class="keyword">int64</span>(<span class="built_in">len</span>(p)) &gt; max &#123;</div><div class="line">		p = p[<span class="number">0</span>:max]</div><div class="line">		n, err = s.r.ReadAt(p, off)</div><div class="line">		<span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</div><div class="line">			err = EOF</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> n, err</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> s.r.ReadAt(p, off)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 返回section的字节尺寸</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *SectionReader)</span> <span class="title">Size</span><span class="params">()</span> <span class="title">int64</span></span> &#123; <span class="keyword">return</span> s.limit - s.base &#125;</div></pre></td></tr></table></figure>
+<h2 id="常用工具类方法"><a href="#常用工具类方法" class="headerlink" title="常用工具类方法"></a>常用工具类方法</h2><ul>
+<li>WriteString函数将字符串s写入到w中</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">WriteString</span><span class="params">(w Writer, s <span class="keyword">string</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> sw, ok := w.(StringWriter); ok &#123;</div><div class="line">		<span class="keyword">return</span> sw.WriteString(s)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> w.Write([]<span class="keyword">byte</span>(s))</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>ReadAtLeast函数从r中读取数据导buf中，同时规定了最少读取的字节数</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r Reader, buf []<span class="keyword">byte</span>, min <span class="keyword">int</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(buf) &lt; min &#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, ErrShortBuffer</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">for</span> n &lt; min &amp;&amp; err == <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">var</span> nn <span class="keyword">int</span></div><div class="line">		nn, err = r.Read(buf[n:])</div><div class="line">		n += nn</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> n &gt;= min &#123;</div><div class="line">		err = <span class="literal">nil</span></div><div class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> n &gt; <span class="number">0</span> &amp;&amp; err == EOF &#123;</div><div class="line">		err = ErrUnexpectedEOF</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>ReadFull一次性读取len(buf)个数到buf中，实际上是对ReadAtLeast的封装</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReadFull</span><span class="params">(r Reader, buf []<span class="keyword">byte</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> ReadAtLeast(r, buf, <span class="built_in">len</span>(buf))</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Copy方法完成将src的数据复制到dst中，直到遇到EOF或者错误</li>
+<li>Copy成功的话会返回nil，而不是EOF</li>
+<li>如果src实现了WriteTo方法，则会优先调用，否则会调用dst的ReadFrom方法</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Copy</span><span class="params">(dst Writer, src Reader)</span> <span class="params">(written <span class="keyword">int64</span>, err error)</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> copyBuffer(dst, src, <span class="literal">nil</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>CopyBuffer和Copy是一致的，只是增加了缓冲区</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">CopyBuffer</span><span class="params">(dst Writer, src Reader, buf []<span class="keyword">byte</span>)</span> <span class="params">(written <span class="keyword">int64</span>, err error)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> buf != <span class="literal">nil</span> &amp;&amp; <span class="built_in">len</span>(buf) == <span class="number">0</span> &#123;</div><div class="line">		<span class="built_in">panic</span>(<span class="string">"empty buffer in io.CopyBuffer"</span>)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> copyBuffer(dst, src, buf)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>copyBuffer是实际上的Copy和CopyBuffer的实现</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">copyBuffer</span><span class="params">(dst Writer, src Reader, buf []<span class="keyword">byte</span>)</span> <span class="params">(written <span class="keyword">int64</span>, err error)</span></span> &#123;</div><div class="line">  <span class="comment">// 如果src实现了WriteTo接口，则调用其WroteTo方法完成写入</span></div><div class="line">	<span class="keyword">if</span> wt, ok := src.(WriterTo); ok &#123;</div><div class="line">		<span class="keyword">return</span> wt.WriteTo(dst)</div><div class="line">	&#125;</div><div class="line">  <span class="comment">// 如果dst实现了ReaderFrom接口，则调用ReadFrom方法完成写入</span></div><div class="line">	<span class="keyword">if</span> rt, ok := dst.(ReaderFrom); ok &#123;</div><div class="line">		<span class="keyword">return</span> rt.ReadFrom(src)</div><div class="line">	&#125;</div><div class="line">  <span class="comment">// 缓冲区大小确定</span></div><div class="line">	<span class="keyword">if</span> buf == <span class="literal">nil</span> &#123;</div><div class="line">		size := <span class="number">32</span> * <span class="number">1024</span></div><div class="line">		<span class="keyword">if</span> l, ok := src.(*LimitedReader); ok &amp;&amp; <span class="keyword">int64</span>(size) &gt; l.N &#123;</div><div class="line">			<span class="keyword">if</span> l.N &lt; <span class="number">1</span> &#123;</div><div class="line">				size = <span class="number">1</span></div><div class="line">			&#125; <span class="keyword">else</span> &#123;</div><div class="line">				size = <span class="keyword">int</span>(l.N)</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		buf = <span class="built_in">make</span>([]<span class="keyword">byte</span>, size)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">    <span class="comment">// 读取到buf中</span></div><div class="line">		nr, er := src.Read(buf)</div><div class="line">		<span class="keyword">if</span> nr &gt; <span class="number">0</span> &#123;</div><div class="line">      <span class="comment">// 写入操作</span></div><div class="line">			nw, ew := dst.Write(buf[<span class="number">0</span>:nr])</div><div class="line">			<span class="keyword">if</span> nw &gt; <span class="number">0</span> &#123;</div><div class="line">				written += <span class="keyword">int64</span>(nw)</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">if</span> ew != <span class="literal">nil</span> &#123;</div><div class="line">				err = ew</div><div class="line">				<span class="keyword">break</span></div><div class="line">			&#125;</div><div class="line">			<span class="keyword">if</span> nr != nw &#123;</div><div class="line">				err = ErrShortWrite</div><div class="line">				<span class="keyword">break</span></div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> er != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">if</span> er != EOF &#123;</div><div class="line">				err = er</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> written, err</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>CopyN完成从src复制N个字节数据到dst</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">CopyN</span><span class="params">(dst Writer, src Reader, n <span class="keyword">int64</span>)</span> <span class="params">(written <span class="keyword">int64</span>, err error)</span></span> &#123;</div><div class="line">	written, err = Copy(dst, LimitReader(src, n))</div><div class="line">	<span class="keyword">if</span> written == n &#123;</div><div class="line">		<span class="keyword">return</span> n, <span class="literal">nil</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> written &lt; n &amp;&amp; err == <span class="literal">nil</span> &#123;</div><div class="line">		err = EOF</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="ioutil中的工具类"><a href="#ioutil中的工具类" class="headerlink" title="ioutil中的工具类"></a>ioutil中的工具类</h2><h3 id="ReadAll函数"><a href="#ReadAll函数" class="headerlink" title="ReadAll函数"></a>ReadAll函数</h3><ul>
+<li>ReadAll函数将r中的数据读取出来并返回</li>
+<li>成功读取返回的err为nil</li>
+<li>readAll函数实际上是利用bytes.Buffer完成数据的读取的</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReadAll</span><span class="params">(r io.Reader)</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> readAll(r, bytes.MinRead)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">readAll</span><span class="params">(r io.Reader, capacity <span class="keyword">int64</span>)</span> <span class="params">(b []<span class="keyword">byte</span>, err error)</span></span> &#123;</div><div class="line">	<span class="keyword">var</span> buf bytes.Buffer</div><div class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</div><div class="line">		e := <span class="built_in">recover</span>()</div><div class="line">		<span class="keyword">if</span> e == <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">return</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> panicErr, ok := e.(error); ok &amp;&amp; panicErr == bytes.ErrTooLarge &#123;</div><div class="line">			err = panicErr</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			<span class="built_in">panic</span>(e)</div><div class="line">		&#125;</div><div class="line">	&#125;()</div><div class="line">  <span class="comment">// 防止capacity溢出</span></div><div class="line">	<span class="keyword">if</span> <span class="keyword">int64</span>(<span class="keyword">int</span>(capacity)) == capacity &#123;</div><div class="line">		buf.Grow(<span class="keyword">int</span>(capacity))</div><div class="line">	&#125;</div><div class="line">	_, err = buf.ReadFrom(r)</div><div class="line">	<span class="keyword">return</span> buf.Bytes(), err</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="ReadFile函数"><a href="#ReadFile函数" class="headerlink" title="ReadFile函数"></a>ReadFile函数</h3><ul>
+<li>ReadFile完成对指定文件的读取并且返回其数据</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReadFile</span><span class="params">(filename <span class="keyword">string</span>)</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span> &#123;</div><div class="line">  <span class="comment">// 打开文件</span></div><div class="line">	f, err := os.Open(filename)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">defer</span> f.Close()</div><div class="line">	<span class="keyword">var</span> n <span class="keyword">int64</span> = bytes.MinRead</div><div class="line"></div><div class="line">	<span class="keyword">if</span> fi, err := f.Stat(); err == <span class="literal">nil</span> &#123;</div><div class="line">    <span class="comment">// 确定读取的size，比文件的大小稍微多一些</span></div><div class="line">		<span class="keyword">if</span> size := fi.Size() + bytes.MinRead; size &gt; n &#123;</div><div class="line">			n = size</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">  <span class="comment">// 调用readAll方法来完成数据的读取</span></div><div class="line">	<span class="keyword">return</span> readAll(f, n)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="WriteFile函数"><a href="#WriteFile函数" class="headerlink" title="WriteFile函数"></a>WriteFile函数</h3><ul>
+<li>WriteFile将数据写入到名称为filename的文件中</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">WriteFile</span><span class="params">(filename <span class="keyword">string</span>, data []<span class="keyword">byte</span>, perm os.FileMode)</span> <span class="title">error</span></span> &#123;</div><div class="line">  <span class="comment">// 打开文件，如果不存在，则创建</span></div><div class="line">	f, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> err</div><div class="line">	&#125;</div><div class="line">  <span class="comment">// 数据的追加写入</span></div><div class="line">	n, err := f.Write(data)</div><div class="line">	<span class="keyword">if</span> err == <span class="literal">nil</span> &amp;&amp; n &lt; <span class="built_in">len</span>(data) &#123;</div><div class="line">		err = io.ErrShortWrite</div><div class="line">	&#125;</div><div class="line">  <span class="comment">// 关闭文件</span></div><div class="line">	<span class="keyword">if</span> err1 := f.Close(); err == <span class="literal">nil</span> &#123;</div><div class="line">		err = err1</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> err</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="ReadDir函数"><a href="#ReadDir函数" class="headerlink" title="ReadDir函数"></a>ReadDir函数</h3><ul>
+<li>ReadDir函数读取dirname下的文件或者路径并返回</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReadDir</span><span class="params">(dirname <span class="keyword">string</span>)</span> <span class="params">([]os.FileInfo, error)</span></span> &#123;</div><div class="line">	f, err := os.Open(dirname)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</div><div class="line">	&#125;</div><div class="line">	list, err := f.Readdir(<span class="number">-1</span>)</div><div class="line">	f.Close()</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</div><div class="line">	&#125;</div><div class="line">	sort.Slice(list, <span class="function"><span class="keyword">func</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123; <span class="keyword">return</span> list[i].Name() &lt; list[j].Name() &#125;)</div><div class="line">	<span class="keyword">return</span> list, <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="NopCloser"><a href="#NopCloser" class="headerlink" title="NopCloser"></a>NopCloser</h3><ul>
+<li>NopCloser返回带Close方法的Reader</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">NopCloser</span><span class="params">(r io.Reader)</span> <span class="title">io</span>.<span class="title">ReadCloser</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> nopCloser&#123;r&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> nopCloser <span class="keyword">struct</span> &#123;</div><div class="line">	io.Reader</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(nopCloser)</span> <span class="title">Close</span><span class="params">()</span> <span class="title">error</span></span> &#123; <span class="keyword">return</span> <span class="literal">nil</span> &#125;</div></pre></td></tr></table></figure>
+<h3 id="Discard"><a href="#Discard" class="headerlink" title="Discard"></a>Discard</h3><ul>
+<li>Discard的写入操作都会被忽略</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Discard实际上是通过devNull来构建的</span></div><div class="line"><span class="keyword">var</span> Discard io.Writer = devNull(<span class="number">0</span>)</div><div class="line"><span class="comment">// devNull结构体本身是个int数据</span></div><div class="line"><span class="keyword">type</span> devNull <span class="keyword">int</span></div><div class="line"><span class="comment">// 实现了Writer接口</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(devNull)</span> <span class="title">Write</span><span class="params">(p []<span class="keyword">byte</span>)</span> <span class="params">(<span class="keyword">int</span>, error)</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> <span class="built_in">len</span>(p), <span class="literal">nil</span></div><div class="line">&#125;</div><div class="line"><span class="comment">// 实现了StringWriter接口</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(devNull)</span> <span class="title">WriteString</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">int</span>, error)</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> <span class="built_in">len</span>(s), <span class="literal">nil</span></div><div class="line">&#125;</div><div class="line"><span class="comment">// 实现了ReaderFrom接口</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(devNull)</span> <span class="title">ReadFrom</span><span class="params">(r io.Reader)</span> <span class="params">(n <span class="keyword">int64</span>, err error)</span></span> &#123;</div><div class="line">	bufp := blackHolePool.Get().(*[]<span class="keyword">byte</span>)</div><div class="line">	readSize := <span class="number">0</span></div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		readSize, err = r.Read(*bufp)</div><div class="line">		n += <span class="keyword">int64</span>(readSize)</div><div class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">			blackHolePool.Put(bufp)</div><div class="line">			<span class="keyword">if</span> err == io.EOF &#123;</div><div class="line">				<span class="keyword">return</span> n, <span class="literal">nil</span></div><div class="line">			&#125;</div><div class="line">			<span class="keyword">return</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> blackHolePool = sync.Pool&#123;</div><div class="line">	New: <span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</div><div class="line">		b := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">8192</span>)</div><div class="line">		<span class="keyword">return</span> &amp;b</div><div class="line">	&#125;,</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="Pipe函数"><a href="#Pipe函数" class="headerlink" title="Pipe函数"></a>Pipe函数</h2><ul>
+<li>Pipe在内存中创建了个管道，可以用于连接需要io.Reader和io.Writer的代码</li>
+<li>读写会相互阻塞，除非一个写入被多次读取的场景存在</li>
+<li>Pipe是并发安全的</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Pipe</span><span class="params">()</span> <span class="params">(*PipeReader, *PipeWriter)</span></span> &#123;</div><div class="line">	p := &amp;pipe&#123;</div><div class="line">		wrCh: <span class="built_in">make</span>(<span class="keyword">chan</span> []<span class="keyword">byte</span>),</div><div class="line">		rdCh: <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>),</div><div class="line">		done: <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;),</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> &amp;PipeReader&#123;p&#125;, &amp;PipeWriter&#123;p&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="PipeReader和PipeWriter"><a href="#PipeReader和PipeWriter" class="headerlink" title="PipeReader和PipeWriter"></a>PipeReader和PipeWriter</h3><ul>
+<li>PipeReader是管道读的半边</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> PipeReader <span class="keyword">struct</span> &#123;</div><div class="line">	p *pipe</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 实现了io.Reader接口</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *PipeReader)</span> <span class="title">Read</span><span class="params">(data []<span class="keyword">byte</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> r.p.Read(data)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 实现了io.Closer接口</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *PipeReader)</span> <span class="title">Close</span><span class="params">()</span> <span class="title">error</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> r.CloseWithError(<span class="literal">nil</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *PipeReader)</span> <span class="title">CloseWithError</span><span class="params">(err error)</span> <span class="title">error</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> r.p.CloseRead(err)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>PipeWriter是管道写的半边</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> PipeWriter <span class="keyword">struct</span> &#123;</div><div class="line">	p *pipe</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 实现了io.Writer接口</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(w *PipeWriter)</span> <span class="title">Write</span><span class="params">(data []<span class="keyword">byte</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> w.p.Write(data)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 实现了io。Close方法</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(w *PipeWriter)</span> <span class="title">Close</span><span class="params">()</span> <span class="title">error</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> w.CloseWithError(<span class="literal">nil</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(w *PipeWriter)</span> <span class="title">CloseWithError</span><span class="params">(err error)</span> <span class="title">error</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> w.p.CloseWrite(err)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="pipe结构体"><a href="#pipe结构体" class="headerlink" title="pipe结构体"></a>pipe结构体</h3><ul>
+<li>实际上Pipe是对pipe的封装</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> pipe <span class="keyword">struct</span> &#123;</div><div class="line">	wrMu sync.Mutex <span class="comment">// 保障写入的安全</span></div><div class="line">	wrCh <span class="keyword">chan</span> []<span class="keyword">byte</span> <span class="comment">// 写入的数据</span></div><div class="line">	rdCh <span class="keyword">chan</span> <span class="keyword">int</span> <span class="comment">// 读取到的数量的byte数</span></div><div class="line"></div><div class="line">	once sync.Once <span class="comment">// 保证pipe只被关闭一次</span></div><div class="line">	done <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125; <span class="comment">// pipe关闭通道信息</span></div><div class="line">	rerr atomicError <span class="comment">// 读错误</span></div><div class="line">	werr atomicError <span class="comment">// 写错误</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>pipe实现了io.Reader接口</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *pipe)</span> <span class="title">Read</span><span class="params">(b []<span class="keyword">byte</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">  <span class="comment">// 判断要读取的通道是否已经关闭</span></div><div class="line">  <span class="keyword">select</span> &#123;</div><div class="line">	<span class="keyword">case</span> &lt;-p.done:</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, p.readCloseError()</div><div class="line">	<span class="keyword">default</span>:</div><div class="line">	&#125;</div><div class="line"></div><div class="line">  <span class="comment">// 将数据写入b中，并将写入的字节数写入rdCh通道中</span></div><div class="line">	<span class="keyword">select</span> &#123;</div><div class="line">	<span class="keyword">case</span> bw := &lt;-p.wrCh:</div><div class="line">		nr := <span class="built_in">copy</span>(b, bw)</div><div class="line">		p.rdCh &lt;- nr</div><div class="line">		<span class="keyword">return</span> nr, <span class="literal">nil</span></div><div class="line">	<span class="keyword">case</span> &lt;-p.done:</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, p.readCloseError()</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>pipe实现了io.Writer接口</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *pipe)</span> <span class="title">Write</span><span class="params">(b []<span class="keyword">byte</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">  <span class="comment">// 保证写入的时候安全，且pipe没有关闭</span></div><div class="line">	<span class="keyword">select</span> &#123;</div><div class="line">	<span class="keyword">case</span> &lt;-p.done:</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, p.writeCloseError()</div><div class="line">	<span class="keyword">default</span>:</div><div class="line">		p.wrMu.Lock()</div><div class="line">		<span class="keyword">defer</span> p.wrMu.Unlock()</div><div class="line">	&#125;</div><div class="line"></div><div class="line">  <span class="comment">// 写入数据</span></div><div class="line">	<span class="keyword">for</span> once := <span class="literal">true</span>; once || <span class="built_in">len</span>(b) &gt; <span class="number">0</span>; once = <span class="literal">false</span> &#123;</div><div class="line">		<span class="keyword">select</span> &#123;</div><div class="line">		<span class="keyword">case</span> p.wrCh &lt;- b:</div><div class="line">			nw := &lt;-p.rdCh</div><div class="line">			b = b[nw:]</div><div class="line">			n += nw</div><div class="line">		<span class="keyword">case</span> &lt;-p.done:</div><div class="line">			<span class="keyword">return</span> n, p.writeCloseError()</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> n, <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>pipe的Close方法</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *pipe)</span> <span class="title">CloseRead</span><span class="params">(err error)</span> <span class="title">error</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</div><div class="line">		err = ErrClosedPipe</div><div class="line">	&#125;</div><div class="line">	p.rerr.Store(err)</div><div class="line">	p.once.Do(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; <span class="built_in">close</span>(p.done) &#125;)</div><div class="line">	<span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *pipe)</span> <span class="title">CloseWrite</span><span class="params">(err error)</span> <span class="title">error</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</div><div class="line">		err = EOF</div><div class="line">	&#125;</div><div class="line">	p.werr.Store(err)</div><div class="line">	p.once.Do(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; <span class="built_in">close</span>(p.done) &#125;)</div><div class="line">	<span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="multi"><a href="#multi" class="headerlink" title="multi"></a>multi</h2><h3 id="MultiReader-将多个Reader的内容写入p"><a href="#MultiReader-将多个Reader的内容写入p" class="headerlink" title="MultiReader 将多个Reader的内容写入p"></a>MultiReader 将多个Reader的内容写入p</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">MultiReader</span><span class="params">(readers ...Reader)</span> <span class="title">Reader</span></span> &#123;</div><div class="line">	r := <span class="built_in">make</span>([]Reader, <span class="built_in">len</span>(readers))</div><div class="line">	<span class="built_in">copy</span>(r, readers)</div><div class="line">	<span class="keyword">return</span> &amp;multiReader&#123;r&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> multiReader <span class="keyword">struct</span> &#123;</div><div class="line">	readers []Reader</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(mr *multiReader)</span> <span class="title">Read</span><span class="params">(p []<span class="keyword">byte</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	<span class="keyword">for</span> <span class="built_in">len</span>(mr.readers) &gt; <span class="number">0</span> &#123;</div><div class="line">    <span class="comment">// flat嵌套</span></div><div class="line">		<span class="keyword">if</span> <span class="built_in">len</span>(mr.readers) == <span class="number">1</span> &#123;</div><div class="line">			<span class="keyword">if</span> r, ok := mr.readers[<span class="number">0</span>].(*multiReader); ok &#123;</div><div class="line">				mr.readers = r.readers</div><div class="line">				<span class="keyword">continue</span></div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		n, err = mr.readers[<span class="number">0</span>].Read(p)</div><div class="line">		<span class="keyword">if</span> err == EOF &#123;</div><div class="line">      <span class="comment">// 避免nl panic</span></div><div class="line">			mr.readers[<span class="number">0</span>] = eofReader&#123;&#125; <span class="comment">// permit earlier GC</span></div><div class="line">			mr.readers = mr.readers[<span class="number">1</span>:]</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> n &gt; <span class="number">0</span> || err != EOF &#123;</div><div class="line">			<span class="keyword">if</span> err == EOF &amp;&amp; <span class="built_in">len</span>(mr.readers) &gt; <span class="number">0</span> &#123;</div><div class="line">				<span class="comment">// Don't return EOF yet. More readers remain.</span></div><div class="line">				err = <span class="literal">nil</span></div><div class="line">			&#125;</div><div class="line">			<span class="keyword">return</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>, EOF</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 避免nil panic</span></div><div class="line"><span class="keyword">type</span> eofReader <span class="keyword">struct</span>&#123;&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(eofReader)</span> <span class="title">Read</span><span class="params">([]<span class="keyword">byte</span>)</span> <span class="params">(<span class="keyword">int</span>, error)</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>, EOF</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="MultiWriter-将p的内容写入多个数据流中"><a href="#MultiWriter-将p的内容写入多个数据流中" class="headerlink" title="MultiWriter 将p的内容写入多个数据流中"></a>MultiWriter 将p的内容写入多个数据流中</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">MultiWriter</span><span class="params">(writers ...Writer)</span> <span class="title">Writer</span></span> &#123;</div><div class="line">	allWriters := <span class="built_in">make</span>([]Writer, <span class="number">0</span>, <span class="built_in">len</span>(writers))</div><div class="line">	<span class="keyword">for</span> _, w := <span class="keyword">range</span> writers &#123;</div><div class="line">		<span class="keyword">if</span> mw, ok := w.(*multiWriter); ok &#123;</div><div class="line">			allWriters = <span class="built_in">append</span>(allWriters, mw.writers...)</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			allWriters = <span class="built_in">append</span>(allWriters, w)</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> &amp;multiWriter&#123;allWriters&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> multiWriter <span class="keyword">struct</span> &#123;</div><div class="line">	writers []Writer</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *multiWriter)</span> <span class="title">Write</span><span class="params">(p []<span class="keyword">byte</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	<span class="keyword">for</span> _, w := <span class="keyword">range</span> t.writers &#123;</div><div class="line">		n, err = w.Write(p)</div><div class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">return</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> n != <span class="built_in">len</span>(p) &#123;</div><div class="line">			err = ErrShortWrite</div><div class="line">			<span class="keyword">return</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="built_in">len</span>(p), <span class="literal">nil</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *multiWriter)</span> <span class="title">WriteString</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	<span class="keyword">var</span> p []<span class="keyword">byte</span> <span class="comment">// lazily initialized if/when needed</span></div><div class="line">	<span class="keyword">for</span> _, w := <span class="keyword">range</span> t.writers &#123;</div><div class="line">		<span class="keyword">if</span> sw, ok := w.(StringWriter); ok &#123;</div><div class="line">			n, err = sw.WriteString(s)</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			<span class="keyword">if</span> p == <span class="literal">nil</span> &#123;</div><div class="line">				p = []<span class="keyword">byte</span>(s)</div><div class="line">			&#125;</div><div class="line">			n, err = w.Write(p)</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">return</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> n != <span class="built_in">len</span>(s) &#123;</div><div class="line">			err = ErrShortWrite</div><div class="line">			<span class="keyword">return</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="built_in">len</span>(s), <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/11/golang/源码解读/sort/sort/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2171,221 +2526,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/07/golang/源码解读/bytes/reader/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/05/07/golang/源码解读/bytes/reader/" itemprop="url">go源码解读-bytes.Reader</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-07T17:26:21+08:00">
-                2020-05-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/" itemprop="url" rel="index">
-                    <span itemprop="name">go</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/源码解读/" itemprop="url" rel="index">
-                    <span itemprop="name">源码解读</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="bytes-Reader"><a href="#bytes-Reader" class="headerlink" title="bytes.Reader"></a>bytes.Reader</h2><ul>
-<li>bytes包中的结构体Reader实现的接口包括<ul>
-<li>io.Reader</li>
-<li>io.ReaderAt</li>
-<li>io.WriterTo</li>
-<li>io.Seeker,</li>
-<li>io.ByteScanner</li>
-<li>io.RuneScanner</li>
-</ul>
-</li>
-</ul>
-<h3 id="Reader结构体机器方法"><a href="#Reader结构体机器方法" class="headerlink" title="Reader结构体机器方法"></a>Reader结构体机器方法</h3><ul>
-<li>bytes.Reader可以实现从字节数组中读取数据</li>
-<li>bytes.Reader是只读的，并且支持查找</li>
-<li>bytes.Reader的零值等价于从空slice中读取的值</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Reader <span class="keyword">struct</span> &#123;</div><div class="line">	s        []<span class="keyword">byte</span> <span class="comment">// 字节数组</span></div><div class="line">	i        <span class="keyword">int64</span> <span class="comment">// 当前读取到的索引</span></div><div class="line">	prevRune <span class="keyword">int</span>   <span class="comment">// 上一个读取的字符的索引</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="Reader结构体的方法"><a href="#Reader结构体的方法" class="headerlink" title="Reader结构体的方法"></a>Reader结构体的方法</h3><ul>
-<li>Len方法返回Reader结构体中还未读取的部分的字节数</li>
-<li>Size方法返回Reader结构体中字节数组s的字节数，Size这个方法无论何时调用，返回结果都应该相同</li>
-<li>Reset方法，初始化Reader为最初从字节b读取的状态，重置方法</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span> <span class="title">Len</span><span class="params">()</span> <span class="title">int</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> r.i &gt;= <span class="keyword">int64</span>(<span class="built_in">len</span>(r.s)) &#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="keyword">int</span>(<span class="keyword">int64</span>(<span class="built_in">len</span>(r.s)) - r.i)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span> <span class="title">Size</span><span class="params">()</span> <span class="title">int64</span></span> &#123; <span class="keyword">return</span> <span class="keyword">int64</span>(<span class="built_in">len</span>(r.s)) &#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span> <span class="title">Reset</span><span class="params">(b []<span class="keyword">byte</span>)</span></span> &#123; *r = Reader&#123;b, <span class="number">0</span>, <span class="number">-1</span>&#125; &#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>实现io.Reader接口的Read方法，将数据读取到字节数组byte中</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span> <span class="title">Read</span><span class="params">(b []<span class="keyword">byte</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> r.i &gt;= <span class="keyword">int64</span>(<span class="built_in">len</span>(r.s)) &#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, io.EOF</div><div class="line">	&#125;</div><div class="line">	r.prevRune = <span class="number">-1</span></div><div class="line">	n = <span class="built_in">copy</span>(b, r.s[r.i:])</div><div class="line">	r.i += <span class="keyword">int64</span>(n)</div><div class="line">	<span class="keyword">return</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>实现io.ReaderAt接口的ReadAt方法，从offset的位置开始读取</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span> <span class="title">ReadAt</span><span class="params">(b []<span class="keyword">byte</span>, off <span class="keyword">int64</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	<span class="comment">// cannot modify state - see io.ReaderAt</span></div><div class="line">	<span class="keyword">if</span> off &lt; <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"bytes.Reader.ReadAt: negative offset"</span>)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> off &gt;= <span class="keyword">int64</span>(<span class="built_in">len</span>(r.s)) &#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, io.EOF</div><div class="line">	&#125;</div><div class="line">	n = <span class="built_in">copy</span>(b, r.s[off:])</div><div class="line">	<span class="keyword">if</span> n &lt; <span class="built_in">len</span>(b) &#123;</div><div class="line">		err = io.EOF</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>实现io.ByteReader的ReadByte方法，每次读取一个byte数据</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// ReadByte implements the  interface.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span> <span class="title">ReadByte</span><span class="params">()</span> <span class="params">(<span class="keyword">byte</span>, error)</span></span> &#123;</div><div class="line">	r.prevRune = <span class="number">-1</span></div><div class="line">	<span class="keyword">if</span> r.i &gt;= <span class="keyword">int64</span>(<span class="built_in">len</span>(r.s)) &#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, io.EOF</div><div class="line">	&#125;</div><div class="line">	b := r.s[r.i]</div><div class="line">	r.i++</div><div class="line">	<span class="keyword">return</span> b, <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>实现io.ByteScanner接口的UnreadByte方法，将上一个读取过的byte设置为未读取，及r.i–</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span> <span class="title">UnreadByte</span><span class="params">()</span> <span class="title">error</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> r.i &lt;= <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">return</span> errors.New(<span class="string">"bytes.Reader.UnreadByte: at beginning of slice"</span>)</div><div class="line">	&#125;</div><div class="line">	r.prevRune = <span class="number">-1</span></div><div class="line">	r.i--</div><div class="line">	<span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>实现io.RuneReader接口的ReadRune方法，从byte中读取一个字符</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span> <span class="title">ReadRune</span><span class="params">()</span> <span class="params">(ch <span class="keyword">rune</span>, size <span class="keyword">int</span>, err error)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> r.i &gt;= <span class="keyword">int64</span>(<span class="built_in">len</span>(r.s)) &#123;</div><div class="line">		r.prevRune = <span class="number">-1</span></div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, <span class="number">0</span>, io.EOF</div><div class="line">	&#125;</div><div class="line">	r.prevRune = <span class="keyword">int</span>(r.i)</div><div class="line">	<span class="keyword">if</span> c := r.s[r.i]; c &lt; utf8.RuneSelf &#123;</div><div class="line">		r.i++</div><div class="line">		<span class="keyword">return</span> <span class="keyword">rune</span>(c), <span class="number">1</span>, <span class="literal">nil</span></div><div class="line">	&#125;</div><div class="line">	ch, size = utf8.DecodeRune(r.s[r.i:])</div><div class="line">	r.i += <span class="keyword">int64</span>(size)</div><div class="line">	<span class="keyword">return</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>实现io.RuneScanner接口的UnreadRune方法，将上一个字符，设置为未读，r.i = int64(r.prevRune)即可</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span> <span class="title">UnreadRune</span><span class="params">()</span> <span class="title">error</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> r.i &lt;= <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">return</span> errors.New(<span class="string">"bytes.Reader.UnreadRune: at beginning of slice"</span>)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> r.prevRune &lt; <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">return</span> errors.New(<span class="string">"bytes.Reader.UnreadRune: previous operation was not ReadRune"</span>)</div><div class="line">	&#125;</div><div class="line">	r.i = <span class="keyword">int64</span>(r.prevRune)</div><div class="line">	r.prevRune = <span class="number">-1</span></div><div class="line">	<span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>实现io.Seeker的Seek方法<ul>
-<li>whence场景包括开头，结尾，和当前指向的index</li>
-<li>返回的是要查找的索引值</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span> <span class="title">Seek</span><span class="params">(offset <span class="keyword">int64</span>, whence <span class="keyword">int</span>)</span> <span class="params">(<span class="keyword">int64</span>, error)</span></span> &#123;</div><div class="line">	r.prevRune = <span class="number">-1</span></div><div class="line">	<span class="keyword">var</span> abs <span class="keyword">int64</span></div><div class="line">	<span class="keyword">switch</span> whence &#123;</div><div class="line">	<span class="keyword">case</span> io.SeekStart:</div><div class="line">		abs = offset</div><div class="line">	<span class="keyword">case</span> io.SeekCurrent:</div><div class="line">		abs = r.i + offset</div><div class="line">	<span class="keyword">case</span> io.SeekEnd:</div><div class="line">		abs = <span class="keyword">int64</span>(<span class="built_in">len</span>(r.s)) + offset</div><div class="line">	<span class="keyword">default</span>:</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"bytes.Reader.Seek: invalid whence"</span>)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> abs &lt; <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"bytes.Reader.Seek: negative position"</span>)</div><div class="line">	&#125;</div><div class="line">	r.i = abs</div><div class="line">	<span class="keyword">return</span> abs, <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>实现io.WriterTo接口的WriteTo方法，将i之后的字节切片写入w中</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span> <span class="title">WriteTo</span><span class="params">(w io.Writer)</span> <span class="params">(n <span class="keyword">int64</span>, err error)</span></span> &#123;</div><div class="line">	r.prevRune = <span class="number">-1</span></div><div class="line">	<span class="keyword">if</span> r.i &gt;= <span class="keyword">int64</span>(<span class="built_in">len</span>(r.s)) &#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>, <span class="literal">nil</span></div><div class="line">	&#125;</div><div class="line">	b := r.s[r.i:]</div><div class="line">	m, err := w.Write(b)</div><div class="line">	<span class="keyword">if</span> m &gt; <span class="built_in">len</span>(b) &#123;</div><div class="line">		<span class="built_in">panic</span>(<span class="string">"bytes.Reader.WriteTo: invalid Write count"</span>)</div><div class="line">	&#125;</div><div class="line">	r.i += <span class="keyword">int64</span>(m)</div><div class="line">	n = <span class="keyword">int64</span>(m)</div><div class="line">	<span class="keyword">if</span> m != <span class="built_in">len</span>(b) &amp;&amp; err == <span class="literal">nil</span> &#123;</div><div class="line">		err = io.ErrShortWrite</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="初始化Reader方法"><a href="#初始化Reader方法" class="headerlink" title="初始化Reader方法"></a>初始化Reader方法</h3><ul>
-<li>NewReader创建一个读取b的Reader对象</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// NewReader returns a new Reader reading from b.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewReader</span><span class="params">(b []<span class="keyword">byte</span>)</span> *<span class="title">Reader</span></span> &#123; <span class="keyword">return</span> &amp;Reader&#123;b, <span class="number">0</span>, <span class="number">-1</span>&#125; &#125;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2439,7 +2579,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">96</span>
+                <span class="site-state-item-count">97</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

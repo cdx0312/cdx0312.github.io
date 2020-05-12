@@ -277,6 +277,255 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/python/8.IO编程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/21/python/8.IO编程/" itemprop="url">8. IO编程</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="IO编程"><a href="#IO编程" class="headerlink" title="IO编程"></a>IO编程</h1><p>IO在计算机中指Input/Output，也就是输入和输出。由于程序和运行时数据是在内存中驻留，由CPU这个超快的计算机核心来执行，设计到数据交换的地方，通常是磁盘、网络等，就需要IO接口。</p>
+<p>比如你打开浏览器，访问新浪首页，浏览器这个程序就需要通过网络IO获取新浪的网页。浏览器首先会发送数据给新浪服务器，告诉它我想要首页的HTML，这个动作是往外发数据，叫Output，随后新浪服务器把网页发过来，这个动作是从外面接收数据，叫Input。所以，通常，程序完成IO操作会有Input和Output两个数据流。当然也有只用一个的情况，比如，从磁盘读取文件到内存，就只有Input操作，反过来，把数据写到磁盘文件里，就只是一个Output操作。</p>
+<p>IO编程中，Stream（流）是一个很重要的概念，可以把流想象成一个水管，数据就是水管里的水，但是只能单向流动。Input Stream就是数据从外面（磁盘、网络）流进内存，Output Stream就是数据从内存流到外面去。对于浏览网页来说，浏览器和新浪服务器之间至少需要建立两根水管，才可以既能发数据，又能收数据。</p>
+<p>由于CPU和内存的速度远远高于外设的速度，所以，在IO编程中，就存在速度严重不匹配的问题。举个例子来说，比如要把100M的数据写入磁盘，CPU输出100M的数据只需要0.01秒，可是磁盘要接收这100M数据可能需要10秒，怎么办呢？有两种办法：</p>
+<p>第一种是CPU等着，也就是程序暂停执行后续代码，等100M的数据在10秒后写入磁盘，再接着往下执行，这种模式称为同步IO；</p>
+<p>另一种方法是CPU不等待，只是告诉磁盘，“您老慢慢写，不着急，我接着干别的事去了”，于是，后续代码可以立刻接着执行，这种模式称为异步IO。</p>
+<p>同步和异步的区别就在于是否等待IO执行的结果。好比你去麦当劳点餐，你说“来个汉堡”，服务员告诉你，对不起，汉堡要现做，需要等5分钟，于是你站在收银台前面等了5分钟，拿到汉堡再去逛商场，这是同步IO。</p>
+<p>你说“来个汉堡”，服务员告诉你，汉堡需要等5分钟，你可以先去逛商场，等做好了，我们再通知你，这样你可以立刻去干别的事情（逛商场），这是异步IO。</p>
+<p>很明显，使用异步IO来编写程序性能会远远高于同步IO，但是异步IO的缺点是编程模型复杂。想想看，你得知道什么时候通知你“汉堡做好了”，而通知你的方法也各不相同。如果是服务员跑过来找到你，这是回调模式，如果服务员发短信通知你，你就得不停地检查手机，这是轮询模式。总之，异步IO的复杂度远远高于同步IO。</p>
+<p>操作IO的能力都是由操作系统提供的，每一种编程语言都会把操作系统提供的低级C接口封装起来方便使用，Python也不例外。我们后面会详细讨论Python的IO编程接口。</p>
+<p>注意，本章的IO编程都是同步模式，异步IO由于复杂度太高，后续涉及到服务器端程序开发时我们再讨论。</p>
+<h2 id="文件读写"><a href="#文件读写" class="headerlink" title="文件读写"></a>文件读写</h2><p>读写文件是最常见的IO操作。python内置了读写文件的函数，用法和C是兼容的。</p>
+<p>读写文件前，我们必须了解在磁盘读写文件的功能都是由操作系统提供的，现代操作系统不允许普通的程序直接操作磁盘，所以，读写文件就是请求操作系统打开一个文件对象，然后，通过操作系统提供的接口从这个文件对象中读取数据，或者把数据写入这个文件对象。</p>
+<h3 id="读文件"><a href="#读文件" class="headerlink" title="读文件"></a>读文件</h3><p>要以读文件的模式打开一个文件对象，使用Python内置的<code>open()</code>函数 ，传入文件名和标示符：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=open(<span class="string">'C:/Users/cdxu0/Desktop/open.txt'</span>,<span class="string">'r'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.read()</div><div class="line"><span class="string">'python open read '</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.close</div><div class="line">&lt;built-<span class="keyword">in</span> method close of _io.TextIOWrapper object at <span class="number">0x000001A97E9DEB40</span>&gt;</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure></p>
+<p>标示符<code>r</code>标示读，这样，我们成功打开了一个文件。如果文件不存在，<code>open()</code>函数就会抛出一个<code>IOError</code>的错误，并且给出错误码和详细的信息高速你文件不存在。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=open(<span class="string">'C:/Users/cdxu0/Desktop/open.py'</span>,<span class="string">'r'</span>)</div><div class="line">Traceback (most recent call last):</div><div class="line">  File <span class="string">"&lt;stdin&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</div><div class="line">FileNotFoundError: [Errno <span class="number">2</span>] No such file <span class="keyword">or</span> directory: <span class="string">'C:/Users/cdxu0/Desktop/open.py'</span></div></pre></td></tr></table></figure></p>
+<p>由于文件读写时都有可能产生<code>IOError</code>，一旦出错，后面的<code>f.close()</code>就不会调用。所以为了保证无论是否出错都能正确的关闭文件，我们可以使用<code>try...finally</code>来实现：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">try</span>:</div><div class="line"><span class="meta">... </span>    f=open(<span class="string">'C:/Users/cdxu0/Desktop/test.txt'</span>,<span class="string">'r'</span>)</div><div class="line"><span class="meta">... </span>    print(f.read())</div><div class="line"><span class="meta">... </span><span class="keyword">finally</span>:</div><div class="line"><span class="meta">... </span>    <span class="keyword">if</span> f:</div><div class="line"><span class="meta">... </span>            f.close()</div><div class="line">...</div><div class="line">python open read</div></pre></td></tr></table></figure></p>
+<p>但是每次都这么写比较繁琐，Python引入了<code>with</code>语句来自动帮助我们调用<code>close()</code>方法。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">with</span> open(<span class="string">'C:/Users/cdxu0/Desktop/test.txt'</span>,<span class="string">'r'</span>) <span class="keyword">as</span> f:</div><div class="line"><span class="meta">... </span>    print(f.read())</div><div class="line">...</div><div class="line">python open read</div></pre></td></tr></table></figure></p>
+<p>这和前面的<code>try...finally</code>是一样的，但是代码更为简洁，并且不用调用<code>f.close()</code>方法。</p>
+<p>调用<code>read()</code>会一次性读取文件的全部内容，如果文件有10G，内存就爆了，保险起见，要反复调用<code>read(size)</code>方法，每次最多读取size个字节的内容。另外，调用<code>readline()</code>可以每次读取一行的内容，调用<code>readlines()</code>一次读取所有内容并按行返回list。因此，要根据需要决定怎么调用。</p>
+<p>如果文件很小，<code>read()</code>一次性读取最方便；如果不能确定文件的大小，反复调用<code>read(size)</code>比较保险；如果是配置文件，调用<code>readlines()</code>最方便。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> line <span class="keyword">in</span> f.readlines():</div><div class="line"><span class="meta">... </span>    print(line.strip())</div><div class="line">...</div><div class="line">python open read</div></pre></td></tr></table></figure></p>
+<h3 id="file-like-Object"><a href="#file-like-Object" class="headerlink" title="file-like Object"></a>file-like Object</h3><p>像<code>open()</code>函数返回的这种有个<code>read()</code>方法的对象，在Python中统称为file-like Object。除了file外，还可以是内存的字节流，网络流，自定义流等等。file-like Object不要求从特定类继承，只要写个<code>read()</code>方法就行。</p>
+<p><code>StringIO</code>就是在内存中创建的file-like Object，常用作临时缓冲。</p>
+<h3 id="二进制文件"><a href="#二进制文件" class="headerlink" title="二进制文件"></a>二进制文件</h3><p>前面讲的默认都是读取文本文件的，并且是UTF-8编码的文本文件。尧都区二进制文件，比如图片、时频等，用<code>rb</code>模式打开文件即可：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=open(<span class="string">'C:/Users/cdxu0/Desktop/临时文件/1.png'</span>,<span class="string">'rb'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.read()</div><div class="line"><span class="string">b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\rIDAT\x08\x99c```\xf8\x0f\x00\x01\x04\x01\x00&#125;\xb2\xc8\xdf\x00\x00\x00\x00I</span></div></pre></td></tr></table></figure></p>
+<h3 id="字符编码"><a href="#字符编码" class="headerlink" title="字符编码"></a>字符编码</h3><p>要读取非UTF-8编码的文本文件，需要给<code>open()</code>函数传入<code>encoding</code>参数，例如，读取GBK编码的文件：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=open(<span class="string">'C:/Users/cdxu0/Desktop/临时文件/test.txt'</span>,<span class="string">'r'</span>,encoding=<span class="string">'gbk'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.read()</div><div class="line"><span class="string">'python open read '</span></div></pre></td></tr></table></figure></p>
+<p>遇到有些编码不规范的文件，你可能会遇到<code>UnicodeDecodeError</code>，因为在文本文件中可能夹杂了一些非法编码的字符。遇到这种情况，<code>open()</code>函数还接收一个errors参数，便是如果遇到编码错误后如何处理。最简单的方式是直接忽略。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; f=open(&apos;C:/Users/cdxu0/Desktop/临时文件/test.txt&apos;,&apos;r&apos;,encoding=&apos;gbk&apos;,errors=&apos;ignore&apos;)</div></pre></td></tr></table></figure></p>
+<h3 id="写文件"><a href="#写文件" class="headerlink" title="写文件"></a>写文件</h3><p>写文件和读文件一样 的，唯一的区别在于在调用<code>open()</code>函数时，传入标示符<code>w</code>或<code>wb</code>表示写文本文件或写二进制文件：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=open(<span class="string">'C:/Users/cdxu0/Desktop/临时文件/open.txt'</span>,<span class="string">'w'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.write(<span class="string">'hehheheh'</span>)</div><div class="line"><span class="number">8</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.close</div><div class="line">&lt;built-<span class="keyword">in</span> method close of _io.TextIOWrapper object at <span class="number">0x000002846BDBEB40</span>&gt;</div></pre></td></tr></table></figure></p>
+<p>你可以反复调用<code>write()</code>来写入文件，但是务必要调用<code>f.close()</code>来关闭文件。当我们写文件时，操作系统往往不会立刻把文件写入磁盘，而是放到缓存里面，空闲时候再慢慢写入。只有调用<code>close()</code>方法时，操作系统才保证把没有写入的数据全部写入磁盘。忘记调<code>close()</code>的后果是可能导致数据只写了一部分。还是用with比较保险：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">with</span> open(<span class="string">'C:/Users/cdxu0/Desktop/临时文件/test.txt'</span>,<span class="string">'w'</span>) <span class="keyword">as</span> f:</div><div class="line"><span class="meta">... </span>    f.write(<span class="string">'hello,python!'</span>)</div><div class="line">...</div><div class="line"><span class="number">13</span></div></pre></td></tr></table></figure></p>
+<p>要写入特定编码的文本文件，请给<code>open()</code>函数传入<code>encoding</code>参数，将字符串自动转换成指定编码。</p>
+<hr>
+<h2 id="StringIO和BytesIO"><a href="#StringIO和BytesIO" class="headerlink" title="StringIO和BytesIO"></a>StringIO和BytesIO</h2><h3 id="StringIO"><a href="#StringIO" class="headerlink" title="StringIO"></a>StringIO</h3><p>很多时候，数据读写不一定是文件，也可以在内存中读写。StringIO顾名思义就是在内存中读写str。要把str写入StringIO，我们需要先创建一个StringIO，然后像文件一样写入就可以了：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> io <span class="keyword">import</span> StringIO</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=StringIO()</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.write(<span class="string">'hello'</span>)</div><div class="line"><span class="number">5</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.write(<span class="string">' '</span>)</div><div class="line"><span class="number">1</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.write(<span class="string">'worls! '</span>)</div><div class="line"><span class="number">7</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(f.getvalue())</div><div class="line">hello worls!</div></pre></td></tr></table></figure></p>
+<p><code>getvalue()</code>方法用于获得写入后的str。</p>
+<p>要读取StringIO，可以用一个str初始化StringIO，然后像问价一样读取：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> io <span class="keyword">import</span> StringIO</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=StringIO(<span class="string">'hello\nhi\nbye!'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line"><span class="meta">... </span>    s=f.readline()</div><div class="line"><span class="meta">... </span>    <span class="keyword">if</span> s==<span class="string">''</span>:</div><div class="line"><span class="meta">... </span>            <span class="keyword">break</span></div><div class="line"><span class="meta">... </span>    print(s.strip())</div><div class="line">...</div><div class="line">hello</div><div class="line">hi</div><div class="line">bye!</div></pre></td></tr></table></figure></p>
+<h3 id="BytesIO"><a href="#BytesIO" class="headerlink" title="BytesIO"></a>BytesIO</h3><p>StringIO操作的只能是str，如果要操作二进制数据，就需要使用BytesIO。BytesIO实现了在内存中读写bytes，我们创建一个BytesIO，然后写入一些bytes:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> io <span class="keyword">import</span> BytesIO</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=BytesIO()</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.write(<span class="string">'中文'</span>.encode(<span class="string">'utf-8'</span>))</div><div class="line"><span class="number">6</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(f.getvalue())</div><div class="line"><span class="string">b'\xe4\xb8\xad\xe6\x96\x87'</span></div></pre></td></tr></table></figure></p>
+<p>请注意，写入的不是str，而是经过UTF-8编码的bytes。和StringIO类似，可以用一个bytes 初始化BytesIO，然后像读文件一样读取：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> io <span class="keyword">import</span> BytesIO</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=BytesIO(<span class="string">b'\xe4\xb8\xad\xe6\x96\x87'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.read()</div><div class="line"><span class="string">b'\xe4\xb8\xad\xe6\x96\x87'</span></div></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="操作文件和目录"><a href="#操作文件和目录" class="headerlink" title="操作文件和目录"></a>操作文件和目录</h2><p>如果我们要操作文件、目录，可以在命令行下面输入操作系统提供的各种命令来完成，比如<code>dir</code>、<code>cp</code>等命令。</p>
+<p>如果要在python程序中执行这些目录和文件操作怎么办？其实操作系统提供的命令只是简单的调用了操作系统提供的接口函数，Python内置的<code>os</code>模块也可以直接调用操作系统提供的接口函数。</p>
+<p>打开python交互式命令行，我们来看看如何使用<code>os</code>模块的基本功能：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> os</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>os.name</div><div class="line"><span class="string">'nt'</span></div></pre></td></tr></table></figure></p>
+<p>如果是<code>nt</code>说明是Windows系统，如果是<code>posix</code>，说明是<code>Linux</code>、<code>Unix</code>、<code>Mac OS X</code>系统。要获取详细的系统信息，可以调用<code>uname()</code>函数，不过在Windows上不提供。</p>
+<h3 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h3><p>在操作系统中定义环境变量，全部保存在<code>os.environ</code>这个变量中，可以直接查看：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>os.environ</div><div class="line">environ(&#123;<span class="string">'PATH'</span>: <span class="string">'C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Users\\cdxu0\\AppData\\Local\\Programs\\Python\\Python35\\Scripts\\;C:\\Users\\cdxu0\\AppData\\Local\\Programs\\Python\\Python35\\'</span>, <span class="string">'PROGRAMFILES(X86)'</span>: <span class="string">'C:\\Program Files (x86)'</span>, <span class="string">'APPDATA'</span>: <span class="string">'C:\\Users\\cdxu0\\AppData\\Roaming'</span>, <span class="string">'FPS_BROWSER_USER_PROFILE_STRING'</span>: <span class="string">'Default'</span>, <span class="string">'COMMONPROGRAMFILES'</span>: <span class="string">'C:\\Program Files\\Common Files'</span>, <span class="string">'ALLUSERSPROFILE'</span>: <span class="string">'C:\\ProgramData'</span>, <span class="string">'COMSPEC'</span>: <span class="string">'C:\\Windows\\system32\\cmd.exe'</span>, <span class="string">'SESSIONNAME'</span>: <span class="string">'Console'</span>, <span class="string">'COMPUTERNAME'</span>: <span class="string">'DESKTOP-F92KHJR'</span>, <span class="string">'USERDOMAIN_ROAMINGPROFILE'</span>: <span class="string">'DESKTOP-F92KHJR'</span>, <span class="string">'SYSTEMDRIVE'</span>: <span class="string">'C:'</span>, <span class="string">'PROCESSOR_LEVEL'</span>: <span class="string">'6'</span>, <span class="string">'COMMONPROGRAMFILES(X86)'</span>: <span class="string">'C:\\Program Files (x86)\\Common Files'</span>, <span class="string">'LOGONSERVER'</span>: <span class="string">'\\\\MicrosoftAccount'</span>, <span class="string">'PROMPT'</span>: <span class="string">'$P$G'</span>, <span class="string">'PROCESSOR_REVISION'</span>: <span class="string">'4501'</span>, <span class="string">'PROCESSOR_IDENTIFIER'</span>: <span class="string">'Intel64 Family 6 Model 69 Stepping 1, GenuineIntel'</span>, <span class="string">'PROGRAMFILES'</span>: <span class="string">'C:\\Program Files'</span>, <span class="string">'USERNAME'</span>: <span class="string">'cdxu0'</span>, <span class="string">'PATHEXT'</span>: <span class="string">'.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC'</span>, <span class="string">'WINDIR'</span>: <span class="string">'C:\\Windows'</span>, <span class="string">'USERPROFILE'</span>: <span class="string">'C:\\Users\\cdxu0'</span>, <span class="string">'MOZ_PLUGIN_PATH'</span>: <span class="string">'C:\\PROGRAM FILES (X86)\\FOXIT SOFTWARE\\FOXIT READER PLUS\\plugins\\'</span>, <span class="string">'PROCESSOR_ARCHITECTURE'</span>: <span class="string">'AMD64'</span>, <span class="string">'LOCALAPPDATA'</span>: <span class="string">'C:\\Users\\cdxu0\\AppData\\Local'</span>, <span class="string">'PROGRAMDATA'</span>: <span class="string">'C:\\ProgramData'</span>, <span class="string">'HOMEPATH'</span>: <span class="string">'\\Users\\cdxu0'</span>, <span class="string">'PSMODULEPATH'</span>: <span class="string">'C:\\Program Files\\WindowsPowerShell\\Modules;C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\Modules'</span>, <span class="string">'TMP'</span>: <span class="string">'C:\\Users\\cdxu0\\AppData\\Local\\Temp'</span>, <span class="string">'FPS_BROWSER_APP_PROFILE_STRING'</span>: <span class="string">'Internet Explorer'</span>, <span class="string">'OS'</span>: <span class="string">'Windows_NT'</span>, <span class="string">'NUMBER_OF_PROCESSORS'</span>: <span class="string">'4'</span>, <span class="string">'PROGRAMW6432'</span>: <span class="string">'C:\\Program Files'</span>, <span class="string">'SYSTEMROOT'</span>: <span class="string">'C:\\Windows'</span>, <span class="string">'COMMONPROGRAMW6432'</span>: <span class="string">'C:\\Program Files\\Common Files'</span>, <span class="string">'ASL.LOG'</span>: <span class="string">'Destination=file'</span>, <span class="string">'PUBLIC'</span>: <span class="string">'C:\\Users\\Public'</span>, <span class="string">'TEMP'</span>: <span class="string">'C:\\Users\\cdxu0\\AppData\\Local\\Temp'</span>, <span class="string">'USERDOMAIN'</span>: <span class="string">'DESKTOP-F92KHJR'</span>, <span class="string">'HOMEDRIVE'</span>: <span class="string">'C:'</span>&#125;)</div></pre></td></tr></table></figure></p>
+<p>要获取某个环境变量的值，可以调用<code>os.environ.get(&#39;key&#39;)</code>：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>os.environ.get(<span class="string">'PATH'</span>)</div><div class="line"><span class="string">'C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Users\\cdxu0\\AppData\\Local\\Programs\\Python\\Python35\\Scripts\\;C:\\Users\\cdxu0\\AppData\\Local\\Programs\\Python\\Python35\\'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>os.environ.get(<span class="string">'OS'</span>,<span class="string">'default'</span>)</div><div class="line"><span class="string">'Windows_NT'</span></div></pre></td></tr></table></figure></p>
+<h3 id="操作文件和目录-1"><a href="#操作文件和目录-1" class="headerlink" title="操作文件和目录"></a>操作文件和目录</h3><p>操作文件和目录的函数一部分放在<code>os</code>模块中，一部分放在<code>`os.path</code>模块中，查看、创建、删除目录的调用如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>os.path.abspath(<span class="string">'.'</span>)</div><div class="line"><span class="string">'C:\\Users\\cdxu0'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>os.path.join(<span class="string">'C://Users//cdxu0'</span>,<span class="string">'testdir'</span>)</div><div class="line"><span class="string">'C://Users//cdxu0\\testdir'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>os.mkdir(<span class="string">'C://Users/cdxu0/testdir'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>os.rmdir(<span class="string">'C://Users/cdxu0/testdir'</span>)</div></pre></td></tr></table></figure></p>
+<p>把两个路径合成一个时，不要直接拼字符串，而要通过<code>os.path,join()</code>函数，这样可以正确处理不同操作系统的路径分隔符。同样拆分路径时，也不要哦去拆字符串，而要通过<code>os.path.split()</code>函数，这样可以把一个路径拆为两部分，后一部分总是最后级别的目录或文件名：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; os.path.split(&apos;C://Users/cdxu0/testdir&apos;)</div><div class="line">(&apos;C://Users/cdxu0&apos;, &apos;testdir&apos;)</div></pre></td></tr></table></figure></p>
+<p><code>os.pathsplitext()</code>可以直接让你得到文件扩展名：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; os.path.splitext(&apos;C://Users/cdxu0/testdir&apos;)</div><div class="line">(&apos;C://Users/cdxu0/testdir&apos;, &apos;&apos;)</div></pre></td></tr></table></figure></p>
+<p>这些合并、拆分路径的函数并不要求目录和文件要真实存在，他们只对字符串进行操作。</p>
+<p>文件操作使用下面的函数。假定当前目录下有一个<code>test.txt</code>文件：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>os.mkdir(<span class="string">'test.txt'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>os.rename(<span class="string">'test.txt'</span>,<span class="string">'test.py'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>os.remove(<span class="string">'test.py'</span>)</div></pre></td></tr></table></figure></p>
+<p>但是复制文件的函数不在<code>os</code>模块中，原因是复制文件并非是由操作系统提供的系统调用。<code>shutil</code>模块提供了<code>copyfile()</code>的函数，你可以在该模块中找到很多使用函数作为os模块的补充。</p>
+<p>最后来看看如何利用python的特性来过滤文件。比如我们要列出当前目录下的所有目录：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; [x for x in os.listdir(&apos;.&apos;) if os.path.isdir(x)]</div><div class="line">[&apos;.android&apos;, &apos;.idlerc&apos;, &apos;3D Objects&apos;, &apos;AppData&apos;, &apos;Application Data&apos;, &apos;Contacts&apos;, &apos;Cookies&apos;, &apos;Desktop&apos;, &apos;Documents&apos;, &apos;Downloads&apos;, &apos;Evernote&apos;, &apos;Favorites&apos;, &apos;IntelGraphicsProfiles&apos;, &apos;Links&apos;, &apos;Local Settings&apos;, &apos;Music&apos;, &apos;My Documents&apos;, &apos;NetHood&apos;, &apos;OneDrive&apos;, &apos;Pictures&apos;, &apos;PrintHood&apos;, &apos;Recent&apos;, &apos;Saved Games&apos;, &apos;Searches&apos;, &apos;SendTo&apos;, &apos;Templates&apos;, &apos;test.py&apos;, &apos;testdir&apos;, &apos;Videos&apos;, &apos;「开始」菜单&apos;]</div></pre></td></tr></table></figure></p>
+<p>要列出所有的，.py文件：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">for</span> x <span class="keyword">in</span> os.listdir(<span class="string">'.'</span>) <span class="keyword">if</span> os.path.isfile(x) <span class="keyword">and</span> os.path.splitext(x)[<span class="number">1</span>]==<span class="string">'.py'</span>]</div><div class="line">[<span class="string">'wenzi.py'</span>]</div></pre></td></tr></table></figure>
+<hr>
+<h2 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h2><p>在程序运行过程中，所有的变量都是在内存中，比如，定义一个dict:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">d=dict(name=<span class="string">'Bob'</span>,age=<span class="number">20</span>,score=<span class="number">99</span>)</div></pre></td></tr></table></figure></p>
+<p>可以随时修改变量，比如把<code>name</code>改为<code>bill</code>，但是一旦程序结束，变量所占用的内存就会被系统全部回收。如果没有把修改后的<code>bill</code>存储到磁盘上，下次重新运行程序，变量又被初始化为<code>Bob</code>。</p>
+<p>我们把变量从内存中变为可存储或传输的过程称之为序列化，在Python中叫picking，在其他语言中也被称为serialization，marshalling，flattening等。</p>
+<p>序列化之后，就可以把序列化后的内容写入磁盘，或者通过网络传输到别的机器上。反过来吧变量内容从序列化的对象重新读到内存里称之为反序列化，即unpicking。</p>
+<p>Python提供了<code>pickle</code>模块来实现序列化。</p>
+<p>首先，我们尝试把一个对象序列化并写入文件：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> pickle</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>d=dict(name=<span class="string">'Bob'</span>,age=<span class="number">20</span>,score=<span class="number">99</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>pickle.dumps(d)</div><div class="line"><span class="string">b'\x80\x03&#125;q\x00(X\x04\x00\x00\x00nameq\x01X\x03\x00\x00\x00Bobq\x02X\x03\x00\x00\x00ageq\x03K\x14X\x05\x00\x00\x00scoreq\x04Kcu.'</span></div></pre></td></tr></table></figure></p>
+<p><code>pickle.dumps()</code>方法把任意对象序列化成一个bytes，然后，就可以把这个bytes写入文件。或者用另一个方法<code>pickle.dump()</code>直接把对象序列化后写入一个file-like Object：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=open(<span class="string">'dump.txt'</span>,<span class="string">'wb'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>pickle.dump(d,f)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.close()</div></pre></td></tr></table></figure></p>
+<p>看看写入的<code>dump.txt</code>文件，内容很乱，这些都是python保存的对象内部信息。当我们要把对象从磁盘读到内存时，可以先把内容读到一个bytes，然后用<code>pickle.loads()</code>方法反序列化出对象，也可以直接用<code>pickle.load()</code>方法从一个file-like Object中直接反序列化出对象。我们打开另一个Python命令行来反序列化刚才保存的对象：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>f=open(<span class="string">'dump.txt'</span>,<span class="string">'rb'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>d=pickle.load(f)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>f.close</div><div class="line">&lt;built-<span class="keyword">in</span> method close of _io.BufferedReader object at <span class="number">0x0000028B1BA07938</span>&gt;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>d</div><div class="line">&#123;<span class="string">'name'</span>: <span class="string">'BOB'</span>, <span class="string">'age'</span>: <span class="number">20</span>, <span class="string">'score'</span>: <span class="number">99</span>&#125;</div></pre></td></tr></table></figure></p>
+<p>这个变量和原来的变量是完全不相干的对象，只是内容相同而已。</p>
+<h3 id="JSON"><a href="#JSON" class="headerlink" title="JSON"></a>JSON</h3><p>如果我们要在不同的编程语言之间传递对象，就必须把对象序列化为标准格式，比如XMl，但更好的方法是序列化为JSON，因为后者表示出来就是一个字符串，可以被所有语言读取，也可以方便的存储到磁盘或者通过网络传输。JSON不仅是标准格式，并且比XML更快，而且可以直接在WEB页面中读取，非常方便。</p>
+<p>JSON表示的对象就是标准的JavaScript语言的对象，JSON和Python内置的数据类型对应如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">JSON</th>
+<th style="text-align:right">Pythonv</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">{}</td>
+<td style="text-align:right">dict</td>
+</tr>
+<tr>
+<td style="text-align:left">[]</td>
+<td style="text-align:right">list</td>
+</tr>
+<tr>
+<td style="text-align:left">“string”</td>
+<td style="text-align:right">str</td>
+</tr>
+<tr>
+<td style="text-align:left">1234.56</td>
+<td style="text-align:right">int或float</td>
+</tr>
+<tr>
+<td style="text-align:left">true/false</td>
+<td style="text-align:right">True/False</td>
+</tr>
+<tr>
+<td style="text-align:left">null</td>
+<td style="text-align:right">None</td>
+</tr>
+</tbody>
+</table>
+<p>Python内置的json模块提供了非常完善的Python对象到JSON格式的转化。把python对象变为一个JSON：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> json</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>d=dict(name=<span class="string">'bob'</span>,age=<span class="number">34</span>,score=<span class="number">99</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>json.dumps(d)</div><div class="line"><span class="string">'&#123;"score": 99, "name": "bob", "age": 34&#125;'</span></div></pre></td></tr></table></figure></p>
+<p><code>dumps()</code>方法返回一个<code>str</code>内容就是标准的JSON。类似的，<code>dump()</code>方法可以直接把JSON写入一个<code>file-like Object</code>。</p>
+<p>要把JSON反序列化为Python对象，用<code>loads()</code>或者对应的<code>load()</code>方法可以直接把JSON的字符串反序列化，后者在<code>file-like Object</code>中读取字符串并反序列化：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>json_str=<span class="string">'&#123;"score": 99, "name": "bob", "age": 34&#125;'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>json.loads(json_str)</div><div class="line">&#123;<span class="string">'score'</span>: <span class="number">99</span>, <span class="string">'name'</span>: <span class="string">'bob'</span>, <span class="string">'age'</span>: <span class="number">34</span>&#125;</div></pre></td></tr></table></figure></p>
+<p>由于JSON标准规定JSON编码是UTF-8，所有我们总是能正确的在python的str和JSON的字符串之间切换。</p>
+<h3 id="JSON进阶"><a href="#JSON进阶" class="headerlink" title="JSON进阶"></a>JSON进阶</h3><p>Python的<code>dict</code>对象可以直接序列化为JSON的<code>{}</code>，不过我们更喜欢用class表示对象，比如定义Student类，然后序列化：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Student</span><span class="params">(object)</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,name,age,score)</span>:</span></div><div class="line"><span class="meta">... </span>            self.name=name</div><div class="line"><span class="meta">... </span>            self.age=age</div><div class="line"><span class="meta">... </span>            self.score=score</div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>s=Student(<span class="string">'Bob'</span>,<span class="number">20</span>,<span class="number">90</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(json.dumps(s))</div></pre></td></tr></table></figure></p>
+<p>运行结果是TypeError，原因是Student对象不是一个可以序列化为JSON的对象。查看<code>dumps()</code>方法的参数列表，发现除了第一个必须的<code>obj</code>参数外，<code>dumps()</code>方法还提供了很多可选参数：<br><a href="https://docs.python.org/3/library/json.html#json.dumps" target="_blank" rel="external">https://docs.python.org/3/library/json.html#json.dumps</a><br>这些可选参数就是让我们来定制JSON序列化。前面Student类实例无法序列化为JSON的原因是在默认情况下，<code>dumps()</code>方法不知道如何将Student实例变为一个JSON的{}对象。</p>
+<p>可选参数<code>default</code>就是把任意一个对象变成一个可序列化为JSON的对象，我们只需要为Student专门写一个转换函数，再把函数传进去即可：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">student2dict</span><span class="params">(std)</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">return</span> &#123;<span class="string">'name'</span>:std.name, <span class="string">'age'</span>:std.age, <span class="string">'score'</span>:std.score&#125;</div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(json.dumps(s,default=student2dict))</div><div class="line">&#123;<span class="string">"score"</span>: <span class="number">90</span>, <span class="string">"name"</span>: <span class="string">"Bob"</span>, <span class="string">"age"</span>: <span class="number">20</span>&#125;</div></pre></td></tr></table></figure></p>
+<p>这样，Student实例首先被<code>student2dict()</code>函数转换成dict，然后再顺利的被序列化为JSON，但是如果改变类，则仍然无法序列化为JSON。我们可以把任意class的实例变为dict：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(json.dumps(s,default=<span class="keyword">lambda</span> obj:obj.__dict__))</div><div class="line">&#123;<span class="string">"age"</span>: <span class="number">20</span>, <span class="string">"score"</span>: <span class="number">90</span>, <span class="string">"name"</span>: <span class="string">"Bob"</span>&#125;</div></pre></td></tr></table></figure></p>
+<p>因为通常class的实例都有一个<code>__dict__</code>属性，它就是一个dict，用来存储实例变量，也有少量例外，如定义了<strong>slots</strong>的class。</p>
+<p>同样，如果我们要把JSON反序列化为一个Student 对象实例，<code>loads()</code>方法首先转换出一个dict对象，然后我们传入<code>object_hook</code>函数负责把一个dict转换为Studnet实例。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">dict2student</span><span class="params">(d)</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">return</span> Student(d[<span class="string">'name'</span>],d[<span class="string">'age'</span>],d[<span class="string">'score'</span>])</div><div class="line">...</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>json_str=<span class="string">'&#123;"age":20, "score":88, "name":"Eason"&#125;'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(json.loads(json_str, object_hook=dict2student))</div><div class="line">&lt;__main__.Student object at <span class="number">0x00000262C641C6A0</span>&gt;</div></pre></td></tr></table></figure></p>
+<p>Python语言特定的序列化模块是<code>pickle</code>，但是如果要把序列化搞的更通用、更符合Web标准，就可以使用json模块。</p>
+<p>json模块的<code>dumps()</code>和<code>loads()</code>函数是定义的很好的接口的典范。当我们使用时，只需要传入一个必须的参数，但是当默认的序列化或者反序列化机制不满足我们的要求时，我们又可以传入更多参数来定制序列化或者反序列化，即做到了接口简单易用，又做到了充分的扩展性和灵活性。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/python/9.进程和线程/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2488,268 +2737,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/python/16.Web编程/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/python/16.Web编程/" itemprop="url">16. Web编程</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="Web开发"><a href="#Web开发" class="headerlink" title="Web开发"></a>Web开发</h1><p>随着互联网的兴起，人们发现CS架构不适合Web，最大的原因是Web应用程序的修改和升级非常迅速，而CS架构需要每个客户端逐个升级桌面APP，因此BS架构开始流行。</p>
-<p>在BS架构下，客户端只需浏览器，应用程序的逻辑和数据都存储在服务器端。浏览器只需要请求服务器获取Web页面，并把Web页面展示给用户即可。Web页面也具有极强的交互性。由于Web页面使用HTML编写的，而HTML具备超强的表现力，并且服务端升级后，客户端无需任何部署就可以使用到最新的版本，因此BS架构迅速流行起来。</p>
-<p>Web开发的阶段：<br>1、静态Web页面<br>2、CGI：Common Gateway Interface<br>3、ASP/JSP/PHP：脚本语言开发与HTML结合紧密。<br>4、MVC：Model-View-Controller的模式，ASP发展为ASP.Net，JSP和PHP也有一大堆MVC框架。</p>
-<p>Python是一种解释型脚本语言，开发效率高，所以很适合来做WEB开发。Python有上百种Web开发框架，有很多成熟的模板技术。</p>
-<h2 id="HTTP协议简介"><a href="#HTTP协议简介" class="headerlink" title="HTTP协议简介"></a>HTTP协议简介</h2><p>在Web应用中，服务器把网页传给浏览器，实际上就是把网页的HTML代码发送给浏览器，让浏览器显示出来。而浏览器和服务器之间的传输协议就是HTTP，所以：</p>
-<blockquote>
-<p>HTML是一种用来定义网页的文本，会HTML，就可以编写网页<br>HTTP是在网络上传输HTML的协议，用于浏览器和服务器的通信。</p>
-</blockquote>
-<p>chrome浏览器视图，开发者，开发者工具，就可以显示开发者工具：<br><img src="/img/1478682531152.png" alt="Alt text"></p>
-<p><code>Elements</code>显示网页的结构，<code>Network</code>显示浏览器和服务器的通信。我们点<code>Network</code>，确保第一个小红灯亮着，Chrome就会记录所有浏览器和服务器之间的通信：<br><img src="/img/1478682659522.png" alt="Alt text"></p>
-<p>当我们在地址栏输入<code>www.sina.com.cn</code>时，浏览器将显示新浪的首页。在<code>Network</code>中，定位到第一条记录，点击，右侧将显示<code>Request Headers</code>，点击右侧的<code>view source</code>，我们就可以看到浏览器发给新浪服务器的请求了：<br><img src="/img/1478691391893.png" alt="Alt text"></p>
-<p>最主要的头两行分析如下，第一行为</p>
-<blockquote>
-<p>GET / HTTP/1.1</p>
-</blockquote>
-<p>GET表示一个读取请求，将从服务器获得网页数据，<code>/</code>表示URL的路径，URL总是以<code>/</code>开头，<code>/</code>就表示首页，最后的<code>HTTP/1.1</code>表示采用的HTTP版本是1.1。目前HTTP协议的版本就是1.1，但是大部分服务器也支持1.0版本，主要区别在于1.1版本允许多个HTTP请求复用一个TCP连接，以加快传输速度。</p>
-<p>第二行开始，每一行都类似于<code>Xxx：abcdefg</code>：</p>
-<blockquote>
-<p>Host: www.sina.com.cn</p>
-</blockquote>
-<p>表示请求的域名是<code>www.sina.com.cn</code>，如果一天服务器有多个网站，服务器就需要通过Host来区分浏览器请求的是哪个网站。</p>
-<p>继续往下找到<code>Response Headers</code>，点击<code>view source</code>，显示服务器返回的原始相应数据：<br><img src="/img/1478692170995.png" alt="Alt text"></p>
-<p>HTTP相应分为Header和Body两部分，我们在Network中看到的Header最重要的几行如下：</p>
-<blockquote>
-<p>200 OK</p>
-</blockquote>
-<p><code>200</code>表示一个成功的响应，后面的<code>OK</code>是说明。失败的响应有<code>404 Not Found</code>，<code>500Internal Server Error</code>等。</p>
-<blockquote>
-<p>Content-Type：text/html</p>
-</blockquote>
-<p><code>Content-Type</code>指示响应的内容，这里是<code>text/html</code>表示HTML网页。请注意浏览器就是靠<code>Content-Type</code>来判断响应的内容是网页还是图片，是时频还是音乐，不是靠URL来判断响应的内容的。</p>
-<p>HTTP响应的Body就是HTML源码，我们可以直接查看：<br><img src="/img/1478692487428.png" alt="Alt text"></p>
-<p>当浏览器读取到新浪首页的HTML源码后，它会解析HTML，显示页面，然后根据HTML里面的各种链接，再发送HTTP请求到新浪服务器，拿到相应的图片、时频、Flash。JavaScript脚本、CSS等各种资源，最终显示出一个完整的页面。我们在Network下回看到很多额外的请求。</p>
-<h3 id="HTTP请求"><a href="#HTTP请求" class="headerlink" title="HTTP请求"></a>HTTP请求</h3><blockquote>
-<p>1、浏览器首先向服务器发送HTTP请求，请求包括：</p>
-<blockquote>
-<p>方法：GET–仅请求资源、POST–附带用户数据<br>路径：由Host头指定–Host：www.sina.com.cn<br>以及其他相关的Header</p>
-</blockquote>
-<p>2、服务器向浏览器返回HTTP相应，相应包括：</p>
-<blockquote>
-<p>响应代码：200表示成功，3xx表示重定向，4xx表示客户端发送的请求有错误，5xx表示服务器端处理时发生了错误；<br>响应类型：由Content-Type指定；<br>以及其他相关的Header；<br>通常服务器的HTTP响应会携带内容，也就是有一个Body，包含响应的内容，网页的HTML源码就在Body中。</p>
-</blockquote>
-<p>3、如果浏览器还需要继续向服务器请求其他资源，比如图片，就再次发出HTTP请求，重复步骤1、2。</p>
-</blockquote>
-<p>Web采用的HTTP协议采用了非常简单的请求-响应模式，从而大大简化了开发。当我们编写一个页面时，我们只需要在HTTP请求中把HTML发送出去，不需要考虑如何附带图片、视频等，浏览器如果需要请求图片和视频，它会发送另一个HTTP请求，因此，一个HTTP请求只处理一个资源。</p>
-<p>HTTP协议同时具备极强的扩展性，虽然浏览器请求的是<a href="http://www.sina.com.cn/的首页，但是新浪在HTML中可以链入其他服务器的资源，比如`" target="_blank" rel="external">http://www.sina.com.cn/的首页，但是新浪在HTML中可以链入其他服务器的资源，比如`</a><img src="http://i1.sinaimg.cn/home/2013/1008/U8455P30DT20131008135420.png">`=&gt;<img src="http://i1.sinaimg.cn/home/2013/1008/U8455P30DT20131008135420.png">，从而将请求压力分散到各个服务器上，并且，一个站点可以链接到其他站点，无数个站点互相链接起来，就形成了World Wide Web，简称WWW。</p>
-<h3 id="HTTP格式"><a href="#HTTP格式" class="headerlink" title="HTTP格式"></a>HTTP格式</h3><p>每个HTTP请求和相应都遵循相同的格式，一个HTTP包含Header和Body两部分，其中Body是可选的。</p>
-<p>HTTP协议是一种文本协议，所以它的格式非常简单。HTTP　GET请求的格式：<br><figure class="highlight http"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">GET</span> <span class="string">/path</span> HTTP/1.1</div><div class="line"><span class="attribute">Header1</span>: Value1</div><div class="line"><span class="attribute">Header2</span>: Value2</div><div class="line"><span class="attribute">Header3</span>: Value3</div></pre></td></tr></table></figure></p>
-<p>每个Header一行一个，换行符是<code>\r\n</code>。HTTP POST请求的格式是：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">POST</span> <span class="string">/path</span> HTTP/1.1</div><div class="line"><span class="attribute">Header1</span>: Value1</div><div class="line"><span class="attribute">Header2</span>: Value2</div><div class="line"><span class="attribute">Header3</span>: Value3</div><div class="line"></div><div class="line">body data goes here...</div></pre></td></tr></table></figure></p>
-<p>当遇到连续两个<code>\r\n</code>时，Header部分结束，后面的数据都是Body。</p>
-<p>HTTP相应的格式：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">200 OK</div><div class="line"><span class="attribute">Header1</span>: Value1</div><div class="line"><span class="attribute">Header2</span>: Value2</div><div class="line"><span class="attribute">Header3</span>: Value3</div><div class="line"></div><div class="line">body data goes here...</div></pre></td></tr></table></figure></p>
-<p>HTTP响应如果包含body，也是通过<code>\r\n\r\n</code>来分割的。Body数据类型是由<code>Content-Type</code>来确定的。</p>
-<hr>
-<h2 id="HTML简介"><a href="#HTML简介" class="headerlink" title="HTML简介"></a>HTML简介</h2><p>ＨＴＭＬ定义了一套语法规则，来告诉浏览器如何把一个丰富多彩的页面显示出来。最简单的HTML长这样：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">  &lt;title&gt;Hello&lt;/title&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">  &lt;h1&gt;Hello, world!&lt;/h1&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
-<p>可以用文本编辑器编写HTML，然后保存为<code>hello.html</code>，双击或者把文件拖到浏览器中，就可以看到效果：<br><img src="/img/1478694755907.png" alt="Alt text"><br>HTML文档就是一些列的Tag组成的，最外层的Tag是<code>&lt;html&gt;</code>。规范的HTML也包含<code>&lt;head&gt;...&lt;/head&gt;</code>和<code>&lt;body&gt;...&lt;body&gt;</code>注意不要和HTTP中的Header和Body搞混了。由于HTML是富文档模型，所以还有一系列的Tag来表示链接、图片、表格、表单等等。</p>
-<h3 id="CSS简介"><a href="#CSS简介" class="headerlink" title="CSS简介"></a>CSS简介</h3><p>CSS是Cascading Style Sheets(层叠样式表)，CSS用来控制HTML里的所有元素如何展现，比如，给标题元素<code>&lt;h1&gt;</code>加一个样式，变成48号字体，灰色，带阴影。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">  &lt;title&gt;Hello&lt;/title&gt;</div><div class="line">  &lt;style&gt;</div><div class="line">    h1 &#123;</div><div class="line">      color: #333333;</div><div class="line">      font-size: 48px;</div><div class="line">      text-shadow: 3px 3px 3px #666666;</div><div class="line">    &#125;</div><div class="line">  &lt;/style&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">  &lt;h1&gt;Hello, world!&lt;/h1&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
-<p>效果如下：<br><img src="/img/1478696324582.png" alt="Alt text"></p>
-<h3 id="JavaScript简介"><a href="#JavaScript简介" class="headerlink" title="JavaScript简介"></a>JavaScript简介</h3><p>JavaScript和Java没有关系。JavaScript是为了让HTML具有交互性而作为脚本语言添加的，JavaScript既可以内嵌到HTML中，也可以从外部链接到HTML中。如果我们希望当用户点击标题时把标题变为红色，就必须通过JavaScript来实现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">  &lt;title&gt;Hello&lt;/title&gt;</div><div class="line">  &lt;style&gt;</div><div class="line">    h1 &#123;</div><div class="line">      color: #333333;</div><div class="line">      font-size: 48px;</div><div class="line">      text-shadow: 3px 3px 3px #666666;</div><div class="line">    &#125;</div><div class="line">  &lt;/style&gt;</div><div class="line">   &lt;script&gt;</div><div class="line">    function change() &#123;</div><div class="line">      document.getElementsByTagName(&apos;h1&apos;)[0].style.color = &apos;#ff0000&apos;;</div><div class="line">    &#125;</div><div class="line">  &lt;/script&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">  &lt;h1 onclick=&quot;change()&quot;&gt;Hello, world!&lt;/h1&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
-<p><img src="/img/1478696913936.png" alt="Alt text"></p>
-<p>如果要学习Web开发，首先要对HTML、CSS和JavaScript作一定的了解。HTML定义了页面的内容，CSS来控制页面元素的样式，而JavaScript负责页面的交互逻辑。</p>
-<hr>
-<h2 id="WSGI接口"><a href="#WSGI接口" class="headerlink" title="WSGI接口"></a>WSGI接口</h2><p>了解HTTP协议和HTML文档，一个Web应用的本质是：</p>
-<blockquote>
-<p>浏览器发送一个请求—&gt;服务器收到请求，生成一个HTML文档—&gt;服务器把HTML文档作为HTTP相应的Body发送给浏览器—&gt;浏览器收到HTTP响应，从HTTP Body中取出HTML并显示。</p>
-</blockquote>
-<p>最简单的WEB应用就是先把HTML用文件保存好，用一个线程的HTTP服务器软件接收用户请求，从文件中读取HTML，返回。Apache、Nginx、Lighttpd等这些常见的静态服务器就是做这件事情的。</p>
-<p> 如果要动态生成HTML，就需要把上述步骤自己实现。不过那些工作量很大，所以底层的代码由专门的服务器软件实现，我们用python专注于生成HTML文档。我们不希望接触到TCP连接。HTTP原始请求和响应格式，所以需要一个统一的接口，让我们专心用Python编写Web业务。</p>
-<p>这个接口就是WSGI：Web Server Gateway Interface，只要求开发者实现一个函数，就可以相应HTTP请求。最简单的实例如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">application</span><span class="params">(envision, start_response)</span>:</span></div><div class="line"><span class="meta">... </span>    start_response(<span class="string">'200 OK'</span>,[(<span class="string">'Content-Type'</span>, <span class="string">'text/html'</span>)])</div><div class="line"><span class="meta">... </span>    <span class="keyword">return</span> [<span class="string">b'&lt;h1&gt;Hello, world!&lt;/h1&gt;'</span>]</div><div class="line">...</div></pre></td></tr></table></figure></p>
-<p>上面的<code>application()</code>函数就是符合WSGI标准的一个HTTP处理函数，它接收两个参数：</p>
-<blockquote>
-<p>environ：一个包含所有HTTP请求信息的<code>dict</code>对象<br>start_response：一个发送HTTP响应的函数。</p>
-</blockquote>
-<p>在<code>application()</code>函数中，调用：</p>
-<blockquote>
-<p>start_response(‘200 OK’,[(‘Content-Type’, ‘text/html’)])</p>
-</blockquote>
-<p>就发送了HTTP响应的Header，注意Header只能发送一次，也就是只能调用一次<code>start_response()</code>函数。<code>start_response()</code>函数接收两个参数，一个是HTTP响应码，一个是一组<code>list</code>表示的HTTP Header，每个Header用一个包含两个<code>str</code>的<code>tuple</code>表示。</p>
-<p>通常情况下，都应该把<code>Connect-Type</code>头发送给浏览器。其他很多常用的HTTP Header也应该发送。</p>
-<p>然后函数的返回值<code>b&#39;&lt;h1&gt;Hello, world!&lt;/h1&gt;&#39;</code>将作为HTTP响应的Body发送给浏览器。</p>
-<p>有了WSGI，我们关心的就是如何从<code>environ</code>这个<code>dict</code>对象中拿到HTTP请求信息然后构造HTML，通过<code>start_response()</code>函数发送Header，最后返回Body。</p>
-<p>整个<code>application()</code>函数本身并没有涉及到任何解析HTTP的部分，也就是说，底层代码不需要我们自己编写，我们只负责在更高层次上考虑如何响应请求就可以了。并且<code>application()</code>必须由WSGI服务器来调用。有很多符合WSGI规范的服务器，我们可以挑选一个来用。Python内置了一个WSGI服务器，这个模块叫wsgiref，它是用纯Python编写的WSGI服务器的参考实现。</p>
-<h3 id="运行WSGI服务"><a href="#运行WSGI服务" class="headerlink" title="运行WSGI服务"></a>运行WSGI服务</h3><p>我们先编写hello.py，实现WEB应用程序的WSGI处理函数：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">application</span><span class="params">(environ, start_response)</span>:</span></div><div class="line">	start_response(<span class="string">'200 OK'</span>,[(<span class="string">'Content-Type'</span>,<span class="string">'text/html'</span>)])</div><div class="line">	<span class="keyword">return</span> [<span class="string">b'&lt;h1&gt;Hello, world!&lt;/h1&gt;'</span>]</div></pre></td></tr></table></figure></p>
-<p>然后再编写一个<code>server.py</code>，负责启动WSGI服务器，加载<code>application()</code>函数：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> wsgiref.simple_server <span class="keyword">import</span> make_server</div><div class="line"></div><div class="line"><span class="keyword">from</span> hello <span class="keyword">import</span> application</div><div class="line"></div><div class="line"><span class="comment">#创建一个服务器，IP地址为空，端口为8000，处理函数是application</span></div><div class="line">httpd = make_server(<span class="string">''</span>, <span class="number">8000</span>, application)</div><div class="line">print(<span class="string">'Serving HTTP on port 8000...'</span>)</div><div class="line"></div><div class="line">httpd.serve_forever()</div></pre></td></tr></table></figure></p>
-<p>两个文件在一个目录下，执行服务器程序：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++&gt;python server.py</div><div class="line">Serving HTTP on port <span class="number">8000.</span>..</div><div class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> - - [<span class="number">10</span>/Nov/<span class="number">2016</span> <span class="number">20</span>:<span class="number">47</span>:<span class="number">17</span>] <span class="string">"GET / HTTP/1.1"</span> <span class="number">200</span> <span class="number">22</span></div><div class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> - - [<span class="number">10</span>/Nov/<span class="number">2016</span> <span class="number">20</span>:<span class="number">47</span>:<span class="number">17</span>] <span class="string">"GET /favicon.ico HTTP/1.1"</span> <span class="number">200</span> <span class="number">22</span></div></pre></td></tr></table></figure></p>
-<p> 启动成功后，打开浏览器，输入<code>http://localhost:8000/</code>就可以看到结果了。<br> <img src="/img/1478782158828.png" alt="Alt text"></p>
-<p>按<code>Ctrl+c</code>终止服务器。</p>
-<p>为了丰富WEB内容，可以在<code>environ</code>里读取<code>PATH_INFO</code>,这样可以显示更加动态的内容：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">application</span><span class="params">(environ, start_response)</span>:</span></div><div class="line">	start_response(<span class="string">'200 OK'</span>,[(<span class="string">'Content-Type'</span>,<span class="string">'text/html'</span>)])</div><div class="line">	body=<span class="string">'&lt;h1&gt;Hello, %s!&lt;/h1&gt;'</span> % (environ[<span class="string">'PATH_INFO'</span>][<span class="number">1</span>:] <span class="keyword">or</span> <span class="string">'web'</span>)</div><div class="line">	<span class="keyword">return</span> [body.encode(<span class="string">'utf-8'</span>)]</div></pre></td></tr></table></figure></p>
-<p>你可以在地址栏输入用户名作为URL的一部分，将返回<code>Hello,xx!</code>：<br><img src="/img/1478782836071.png" alt="Alt text"></p>
-<p>无论多么复杂的WEB应用程序，入口都是一个WSGI处理函数。HTTP请求的所有输入信息都可以通过<code>environ</code>获得，HTTP响应的输出都可以通过<code>start_response()</code>加上函数返回值作为Body。复杂的Web应用程序，光靠一个WSGI函数来处理还是太底层了，我们需要在WSGI之上再抽象出Web框架，进一步简化开发。</p>
-<hr>
-<h2 id="使用Web框架"><a href="#使用Web框架" class="headerlink" title="使用Web框架"></a>使用Web框架</h2><p>了解了WSGI框架，我们发现：其实一个WebAPP就是写一个WSGI的处理函数，针对每个HTTP请求进行相应。</p>
-<p>但是如何处理HTTP请求不是问题，问题是如何处理100个不同的URL。</p>
-<p>每一个URL可以对应GET和POST请求，当然还有PUT、DELETE等请求，但是通常我们只考虑最常见的GET和POST请求。</p>
-<p>一个最简单的想法是从<code>environ</code>变量里取出HTTP请求的信息，然后逐个判断：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">application</span><span class="params">(environ, start_response)</span>:</span></div><div class="line">    method = environ[<span class="string">'REQUEST_METHOD'</span>]</div><div class="line">    path = environ[<span class="string">'PATH_INFO'</span>]</div><div class="line">    <span class="keyword">if</span> method==<span class="string">'GET'</span> <span class="keyword">and</span> path==<span class="string">'/'</span>:</div><div class="line">        <span class="keyword">return</span> handle_home(environ, start_response)</div><div class="line">    <span class="keyword">if</span> method==<span class="string">'POST'</span> <span class="keyword">and</span> path=<span class="string">'/signin'</span>:</div><div class="line">        <span class="keyword">return</span> handle_signin(environ, start_response)</div><div class="line">    ...</div></pre></td></tr></table></figure></p>
-<p>这样写下去代码是没法维护的，因为WSGI提供的接口虽然比HTTP接口高级了不少，但是和Web APP的处理逻辑相比，还是比较低级的，我们需要在WSGI接口之上能进一步抽象，让我们专注于用一个函数处理一个URL，至于URL到函数 的映射就交给WEB框架来做。</p>
-<p>Python提供了上百个开源的框架，最流行的为<a href="http://flask.pocoo.org/" target="_blank" rel="external">flask</a>。</p>
-<p>写一个<code>app.py</code>，处理三个URL，分别是：</p>
-<blockquote>
-<p>1、<code>GET /</code>：首页，返回<code>Home</code><br>2、<code>GET /signin</code>:登录页，显示登录表单<br>3、<code>POST /signin</code>：处理登录表单，显示登录结果。</p>
-</blockquote>
-<p>同一个URL<code>/signin</code>分别有GET和POST两种请求，映射到两个处理函数争取。Flask通过Python的装饰器在内部自动地把URL和函数关联起来：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</div><div class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> request</div><div class="line"></div><div class="line">app=Flask(__name__)</div><div class="line"></div><div class="line"><span class="meta">@app.route('/',methods=['GET', 'Post'])</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">home</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">return</span> <span class="string">'&lt;h1&gt;Home&lt;/h1&gt;'</span></div><div class="line"></div><div class="line"><span class="meta">@app.route('/signin', methods=['GET'])</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">signin_form</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">return</span> <span class="string">'''&lt;form action="/signin" method="post"&gt;</span></div><div class="line"><span class="string">			  &lt;p&gt;&lt;input name="username"&gt;&lt;/p&gt;</span></div><div class="line"><span class="string">			  &lt;p&gt;&lt;input name="password" type="password"&gt;&lt;/p&gt;</span></div><div class="line"><span class="string">			  &lt;p&gt;&lt;button type="submit"&gt;Sign In&lt;/p&gt;</span></div><div class="line"><span class="string">			  &lt;/form&gt;'''</span></div><div class="line"></div><div class="line"><span class="meta">@app.route('/signin', methods=['POST'])</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">signin</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">if</span> request.form[<span class="string">'username'</span>]==<span class="string">'admin'</span> <span class="keyword">and</span> request.form[<span class="string">'password'</span>]==<span class="string">'password'</span>:</div><div class="line">		<span class="keyword">return</span> <span class="string">'&lt;h3&gt;Hello, admin!&lt;/h3&gt;'</span></div><div class="line">	<span class="keyword">return</span> <span class="string">'&lt;h3&gt;Bad username or password.&lt;/h3&gt;'</span></div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</div><div class="line">	app.run()</div></pre></td></tr></table></figure></p>
-<p>运行<code>python app.py</code>，Flask自带的Server在端口5000上监听：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">D:\笔记\Python\Notepad++&gt;python app.py</div><div class="line"> * Running on http://<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">5000</span>/ (Press CTRL+C to quit)</div><div class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> - - [<span class="number">11</span>/Nov/<span class="number">2016</span> <span class="number">18</span>:<span class="number">07</span>:<span class="number">12</span>] <span class="string">"GET / HTTP/1.1"</span> <span class="number">200</span> -</div><div class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> - - [<span class="number">11</span>/Nov/<span class="number">2016</span> <span class="number">18</span>:<span class="number">07</span>:<span class="number">12</span>] <span class="string">"GET /favicon.ico HTTP/1.1"</span> <span class="number">404</span> -</div></pre></td></tr></table></figure></p>
-<p>在浏览器首页输入：<code>http://localhost:5000/</code>:<br><img src="/img/1478858951071.png" alt="Alt text"></p>
-<p>首页显示正确，地址栏输入:<code>http://localhost:5000/signin</code>:<br><img src="/img/1478859009824.png" alt="Alt text"></p>
-<p>输入预设的用户名和口令：<br><img src="/img/1478859057990.png" alt="Alt text"><br><img src="/img/1478859073699.png" alt="Alt text"></p>
-<p>实际的Web APP应该拿到用户名和口令后，去数据库查询再对比，来判断用户是否能登录成功。除了Flask，常见的python框架还有：Django、web.py、Bottle、Tornado</p>
-<p>有了Web框架，我们在编写Web应用时，注意力就从WSGI处理函数转移到URL+对应的处理函数，编写变得简单。在编写URL处理函数时，除了配置URL外，从HTTP请求拿到用户数据也是非常重要的。Web框架都提供了自己的API来实现这些功能。Flask通过<code>request.form[&#39;name&#39;]</code>来获取表单的内容。</p>
-<hr>
-<h2 id="使用模板"><a href="#使用模板" class="headerlink" title="使用模板"></a>使用模板</h2><p>Web框架把我们从WSGI中拯救出来了，我们只需要不断地编写函数，带上URL，就可以继续Web APP的开发了。Web App最复杂的部分在HTML页面。HTML不仅要正确，还要通过CSS美化，再加上复杂的JavaScript脚本来实现各种交互和动画效果。用python的字符串是无法实现的。所以出现了模板技术。</p>
-<p>使用模板首先需要预先准备一个HTML文档，这个HTMl文档不是普通的HTML，而是嵌入了一些变量和指令，然后根据我们传入的数据，替换后得到最终的HTMl，发送给用户：<br><img src="/img/1478859739321.png" alt="Alt text"></p>
-<p>这就是传说中的MVC：Model-View-Controller，模型-视图-控制器</p>
-<p>Python处理URL的函数就是C：Controller，Controller负责业务逻辑，比如检查用户名是否存在，取出用户信息等等。包含变量<code></code>的模板就是V：View，View负责显示逻辑，通过简单地替换一些变量，View最终输出的就是用户看到的HTML。</p>
-<p>上面的例子中，Model就是一个<code>dict</code>：</p>
-<blockquote>
-<p>{ ‘name’: ‘Michael’}</p>
-</blockquote>
-<p>因为Python支持关键字参数，很多Web框架允许传入关键字参数，然后在框架内部组装出一个<code>dict</code>作为Model。</p>
-<p>对之前的app.py进行改写：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</div><div class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> request, render_template</div><div class="line"></div><div class="line">app=Flask(__name__)</div><div class="line"></div><div class="line"><span class="meta">@app.route('/',methods=['GET', 'Post'])</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">home</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">return</span> render_template(<span class="string">'home.html'</span>)</div><div class="line"></div><div class="line"><span class="meta">@app.route('/signin', methods=['GET'])</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">signin_form</span><span class="params">()</span>:</span></div><div class="line">	<span class="keyword">return</span> render_template(<span class="string">'form.html'</span>)</div><div class="line"></div><div class="line"><span class="meta">@app.route('/signin', methods=['POST'])</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">signin</span><span class="params">()</span>:</span></div><div class="line">	username=request.form[<span class="string">'username'</span>]</div><div class="line">	password=request.form[<span class="string">'password'</span>]</div><div class="line">	<span class="keyword">if</span> username==<span class="string">'admin'</span> <span class="keyword">and</span> password==<span class="string">'password'</span>:</div><div class="line">		<span class="keyword">return</span> render_template(<span class="string">'signin-ok.html'</span>, username=username)</div><div class="line">	<span class="keyword">return</span> render_template(<span class="string">'form.html'</span>, message=<span class="string">'Bad username or password'</span>,username=username)</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</div><div class="line">	app.run()</div></pre></td></tr></table></figure></p>
-<p>Flask通过<code>render_template()</code>函数来实现模板的渲染。和Web框架类似，Python的模板也有很多中。Flask默认支持的模板是jinja2，用jinja2来编写模板home.html、显示首页：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">  &lt;title&gt;Home&lt;/title&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">  &lt;h1 style=&quot;font-style:italic&quot;&gt;Home&lt;/h1&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html</div></pre></td></tr></table></figure></p>
-<p>form.html:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">  &lt;title&gt;Please Sign In&lt;/title&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">  &#123;% if message %&#125;</div><div class="line">  &lt;p style=&quot;color:red&quot;&gt;&#123;&#123; message &#125;&#125;&lt;/p&gt;</div><div class="line">  &#123;% endif %&#125;</div><div class="line">  &lt;form action=&quot;/signin&quot; method=&quot;post&quot;&gt;</div><div class="line">    &lt;legend&gt;Please sign in:&lt;/legend&gt;</div><div class="line">    &lt;p&gt;&lt;input name=&quot;username&quot; placeholder=&quot;Username&quot; value=&quot;&#123;&#123; username &#125;&#125;&quot;&gt;&lt;/p&gt;</div><div class="line">    &lt;p&gt;&lt;input name=&quot;password&quot; placeholder=&quot;Password&quot; type=&quot;password&quot;&gt;&lt;/p&gt;</div><div class="line">    &lt;p&gt;&lt;button type=&quot;submit&quot;&gt;Sign In&lt;/button&gt;&lt;/p&gt;</div><div class="line">  &lt;/form&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
-<p>signin-ok.html:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">  &lt;title&gt;Welcome, &#123;&#123; username &#125;&#125;&lt;/title&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">  &lt;p&gt;Welcome, &#123;&#123; username &#125;&#125;!&lt;/p&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2803,7 +2790,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">96</span>
+                <span class="site-state-item-count">97</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

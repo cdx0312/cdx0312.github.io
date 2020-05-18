@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="go,源码解读," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="RWMutex
+RWMutex是一个互斥读写锁
+可以被多个读线程持有或者被一个写线程持有
+零值为未上锁的mutex
+第一次使用之后不可复制
+多个线程的读取操作不会被阻塞，读写，写读，读读会被阻塞
+
+1234567type RWMutex struct &amp;#123;	w           Mutex  // 互斥量	writerSem   uint32 // 写阻塞等待的信号量，最后一个读线程释放">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go源码解读-sync.RWMutex">
+<meta property="og:url" content="http://yoursite.com/2020/05/18/golang/源码解读/sync/rwmutex/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="RWMutex
+RWMutex是一个互斥读写锁
+可以被多个读线程持有或者被一个写线程持有
+零值为未上锁的mutex
+第一次使用之后不可复制
+多个线程的读取操作不会被阻塞，读写，写读，读读会被阻塞
+
+1234567type RWMutex struct &amp;#123;	w           Mutex  // 互斥量	writerSem   uint32 // 写阻塞等待的信号量，最后一个读线程释放">
+<meta property="og:updated_time" content="2020-05-18T09:26:58.702Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="go源码解读-sync.RWMutex">
+<meta name="twitter:description" content="RWMutex
+RWMutex是一个互斥读写锁
+可以被多个读线程持有或者被一个写线程持有
+零值为未上锁的mutex
+第一次使用之后不可复制
+多个线程的读取操作不会被阻塞，读写，写读，读读会被阻塞
+
+1234567type RWMutex struct &amp;#123;	w           Mutex  // 互斥量	writerSem   uint32 // 写阻塞等待的信号量，最后一个读线程释放">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/05/18/golang/源码解读/sync/rwmutex/"/>
+
+
+
+
+
+  <title>go源码解读-sync.RWMutex | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/18/golang/源码解读/sync/rwmutex/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">go源码解读-sync.RWMutex</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-18T17:02:27+08:00">
+                2020-05-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/源码解读/" itemprop="url" rel="index">
+                    <span itemprop="name">源码解读</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="RWMutex"><a href="#RWMutex" class="headerlink" title="RWMutex"></a>RWMutex</h2><ul>
+<li>RWMutex是一个互斥读写锁</li>
+<li>可以被多个读线程持有或者被一个写线程持有</li>
+<li>零值为未上锁的mutex</li>
+<li>第一次使用之后不可复制</li>
+<li>多个线程的读取操作不会被阻塞，读写，写读，读读会被阻塞</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> RWMutex <span class="keyword">struct</span> &#123;</div><div class="line">	w           Mutex  <span class="comment">// 互斥量</span></div><div class="line">	writerSem   <span class="keyword">uint32</span> <span class="comment">// 写阻塞等待的信号量，最后一个读线程释放锁时会释放信号量</span></div><div class="line">	readerSem   <span class="keyword">uint32</span> <span class="comment">// 读阻塞等待信号量，持有写锁的线程完成释放锁后释放的信号量</span></div><div class="line">	readerCount <span class="keyword">int32</span>  <span class="comment">// 记录读者的数量</span></div><div class="line">	readerWait  <span class="keyword">int32</span>  <span class="comment">// 记录写阻塞时读者的个数</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="RWMutex的方法"><a href="#RWMutex的方法" class="headerlink" title="RWMutex的方法"></a>RWMutex的方法</h3><ul>
+<li>RLock方法完成读锁的加锁，如果是个写线程请求锁将会被阻塞</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rw *RWMutex)</span> <span class="title">RLock</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> race.Enabled &#123;</div><div class="line">		_ = rw.w.state</div><div class="line">		race.Disable()</div><div class="line">	&#125;</div><div class="line">  <span class="comment">// 完成当前持有该锁的读者的个数的+1，如果没有持有该锁的读线程，则会唤醒等待中的写信号量</span></div><div class="line">	<span class="keyword">if</span> atomic.AddInt32(&amp;rw.readerCount, <span class="number">1</span>) &lt; <span class="number">0</span> &#123;</div><div class="line">		runtime_SemacquireMutex(&amp;rw.readerSem, <span class="literal">false</span>)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> race.Enabled &#123;</div><div class="line">		race.Enable()</div><div class="line">		race.Acquire(unsafe.Pointer(&amp;rw.readerSem))</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>RUnlock方法完成读锁的解锁操作</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rw *RWMutex)</span> <span class="title">RUnlock</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> race.Enabled &#123;</div><div class="line">		_ = rw.w.state</div><div class="line">		race.ReleaseMerge(unsafe.Pointer(&amp;rw.writerSem))</div><div class="line">		race.Disable()</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> r := atomic.AddInt32(&amp;rw.readerCount, <span class="number">-1</span>); r &lt; <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">if</span> r+<span class="number">1</span> == <span class="number">0</span> || r+<span class="number">1</span> == -rwmutexMaxReaders &#123;</div><div class="line">			race.Enable()</div><div class="line">			throw(<span class="string">"sync: RUnlock of unlocked RWMutex"</span>)</div><div class="line">		&#125;</div><div class="line">		<span class="comment">// A writer is pending.</span></div><div class="line">		<span class="keyword">if</span> atomic.AddInt32(&amp;rw.readerWait, <span class="number">-1</span>) == <span class="number">0</span> &#123;</div><div class="line">			<span class="comment">// The last reader unblocks the writer.</span></div><div class="line">			runtime_Semrelease(&amp;rw.writerSem, <span class="literal">false</span>)</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> race.Enabled &#123;</div><div class="line">		race.Enable()</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Lock完成写锁的加锁</li>
+<li>写锁实际上是加到w中的</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rw *RWMutex)</span> <span class="title">Lock</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> race.Enabled &#123;</div><div class="line">		_ = rw.w.state</div><div class="line">		race.Disable()</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// First, resolve competition with other writers.</span></div><div class="line">	rw.w.Lock()</div><div class="line">	<span class="comment">// Announce to readers there is a pending writer.</span></div><div class="line">	r := atomic.AddInt32(&amp;rw.readerCount, -rwmutexMaxReaders) + rwmutexMaxReaders</div><div class="line">	<span class="comment">// Wait for active readers.</span></div><div class="line">	<span class="keyword">if</span> r != <span class="number">0</span> &amp;&amp; atomic.AddInt32(&amp;rw.readerWait, r) != <span class="number">0</span> &#123;</div><div class="line">		runtime_SemacquireMutex(&amp;rw.writerSem, <span class="literal">false</span>)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> race.Enabled &#123;</div><div class="line">		race.Enable()</div><div class="line">		race.Acquire(unsafe.Pointer(&amp;rw.readerSem))</div><div class="line">		race.Acquire(unsafe.Pointer(&amp;rw.writerSem))</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Unlock方法完成写锁的解锁</li>
+<li>逻辑与Mutex的解锁是一致的</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rw *RWMutex)</span> <span class="title">Unlock</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> race.Enabled &#123;</div><div class="line">		_ = rw.w.state</div><div class="line">		race.Release(unsafe.Pointer(&amp;rw.readerSem))</div><div class="line">		race.Disable()</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// Announce to readers there is no active writer.</span></div><div class="line">	r := atomic.AddInt32(&amp;rw.readerCount, rwmutexMaxReaders)</div><div class="line">	<span class="keyword">if</span> r &gt;= rwmutexMaxReaders &#123;</div><div class="line">		race.Enable()</div><div class="line">		throw(<span class="string">"sync: Unlock of unlocked RWMutex"</span>)</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Unblock blocked readers, if any.</span></div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="keyword">int</span>(r); i++ &#123;</div><div class="line">		runtime_Semrelease(&amp;rw.readerSem, <span class="literal">false</span>)</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Allow other writers to proceed.</span></div><div class="line">	rw.w.Unlock()</div><div class="line">	<span class="keyword">if</span> race.Enabled &#123;</div><div class="line">		race.Enable()</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>封装了专门的读锁</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// RLocker returns a Locker interface that implements</span></div><div class="line"><span class="comment">// the Lock and Unlock methods by calling rw.RLock and rw.RUnlock.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rw *RWMutex)</span> <span class="title">RLocker</span><span class="params">()</span> <span class="title">Locker</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> (*rlocker)(rw)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> rlocker RWMutex</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *rlocker)</span> <span class="title">Lock</span><span class="params">()</span></span>   &#123; (*RWMutex)(r).RLock() &#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *rlocker)</span> <span class="title">Unlock</span><span class="params">()</span></span> &#123; (*RWMutex)(r).RUnlock() &#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/go/" rel="tag"># go</a>
+          
+            <a href="/tags/源码解读/" rel="tag"># 源码解读</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/18/golang/源码解读/sync/cond/" rel="next" title="go源码解读-sync.Cond">
+                <i class="fa fa-chevron-left"></i> go源码解读-sync.Cond
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/18/golang/源码解读/sync/waitGroup/" rel="prev" title="go源码解读-sync.WaitGroup">
+                go源码解读-sync.WaitGroup <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">35</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#RWMutex"><span class="nav-number">1.</span> <span class="nav-text">RWMutex</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RWMutex的方法"><span class="nav-number">1.1.</span> <span class="nav-text">RWMutex的方法</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

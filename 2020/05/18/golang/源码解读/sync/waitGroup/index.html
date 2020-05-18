@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="go,源码解读," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="WaitGroup
+WaitGroup结构体会等待一组goroutines结束
+Add方法会设置等待的goroutine的数量
+goroutine结束之后调用done即可
+WaitGroup可以用于所有线程都结束之后才执行的逻辑
+使用之后不可以再复制
+state1为64位结构的值
+高位的32位为计数器
+低位的32位为等待线程数
+
+
+
+1234type WaitGroup struct &amp;#123;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go源码解读-sync.WaitGroup">
+<meta property="og:url" content="http://yoursite.com/2020/05/18/golang/源码解读/sync/waitGroup/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="WaitGroup
+WaitGroup结构体会等待一组goroutines结束
+Add方法会设置等待的goroutine的数量
+goroutine结束之后调用done即可
+WaitGroup可以用于所有线程都结束之后才执行的逻辑
+使用之后不可以再复制
+state1为64位结构的值
+高位的32位为计数器
+低位的32位为等待线程数
+
+
+
+1234type WaitGroup struct &amp;#123;">
+<meta property="og:updated_time" content="2020-05-18T12:08:55.311Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="go源码解读-sync.WaitGroup">
+<meta name="twitter:description" content="WaitGroup
+WaitGroup结构体会等待一组goroutines结束
+Add方法会设置等待的goroutine的数量
+goroutine结束之后调用done即可
+WaitGroup可以用于所有线程都结束之后才执行的逻辑
+使用之后不可以再复制
+state1为64位结构的值
+高位的32位为计数器
+低位的32位为等待线程数
+
+
+
+1234type WaitGroup struct &amp;#123;">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/05/18/golang/源码解读/sync/waitGroup/"/>
+
+
+
+
+
+  <title>go源码解读-sync.WaitGroup | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/18/golang/源码解读/sync/waitGroup/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">go源码解读-sync.WaitGroup</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-18T18:00:40+08:00">
+                2020-05-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/源码解读/" itemprop="url" rel="index">
+                    <span itemprop="name">源码解读</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="WaitGroup"><a href="#WaitGroup" class="headerlink" title="WaitGroup"></a>WaitGroup</h2><ul>
+<li>WaitGroup结构体会等待一组goroutines结束</li>
+<li>Add方法会设置等待的goroutine的数量</li>
+<li>goroutine结束之后调用done即可</li>
+<li>WaitGroup可以用于所有线程都结束之后才执行的逻辑</li>
+<li>使用之后不可以再复制</li>
+<li>state1为64位结构的值<ul>
+<li>高位的32位为计数器</li>
+<li>低位的32位为等待线程数</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> WaitGroup <span class="keyword">struct</span> &#123;</div><div class="line">	noCopy noCopy <span class="comment">// 第一次使用之后，不可以用copy函数进行复制</span></div><div class="line">	state1 [<span class="number">3</span>]<span class="keyword">uint32</span> <span class="comment">// 计数器，高4个字节记录要等待的线程总数，低位4个字节记录还需要等待完成的线程数量</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="state方法"><a href="#state方法" class="headerlink" title="state方法"></a>state方法</h3><ul>
+<li>state方法返回计数和信号量的地址</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(wg *WaitGroup)</span> <span class="title">state</span><span class="params">()</span> <span class="params">(statep *<span class="keyword">uint64</span>, semap *<span class="keyword">uint32</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> <span class="keyword">uintptr</span>(unsafe.Pointer(&amp;wg.state1))%<span class="number">8</span> == <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">return</span> (*<span class="keyword">uint64</span>)(unsafe.Pointer(&amp;wg.state1)), &amp;wg.state1[<span class="number">2</span>]</div><div class="line">	&#125; <span class="keyword">else</span> &#123;</div><div class="line">		<span class="keyword">return</span> (*<span class="keyword">uint64</span>)(unsafe.Pointer(&amp;wg.state1[<span class="number">1</span>])), &amp;wg.state1[<span class="number">0</span>]</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Add方法"><a href="#Add方法" class="headerlink" title="Add方法"></a>Add方法</h3><ul>
+<li>Add方法添加计数的goroutine数到wg中</li>
+<li>添加完计数器变为0，所有的阻塞的线程会被释放</li>
+<li>添加完计数器为负数，会panic</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(wg *WaitGroup)</span> <span class="title">Add</span><span class="params">(delta <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">  <span class="comment">// 获取当前计数和信号量的地址</span></div><div class="line">	statep, semap := wg.state()</div><div class="line">	<span class="keyword">if</span> race.Enabled &#123;</div><div class="line">		_ = *statep <span class="comment">// trigger nil deref early</span></div><div class="line">		<span class="keyword">if</span> delta &lt; <span class="number">0</span> &#123;</div><div class="line">			race.ReleaseMerge(unsafe.Pointer(wg))</div><div class="line">		&#125;</div><div class="line">		race.Disable()</div><div class="line">		<span class="keyword">defer</span> race.Enable()</div><div class="line">	&#125;</div><div class="line">  <span class="comment">// 高32位来进行计数器的CAS加法</span></div><div class="line">	state := atomic.AddUint64(statep, <span class="keyword">uint64</span>(delta)&lt;&lt;<span class="number">32</span>)</div><div class="line">  <span class="comment">// 当前需要等待的线总数</span></div><div class="line">	v := <span class="keyword">int32</span>(state &gt;&gt; <span class="number">32</span>)</div><div class="line">  <span class="comment">// 获取需要等待结束的线程数</span></div><div class="line">	w := <span class="keyword">uint32</span>(state)</div><div class="line">	<span class="keyword">if</span> race.Enabled &amp;&amp; delta &gt; <span class="number">0</span> &amp;&amp; v == <span class="keyword">int32</span>(delta) &#123;</div><div class="line">		race.Read(unsafe.Pointer(semap))</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> v &lt; <span class="number">0</span> &#123;</div><div class="line">		<span class="built_in">panic</span>(<span class="string">"sync: negative WaitGroup counter"</span>)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> w != <span class="number">0</span> &amp;&amp; delta &gt; <span class="number">0</span> &amp;&amp; v == <span class="keyword">int32</span>(delta) &#123;</div><div class="line">		<span class="built_in">panic</span>(<span class="string">"sync: WaitGroup misuse: Add called concurrently with Wait"</span>)</div><div class="line">	&#125;</div><div class="line">  <span class="comment">// v或者w为0直接返回即可</span></div><div class="line">	<span class="keyword">if</span> v &gt; <span class="number">0</span> || w == <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line">  <span class="comment">// Add和Wait同步发生，此时会报错</span></div><div class="line">	<span class="keyword">if</span> *statep != state &#123;</div><div class="line">		<span class="built_in">panic</span>(<span class="string">"sync: WaitGroup misuse: Add called concurrently with Wait"</span>)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">  <span class="comment">// 将等待完成的线程数设置为0，逐一释放之前等待的线程</span></div><div class="line">	*statep = <span class="number">0</span></div><div class="line">	<span class="keyword">for</span> ; w != <span class="number">0</span>; w-- &#123;</div><div class="line">		runtime_Semrelease(semap, <span class="literal">false</span>)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Done方法"><a href="#Done方法" class="headerlink" title="Done方法"></a>Done方法</h3><ul>
+<li>Done方法完成counter–</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(wg *WaitGroup)</span> <span class="title">Done</span><span class="params">()</span></span> &#123;</div><div class="line">	wg.Add(<span class="number">-1</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Wait方法"><a href="#Wait方法" class="headerlink" title="Wait方法"></a>Wait方法</h3><ul>
+<li>Wait方法完成线程阻塞，直到counter为0</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(wg *WaitGroup)</span> <span class="title">Wait</span><span class="params">()</span></span> &#123;</div><div class="line">  <span class="comment">// 获取计数器和信号量的地址</span></div><div class="line">	statep, semap := wg.state()</div><div class="line">	<span class="keyword">if</span> race.Enabled &#123;</div><div class="line">		_ = *statep <span class="comment">// trigger nil deref early</span></div><div class="line">		race.Disable()</div><div class="line">	&#125;</div><div class="line">  <span class="comment">// 循环等待counter为0</span></div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		state := atomic.LoadUint64(statep)</div><div class="line">    <span class="comment">// 获取counter和waiter的值</span></div><div class="line">		v := <span class="keyword">int32</span>(state &gt;&gt; <span class="number">32</span>)</div><div class="line">		w := <span class="keyword">uint32</span>(state)</div><div class="line">		<span class="keyword">if</span> v == <span class="number">0</span> &#123;</div><div class="line">      <span class="comment">// 如果counter为0，则直接返回，进行后续操作</span></div><div class="line">			<span class="keyword">if</span> race.Enabled &#123;</div><div class="line">				race.Enable()</div><div class="line">				race.Acquire(unsafe.Pointer(wg))</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">return</span></div><div class="line">		&#125;</div><div class="line">		<span class="comment">// 否则waiter计数++</span></div><div class="line">		<span class="keyword">if</span> atomic.CompareAndSwapUint64(statep, state, state+<span class="number">1</span>) &#123;</div><div class="line">			<span class="keyword">if</span> race.Enabled &amp;&amp; w == <span class="number">0</span> &#123;</div><div class="line">				race.Write(unsafe.Pointer(semap))</div><div class="line">			&#125;</div><div class="line">      <span class="comment">// 排队休眠，等待信号量唤醒</span></div><div class="line">			runtime_Semacquire(semap)</div><div class="line">      <span class="comment">// 休眠过程中，wg被重用会导致state不一致，从而panic</span></div><div class="line">			<span class="keyword">if</span> *statep != <span class="number">0</span> &#123;</div><div class="line">				<span class="built_in">panic</span>(<span class="string">"sync: WaitGroup is reused before previous Wait has returned"</span>)</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">if</span> race.Enabled &#123;</div><div class="line">				race.Enable()</div><div class="line">				race.Acquire(unsafe.Pointer(wg))</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">return</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/go/" rel="tag"># go</a>
+          
+            <a href="/tags/源码解读/" rel="tag"># 源码解读</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/18/golang/源码解读/sync/rwmutex/" rel="next" title="go源码解读-sync.RWMutex">
+                <i class="fa fa-chevron-left"></i> go源码解读-sync.RWMutex
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">35</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#WaitGroup"><span class="nav-number">1.</span> <span class="nav-text">WaitGroup</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#state方法"><span class="nav-number">1.1.</span> <span class="nav-text">state方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Add方法"><span class="nav-number">1.2.</span> <span class="nav-text">Add方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Done方法"><span class="nav-number">1.3.</span> <span class="nav-text">Done方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Wait方法"><span class="nav-number">1.4.</span> <span class="nav-text">Wait方法</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

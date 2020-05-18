@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="go,源码解读," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="Mutex
+sync包提供了互斥量，Once, WaitGroup来保证多线程并发安全
+比较简单的同步通过sync包，比较复杂的同步建议通过channel来实现
+
+Mutex结构体
+Mutex实际上是互斥锁
+Mutex的初始化状态就是一个没加锁的互斥锁
+Mutex在被加锁之后不允许被复制，也就是带有状态的Mutex不能被复制，否则会给原来的临界数据复制出一把锁
+Mutex包含两个字段
+state">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go源码解读-sync.Mutex">
+<meta property="og:url" content="http://yoursite.com/2020/05/13/golang/源码解读/sync/mutex/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="Mutex
+sync包提供了互斥量，Once, WaitGroup来保证多线程并发安全
+比较简单的同步通过sync包，比较复杂的同步建议通过channel来实现
+
+Mutex结构体
+Mutex实际上是互斥锁
+Mutex的初始化状态就是一个没加锁的互斥锁
+Mutex在被加锁之后不允许被复制，也就是带有状态的Mutex不能被复制，否则会给原来的临界数据复制出一把锁
+Mutex包含两个字段
+state">
+<meta property="og:updated_time" content="2020-05-13T04:18:30.960Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="go源码解读-sync.Mutex">
+<meta name="twitter:description" content="Mutex
+sync包提供了互斥量，Once, WaitGroup来保证多线程并发安全
+比较简单的同步通过sync包，比较复杂的同步建议通过channel来实现
+
+Mutex结构体
+Mutex实际上是互斥锁
+Mutex的初始化状态就是一个没加锁的互斥锁
+Mutex在被加锁之后不允许被复制，也就是带有状态的Mutex不能被复制，否则会给原来的临界数据复制出一把锁
+Mutex包含两个字段
+state">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/05/13/golang/源码解读/sync/mutex/"/>
+
+
+
+
+
+  <title>go源码解读-sync.Mutex | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/13/golang/源码解读/sync/mutex/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">go源码解读-sync.Mutex</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-13T10:10:06+08:00">
+                2020-05-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/源码解读/" itemprop="url" rel="index">
+                    <span itemprop="name">源码解读</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Mutex"><a href="#Mutex" class="headerlink" title="Mutex"></a>Mutex</h2><ul>
+<li>sync包提供了互斥量，Once, WaitGroup来保证多线程并发安全</li>
+<li>比较简单的同步通过sync包，比较复杂的同步建议通过channel来实现</li>
+</ul>
+<h3 id="Mutex结构体"><a href="#Mutex结构体" class="headerlink" title="Mutex结构体"></a>Mutex结构体</h3><ul>
+<li>Mutex实际上是互斥锁</li>
+<li>Mutex的初始化状态就是一个没加锁的互斥锁</li>
+<li>Mutex在被加锁之后不允许被复制，也就是带有状态的Mutex不能被复制，否则会给原来的临界数据复制出一把锁</li>
+<li>Mutex包含两个字段<ul>
+<li>state</li>
+<li>sema</li>
+</ul>
+</li>
+<li>Mutex现在有两种状态，normal和starvation<ul>
+<li>normal状态下，goroutine是在一个FIFO的队列中排队等待锁的，也就是按照锁的请求时间依次获取锁。但是被唤醒的goroutine并不会立刻拥有mutex，而是需要与新到达的goroutine进行竞争，由于新到达的goroutine已经加载在内存中，所以被唤醒的goroutine大概率会竞争失败，竞争失败之后被唤醒的goroutine会被防止到FIFO的队首。如果一个被唤醒的goroutine在1ms内获取mutex失败，则mutex状态设置为starvation</li>
+<li>starvation状态下，mutex在被当前持有的线程解锁之后，FIFO队列首的goroutine被唤醒并直接拥有改mutex，新到达的goroutine不再尝试获取mutex,也不再自选等待获取锁，而是直接排到队列的队尾</li>
+<li>如果一个goroutine获取到mutex，如果这个goroutine是队列中的最后一个goroutine或者goroutine等待时间小于1ms，则mutex状态变为noraml状态</li>
+<li>normal状态下性能更好，starvation状态下更加公平，不存在插队和多次获取的情况</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Mutex <span class="keyword">struct</span> &#123;</div><div class="line">	state <span class="keyword">int32</span></div><div class="line">	sema  <span class="keyword">uint32</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">const</span> (</div><div class="line">	mutexLocked = <span class="number">1</span> &lt;&lt; <span class="literal">iota</span>      <span class="comment">// 锁定状态 001</span></div><div class="line">	mutexWoken                   <span class="comment">// 唤醒状态 010</span></div><div class="line">	mutexStarving                <span class="comment">// 饥饿状态 100</span></div><div class="line">	mutexWaiterShift = <span class="literal">iota</span>      <span class="comment">// 向右偏移3位之后的值记录等待该mutex的goroutine数量</span></div><div class="line">	starvationThresholdNs = <span class="number">1e6</span>  <span class="comment">// normal到starvation状态的阈值 1ms</span></div><div class="line">)</div></pre></td></tr></table></figure>
+<h3 id="Mutex实现了Locker接口"><a href="#Mutex实现了Locker接口" class="headerlink" title="Mutex实现了Locker接口"></a>Mutex实现了Locker接口</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Locker <span class="keyword">interface</span> &#123;</div><div class="line">	Lock()</div><div class="line">	Unlock()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>lock方法对mutex加锁</li>
+<li>如果mutex已经被加锁，尝试加锁的goroutine将会被阻塞直到获取到该锁</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Mutex)</span> <span class="title">Lock</span><span class="params">()</span></span> &#123;</div><div class="line">  <span class="comment">// 如果mutex没有被加过锁,则用原子方法CAS修改mutex的状态为mutexLocked，直接返回结果即可</span></div><div class="line">	<span class="keyword">if</span> atomic.CompareAndSwapInt32(&amp;m.state, <span class="number">0</span>, mutexLocked) &#123;</div><div class="line">		<span class="keyword">if</span> race.Enabled &#123;</div><div class="line">			race.Acquire(unsafe.Pointer(m))</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">var</span> waitStartTime <span class="keyword">int64</span></div><div class="line">	starving := <span class="literal">false</span></div><div class="line">	awoke := <span class="literal">false</span></div><div class="line">	iter := <span class="number">0</span></div><div class="line">	old := m.state</div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">    <span class="comment">// 如果当前mutex的状态为starvation，则当前线程不再自旋等待mutex</span></div><div class="line">		<span class="keyword">if</span> old&amp;(mutexLocked|mutexStarving) == mutexLocked &amp;&amp; runtime_canSpin(iter) &#123;</div><div class="line">			<span class="comment">// Active spinning makes sense.</span></div><div class="line">			<span class="comment">// Try to set mutexWoken flag to inform Unlock</span></div><div class="line">			<span class="comment">// to not wake other blocked goroutines.</span></div><div class="line">      <span class="comment">// awork为false,mutex为非awoke状态，有等待状态的goroutine且CAS更改awoke位成功，则将awoke设置为true</span></div><div class="line">			<span class="keyword">if</span> !awoke &amp;&amp; old&amp;mutexWoken == <span class="number">0</span> &amp;&amp; old&gt;&gt;mutexWaiterShift != <span class="number">0</span> &amp;&amp;</div><div class="line">				atomic.CompareAndSwapInt32(&amp;m.state, old, old|mutexWoken) &#123;</div><div class="line">				awoke = <span class="literal">true</span></div><div class="line">			&#125;</div><div class="line">      <span class="comment">// 实际的自旋等待操作，更新iter和old的值</span></div><div class="line">			runtime_doSpin()</div><div class="line">			iter++</div><div class="line">			old = m.state</div><div class="line">			<span class="keyword">continue</span></div><div class="line">		&#125;</div><div class="line">		<span class="built_in">new</span> := old</div><div class="line">    <span class="comment">// 如果mutex为starvation状态的话，当前的goroutine需要去队列中排队</span></div><div class="line">		<span class="keyword">if</span> old&amp;mutexStarving == <span class="number">0</span> &#123;</div><div class="line">			<span class="built_in">new</span> |= mutexLocked</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> old&amp;(mutexLocked|mutexStarving) != <span class="number">0</span> &#123;</div><div class="line">			<span class="built_in">new</span> += <span class="number">1</span> &lt;&lt; mutexWaiterShift</div><div class="line">		&#125;</div><div class="line">    <span class="comment">// 当前goroutine为starvation状态并且为非锁定状态，设置mutex状态为starvation</span></div><div class="line">		<span class="keyword">if</span> starving &amp;&amp; old&amp;mutexLocked != <span class="number">0</span> &#123;</div><div class="line">			<span class="built_in">new</span> |= mutexStarving</div><div class="line">		&#125;</div><div class="line">    <span class="comment">// awoke为true,在等待队列中唤醒一个goroutine</span></div><div class="line">		<span class="keyword">if</span> awoke &#123;</div><div class="line"></div><div class="line">			<span class="keyword">if</span> <span class="built_in">new</span>&amp;mutexWoken == <span class="number">0</span> &#123;</div><div class="line">				throw(<span class="string">"sync: inconsistent mutex state"</span>)</div><div class="line">			&#125;</div><div class="line">			<span class="built_in">new</span> &amp;^= mutexWoken</div><div class="line">		&#125;</div><div class="line">    <span class="comment">// 将新的mutex状态值通过CAS复制给state</span></div><div class="line">		<span class="keyword">if</span> atomic.CompareAndSwapInt32(&amp;m.state, old, <span class="built_in">new</span>) &#123;</div><div class="line">      <span class="comment">// 如果old的状态为000，则直接退出，已经完成了上锁操作</span></div><div class="line">			<span class="keyword">if</span> old&amp;(mutexLocked|mutexStarving) == <span class="number">0</span> &#123;</div><div class="line">				<span class="keyword">break</span> <span class="comment">// locked the mutex with CAS</span></div><div class="line">			&#125;</div><div class="line">			<span class="comment">// If we were already waiting before, queue at the front of the queue.</span></div><div class="line">			queueLifo := waitStartTime != <span class="number">0</span></div><div class="line">			<span class="keyword">if</span> waitStartTime == <span class="number">0</span> &#123;</div><div class="line">				waitStartTime = runtime_nanotime()</div><div class="line">			&#125;</div><div class="line">      <span class="comment">// 阻塞获取mutex，这个地方会一直阻塞，直到获取到mutex锁</span></div><div class="line">			runtime_SemacquireMutex(&amp;m.sema, queueLifo)</div><div class="line">      <span class="comment">// 获取到锁之后，根据获取锁的等待时间，设置mutex的运行状态是否为starvation</span></div><div class="line">			starving = starving || runtime_nanotime()-waitStartTime &gt; starvationThresholdNs</div><div class="line">			old = m.state</div><div class="line">      <span class="comment">// 设置mutex的starvation状态</span></div><div class="line">			<span class="keyword">if</span> old&amp;mutexStarving != <span class="number">0</span> &#123;</div><div class="line">				<span class="keyword">if</span> old&amp;(mutexLocked|mutexWoken) != <span class="number">0</span> || old&gt;&gt;mutexWaiterShift == <span class="number">0</span> &#123;</div><div class="line">					throw(<span class="string">"sync: inconsistent mutex state"</span>)</div><div class="line">				&#125;</div><div class="line">				delta := <span class="keyword">int32</span>(mutexLocked - <span class="number">1</span>&lt;&lt;mutexWaiterShift)</div><div class="line">				<span class="keyword">if</span> !starving || old&gt;&gt;mutexWaiterShift == <span class="number">1</span> &#123;</div><div class="line">					delta -= mutexStarving</div><div class="line">				&#125;</div><div class="line">				atomic.AddInt32(&amp;m.state, delta)</div><div class="line">				<span class="keyword">break</span></div><div class="line">			&#125;</div><div class="line">			awoke = <span class="literal">true</span></div><div class="line">			iter = <span class="number">0</span></div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			old = m.state</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">if</span> race.Enabled &#123;</div><div class="line">		race.Acquire(unsafe.Pointer(m))</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// runtime包中的，返回当前时刻自旋等待是否有意义</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">runtime_canSpin</span><span class="params">(i <span class="keyword">int</span>)</span> <span class="title">bool</span></span></div></pre></td></tr></table></figure>
+<ul>
+<li>Unlock完成解锁</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Mutex)</span> <span class="title">Unlock</span><span class="params">()</span></span> &#123;</div><div class="line">  <span class="comment">// 快速解锁</span></div><div class="line">	<span class="keyword">if</span> race.Enabled &#123;</div><div class="line">		_ = m.state</div><div class="line">		race.Release(unsafe.Pointer(m))</div><div class="line">	&#125;</div><div class="line"></div><div class="line">  <span class="comment">// 快速重置mutexLocked位置为0，完成之后很可能被其他goroutine抢走锁</span></div><div class="line">	<span class="built_in">new</span> := atomic.AddInt32(&amp;m.state, -mutexLocked)</div><div class="line">	<span class="keyword">if</span> (<span class="built_in">new</span>+mutexLocked)&amp;mutexLocked == <span class="number">0</span> &#123;</div><div class="line">		throw(<span class="string">"sync: unlock of unlocked mutex"</span>)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">  <span class="comment">// 如果mutex为normal状态，走stravtion分支即可</span></div><div class="line">	<span class="keyword">if</span> <span class="built_in">new</span>&amp;mutexStarving == <span class="number">0</span> &#123;</div><div class="line">		old := <span class="built_in">new</span></div><div class="line">		<span class="keyword">for</span> &#123;</div><div class="line">      <span class="comment">// 如果没有等待的goroutine，直接返回即可</span></div><div class="line">			<span class="keyword">if</span> old&gt;&gt;mutexWaiterShift == <span class="number">0</span> || old&amp;(mutexLocked|mutexWoken|mutexStarving) != <span class="number">0</span> &#123;</div><div class="line">				<span class="keyword">return</span></div><div class="line">			&#125;</div><div class="line">			<span class="comment">// 有等待的goroutine，则会减少等待数量并且唤醒一个goroutine进行竞争mutex</span></div><div class="line">			<span class="built_in">new</span> = (old - <span class="number">1</span>&lt;&lt;mutexWaiterShift) | mutexWoken</div><div class="line">			<span class="keyword">if</span> atomic.CompareAndSwapInt32(&amp;m.state, old, <span class="built_in">new</span>) &#123;</div><div class="line">				runtime_Semrelease(&amp;m.sema, <span class="literal">false</span>)</div><div class="line">				<span class="keyword">return</span></div><div class="line">			&#125;</div><div class="line">			old = m.state</div><div class="line">		&#125;</div><div class="line">	&#125; <span class="keyword">else</span> &#123;</div><div class="line">    <span class="comment">// starvation分支直接将mutex交给FIFO队列首部的goroutine</span></div><div class="line">    <span class="comment">// 通过runtime_Semrelease唤醒等待的goroutine</span></div><div class="line">		runtime_Semrelease(&amp;m.sema, <span class="literal">true</span>)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/go/" rel="tag"># go</a>
+          
+            <a href="/tags/源码解读/" rel="tag"># 源码解读</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/12/golang/goroutine&channel/" rel="next" title="goroutine&channel学习">
+                <i class="fa fa-chevron-left"></i> goroutine&channel学习
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/13/k8s/k8s简介/" rel="prev" title="kubernates简介">
+                kubernates简介 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">35</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Mutex"><span class="nav-number">1.</span> <span class="nav-text">Mutex</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Mutex结构体"><span class="nav-number">1.1.</span> <span class="nav-text">Mutex结构体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mutex实现了Locker接口"><span class="nav-number">1.2.</span> <span class="nav-text">Mutex实现了Locker接口</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -277,7 +277,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/java/struts2总结 四--异常处理和I18N/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/Zookeeper分布式专题/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="cdx">
@@ -296,7 +296,347 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/04/21/java/struts2总结 四--异常处理和I18N/" itemprop="url">struts2总结（四）--异常处理和I18N</a></h1>
+                <a class="post-title-link" href="/2019/04/21/Zookeeper分布式专题/" itemprop="url">Zookeeper分布式专题</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/分布式/" itemprop="url" rel="index">
+                    <span itemprop="name">分布式</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/分布式/zookeeper/" itemprop="url" rel="index">
+                    <span itemprop="name">zookeeper</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="zookeeper简介"><a href="#zookeeper简介" class="headerlink" title="zookeeper简介"></a>zookeeper简介</h1><ul>
+<li>中间件，提供协调服务</li>
+<li>作用于分布式系统，发挥其优势，可以为大数据服务</li>
+<li><p>支持java，提供java和c语言的客户端API</p>
+</li>
+<li><p>特性：</p>
+<ol>
+<li>一致性：数据一致性，数据按照顺序分批入库</li>
+<li>原子性：事物要么成功，要么失败，不会局部化执行</li>
+<li>单一视图：客户端连接集群中的任一个zk节点，数据都是一致的</li>
+<li>可靠性：每次对zk的操作状态都会保存在服务端</li>
+<li>实时性：客户端可以读取到zk服务端的最新数据</li>
+</ol>
+</li>
+</ul>
+<h2 id="分布式系统"><a href="#分布式系统" class="headerlink" title="分布式系统"></a>分布式系统</h2><ul>
+<li>多个计算机组成一个整体，一个整体一致对外并且处理同一请求</li>
+<li>内部的每台计算机都可以通信，restful/rpc</li>
+<li>客户端到服务端的一次请求到响应结束会经历多台计算机</li>
+</ul>
+<h1 id="zookeeper的安装"><a href="#zookeeper的安装" class="headerlink" title="zookeeper的安装"></a>zookeeper的安装</h1><h2 id="jdk安装"><a href="#jdk安装" class="headerlink" title="jdk安装"></a>jdk安装</h2><ol>
+<li>下载linux的jdk1.8,上传服务器</li>
+<li>解压缩jdk，配置jdk</li>
+<li><p>测试：java -version</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">ubuntu@VM-0-8-ubuntu:~$ java -version</div><div class="line">java version &quot;1.8.0_181&quot;</div><div class="line">Java(TM) SE Runtime Environment (build 1.8.0_181-b13)</div><div class="line">Java HotSpot(TM) 64-Bit Server VM (build 25.181-b13, mixed mode)</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h1 id="zookeeper基本数据模型"><a href="#zookeeper基本数据模型" class="headerlink" title="zookeeper基本数据模型"></a>zookeeper基本数据模型</h1><ul>
+<li>zk的数据模型可以理解为linux的目录文件</li>
+<li>每一个节点称为znode，可以有子节点，也可以有数据</li>
+<li>每一个节点分为临时节点和永久节点，临时节点在客户端断开后消失</li>
+<li>每一个zk节点都有各自的版本号，可以通过命令行显示节点信息</li>
+<li>当节点的数据发生变化，该节点的版本号就会累加</li>
+<li>删除修改过的节点，版本号不匹配则会报错</li>
+<li>每个zk节点存储的数据不宜过大，几k即可</li>
+<li>节点可以设置权限acl，可以通过权限来限制用户的访问</li>
+</ul>
+<h2 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h2><ul>
+<li>客户端连接</li>
+<li>查看znode</li>
+<li>关闭连接</li>
+</ul>
+<h2 id="zk的作用"><a href="#zk的作用" class="headerlink" title="zk的作用"></a>zk的作用</h2><ul>
+<li>master节点选举，主节点挂了之后，从节点会接收工作，并且保证这个节点时唯一的，也就是所谓的首脑模式，从而保证集群的高可用。</li>
+<li>统一配置文件管理，只需要一台服务器，可以把相同的配置文件同步更新到其他的服务器，在云计算中使用的很多。</li>
+<li>发布与订阅，类似于MQ，dubbo发布者将数据存在znode，订阅者会读取这个数据。</li>
+<li>提供分布式锁，用于分布式环境中不同进程之间争夺资源，类似于多线程中的锁。</li>
+<li>集群管理，保证集群中数据的强一致性。</li>
+</ul>
+<h1 id="zk基本特性"><a href="#zk基本特性" class="headerlink" title="zk基本特性"></a>zk基本特性</h1><ul>
+<li><p>./zkCli.sh打开客户端</p>
+</li>
+<li><p>ls</p>
+</li>
+</ul>
+<p><img src="assets/markdown-img-paste-20181017195401356.png" alt></p>
+<ul>
+<li>ls2</li>
+</ul>
+<p><img src="assets/markdown-img-paste-20181017195429318.png" alt></p>
+<ul>
+<li>get</li>
+</ul>
+<p><img src="assets/markdown-img-paste-20181017195553887.png" alt></p>
+<ul>
+<li>stat</li>
+</ul>
+<p><img src="assets/markdown-img-paste-20181017195526564.png" alt></p>
+<p>参数信息：</p>
+<ul>
+<li>cZid：节点id</li>
+<li>ctime：创建时间</li>
+<li>mZid：修改节点的id</li>
+<li>mTime</li>
+<li>pZxid：子节点id</li>
+<li>cversion：子节点version</li>
+<li>dataVersion：当前节点数据的版本号</li>
+<li>aclVersion：权限版本号</li>
+<li>ephemeralOwner：</li>
+<li>dataLength：</li>
+<li>numChildren：子节点的个数</li>
+</ul>
+<h2 id="session的基本原理"><a href="#session的基本原理" class="headerlink" title="session的基本原理"></a>session的基本原理</h2><ul>
+<li>客户端和服务端之间的连接存在session</li>
+<li>每个session都可以设置一个超时时间</li>
+<li>心跳结束，session就过期</li>
+<li>session过期，临时节点znode会被抛弃</li>
+<li>心跳机制：客户端向服务端的ping包请求</li>
+</ul>
+<h2 id="create命令"><a href="#create命令" class="headerlink" title="create命令"></a>create命令</h2><ul>
+<li>创建持久化节点</li>
+</ul>
+<p><img src="assets/markdown-img-paste-20181017200354365.png" alt></p>
+<ul>
+<li>创建临时节点</li>
+</ul>
+<p><img src="assets/markdown-img-paste-20181017200449517.png" alt></p>
+<ul>
+<li>创建顺序节点</li>
+</ul>
+<p><img src="assets/markdown-img-paste-20181017200805341.png" alt></p>
+<h2 id="set命令"><a href="#set命令" class="headerlink" title="set命令"></a>set命令</h2><p><img src="assets/markdown-img-paste-20181017201052567.png" alt></p>
+<ul>
+<li>根据版本号实现乐观锁</li>
+</ul>
+<p><img src="assets/markdown-img-paste-20181017201144595.png" alt></p>
+<h2 id="delete命令"><a href="#delete命令" class="headerlink" title="delete命令"></a>delete命令</h2><ul>
+<li>不设置版本号</li>
+</ul>
+<p><img src="assets/markdown-img-paste-2018101720133103.png" alt></p>
+<ul>
+<li>设置版本号需要版本号匹配才可以删除</li>
+</ul>
+<p><img src="assets/markdown-img-paste-20181017201438164.png" alt></p>
+<h2 id="watcher机制"><a href="#watcher机制" class="headerlink" title="watcher机制"></a>watcher机制</h2><ul>
+<li>针对每一个节点的操作，都会有一个监督者，也就是watcher</li>
+<li>当监控的某一个对象（znode）发生了变化，则出发watcher事件</li>
+<li>zk中的watcher是一次性的，触发后就会被立即销毁</li>
+<li>父节点，子节点，增删改查都能够触发其watcher</li>
+<li>针对不同类型的操作，触发的watcher事件也是不同的<ul>
+<li>子节点创建事件</li>
+<li>子节点删除事件</li>
+<li>子节点数据变化事件</li>
+</ul>
+</li>
+</ul>
+<h2 id="watcher命令行"><a href="#watcher命令行" class="headerlink" title="watcher命令行"></a>watcher命令行</h2><ul>
+<li><p>watcher事件类型</p>
+<ul>
+<li>创建父节点触发：NodeCreated<br><img src="assets/markdown-img-paste-20181017202244131.png" alt></li>
+<li>修改父节点数据触发：NodeDataChanged<br><img src="assets/markdown-img-paste-20181017202411972.png" alt></li>
+<li>删除节点触发：NodeDeleted<br><img src="assets/markdown-img-paste-20181017202630988.png" alt></li>
+<li>ls为父节点设置watcher，创建子节点触发：NodeChildrenChanged<br><img src="assets/markdown-img-paste-20181017202829923.png" alt></li>
+<li>ls为父节点设置watcher，删除子节点触发：NodeChildrenChanged<br><img src="assets/markdown-img-paste-20181017202933755.png" alt></li>
+<li>ls为父节点设置watcher，修改子节点不触发任何事件<br><img src="assets/markdown-img-paste-20181017203123310.png" alt></li>
+</ul>
+</li>
+<li><p>watcher使用场景</p>
+<ul>
+<li>统一资源配置</li>
+</ul>
+</li>
+</ul>
+<h2 id="ACL-Acess-Control-Lists-权限控制"><a href="#ACL-Acess-Control-Lists-权限控制" class="headerlink" title="ACL(Acess Control Lists)权限控制"></a>ACL(Acess Control Lists)权限控制</h2><ul>
+<li>针对节点可以设置相关读写等权限，目的为了保障数据安全性</li>
+<li>权限permissions可以指定不同的权限范围以及角色</li>
+</ul>
+<h3 id="ACL命令行"><a href="#ACL命令行" class="headerlink" title="ACL命令行"></a>ACL命令行</h3><ul>
+<li>getAcl：获取某个节点的acl权限信息</li>
+<li>setAcl：设置某个节点的acl权限信息</li>
+<li>addauth：输入认证权限信息，注册时输入明文密码登录，但是在zk的系统中，密码以加密形式存在。</li>
+<li>zk的acl通过【scheme:id:permissions】来构成权限列表<ul>
+<li>scheme：代表采用的某种权限机制<ul>
+<li>world:world下只有一个id，也就是只有一个用户anyone，任何人都可以访问该节点</li>
+<li>auth:代表认证登录，需要注册用户有权限就可以，明文密码登录</li>
+<li>digest:需要对密码加密才能访问</li>
+<li>ip:当设置ip为指定的ip地址，此时限制ip进行访问</li>
+<li>super：代表超级管理员，拥有所有的权限</li>
+</ul>
+</li>
+<li>id：代表允许访问的用户</li>
+<li>permissions：权限组合字符串<ul>
+<li>crdwa：权限字符串</li>
+<li>create：创建子节点</li>
+<li>read：获取节点、子节点</li>
+<li>write：设置节点数据</li>
+<li>delete：删除子节点</li>
+<li>admin：设置权限</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ol>
+<li>world:anyone:cdrwa</li>
+</ol>
+<p><img src="assets/markdown-img-paste-20181018120809334.png" alt></p>
+<p><img src="assets/markdown-img-paste-2018101812272445.png" alt></p>
+<ol>
+<li>auth:user:pwd:cdrwa</li>
+<li>digest:user:BASE64(SHA1(pwd)):cdrwa</li>
+<li>addauth digest user:pwd</li>
+</ol>
+<p><img src="assets/markdown-img-paste-20181018130237413.png" alt></p>
+<h1 id="zk集群"><a href="#zk集群" class="headerlink" title="zk集群"></a>zk集群</h1><h2 id="集群搭建的注意点"><a href="#集群搭建的注意点" class="headerlink" title="集群搭建的注意点"></a>集群搭建的注意点</h2><ul>
+<li>配置文件myid 1/2/3对应server.1.2.3</li>
+<li>通过./zkCli.sh -server [ip]:[port]检测集群是否配置成功</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/java/struts2总结 六--struts2项目开发流程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/21/java/struts2总结 六--struts2项目开发流程/" itemprop="url">struts2总结（六）--Struts2项目开发流程</a></h1>
         
 
         <div class="post-meta">
@@ -381,51 +721,24 @@
       
         
           
-            <h2 id="6-声明式异常处理"><a href="#6-声明式异常处理" class="headerlink" title="6 声明式异常处理"></a>6 声明式异常处理</h2><p>通过配置的方式捕获指定类型异常，有ExceptionMappingInterceptor拦截器将异常信息（ExceptionHolder：exceptionStack， exception）压入栈顶，然后通过OGNL表达式在页面中获取异常。</p>
-<ol>
-<li><p>在Actoin中进行异常映射</p>
-<ul>
-<li>只对当前Action对应类型的异常起作用，在struts2配置文件Action内部节点使用exception-mapping来映射异常,当发生SQLException时，会返回“error”信息，并跳转到error.jsp页面：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;action name=&quot;*-*&quot; class=&quot;com.bbs.action.&#123;1&#125;Action&quot; method=&quot;&#123;2&#125;&quot;&gt;</div><div class="line">          &lt;result&gt;/admin/&#123;1&#125;-&#123;2&#125;.jsp&lt;/result&gt;</div><div class="line">          &lt;result name=&quot;input&quot;&gt;/admin/&#123;1&#125;-&#123;2&#125;.jsp&lt;/result&gt;</div><div class="line">          &lt;exception-mapping exception=&quot;java.sql.SQLException&quot; result=&quot;error&quot; /&gt;</div><div class="line">          &lt;result name=&quot;error&quot;&gt;/error.jsp&lt;/result&gt;</div><div class="line">      &lt;/action&gt;</div></pre></td></tr></table></figure>
-</li>
+            <ol>
+<li>建立界面原型</li>
+<li>建立struts.XHTML<ul>
+<li>确定namespace</li>
+<li>确定package</li>
+<li>确定Result</li>
+<li>将界面原型页面进行修改，匹配现有设置</li>
+<li>测试</li>
+<li>做好规划</li>
 </ul>
 </li>
-<li><p>在package中进行全局异常映射</p>
-<ul>
-<li>针对所有Action对应类型的异常都起作用，可以通过OGNL在页面中获取异常信息需。</li>
-<li>GLOBAL级别的声明式异常配置必须配置在所有的Action之前，同时，global-result节点需要配置在global-exception-mappings之前。</li>
-<li>当捕获到一个异常对象时，如果同时存在Action和全局两种级别的映射信息，则优先使用Action级别。<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;package name=&quot;default&quot; extends=&quot;struts-default&quot;&gt;</div><div class="line">      &lt;global-results&gt;</div><div class="line">          &lt;result name=&quot;globleException&quot;&gt;/error.jsp&lt;/result&gt;</div><div class="line">      &lt;/global-results&gt;</div><div class="line"></div><div class="line">      &lt;global-exception-mappings&gt;</div><div class="line">          &lt;exception-mapping result=&quot;globleException&quot; exception=&quot;java.lang.Exception&quot;/&gt;</div><div class="line">      &lt;/global-exception-mappings&gt;</div><div class="line">  &lt;/package&gt;</div></pre></td></tr></table></figure>
-</li>
+<li>建立数据库</li>
+<li>建立Model层</li>
+<li>建立Service层<ul>
+<li>使用JUnit进行单元测试</li>
 </ul>
 </li>
-<li><p>使用继承共用异常映射，多个package可以通过extends来公用异常映射：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">&lt;package name=&quot;admin&quot; namespace=&quot;/admin&quot; extends=&quot;default&quot; &gt;</div><div class="line"></div><div class="line">       &lt;action name=&quot;index&quot;&gt;</div><div class="line">           &lt;result&gt;/admin/index.html&lt;/result&gt;</div><div class="line">       &lt;/action&gt;</div><div class="line"></div><div class="line">       &lt;action name=&quot;*-*&quot; class=&quot;com.action.&#123;1&#125;Action&quot; method=&quot;&#123;2&#125;&quot;&gt;</div><div class="line">           &lt;result&gt;/admin/&#123;1&#125;-&#123;2&#125;.jsp&lt;/result&gt;</div><div class="line">           &lt;result name=&quot;input&quot;&gt;/admin/&#123;1&#125;-&#123;2&#125;.jsp&lt;/result&gt;</div><div class="line">           &lt;result name=&quot;error&quot;&gt;/error.jsp&lt;/result&gt;</div><div class="line">       &lt;/action&gt;</div><div class="line">&lt;/package&gt;</div></pre></td></tr></table></figure>
-</li>
-<li><p>Struts2中异常处理由拦截器实现（观察struts-default.xml）</p>
-<ul>
-<li>实际上Struts2的大多数功能都由拦截器实现</li>
-</ul>
-</li>
-</ol>
-<h2 id="7-I18N"><a href="#7-I18N" class="headerlink" title="7 I18N"></a>7 I18N</h2><ol>
-<li><p>I18N原理<br>国际化，international。我们将程序中硬编码的文本转移到外部的资源文件（.properties）中期 ，针对每一种语言环境，编写一个资源文件。指定当前程序所用的语言环境，Java中的国际化处理机制能够自动找到对应的资源文件并读取内容。创建了两个资源文件，一个为bbs_en_US.properties,bbs_zh_CN.properties，需要注意的 是编码问题，IDEA中将File-Editor-Code Style-File Encodings-Transparent native-to-ascii conversion勾选上，就可以将中文自动转换成ASCII编码。</p>
-<ul>
-<li>ResourceBundle和Locale的概念</li>
-<li>ResourceBundle:按语言查找顺序</li>
-<li>Locale命令是将当前语言环境或全部公共语言环境的信息输出到标准输出上</li>
-<li>资源文件:在Action所在的包或者任意一个父包中定义package.properties和package_language_COUTRY.properties资源文件</li>
-</ul>
-</li>
-<li><p>Struts的资源文件</p>
-<ul>
-<li>Action – Package – App级</li>
-<li>一般只用APP</li>
-<li>struts.xml custom.i18n</li>
-<li>动态语言切换</li>
-<li>request_locale=en_US</li>
-</ul>
-</li>
-<li><p>了解的不多，以后可以查教程<br><a href="http://www.yiibai.com/struts_2/struts_localization.html" target="_blank" rel="external">I18N</a></p>
-</li>
+<li>开始开发</li>
 </ol>
 
           
@@ -719,177 +1032,6 @@
 <p><em>参考：<a href="http://www.jianshu.com/p/a884504a8863" target="_blank" rel="external">http://www.jianshu.com/p/a884504a8863</a></em></p>
 </li>
 </ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/java/struts2总结 六--struts2项目开发流程/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/java/struts2总结 六--struts2项目开发流程/" itemprop="url">struts2总结（六）--Struts2项目开发流程</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/Struts2/" itemprop="url" rel="index">
-                    <span itemprop="name">Struts2</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <ol>
-<li>建立界面原型</li>
-<li>建立struts.XHTML<ul>
-<li>确定namespace</li>
-<li>确定package</li>
-<li>确定Result</li>
-<li>将界面原型页面进行修改，匹配现有设置</li>
-<li>测试</li>
-<li>做好规划</li>
-</ul>
-</li>
-<li>建立数据库</li>
-<li>建立Model层</li>
-<li>建立Service层<ul>
-<li>使用JUnit进行单元测试</li>
-</ul>
-</li>
-<li>开始开发</li>
-</ol>
 
           
         
@@ -3018,7 +3160,7 @@ String(request.getParamter(&quot;userName&quot;).getBytes(&quot;ISO8859-1&quot;)
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/Redis-redis底层数据结构/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/java/Spring1_Spring的核心/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="cdx">
@@ -3037,7 +3179,7 @@ String(request.getParamter(&quot;userName&quot;).getBytes(&quot;ISO8859-1&quot;)
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/04/21/Redis-redis底层数据结构/" itemprop="url">Redis-redis底层数据结构</a></h1>
+                <a class="post-title-link" href="/2019/04/21/java/Spring1_Spring的核心/" itemprop="url">1_Spring的核心</a></h1>
         
 
         <div class="post-meta">
@@ -3072,8 +3214,19 @@ String(request.getParamter(&quot;userName&quot;).getBytes(&quot;ISO8859-1&quot;)
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/redis/" itemprop="url" rel="index">
-                    <span itemprop="name">redis</span>
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/Spring/" itemprop="url" rel="index">
+                    <span itemprop="name">Spring</span>
                   </a>
                 </span>
 
@@ -3111,154 +3264,459 @@ String(request.getParamter(&quot;userName&quot;).getBytes(&quot;ISO8859-1&quot;)
       
         
           
-            <h1 id="Redis介绍"><a href="#Redis介绍" class="headerlink" title="Redis介绍"></a>Redis介绍</h1><p>  redis是一个基于键值对的分布式存储系统，与memcached类似，却优于memcached的一个高性能的key-value数据库。其中键值对的key总是为一个字符串对象，字符串的值可以为字符串对象，列表对象，哈希对象，集合对象，有序集合对象之一。</p>
-<p>  Redis中value的值为上面五种，但是底层数据结构包括：</p>
-<ul>
-<li>简单动态字符串</li>
-<li>链表</li>
-<li>字典</li>
-<li>跳跃表</li>
-<li>整数集合</li>
-<li>压缩列表</li>
-<li>对象</li>
+            <hr>
+<h1 id="Spring简介"><a href="#Spring简介" class="headerlink" title="Spring简介"></a>Spring简介</h1><hr>
+<h2 id="Spring的根本使命是：简化Java的开发，采用了四种策略："><a href="#Spring的根本使命是：简化Java的开发，采用了四种策略：" class="headerlink" title="Spring的根本使命是：简化Java的开发，采用了四种策略："></a>Spring的根本使命是：简化Java的开发，采用了四种策略：</h2><ul>
+<li>基于POJO的轻量级和最小浸入性编程,避免了大量的不必要的冗余代码</li>
+<li>通过依赖注入和面向接口事项松耦合，每个对象负责管理与自己相互协作的对象的引用会造成高度的耦合性，测试比较复杂，另一种方式是采用依赖注入，对象的依赖关系将由负责协调系统中各个对象的第三方组件在创建对象时设定，对象无需自行创建或者管理器依赖关系，依赖关系会自动的注入到需要的对象中去。</li>
+<li>基于切面和惯例进行声明式编程</li>
+<li>通过切面和模板减少样式代码，如JDBC查询模板语句</li>
 </ul>
-<h1 id="简单动态字符串（simple-dynamic-string）"><a href="#简单动态字符串（simple-dynamic-string）" class="headerlink" title="简单动态字符串（simple dynamic string）"></a>简单动态字符串（simple dynamic string）</h1><h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>Redis底层是由C编写的，但是其对C中字符串做了一个封装，构建了种名为简单动态字符串的抽象类型，并将SDS设置为redis默认采用的字符串表示</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">redis&gt;SET msg &quot;sdsTest&quot;</div><div class="line">OK</div></pre></td></tr></table></figure>
-<p>key是一个字符串对象，字符串对象的低层是一个保存着“msg”的SDS；<br>value是一个字符串对象，低层是一个保存着字符串“sdsTest”的SDS。</p>
-<h2 id="SDS的定义"><a href="#SDS的定义" class="headerlink" title="SDS的定义"></a>SDS的定义</h2><p>redis中定义动态字符串的结构：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">typedef char *sds;  </div><div class="line">//指向sdshdr结构buf成员的地址</div><div class="line"></div><div class="line">struct sdshdr &#123;</div><div class="line">    int len;        //buf中已占用空间的长度</div><div class="line">    int free;       //buf中剩余可用空间的长度</div><div class="line">    char buf[];     //初始化sds分配的数据空间</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-<p>则msg可以被表示为：</p>
-<p><img src="/img/redis-sds-example.png" alt="Alt text"></p>
-<ul>
-<li>len为7，表示这个sds的长度为7</li>
-<li>free为0，表示这个sds可用空间为0</li>
-<li>buf是一个char数组，分配了len + 1 + free个字节的长度，前len个字节保存着SDS的信息，接下来一个字符保存字符串终止符’\0’,剩下free个字节是未使用的。</li>
+<h2 id="Spring容器"><a href="#Spring容器" class="headerlink" title="Spring容器"></a>Spring容器</h2><ul>
+<li>Spring应用中，对象存在于Spring容器中，容器创建对象，装配对象，配置对象，管理对象的声明周期。</li>
+<li>Spring容器可以分为两种类型：<ul>
+<li>Bean工厂：最简单的容器，提供基本的DI支持</li>
+<li>应用上下文：基于beanFactory之上构建，提供面向应用的服务，可以从属性文件解析文本信息<ul>
+<li>ClassPathXMLApplicationContext: 从类路径下的XML配置文件中加载上下文定义，把应用上下文定义文件当做类资源</li>
+<li>FileSystemXmlApplocationcontext：读取文件系统下的XML配置文件并加载上下文定义</li>
+<li>XmlWebApplocationContext：读取web应用下的XML配置文件并装载上下文定义。</li>
 </ul>
-<h2 id="SDS与C字符串的区别"><a href="#SDS与C字符串的区别" class="headerlink" title="SDS与C字符串的区别"></a>SDS与C字符串的区别</h2><p>  redis不直接使用C字符串而采用SDS的原因主要在于传统C语言使用长度为N+1的字符数组来存储长度为N的字符串，这样在获取字符串长度，字符串扩展操作时效率低，不能满足redis对字符串在安全性、功能、效率等的要求。</p>
-<ol>
-<li><p>获取字符串长度</p>
-<ul>
-<li>传统C语言：获取字符串长度需要遍历字符数组，复杂度为O(N);</li>
-<li>Redis SDS：获取len属性的值就是字符串的长度 O(1);</li>
-</ul>
-</li>
-<li><p>杜绝缓冲区溢出</p>
-<ul>
-<li>C语言中字符串不记录字符串的长度，容易造成缓冲区溢出。比如拼接字符串过程容易发生缓冲区溢出。</li>
-<li>redis中sds的空间分配策略杜绝了发生缓冲区溢出：redis会在拼接字符串之前，预先检查给定SDS空间是否足够，如果不够会先扩展SDS空间，然后再执行拼接操作。</li>
-</ul>
-</li>
-<li><p>减少修改字符串时带来的内存重新分配次数。</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">/* Enlarge the free space at the end of the sds string so that the caller</div><div class="line"> * is sure that after calling this function can overwrite up to addlen</div><div class="line"> * bytes after the end of the string, plus one more byte for nul term.</div><div class="line"> *</div><div class="line"> * Note: this does not change the *length* of the sds string as returned</div><div class="line"> * by sdslen(), but only the free buffer space we have. */</div><div class="line">sds sdsMakeRoomFor(sds s, size_t addlen) &#123;</div><div class="line">    void *sh, *newsh;</div><div class="line">    size_t avail = sdsavail(s);</div><div class="line">    size_t len, newlen;</div><div class="line">    char type, oldtype = s[-1] &amp; SDS_TYPE_MASK;</div><div class="line">    int hdrlen;</div><div class="line"></div><div class="line">    /* Return ASAP if there is enough space left. */</div><div class="line">    if (avail &gt;= addlen) return s;</div><div class="line"></div><div class="line">    len = sdslen(s);</div><div class="line">    sh = (char*)s-sdsHdrSize(oldtype);</div><div class="line">    newlen = (len+addlen);</div><div class="line">    if (newlen &lt; SDS_MAX_PREALLOC)</div><div class="line">        newlen *= 2;</div><div class="line">    else</div><div class="line">        newlen += SDS_MAX_PREALLOC;</div><div class="line"></div><div class="line">    type = sdsReqType(newlen);</div><div class="line"></div><div class="line">    /* Don&apos;t use type 5: the user is appending to the string and type 5 is</div><div class="line">     * not able to remember empty space, so sdsMakeRoomFor() must be called</div><div class="line">     * at every appending operation. */</div><div class="line">    if (type == SDS_TYPE_5) type = SDS_TYPE_8;</div><div class="line"></div><div class="line">    hdrlen = sdsHdrSize(type);</div><div class="line">    if (oldtype==type) &#123;</div><div class="line">        newsh = s_realloc(sh, hdrlen+newlen+1);</div><div class="line">        if (newsh == NULL) return NULL;</div><div class="line">        s = (char*)newsh+hdrlen;</div><div class="line">    &#125; else &#123;</div><div class="line">        /* Since the header size changes, need to move the string forward,</div><div class="line">         * and can&apos;t use realloc */</div><div class="line">        newsh = s_malloc(hdrlen+newlen+1);</div><div class="line">        if (newsh == NULL) return NULL;</div><div class="line">        memcpy((char*)newsh+hdrlen, s, len+1);</div><div class="line">        s_free(sh);</div><div class="line">        s = (char*)newsh+hdrlen;</div><div class="line">        s[-1] = type;</div><div class="line">        sdssetlen(s, len);</div><div class="line">    &#125;</div><div class="line">    sdssetalloc(s, newlen);</div><div class="line">    return s;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li><p>C语言在进行字符串的扩展和收缩的时候，都会面临着内存空间的重新分配问题。字符串拼接会产生字符串的内存空间的扩充，忘记申请分配空间会导致内存溢出；而字符串切割的时候，如果没有对内存空间重新分配会造成内存泄漏。</p>
-</li>
-<li><p>redis对SDS进行扩展，修改是SDS的长度，通过预分配侧率，SDS将连续增长的N次字符串所需的内存重分配次数从固定N次，降低为最多N次。</p>
 </li>
 </ul>
 </li>
-<li><p>惰性空间的释放</p>
-<p>redis字符串进行收缩时，修改free属性来记录剩余的空间，并不直接回收那些不使用的内存，这样可以避免下次对字符串再次修改过程中可能存在的空间扩展，避免了缩短字符串所需要的内存重分配操作和将来可能存在的增长字符串操作。</p>
-</li>
-<li><p>二进制安全<br>C语言中字符串以空字符串为结束符，所以传统字符串不能保存图片视频等二级制文件。redis中依靠len来判断字符串是否结束，而不是寻找空字符串，这样可以用来保存图片，音频，视频等二进制数据，实现了二级制安全。SDS遵循C字符串以空字符串结尾的惯例。</p>
-</li>
-</ol>
-<h1 id="链表"><a href="#链表" class="headerlink" title="链表"></a>链表</h1><p>链表在redis中使用很多，比如列表件的低层实现之一就是链表。而且在redis中链表的结构被实现为双向链表，收尾操作很快。</p>
-<h2 id="链表的数据结构"><a href="#链表的数据结构" class="headerlink" title="链表的数据结构"></a>链表的数据结构</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">/* Node, List, and Iterator are the only data structures used currently. */</div><div class="line"></div><div class="line">typedef struct listNode &#123;</div><div class="line">    struct listNode *prev;</div><div class="line">    struct listNode *next;</div><div class="line">    void *value;</div><div class="line">&#125; listNode;</div></pre></td></tr></table></figure>
-<ul>
-<li>双向链表通过prev和next指针来会获取当前节点的前驱节点和后继节点的复杂度为O(1);</li>
+<li>Bean的生命周期：<ul>
+<li>Spring对Bean进行实例化</li>
+<li>Spring将值和Bean的引用注入进bean对应的属性中去</li>
+<li>如果Bean实现了BeanNameAware接口，Spring将Bean的ID传递给setBeanName()接口方法</li>
+<li>如果Bean实现了BeanFactoryAware接口，Spring将调用setBeanFactory()接口方法,将BeanFactory容器实例传入。</li>
+<li>如果Bean实现了ApplicationContextAweare接口，Spring将调用他们的setApplicationContext()接口方法，将应用上下文的引用传入</li>
+<li>如果Bean实现了BeanPostProcessor接口，Spring将调用他们的postProcessBeforeInitialization()接口方法</li>
+<li>如果Bean实现了InitializingBean接口，Spring将调用他们的afterPropertiesSet()接口方法。类似的，如果Bean使用init-method声明了初始化方法，该方法也会被调用。</li>
+<li>如果Bean实现了BeanPostProcessor接口，Spring将调用他们的postProcessAfterInitialization()接口方法</li>
+<li>此时此刻，Bean已经准备就绪，可以被应用程序调用，Bean会一直驻留在应用上下文中，直到该应用上下文被销毁</li>
+<li>如果Bean实现了DisposableBea接口，Spring将调用他们的destroy()接口方法。同样如果Bean使用destroy-method声明了销毁方法，该方法也会被调用。</li>
 </ul>
-<p>我们可以直接通过list来操作链表结构：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">typedef struct list &#123;</div><div class="line">    listNode *head;</div><div class="line">    listNode *tail;</div><div class="line">    void *(*dup)(void *ptr);</div><div class="line">    void (*free)(void *ptr);</div><div class="line">    int (*match)(void *ptr, void *key);</div><div class="line">    unsigned long len;</div><div class="line">&#125; list;</div></pre></td></tr></table></figure>
-<p><img src="/img/redis-linked-example.png" alt="Alt text"></p>
-<ul>
-<li>其中head指针指向链表头，tail指针指向链表尾，获取收尾节点复杂度O(1)</li>
-<li>len记载链表的长度 获取长度复杂度为O(1);</li>
-<li>dup,free,match指针实现多态，链表节点listNode使用空指针来保存节点的值，表头list使用dup，free, match指针来针对链表中存放非不同对象来实现不同的方法。</li>
-</ul>
-<h1 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h1><p>  或者成为map,是一种用于保存键值对的抽象数据结构。字典中一个key可以和一个value进行关联，每一个key独一无二并且指向一个value，一个value可以被多个可以同时指定。C语言中不存在字典这种数据结构，redis实现了字典的数据结构。redis存取数据采用的都是key-value的形式，其中key为一个字符串对象，而value取值可以是字符串，可以是列表，可以是集合等。</p>
-<h2 id="字典的实现"><a href="#字典的实现" class="headerlink" title="字典的实现"></a>字典的实现</h2><p>  redis中字典是通过哈希表实现的，一个哈希表有多个节点，每个节点保存一个键值对。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">typedef struct dict &#123;</div><div class="line">    dictType *type;</div><div class="line">    void *privdata;</div><div class="line">    dictht ht[2];</div><div class="line">    long rehashidx; /* rehashing not in progress if rehashidx == -1 */</div><div class="line">    int iterators; /* number of iterators currently running */</div><div class="line">&#125; dict;</div></pre></td></tr></table></figure>
-<ul>
-<li>type: 指针指向dictType结构，该结构使得key和value能够存储任何类型的数据。</li>
-<li>privdata: 私有数据，存放dictType结构中的函数的参数</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">typedef struct dictType &#123;</div><div class="line">    unsigned int (*hashFunction)(const void *key);      //计算hash值的函数</div><div class="line">    void *(*keyDup)(void *privdata, const void *key);   //复制key的函数</div><div class="line">    void *(*valDup)(void *privdata, const void *obj);   //复制value的函数</div><div class="line">    int (*keyCompare)(void *privdata, const void *key1, const void *key2);  //比较key的函数</div><div class="line">    void (*keyDestructor)(void *privdata, void *key);   //销毁key的析构函数</div><div class="line">    void (*valDestructor)(void *privdata, void *obj);   //销毁val的析构函数</div><div class="line">&#125; dictType;</div></pre></td></tr></table></figure>
-<ul>
-<li>ht[2]: 两张哈希表</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">typedef struct dictht &#123;</div><div class="line">    dictEntry **table;        //哈希表节点dictEntry位置</div><div class="line">    unsigned long size;       //哈希表大小，初始4</div><div class="line">    unsigned long sizemask;   //将哈希值映射到table索引</div><div class="line">    unsigned long used;       //记录哈希表已有节点数量</div><div class="line">&#125; dictht;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">typedef struct dictEntry &#123;</div><div class="line">    void *key;</div><div class="line">    union &#123;</div><div class="line">        void *val;</div><div class="line">        uint64_t u64;</div><div class="line">        int64_t s64;</div><div class="line">        double d;</div><div class="line">    &#125; v;</div><div class="line">    struct dictEntry *next;   //解决哈希冲突</div><div class="line">&#125; dictEntry;</div></pre></td></tr></table></figure>
-<ul>
-<li>rehashidx: rehash的标志位</li>
-<li>iterators：记录迭代器的数量</li>
-</ul>
-<h2 id="Redis中使用的哈希算法"><a href="#Redis中使用的哈希算法" class="headerlink" title="Redis中使用的哈希算法"></a>Redis中使用的哈希算法</h2><ul>
-<li>计算int的哈希函数</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">unsigned int dictIntHashFunction(unsigned int key)</div><div class="line">&#123;</div><div class="line">    key += ~(key &lt;&lt; 15);</div><div class="line">    key ^=  (key &gt;&gt; 10);</div><div class="line">    key +=  (key &lt;&lt; 3);</div><div class="line">    key ^=  (key &gt;&gt; 6);</div><div class="line">    key += ~(key &lt;&lt; 11);</div><div class="line">    key ^=  (key &gt;&gt; 16);</div><div class="line">    return key;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>MurmurHash2哈希算法：redis使用MurmurHash2算法来计算法哈希值，能产生32-bit或64-bit哈希值。该算法对硬件的要求在于：1.机器可以从任意一个地址读取一个4-bit大小的值，并且int的大小为4bit。seed默认值为5381，可以人为改变，不过没什么意义。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line">unsigned int dictGenHashFunction(const void *key, int len) &#123;</div><div class="line">    /* &apos;m&apos; and &apos;r&apos; are mixing constants generated offline.</div><div class="line">     They&apos;re not really &apos;magic&apos;, they just happen to work well.  */</div><div class="line">    uint32_t seed = dict_hash_function_seed;</div><div class="line">    const uint32_t m = 0x5bd1e995;</div><div class="line">    const int r = 24;</div><div class="line"></div><div class="line">    /* Initialize the hash to a &apos;random&apos; value */</div><div class="line">    uint32_t h = seed ^ len;</div><div class="line"></div><div class="line">    /* Mix 4 bytes at a time into the hash */</div><div class="line">    const unsigned char *data = (const unsigned char *)key;</div><div class="line"></div><div class="line">    while(len &gt;= 4) &#123;</div><div class="line">        uint32_t k = *(uint32_t*)data;</div><div class="line"></div><div class="line">        k *= m;</div><div class="line">        k ^= k &gt;&gt; r;</div><div class="line">        k *= m;</div><div class="line"></div><div class="line">        h *= m;</div><div class="line">        h ^= k;</div><div class="line"></div><div class="line">        data += 4;</div><div class="line">        len -= 4;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /* Handle the last few bytes of the input array  */</div><div class="line">    switch(len) &#123;</div><div class="line">    case 3: h ^= data[2] &lt;&lt; 16;</div><div class="line">    case 2: h ^= data[1] &lt;&lt; 8;</div><div class="line">    case 1: h ^= data[0]; h *= m;</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">    /* Do a few final mixes of the hash to ensure the last few</div><div class="line">     * bytes are well-incorporated. */</div><div class="line">    h ^= h &gt;&gt; 13;</div><div class="line">    h *= m;</div><div class="line">    h ^= h &gt;&gt; 15;</div><div class="line"></div><div class="line">    return (unsigned int)h;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>djb哈希算法: seed和字符串的ascii值，len次变换之后得到hash值。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">/* And a case insensitive hash function (based on djb hash) */</div><div class="line">unsigned int dictGenCaseHashFunction(const unsigned char *buf, int len) &#123;</div><div class="line">    unsigned int hash = (unsigned int)dict_hash_function_seed;</div><div class="line"></div><div class="line">    while (len--)</div><div class="line">        hash = ((hash &lt;&lt; 5) + hash) + (tolower(*buf++)); /* hash * 33 + c */</div><div class="line">    return hash;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="rehash"><a href="#rehash" class="headerlink" title="rehash"></a>rehash</h2><p>当哈希表的大小不能满足需求，可能会有两个以上的键值被分配到同一个位置上，这时候就发生了冲突，redis中解决冲突的方法和HashMap中类似，使用链表法。但是当这种情况频繁发生，会影响查找的性能，需要尽力避免。这个时候希望通过哈希表的load factor来动态的决定扩展哈希表或者收缩哈希表。</p>
-<ul>
-<li>rehash流程：<ol>
-<li>根据要求扩展或者收缩ht[1]</li>
-<li>将ht[0]上的节点rehash到ht[1]上</li>
-<li>释放ht[0], 将ht[1]设置为ht[0],新建一个ht[1]</li>
-</ol>
 </li>
 </ul>
-<p>扩展操作：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">/* Expand the hash table if needed */</div><div class="line">static int _dictExpandIfNeeded(dict *d)</div><div class="line">&#123;</div><div class="line">    /* Incremental rehashing already in progress. Return. */</div><div class="line">    if (dictIsRehashing(d)) return DICT_OK;</div><div class="line"></div><div class="line">    /* If the hash table is empty expand it to the initial size. */</div><div class="line">    if (d-&gt;ht[0].size == 0) return dictExpand(d, DICT_HT_INITIAL_SIZE);</div><div class="line"></div><div class="line">    /* If we reached the 1:1 ratio, and we are allowed to resize the hash</div><div class="line">     * table (global setting) or we should avoid it but the ratio between</div><div class="line">     * elements/buckets is over the &quot;safe&quot; threshold, we resize doubling</div><div class="line">     * the number of buckets. */</div><div class="line">    if (d-&gt;ht[0].used &gt;= d-&gt;ht[0].size &amp;&amp;</div><div class="line">        (dict_can_resize ||</div><div class="line">         d-&gt;ht[0].used/d-&gt;ht[0].size &gt; dict_force_resize_ratio))</div><div class="line">    &#123;</div><div class="line">        return dictExpand(d, d-&gt;ht[0].used*2);</div><div class="line">    &#125;</div><div class="line">    return DICT_OK;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>收缩操作：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">int dictResize(dict *d)</div><div class="line">&#123;</div><div class="line">    int minimal;</div><div class="line"></div><div class="line">    if (!dict_can_resize || dictIsRehashing(d)) return DICT_ERR;</div><div class="line">    minimal = d-&gt;ht[0].used;</div><div class="line">    if (minimal &lt; DICT_HT_INITIAL_SIZE)</div><div class="line">        minimal = DICT_HT_INITIAL_SIZE;</div><div class="line">    return dictExpand(d, minimal);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>根据传入的size来跳帧过着创建字典d的哈希表</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">/* Expand or create the hash table */</div><div class="line">int dictExpand(dict *d, unsigned long size)</div><div class="line">&#123;</div><div class="line">    dictht n; /* the new hash table */</div><div class="line">    unsigned long realsize = _dictNextPower(size);</div><div class="line"></div><div class="line">    /* the size is invalid if it is smaller than the number of</div><div class="line">     * elements already inside the hash table */</div><div class="line">    if (dictIsRehashing(d) || d-&gt;ht[0].used &gt; size)</div><div class="line">        return DICT_ERR;</div><div class="line"></div><div class="line">    /* Rehashing to the same table size is not useful. */</div><div class="line">    if (realsize == d-&gt;ht[0].size) return DICT_ERR;</div><div class="line"></div><div class="line">    /* Allocate the new hash table and initialize all pointers to NULL */</div><div class="line">    n.size = realsize;</div><div class="line">    n.sizemask = realsize-1;</div><div class="line">    n.table = zcalloc(realsize*sizeof(dictEntry*));</div><div class="line">    n.used = 0;</div><div class="line"></div><div class="line">    /* Is this the first initialization? If so it&apos;s not really a rehashing</div><div class="line">     * we just set the first hash table so that it can accept keys. */</div><div class="line">    if (d-&gt;ht[0].table == NULL) &#123;</div><div class="line">        d-&gt;ht[0] = n;</div><div class="line">        return DICT_OK;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /* Prepare a second hash table for incremental rehashing */</div><div class="line">    d-&gt;ht[1] = n;</div><div class="line">    d-&gt;rehashidx = 0;</div><div class="line">    return DICT_OK;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>rehash过程不是一次性集中完成的，而是分多次，渐进式的，断续进行的，这样可以减少对服务器的影响。</p>
-<h2 id="渐进式rehash-incremental-rehashing"><a href="#渐进式rehash-incremental-rehashing" class="headerlink" title="渐进式rehash(incremental rehashing)"></a>渐进式rehash(incremental rehashing)</h2><ol>
-<li>dict中有一个成员为rehashidx，表示rehash的状态标志，-1表示不进行rehash，0表示开始进行rehash。</li>
-<li>rehash过程中，每次对字典的CRUD时，会检查rehashidx标志位，如果在进行rehash，CRUD结束之后顺带进行单步rehash，同时rehashidx+1;</li>
-<li>rehash结束之后，将rehashidx该为-1。</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">static void _dictRehashStep(dict *d) &#123;</div><div class="line">    if (d-&gt;iterators == 0) dictRehash(d,1);</div><div class="line">&#125;</div><div class="line"></div><div class="line">int dictRehash(dict *d, int n) &#123;</div><div class="line">    int empty_visits = n*10; /* Max number of empty buckets to visit. */</div><div class="line">    if (!dictIsRehashing(d)) return 0;</div><div class="line"></div><div class="line">    while(n-- &amp;&amp; d-&gt;ht[0].used != 0) &#123;</div><div class="line">        dictEntry *de, *nextde;</div><div class="line"></div><div class="line">        /* Note that rehashidx can&apos;t overflow as we are sure there are more</div><div class="line">         * elements because ht[0].used != 0 */</div><div class="line">        assert(d-&gt;ht[0].size &gt; (unsigned long)d-&gt;rehashidx);</div><div class="line">        while(d-&gt;ht[0].table[d-&gt;rehashidx] == NULL) &#123;</div><div class="line">            d-&gt;rehashidx++;</div><div class="line">            if (--empty_visits == 0) return 1;</div><div class="line">        &#125;</div><div class="line">        de = d-&gt;ht[0].table[d-&gt;rehashidx];</div><div class="line">        /* Move all the keys in this bucket from the old to the new hash HT */</div><div class="line">        while(de) &#123;</div><div class="line">            unsigned int h;</div><div class="line"></div><div class="line">            nextde = de-&gt;next;</div><div class="line">            /* Get the index in the new hash table */</div><div class="line">            h = dictHashKey(d, de-&gt;key) &amp; d-&gt;ht[1].sizemask;</div><div class="line">            de-&gt;next = d-&gt;ht[1].table[h];</div><div class="line">            d-&gt;ht[1].table[h] = de;</div><div class="line">            d-&gt;ht[0].used--;</div><div class="line">            d-&gt;ht[1].used++;</div><div class="line">            de = nextde;</div><div class="line">        &#125;</div><div class="line">        d-&gt;ht[0].table[d-&gt;rehashidx] = NULL;</div><div class="line">        d-&gt;rehashidx++;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /* Check if we already rehashed the whole table... */</div><div class="line">    if (d-&gt;ht[0].used == 0) &#123;</div><div class="line">        zfree(d-&gt;ht[0].table);</div><div class="line">        d-&gt;ht[0] = d-&gt;ht[1];</div><div class="line">        _dictReset(&amp;d-&gt;ht[1]);</div><div class="line">        d-&gt;rehashidx = -1;</div><div class="line">        return 0;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /* More to rehash... */</div><div class="line">    return 1;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="跳跃表"><a href="#跳跃表" class="headerlink" title="跳跃表"></a>跳跃表</h1><p>跳跃表示一种有序的数据结构，它通过在每个节点中维持多个指向其他节点的指针，从而可以快速到达要访问的节点。跳跃表是一个有序链表，其查找复杂度平均为O(logN)，最坏O(N)。redis中将跳跃表应用在有序集合键。</p>
-<p>Redis中跳跃表主要有两部分组成：zskiplist和中skiplistNode：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">typedef struct zskiplist &#123;</div><div class="line">    struct zskiplistNode *header, *tail;</div><div class="line">    unsigned long length;       </div><div class="line">    int level;                  //跳跃表中节点的最大层数，除了第一个节点</div><div class="line">&#125; zskiplist;</div><div class="line"></div><div class="line">typedef struct zskiplistNode &#123;</div><div class="line">    robj *obj;                          </div><div class="line">    double score;                       </div><div class="line">    struct zskiplistNode *backward;     </div><div class="line">    struct zskiplistLevel &#123;</div><div class="line">        struct zskiplistNode *forward;  </div><div class="line">        unsigned int span;              </div><div class="line">    &#125; level[];                          </div><div class="line">&#125; zskiplistNode;</div></pre></td></tr></table></figure>
-<ul>
-<li>level：层，每个元素包含一个指向其他节点的指针，实现跳跃查询的关键。</li>
+<h2 id="Spring的六大模块"><a href="#Spring的六大模块" class="headerlink" title="Spring的六大模块"></a>Spring的六大模块</h2><ul>
+<li>核心Spring容器：负责Bean的创建，配置和管理。BeanFactory提供了依赖注入，应用上下文及其他企业服务。</li>
+<li>AOP模块：对面向切面编程提供了丰富的支持。</li>
+<li>数据访问与集成：JDBC和DAO层模块封装了数据库样板，提供了ORM模块，</li>
+<li>Web和远程调用</li>
+<li>测试</li>
 </ul>
-<h1 id="整数集合"><a href="#整数集合" class="headerlink" title="整数集合"></a>整数集合</h1><p>整数结合是集合键低层实现之一。集合键另一实现为值为空的散列表。整数集合是为了节省使用散列表存储整形对象时的空间浪费。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">typedef struct intset &#123;</div><div class="line">    uint32_t encoding;</div><div class="line">    uint32_t length;</div><div class="line">    int8_t contents[];</div><div class="line">&#125; intset;</div></pre></td></tr></table></figure>
+<hr>
+<h1 id="装配Bean"><a href="#装配Bean" class="headerlink" title="装配Bean"></a>装配Bean</h1><hr>
+<h2 id="声明Bean"><a href="#声明Bean" class="headerlink" title="声明Bean"></a>声明Bean</h2><h3 id="XML命名空间"><a href="#XML命名空间" class="headerlink" title="XML命名空间"></a>XML命名空间</h3><ul>
+<li><p>Java自带了许多XML命名空间，通过这些命名空间可以配置Spring</p>
 <ul>
-<li>encoding:编码格式，默认用2个字节存储，还有4个字节和8个字节</li>
-<li>length:集合元素的数量</li>
-<li>contents:数组类型</li>
+<li>aop：为声明切面以及将@AspectJ注解的类代理为Spring切面提供了配置元素</li>
+<li>beans：支持声明Bean和装配Bean，是Spring最核心也是最原始的命名空间</li>
+<li>context：为配置Spring应用上下文提供了配置元素，包括自动检测和自动装配bean，注入非Spring直接管理的对象</li>
+<li>jee：提供了与Java EE API的继承，例如JNDI和EJB</li>
+<li>jms：为声明消息驱动的POJO提供了配置元素</li>
+<li>lang：支持配置由Groovy、JRuby或BeanShell等脚本实现的Bean</li>
+<li>mvc：启动Spring MVC的能力，例如面向注解的控制器、视图控制器和拦截器</li>
+<li>oxm：支持Spring的对象到XML的映射配置</li>
+<li>tx：提供声明式事务配置</li>
+<li>util：提供各种各样的工具类元素，包括把集合配置为Bean，支持属性占位符元素</li>
 </ul>
-<p>新的元素插入到集合的流程：</p>
-<ol>
-<li>判断新元素的编码格式</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">/* Return the required encoding for the provided value. */</div><div class="line">static uint8_t _intsetValueEncoding(int64_t v) &#123;</div><div class="line">    if (v &lt; INT32_MIN || v &gt; INT32_MAX)</div><div class="line">        return INTSET_ENC_INT64;</div><div class="line">    else if (v &lt; INT16_MIN || v &gt; INT16_MAX)</div><div class="line">        return INTSET_ENC_INT32;</div><div class="line">    else</div><div class="line">        return INTSET_ENC_INT16;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ol>
-<li>调整内存空间</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">/* Resize the intset */</div><div class="line">static intset *intsetResize(intset *is, uint32_t len) &#123;</div><div class="line">    uint32_t size = len*intrev32ifbe(is-&gt;encoding);</div><div class="line">    is = zrealloc(is,sizeof(intset)+size);</div><div class="line">    return is;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ol>
-<li>根据编码格式设置对应的值</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">/* Set the value at pos, using the configured encoding. */</div><div class="line">static void _intsetSet(intset *is, int pos, int64_t value) &#123;</div><div class="line">    uint32_t encoding = intrev32ifbe(is-&gt;encoding);</div><div class="line"></div><div class="line">    if (encoding == INTSET_ENC_INT64) &#123;</div><div class="line">        ((int64_t*)is-&gt;contents)[pos] = value;</div><div class="line">        memrev64ifbe(((int64_t*)is-&gt;contents)+pos);</div><div class="line">    &#125; else if (encoding == INTSET_ENC_INT32) &#123;</div><div class="line">        ((int32_t*)is-&gt;contents)[pos] = value;</div><div class="line">        memrev32ifbe(((int32_t*)is-&gt;contents)+pos);</div><div class="line">    &#125; else &#123;</div><div class="line">        ((int16_t*)is-&gt;contents)[pos] = value;</div><div class="line">        memrev16ifbe(((int16_t*)is-&gt;contents)+pos);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>数组集合的好处：提升灵活性并节省内存空间。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">/* Upgrades the intset to a larger encoding and inserts the given integer. */</div><div class="line">static intset *intsetUpgradeAndAdd(intset *is, int64_t value) &#123;</div><div class="line">    uint8_t curenc = intrev32ifbe(is-&gt;encoding);</div><div class="line">    uint8_t newenc = _intsetValueEncoding(value);</div><div class="line">    int length = intrev32ifbe(is-&gt;length);</div><div class="line">    int prepend = value &lt; 0 ? 1 : 0;</div><div class="line"></div><div class="line">    /* First set new encoding and resize */</div><div class="line">    is-&gt;encoding = intrev32ifbe(newenc);</div><div class="line">    is = intsetResize(is,intrev32ifbe(is-&gt;length)+1);</div><div class="line"></div><div class="line">    /* Upgrade back-to-front so we don&apos;t overwrite values.</div><div class="line">     * Note that the &quot;prepend&quot; variable is used to make sure we have an empty</div><div class="line">     * space at either the beginning or the end of the intset. */</div><div class="line">    while(length--)</div><div class="line">        _intsetSet(is,length+prepend,_intsetGetEncoded(is,length,curenc));</div><div class="line"></div><div class="line">    /* Set the value at the beginning or the end. */</div><div class="line">    if (prepend)</div><div class="line">        _intsetSet(is,0,value);</div><div class="line">    else</div><div class="line">        _intsetSet(is,intrev32ifbe(is-&gt;length),value);</div><div class="line">    is-&gt;length = intrev32ifbe(intrev32ifbe(is-&gt;length)+1);</div><div class="line">    return is;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="压缩列表"><a href="#压缩列表" class="headerlink" title="压缩列表"></a>压缩列表</h1><p>ziplist是哈希键的低层实现之一。为特殊编码的双向链表，和整数集合一样是为了提高内存的存储效率而的设计的。当保存的对象是小整数，或者长度较短的字符串，redis就会使用压缩列表来作为哈希键的实现。</p>
-<h2 id="压缩列表的构成"><a href="#压缩列表的构成" class="headerlink" title="压缩列表的构成"></a>压缩列表的构成</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">/* Macro to determine type */</div><div class="line">#define ZIP_IS_STR(enc) (((enc) &amp; ZIP_STR_MASK) &lt; ZIP_STR_MASK)</div><div class="line"></div><div class="line">/* Utility macros */</div><div class="line">#define ZIPLIST_BYTES(zl)       (*((uint32_t*)(zl)))</div><div class="line">#define ZIPLIST_TAIL_OFFSET(zl) (*((uint32_t*)((zl)+sizeof(uint32_t))))</div><div class="line">#define ZIPLIST_LENGTH(zl)      (*((uint16_t*)((zl)+sizeof(uint32_t)*2)))</div><div class="line">#define ZIPLIST_HEADER_SIZE     (sizeof(uint32_t)*2+sizeof(uint16_t))</div><div class="line">#define ZIPLIST_END_SIZE        (sizeof(uint8_t))</div><div class="line">#define ZIPLIST_ENTRY_HEAD(zl)  ((zl)+ZIPLIST_HEADER_SIZE)</div><div class="line">#define ZIPLIST_ENTRY_TAIL(zl)  ((zl)+intrev32ifbe(ZIPLIST_TAIL_OFFSET(zl)))</div><div class="line">#define ZIPLIST_ENTRY_END(zl)   ((zl)+intrev32ifbe(ZIPLIST_BYTES(zl))-1)</div></pre></td></tr></table></figure>
-<p><img src="/img/redis-ziplist.png" alt="Alt text"></p>
-<p>压缩链表可以包含任意多个节点，每个节点保存一个字节数组或者一个整数值。</p>
+</li>
+<li><p>创建Spring配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</div><div class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</div><div class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</div><div class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd&quot;</div><div class="line">&gt;</div><div class="line">  &lt;!--Bean declarations go here --&gt;</div><div class="line">&lt;/beans&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>beans 元素中放置所有的Spring配置文件。</p>
+<h3 id="声明Bean-1"><a href="#声明Bean-1" class="headerlink" title="声明Bean"></a>声明Bean</h3><p>定义一个Perfomer接口：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public interface Performer &#123;</div><div class="line">    void perform() throws Exception;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>新建一个Bean,实现了Performer接口，从而可以进行表演扔袋子的节目：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public class Juggler implements Performer&#123;</div><div class="line">    private int beanBags = 3;</div><div class="line"></div><div class="line">    public Juggler() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public Juggler(int beanBags) &#123;</div><div class="line">        this.beanBags = beanBags;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void perform() throws Exception &#123;</div><div class="line">        System.out.println(&quot;JUGGLING &quot; + beanBags + &quot; BEANBAGS&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在Spring配置文件中声明一个Bean：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;duke&quot; class=&quot;com.springinaction.springidol.Juggler&quot; /&gt;</div></pre></td></tr></table></figure></p>
+<p><bean>元素是Spring中最基本的配置单元，通过该元素，Spring可以创建一个对象，duke相当于Juggler的一个实例，main函数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public class main &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        ApplicationContext ctx = new ClassPathXmlApplicationContext(</div><div class="line">                &quot;com/springinaction/springidol/spring-idol.xml&quot;</div><div class="line">        );</div><div class="line">        Performer performer = (Performer) ctx.getBean(&quot;duke&quot;);</div><div class="line">        try &#123;</div><div class="line">            performer.perform();</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></bean></p>
+<p>打印结果：<code>JUGGLING 3 BEANBAGS</code></p>
+<h3 id="构造器注入"><a href="#构造器注入" class="headerlink" title="构造器注入"></a>构造器注入</h3><p>XML文件中，让duke成为可以抛15个袋子的杂技师：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;duke&quot; class=&quot;com.springinaction.springidol.Juggler&quot; &gt;</div><div class="line">  &lt;constructor-arg value=&quot;15&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure></p>
+<p>当不配置constructor-arg标签时，Spring将使用默认的构造方法，配置之后会使用另外的构造方法来实例化对象。</p>
+<ul>
+<li>构造器注入对象的引用<br>Poem接口：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public interface Poem &#123;</div><div class="line">    void recite();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>注入对象引用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public class PoeticJuggler extends Juggler&#123;</div><div class="line">    private Poem poem;</div><div class="line"></div><div class="line">    public PoeticJuggler(Poem poem) &#123;</div><div class="line">        super();</div><div class="line">        this.poem = poem;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public PoeticJuggler(int beanBags, Poem poem) &#123;</div><div class="line">        super(beanBags);</div><div class="line">        this.poem = poem;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void perform() throws Exception &#123;</div><div class="line">        super.perform();</div><div class="line">        System.out.println(&quot;While reciting...&quot;);</div><div class="line">        poem.recite();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>实现Poem接口的类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public class Sonnet29 implements Poem&#123;</div><div class="line">    private static String[] LINES = &#123;</div><div class="line">            &quot;when I was young&quot;,</div><div class="line">            &quot;I am a boy.....&quot;,</div><div class="line">            &quot;end of the poem&quot;</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">    public Sonnet29() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void recite() &#123;</div><div class="line">        for (int i = 0; i &lt; LINES.length; i++)</div><div class="line">            System.out.println(LINES[i]);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>XML中进行配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;duke&quot; class=&quot;com.springinaction.springidol.PoeticJuggler&quot; &gt;</div><div class="line">  &lt;constructor-arg value=&quot;15&quot;/&gt;</div><div class="line">  &lt;constructor-arg ref=&quot;sonnet29&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div><div class="line">&lt;bean id=&quot;sonnet29&quot; class=&quot;com.springinaction.springidol.Sonnet29&quot;/&gt;</div></pre></td></tr></table></figure>
+<p>这相当于执行了如下的Java语句：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Poem sonnet29 = new Sonnet29();</div><div class="line">Performer duke = new PoeticJuggler(15, sonnet29);</div></pre></td></tr></table></figure>
+<p>打印输出为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">JUGGLING 15 BEANBAGS</div><div class="line">While reciting...</div><div class="line">when I was young</div><div class="line">I am a boy.....</div><div class="line">end of the poem</div></pre></td></tr></table></figure>
+<ul>
+<li>工厂方法构造Bean<br>Spring支持通过<bean>元素的factory-method属性来装配工厂创建的Bean,Stage实例如下,没有公开的构造方法：</bean></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public class Stage &#123;</div><div class="line">    public Stage() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //返回实例</div><div class="line">    public static Stage getInstance() &#123;</div><div class="line">        return StageSingletonHolder.instance;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //延迟加载实例</div><div class="line">    private static class StageSingletonHolder &#123;</div><div class="line">        static Stage instance = new Stage();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;!--通过工厂方法创建Bean--&gt;</div><div class="line">&lt;bean id=&quot;theStage&quot; class=&quot;com.springinaction.springidol.Stage&quot; factory-method=&quot;getInstance&quot;/&gt;</div></pre></td></tr></table></figure>
+<h3 id="Bean的作用域"><a href="#Bean的作用域" class="headerlink" title="Bean的作用域"></a>Bean的作用域</h3><p>Spring的Bean作用域允许用户配置所创建的Bean属于哪一种作用域：</p>
+<pre><code>* singleton：在每一个Spring容器中，一个Bean定义只有一个对象实例（默认）
+* prototype：允许Bean的定义可以被实例化任意次
+* request：在一次HTTP请求中，每个Bean定义对应一个实例。
+* session：在依次HTTP Session中，每个Bean定义对应一个实例。
+* global-session：在一个全局的HTTP Session中，每个Bean定义对应一个实例。
+</code></pre><h3 id="初始化和销毁Bean"><a href="#初始化和销毁Bean" class="headerlink" title="初始化和销毁Bean"></a>初始化和销毁Bean</h3><p>实现开关灯的实体类：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public class Auditorium &#123;</div><div class="line">    public void turnOnLights()&#123;</div><div class="line">        System.out.println(&quot;trun on the lights!!!!&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void trunOffLights() &#123;</div><div class="line">        System.out.println(&quot;turn off the lights!!!!&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>XML配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;!--初始化和销毁bean--&gt;</div><div class="line">&lt;bean id=&quot;auditorium&quot; class=&quot;com.springinaction.springidol.Auditorium&quot; init-method=&quot;turnOnLights&quot; destroy-method=&quot;trunOffLights&quot; /&gt;</div></pre></td></tr></table></figure></p>
+<p>Audiorium实例化后会立刻调用init-method，该Bean移除之后会调用destroy-method。</p>
+<blockquote>
+<p>默认的init-method和destroy-method：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</div><div class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</div><div class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd&quot;</div><div class="line">       default-init-method=&quot;turnOnLights&quot;</div><div class="line">       default-destroy-method=&quot;trunOffLights&quot;</div><div class="line">&gt;</div></pre></td></tr></table></figure></p>
+</blockquote>
+<p>为上下文所有的Bean配置默认的初始化和销毁方法。</p>
+<h2 id="注入Bean属性"><a href="#注入Bean属性" class="headerlink" title="注入Bean属性"></a>注入Bean属性</h2><p>JavaBean的属性通常是私有的，Spring可以借助其set方法配置属性的值，实现setter注入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public class Instrumentalist implements Performer&#123;</div><div class="line"></div><div class="line">    public Instrumentalist() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void perform() throws Exception &#123;</div><div class="line">        System.out.println(&quot;Playing &quot; + song + &quot; : &quot;);</div><div class="line">        instrument.play();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private String song;</div><div class="line"></div><div class="line">    public String getSong() &#123;</div><div class="line">        return song;</div><div class="line">    &#125;</div><div class="line">    //注入歌曲</div><div class="line">    public void setSong(String song) &#123;</div><div class="line">        this.song = song;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String screanSong() &#123;</div><div class="line">        return song;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private Instrument instrument;</div><div class="line">//    注入乐器</div><div class="line">    public void setInstrument(Instrument instrument) &#123;</div><div class="line">        this.instrument = instrument;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>其有两个属性，song和Instrument,Instrument接口如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public interface Instrument &#123;</div><div class="line">    public void play();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>XML中配置其默认的构造方法生成Bean kenny:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;kenny&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot;/&gt;</div></pre></td></tr></table></figure></p>
+<p>此时kenny没有歌曲也没有乐器，需要对其进行注入属性。</p>
+<h3 id="注入简单值"><a href="#注入简单值" class="headerlink" title="注入简单值"></a>注入简单值</h3><p>使用<property>元素配置Bean的属性。一旦Instrumentalist被实例化，Spring就会调用<property>元素所指定属性的setter方法为该属性注入值。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;!--注入Bean属性--&gt;</div><div class="line">&lt;bean id=&quot;kenny&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot; &gt;</div><div class="line">  &lt;property name=&quot;song&quot; value=&quot;Jingle Bells&quot; /&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure></property></property></p>
+<h3 id="引用其他Bean"><a href="#引用其他Bean" class="headerlink" title="引用其他Bean"></a>引用其他Bean</h3><p>定义两个实现了Instrument接口的类：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public class saxophone implements Instrument&#123;</div><div class="line">    public saxophone() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void play() &#123;</div><div class="line">        System.out.println(&quot;tttttttoooooooo&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public class Piano implements Instrument&#123;</div><div class="line">    public Piano() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void play() &#123;</div><div class="line">        System.out.println(&quot;play the piano!!!&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Spring支持将其他Bean注入到当前Bean：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;kenny&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot; &gt;</div><div class="line">    &lt;property name=&quot;song&quot; value=&quot;Jingle Bells&quot; /&gt;</div><div class="line">    &lt;property name=&quot;instrument&quot; ref=&quot;saxophone&quot;/&gt;</div><div class="line">    &lt;property name=&quot;instrument&quot; ref=&quot;piano&quot; /&gt;</div><div class="line">&lt;/bean&gt;</div><div class="line">&lt;bean id=&quot;saxophone&quot; class=&quot;com.springinaction.springidol.saxophone&quot; /&gt;</div><div class="line">&lt;bean id=&quot;piano&quot; class=&quot;com.springinaction.springidol.Piano&quot; /&gt;</div></pre></td></tr></table></figure></p>
+<ul>
+<li>注入内部Bean<br>注入的Bean仅当前Bean可以使用，此时可以采用内部Bean的注入方法：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;!-- 内部BEAN --&gt;</div><div class="line">&lt;bean id=&quot;kenny&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot;&gt;</div><div class="line">  &lt;property name=&quot;song&quot; value=&quot;Jingle Bells&quot; /&gt;</div><div class="line">  &lt;property name=&quot;instrument&quot;&gt;</div><div class="line">    &lt;bean class=&quot;com.springinaction.springidol.saxophone&quot; /&gt;</div><div class="line">  &lt;/property&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>除了<property>标签外，<constructor-arg>标签同样可以注入内部Bean</constructor-arg></property></p>
+<h3 id="Spring命名空间的P装配属性"><a href="#Spring命名空间的P装配属性" class="headerlink" title="Spring命名空间的P装配属性"></a>Spring命名空间的P装配属性</h3><p>XML声明：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</div><div class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</div><div class="line">       xmlns:p=&quot;http://www.springframework.org/schema/p&quot;</div><div class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</div><div class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd&quot;</div><div class="line">       default-init-method=&quot;turnOnLights&quot;</div><div class="line">       default-destroy-method=&quot;trunOffLights&quot;</div><div class="line">&gt;</div></pre></td></tr></table></figure></p>
+<p>p标签和property功能类似，但是更加简洁：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;kenny&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot; p:song = &quot;Jingle Bells&quot; p:instrument-ref=&quot;saxophone&quot;/&gt;</div></pre></td></tr></table></figure></p>
+<h3 id="装配集合"><a href="#装配集合" class="headerlink" title="装配集合"></a>装配集合</h3><ul>
+<li><list>：装配list类型的值，不允许重复</list></li>
+<li><set>：装配set类型的值，不允许重复</set></li>
+<li><map>：装配map类型的值，名称和值可以是任意类型</map></li>
+<li><props>：装配properties类型的值，名称和值必须都是String类型</props></li>
+</ul>
+<p>属性实际定义的集合类型和选择<list>、<set>没有任何的关系。新建一人可以同时演奏多种乐器的实体类：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">import java.util.Collection;</div><div class="line"></div><div class="line">public class OneManBand implements Performer&#123;</div><div class="line">    public OneManBand() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void perform() throws Exception &#123;</div><div class="line">        for (Instrument instrument : instruments) &#123;</div><div class="line">            instrument.play();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private Collection&lt;Instrument&gt; instruments;</div><div class="line"></div><div class="line">    public void setInstruments(Collection&lt;Instrument&gt; instruments) &#123;</div><div class="line">        this.instruments = instruments;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></set></list></p>
+<p>装配list Set Array分别为:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;hank&quot; class=&quot;com.springinaction.springidol.OneManBand&quot;&gt;</div><div class="line">  &lt;property name=&quot;instruments&quot;&gt;</div><div class="line">    &lt;list&gt;</div><div class="line">      &lt;ref bean=&quot;saxophone&quot;/&gt;</div><div class="line">      &lt;ref bean=&quot;piano&quot;/&gt;</div><div class="line">    &lt;/list&gt;</div><div class="line">  &lt;/property&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure></p>
+<p>list实际上可以包含另一个list作为其成员构成多维列表，无论<list>还是<set>都可以用来装配类型为Collection的任意实现或者数组的属性。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;hank2&quot; class=&quot;com.springinaction.springidol.OneManBand2&quot;&gt;</div><div class="line">  &lt;property name=&quot;instruments&quot;&gt;</div><div class="line">    &lt;map&gt;</div><div class="line">      &lt;entry key=&quot;PIANO&quot; value-ref=&quot;piano&quot;/&gt;</div><div class="line">      &lt;entry key=&quot;SAX&quot; value-ref=&quot;saxophone&quot;/&gt;</div><div class="line">    &lt;/map&gt;</div><div class="line">  &lt;/property&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure></set></list></p>
+<p>装配map类型：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">import java.util.Collection;</div><div class="line">import java.util.Map;</div><div class="line"></div><div class="line">public class OneManBand2 implements Performer&#123;</div><div class="line">    public OneManBand2() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void perform() throws Exception &#123;</div><div class="line">        for (String key : instruments.keySet()) &#123;</div><div class="line">            System.out.println(key + &quot; : &quot;);</div><div class="line">            instruments.get(key).play();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private Map&lt;String, Instrument&gt; instruments;</div><div class="line"></div><div class="line">    public void setInstruments(Map&lt;String, Instrument&gt; instruments) &#123;</div><div class="line">        this.instruments = instruments;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;hank2&quot; class=&quot;com.springinaction.springidol.OneManBand2&quot;&gt;</div><div class="line">  &lt;property name=&quot;instruments&quot;&gt;</div><div class="line">    &lt;map&gt;</div><div class="line">      &lt;entry key=&quot;PIANO&quot; value-ref=&quot;piano&quot;/&gt;</div><div class="line">      &lt;entry key=&quot;SAX&quot; value-ref=&quot;saxophone&quot;/&gt;</div><div class="line">    &lt;/map&gt;</div><div class="line">  &lt;/property&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
+<h2 id="使用表达式装配"><a href="#使用表达式装配" class="headerlink" title="使用表达式装配"></a>使用表达式装配</h2><p>Spring引入了表达式语言Spring Expression Language，SpEL通过运行期执行的表达式将值装配到Bean的属性和构造器参数中去。SpEL的特性包括：</p>
+<pre><code>* 使用Bean的ID来引用Bean
+* 调用方法和访问对象的属性
+* 对值进行算数、关系和逻辑运算
+* 正则表达式匹配
+* 集合操作
+</code></pre><h3 id="基本要素"><a href="#基本要素" class="headerlink" title="基本要素"></a>基本要素</h3><p> #{}会提示Spring这个标记里的内容时SpEL表达式，其格式可以为整型数，浮点数，科学计数法，字符串类型(单引号或者双引号都可以),bool类型</p>
+<ul>
+<li><p>字面值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;property name=&quot;count&quot; value=&quot;#&#123;5&#125;&quot;/&gt;</div><div class="line">&lt;property name=&quot;frequency&quot; value=&quot;#&#123;89.22&#125;&quot;/&gt;</div><div class="line">&lt;property name=&quot;capacity&quot; value=&quot;#&#123;1e6&#125;&quot;/&gt;</div><div class="line">&lt;property name=&quot;name&quot; value=&quot;#&#123;&quot;Chuck&quot;&#125;&quot;/&gt;</div><div class="line">&lt;property name=&quot;name&quot; value=&quot;#&#123;&apos;Chuck&apos;&#125;&quot;/&gt;</div><div class="line">&lt;property name=&quot;enable&quot; value=&quot;#&#123;false&#125;&quot;/&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>引用Bean属性和方法<br>SpEL表达式不仅可以装配字面值，还可以装配Bean的属性和方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;carl&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot;&gt;</div><div class="line">  &lt;property name=&quot;song&quot; value=&quot;#&#123;kenny.song&#125;&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;carl&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot;&gt;</div><div class="line">  &lt;property name=&quot;song&quot; value=&quot;#&#123;songSelector.selectSong().toUpperCase()&#125;&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
+<p>返回值<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;carl&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot;&gt;</div><div class="line">  &lt;property name=&quot;song&quot; value=&quot;#&#123;songSelector.selectSong().toUpperCase()&#125;&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure></p>
+<p>为NULL会报空指针错误，解决空指针错误的方法为使用null-safe存取器：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;carl&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot;&gt;</div><div class="line">  &lt;property name=&quot;song&quot; value=&quot;#&#123;songSelector.selectSong()?.toUpperCase()&#125;&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure></p>
+<ul>
+<li>操作类<br>T()运算符会调用类作用域的方法和常量。例如T(java.lang.Math)，该运算符可以调用指定类的静态方法和常量，当需要把PI装配到Bean中去：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;property name=&quot;PI&quot; value=&quot;#&#123;T(java.lang.Math).PI&#125;&quot;/&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="值操作"><a href="#值操作" class="headerlink" title="值操作"></a>值操作</h3><ul>
+<li><p>运算符</p>
+<ul>
+<li><p>算数运算：+、-、<code>*</code>，/, %, ^</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;property name=&quot;adjustedAmount&quot; value=&quot;#&#123;counter.total-20&#125;&quot;/&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>关系运算：&lt;、&gt;、==、 &gt;=、 &lt;=、lt、 gt、 eq、 le、 ge</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;property name=&quot;equal&quot; value=&quot;#&#123;counter.total == 100&#125;&quot;/&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>逻辑运算：and、 or、 not、 |</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;property name=&quot;largeCircle&quot; value=&quot;#&#123;shape.kind == &apos;circle&apos; and shape.perimeter gt 100000&#125;&quot;/&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>条件运算：?:(ternary)、?:(Elvis)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;property name=&quot;instrument&quot; value=&quot;#&#123;songSelector.selectSong()==&apos;Jingle Bells&apos;?piano:saxophone&#125;&quot;/&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>正则表达式：matches</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;property name=&quot;validEmail&quot; value=&quot;#&#123;admin.email matches &apos;[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.com&apos;&#125;&quot;/&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="SpEL中筛选集合"><a href="#SpEL中筛选集合" class="headerlink" title="SpEL中筛选集合"></a>SpEL中筛选集合</h3><p>设定一个City类：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public class City &#123;</div><div class="line">    private String name;</div><div class="line">    private String state;</div><div class="line">    private int population;</div><div class="line"></div><div class="line">    public String getName() &#123;</div><div class="line">        return name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setName(String name) &#123;</div><div class="line">        this.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String getState() &#123;</div><div class="line">        return state;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setState(String state) &#123;</div><div class="line">        this.state = state;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public int getPopulation() &#123;</div><div class="line">        return population;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setPopulation(int population) &#123;</div><div class="line">        this.population = population;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>通过Spring的<util:list>元素定义一个City的List集合：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;util:list id=&quot;cities&quot;&gt;</div><div class="line">  &lt;bean class=&quot;com.springinaction.springidol.City&quot; p:name=&quot;Chicago&quot; p:state=&quot;IL&quot; p:population=&quot;285114&quot;/&gt;</div><div class="line">  &lt;bean class=&quot;com.springinaction.springidol.City&quot; p:name=&quot;Atlanta&quot; p:state=&quot;GA&quot; p:population=&quot;537958&quot;/&gt;</div><div class="line">  &lt;bean class=&quot;com.springinaction.springidol.City&quot; p:name=&quot;Dallas&quot; p:state=&quot;TX&quot; p:population=&quot;1279910&quot;/&gt;</div><div class="line">&lt;/util:list&gt;</div></pre></td></tr></table></figure></util:list></p>
+<ul>
+<li>访问集合成员：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;property name=&quot;chosenCity&quot; value=&quot;#&#123;cities[1]&#125;&quot;/&gt;</div><div class="line">&lt;property name=&quot;chosenCity&quot; value=&quot;#&#123;cities[T(java.lang.Math).random * cities.size()]&#125;&quot;/&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>选择属性的方式：</p>
+<ul>
+<li>systemEnvironment：包含应用程序所在机器上的所有的环境变量，Propert集合<br><code>&lt;property name=&quot;homePath&quot; value=&quot;#{systemEnvironment[&#39;HOME&#39;]}&quot;/&gt;</code></li>
+<li>systemProperties：包含了Java应用程序启动时所设置的所有的属性</li>
+</ul>
+<ul>
+<li><p>查询集合成员<br>查询运算符<code>.?[]</code>，会创建一个新的集合存放符合条件的CITY：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;property name=&quot;bigCities&quot; value=&quot;#&#123;cities.?[population gt 100000]&#125;&quot;/&gt;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>.^[]</code>：从集合中查询出第一个匹配项</li>
+<li><code>.$[]</code>：从集合中查询出最后一个匹配项</li>
+</ul>
+</li>
+<li><p>投影集合<br><code>.![]</code>：从集合中的每一个成员中取出特定的属性放入一个新的集合中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;property name=&quot;CityName&quot; value=&quot;#&#123;cities.![name]&#125;&quot;/&gt;</div><div class="line">&lt;property name=&quot;CityName&quot; value=&quot;#&#123;cities.![name + &apos;, &apos; + state]&#125;&quot;/&gt;</div><div class="line">&lt;property name=&quot;bigCities&quot; value=&quot;#&#123;cities.?[population gt 100000].![name + &apos;, &apos; + state]&#125;&quot; /&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<hr>
+<h1 id="最小化Spring-XML配置"><a href="#最小化Spring-XML配置" class="headerlink" title="最小化Spring XML配置"></a>最小化Spring XML配置</h1><hr>
+<p>Spring提供了几种技巧解决大量Bean下XML文件的配置：</p>
+<ul>
+<li>自动装配(autowiring)：有助于减少甚至消除配置<property>元素和<constructor-arg>元素，让Spring自动识别如何装配Bean的依赖关系。</constructor-arg></property></li>
+<li>自动检测(autodiscovery)：比自动装配更进一步，让Spring能够自动识别哪些类需要被配置成Spring Bean，减少对<bean>的使用。</bean></li>
+</ul>
+<h2 id="自动装配Bean属性"><a href="#自动装配Bean属性" class="headerlink" title="自动装配Bean属性"></a>自动装配Bean属性</h2><h3 id="四种类型的自动装配"><a href="#四种类型的自动装配" class="headerlink" title="四种类型的自动装配"></a>四种类型的自动装配</h3><ul>
+<li><p>byName：把与Bean的属性具有相同名字(ID)的其他Bean自动装配到Bean的对应属性中。如果没有和属性名字相匹配的Bean，则该属性不装配。<br>  kenny Bean中,使用property标签显式配置了instrument的属性，如果将saxophone Bean的名字改为instrument：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;kenny&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot; &gt;</div><div class="line">  &lt;property name=&quot;song&quot; value=&quot;Jingle Bells&quot; /&gt;</div><div class="line">  &lt;property name=&quot;instrument&quot; ref=&quot;saxophone&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
+<p>  等价于：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;kenny3&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot; autowire=&quot;byName&quot;&gt;</div><div class="line">  &lt;property name=&quot;song&quot; value=&quot;Jingle Bells&quot; /&gt;</div><div class="line">&lt;/bean&gt;</div><div class="line">&lt;bean id=&quot;instrument&quot; class=&quot;com.springinaction.springidol.saxophone&quot;/&gt;</div></pre></td></tr></table></figure>
+<p>  <em>byName自动装配遵循的一项约定：为属性自动装配ID与该属性的名字相同的Bean</em></p>
+</li>
+<li><p>byType：把与Bean的属性具有相同类型的其他Bean自动装配到Bean的对应属性中，如果没有跟属性的类型相匹配的Bean，则该属性不装配。<br>  与byName类似，不过是检查属性的类型，Spring会寻找哪一个Bean的类型与属性的类型相匹配，但是当Spring找到多个Bean的类型与属性相同时，会抛出错误，应用只允许一个与属性类型相同的Bean。解决方法是为：</p>
+<pre><code>* 自动装配标示一个首选Bean,有且仅有一个Bean的primary=true
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;instrument&quot; class=&quot;com.springinaction.springidol.saxophone&quot; primary=&quot;true&quot;/&gt;</div></pre></td></tr></table></figure>
+
+* 取消某个Bean自动装配的资格。
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;instrument&quot; class=&quot;com.springinaction.springidol.saxophone&quot; autowire-candidate=&quot;false&quot; /&gt;</div></pre></td></tr></table></figure>
+</code></pre></li>
+<li><p>constructor：把与Bean的构造器入参具有相同类型的其他Bean自动装配到Bean构造器对应入参中去。</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;duke1&quot; class=&quot;com.springinaction.springidol.PoeticJuggler&quot; autowire=&quot;constructor&quot;/&gt;</div></pre></td></tr></table></figure>
+<p>  Spring会去寻找和Bean的构造方法中的属性类型相同的Bean注入到当前Bean，局限性和byType一样。多个合适的Bean或者多个构造器都会出错。</p>
+</li>
+<li>autodetect：首先尝试用constructor进行自动装配，如果失败，再尝试用byType进行自动装配。</li>
+</ul>
+<h3 id="默认自动装配"><a href="#默认自动装配" class="headerlink" title="默认自动装配"></a>默认自动装配</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;beans ...  default-autowire=&quot;byType&quot;&gt;</div></pre></td></tr></table></figure>
+<p>该参数的默认值为none,特定Bean可以设定其自动装配方式来覆盖默认的装配方式。</p>
+<h3 id="混合使用自动装配和显示装配"><a href="#混合使用自动装配和显示装配" class="headerlink" title="混合使用自动装配和显示装配"></a>混合使用自动装配和显示装配</h3><p>对某个Bean选择了自动装配策略，同时也可以进行显示装配。可以通过显示装配来解决自动装配中存在的不确定的问题，覆盖掉其自动装配的值。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;kenny4&quot; class=&quot;com.springinaction.springidol.Instrumentalist&quot; autowire=&quot;byType&quot;&gt;</div><div class="line">  &lt;property name=&quot;song&quot; value=&quot;Jingle Bell&quot; /&gt;</div><div class="line">  &lt;property name=&quot;instrument&quot;&gt;&lt;null /&gt;&lt;/property&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure></p>
+<ul>
+<li><em>NOTE：不能混合使用constructor自动装配策略和<constructor-arg>元素</constructor-arg></em></li>
+</ul>
+<h2 id="使用注解装配"><a href="#使用注解装配" class="headerlink" title="使用注解装配"></a>使用注解装配</h2><p>Spring默认不使用注解，使用注解需要在XML中进行配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</div><div class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</div><div class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</div><div class="line">       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;</div><div class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd&quot;&gt;</div><div class="line">&lt;context:annotation-config /&gt;</div><div class="line">&lt;/beans&gt;</div></pre></td></tr></table></figure></p>
+<p>Spring支持几种不同的用于自动装配的注解：</p>
+<pre><code>* Spring自带的@Autowired注解
+* JSR-330的@Inject注解
+* JSR-250的@Resource注解
+</code></pre><h3 id="使用-Autowired注解"><a href="#使用-Autowired注解" class="headerlink" title="使用@Autowired注解"></a>使用@Autowired注解</h3><p>对属性的setter方法添加注解：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@Autowired</div><div class="line">public void setInstrument(Instrument instrument) &#123;</div><div class="line">    this.instrument = instrument;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>Autowired注解可以用在setter方法，任意方法以及构造方法。当对构造器进行标注时，Autowired注解表示当创建Bean时，即使在Spring XML文件中没有使用<constructor-arg>元素配置Bean，该构造器也需要进行自动装配。我们也可以使用@AutoWired注解直接标注属性，并删除setter方法。@AutoWired存在问题在于没有Bean装配到注解属性或者多个Bean装配到注解属性：</constructor-arg></p>
+<ul>
+<li><p>可选的自动装配：@Autowired所标注的属性和参数必须是可装配的，如果没有Bean装配到所标注的属性和参数时，会报错。设定required参数来限定@Autowired，当没有找到可装载的Bean时，属性和参数的值为NULL。</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">@Autowired(required = false)</div><div class="line">private Instrument instrument;</div></pre></td></tr></table></figure>
+<p>  但是当其注解构造方法时，只能有一个构造器的required的值为true。</p>
+</li>
+<li><p>限定歧义性的依赖：当有同时满足装配的条件的多个Bean存在时，Spring会抛出NoSuchBeanDefineException错误，表明装配失败。使用@Qualifier注解来制定装配的具体Bean：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@AutoWired</div><div class="line">@Qualifier(&quot;guitar&quot;)</div><div class="line">private Instrument instrument;</div></pre></td></tr></table></figure>
+<p>  XML配置也可以同样使用qualifier标签来缩小Bean搜索范围：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;bean class=&quot;com.springinaction.springidol.Piano&quot;&gt;</div><div class="line">  &lt;qualifier value=&quot;piano&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>自定义的限定器<br>  使用@Qualifier作为自定义注解的元注解：@</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@Qualifier</div><div class="line">public @Interface StringedInstrument&#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>  这样就可以用@StringedInstrument注解来标注guitar</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@StringedInstrument</div><div class="line">public class Guitar implements Instrument&#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>  自动装配时对Instrument进行限定，从而查找所有被StringedInstrument标注的Bean，不能确定到一个Bean会再进行其他限定。</p>
+<blockquote>
+<p>使用@Autowired的缺点在于引入了对Spring注解的依赖，可以使用Java的@Inject注解来解决这个问题</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="Inject注解"><a href="#Inject注解" class="headerlink" title="@Inject注解"></a><code>@</code>Inject注解</h3><p>与Spring的@Autowired注解类似，JCP的@Inject注解可以用来自动装配属性、方法和构造器；区别在于@Inject没有required属性，所有其所标注的依赖关系必须存在！</p>
+<ul>
+<li><p>限定@Inject使用注解@Named</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@Inject</div><div class="line">@Named(&quot;guitar&quot;)</div><div class="line">private Instrument Instrument;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>@Named注解表明选择了一个Bean，@Qualifier表明满足条件的Bean</p>
+</blockquote>
+</li>
+<li><p>自定义的JSR-330 Qualifier</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@Qualifier</div><div class="line">public @Interface StringedInstrument&#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>  区别在于这里的@Qualifier来自JSR-330而不是Spring</p>
+</li>
+</ul>
+<h3 id="注解中使用表达式"><a href="#注解中使用表达式" class="headerlink" title="注解中使用表达式"></a>注解中使用表达式</h3><p><code>@Value</code>可以用来装配String类型的值和基本类型的值：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">@value(&quot;Eruption&quot;)</div><div class="line">private String song;</div></pre></td></tr></table></figure></p>
+<p>SpEL和注解结合,实现注解驱动的装配方式：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">@value(&quot;#&#123;systemProperties.myFavoriteSong&#125;&quot;)</div><div class="line">private String song;</div></pre></td></tr></table></figure></p>
+<h2 id="自动检测Bean"><a href="#自动检测Bean" class="headerlink" title="自动检测Bean"></a>自动检测Bean</h2><p><code>&lt;context:annotation-config&gt;</code>可以消除Bean里面的配置，<code>&lt;context:component-scan&gt;</code>还可以完成自动检测Bean的功能，从而XML中不需要创建Bean：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</div><div class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</div><div class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</div><div class="line">       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;</div><div class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd&quot;&gt;</div><div class="line">&lt;context:component-scan base-package=&quot;com.springinaction.springidol&quot;/&gt;</div><div class="line">&lt;/beans&gt;</div></pre></td></tr></table></figure></p>
+<h3 id="标注Bean"><a href="#标注Bean" class="headerlink" title="标注Bean"></a>标注Bean</h3><p>context:component-scan默认查找构造型注解所标注的类：</p>
+<ul>
+<li><code>@Component</code> 通用的构造型注解，标示该类为Spring组件</li>
+<li><code>@Controller</code> 标示该类定义为SpringMVC controller</li>
+<li><code>@Repository</code> 标识将该类定义为数据仓库</li>
+<li><code>@Service</code> 标识将该类定义为服务</li>
+<li><code>@Component</code>也可以标注自定义注解</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">import org.springframework.stereotype.Component;</div><div class="line"></div><div class="line">@Component</div><div class="line">public class Guitar implements Instrument&#123;</div><div class="line">    @Override</div><div class="line">    public void play() &#123;</div><div class="line">        System.out.println(&quot;ssss ddd fff .&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Spring扫描com.springinaction.springidol包时，会发现@Component注解标识的Guitar类，将其自动注册为Spring Bean。默认ID为guitar。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">import org.springframework.beans.factory.annotation.Autowired;</div><div class="line">import org.springframework.stereotype.Component;</div><div class="line"></div><div class="line">@Component(&quot;eddie&quot;)</div><div class="line">public class Instrumentalist implements Performer&#123;</div><div class="line">...</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="过滤组件扫描"><a href="#过滤组件扫描" class="headerlink" title="过滤组件扫描"></a>过滤组件扫描</h3><p>Spring默认会扫描包下的所有类的@Component注解来生成Bean，我们可以自己定义过滤规则来实现自动注册特定的类：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;context:component-scan base-package=&quot;com.springinaction.springidol&quot;&gt;</div><div class="line">    &lt;context:include-filter type=&quot;assignable&quot; expression=&quot;com.springinaction.springidol.Instrument&quot;</div><div class="line">&lt;/context:component-scan&gt;</div></pre></td></tr></table></figure></p>
+<p>可以自动将所有派生与Instrument的类注册到Spring Bean中。<br>过滤器类型包含5种：</p>
+<ul>
+<li>annotation：顾虑器扫描使用指定注解所标注的那些类，通过expression属性指定要扫描的注解</li>
+<li>assignable：过滤器通过扫描派生于expression属性所指定的那些类</li>
+<li>aspectj：过滤器扫描与expression属性所指定的AspectJ表达式所匹配的类</li>
+<li>custom：使用自定义的org.springframework.core.type.TypeFilter实现类，该类由expression属性指定</li>
+<li>regex：过滤器扫描类的名称与expression属性所指定的正则表达式所匹配的那些类。</li>
+</ul>
+<p>context:exclude-filter表示不注册那些类：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;context:component-scan base-package=&quot;com.springinaction.springidol&quot;&gt;</div><div class="line">    &lt;context:include-filter type=&quot;assignable&quot; expression=&quot;com.springinaction.springidol.Instrument&quot;/&gt;</div><div class="line">    &lt;context:exclude-filter type=&quot;assignable&quot; expression=&quot;com.springinaction.springidol.Instrumentalist&quot;/&gt;</div><div class="line">&lt;/context:component-scan&gt;</div></pre></td></tr></table></figure></p>
+<h2 id="使用Spring基于Java的配置"><a href="#使用Spring基于Java的配置" class="headerlink" title="使用Spring基于Java的配置"></a>使用Spring基于Java的配置</h2><h3 id="启动Java配置"><a href="#启动Java配置" class="headerlink" title="启动Java配置"></a>启动Java配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</div><div class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</div><div class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</div><div class="line">       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;</div><div class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd&quot;&gt;</div><div class="line">    &lt;context:component-scan base-package=&quot;com.springinaction.springidol&quot;/&gt;</div><div class="line">&lt;/beans&gt;</div></pre></td></tr></table></figure>
+<p>context:component-scan会自动加载@Configuration注解的类。</p>
+<h3 id="定义一个配置类"><a href="#定义一个配置类" class="headerlink" title="定义一个配置类"></a>定义一个配置类</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">import org.springframework.context.annotation.Configuration;</div><div class="line"></div><div class="line">@Configuration</div><div class="line">public class SpringIdolConfig &#123;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>@</code>Configuration注解会告知Spring，这个类将包含一个或者多个Bean的定义。</p>
+<h3 id="声明一个Bean"><a href="#声明一个Bean" class="headerlink" title="声明一个Bean"></a>声明一个Bean</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@Bean</div><div class="line">public Performer duke() &#123;</div><div class="line">    return new Juggler();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>等价于XML中配置<bean>标签。@Bean告知Spring这个方法将返回一个对象，该对象应该被注册到Spring应用上下文中的一个Bean。</bean></p>
+<h3 id="使用Spring的基于Java的配置进行注入"><a href="#使用Spring的基于Java的配置进行注入" class="headerlink" title="使用Spring的基于Java的配置进行注入"></a>使用Spring的基于Java的配置进行注入</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@Bean</div><div class="line">public Performer duke10() &#123;</div><div class="line">  return new Juggle(15);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">@Bean</div><div class="line">private Poem sonnet29()&#123;</div><div class="line">  return new sonnet29();</div><div class="line">&#125;</div><div class="line"></div><div class="line">@Bean</div><div class="line">private Performer pueticDuke()&#123;</div><div class="line">  return new PoeticJuggler(sonnet29());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<hr>
+<h1 id="面向切面的Spring"><a href="#面向切面的Spring" class="headerlink" title="面向切面的Spring"></a>面向切面的Spring</h1><p>两个概念：</p>
+<ul>
+<li>横切关注点：分布于应用中的多处的功能，例如安全、日志、事务管理等。</li>
+<li>AOP：将横切关注点和业务逻辑进行分离</li>
+</ul>
+<h2 id="面向切面编程"><a href="#面向切面编程" class="headerlink" title="面向切面编程"></a>面向切面编程</h2><p>Spring中首先在一个地方定义通用功能，然后通过声明的方式定义一个功能以何种方式在何处应用，而无需修改受影响的类。横切关注点可以被模块化为特殊的类，这些类成为切面。其好处有两点：</p>
+<ul>
+<li>每个关注点集中与移除</li>
+<li>服务模块更简洁</li>
+</ul>
+<h3 id="定义AOP术语"><a href="#定义AOP术语" class="headerlink" title="定义AOP术语"></a>定义AOP术语</h3><ul>
+<li><p>通知(Advice)：通知定义了切面是什么以及如何使用。Spring切面可以应用的5中类型的通知：</p>
+<ul>
+<li>Before：在方法被调用之前调用通知</li>
+<li>After：在方法完成之后调用通知，无论方法执行是否成功</li>
+<li>After-retruning：在方法成功执行之后调用通知</li>
+<li>After-throwing：在方法抛出异常后调用通知</li>
+<li>Around：通知包裹了被通知的方法，在被通知的方法调用之前和调用之后执行自定义的行为。</li>
+</ul>
+</li>
+<li><p>连接点(Joinpoint)：在应用执行过程中能够插入切面的一个点。</p>
+</li>
+<li>切点(Poincut)：指定了切面应用的范围。</li>
+<li>切面(Aspect)：切面是切点和通知的结合。</li>
+<li>引入(Introduction)：引用允许我们向现有的类添加新方法和属性。</li>
+<li>织入(Weaving)：织入是将切面应用到目标对象来创建新的代理对象的过程。切面在指定的连接点被织入到目标对象中去。在目标对象的声明周期中有多个点可以进行织入：<ul>
+<li>编译期：需要特殊的编译器，AspectJ的织入编译器就是以这种方式织入的。</li>
+<li>类加载期：切面在目标类加载到JVM时被织入。这种方式需要特殊的类加载器(ClassLoader)，在引入之前增强该类的字节码。</li>
+<li>运行期：切面在应用运行的某个时刻被织入。一般在织入切面时，AOP容器会为目标对象动态的创建一个代理对象。Spring AOP就是这样。</li>
+</ul>
+</li>
+</ul>
+<h3 id="Spring对AOP的支持"><a href="#Spring对AOP的支持" class="headerlink" title="Spring对AOP的支持"></a>Spring对AOP的支持</h3><p>Spring提供了4种AOP支持：</p>
+<ul>
+<li>基于代理的经典AOP</li>
+<li><code>@AspectJ</code>注解驱动的切面</li>
+<li>纯POJO切面</li>
+<li>注入式AspectJ切面</li>
+</ul>
+<p>一些关键点：</p>
+<ul>
+<li>Spring通知是Java编写的</li>
+<li>Spring在运行期间通知对象</li>
+<li>Spring只支持方法连接点</li>
+</ul>
+<h2 id="使用切点选择连接点"><a href="#使用切点选择连接点" class="headerlink" title="使用切点选择连接点"></a>使用切点选择连接点</h2><p>Spring AOP中需要使用AspectJ的切点表达式语言来定义切点。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">AspectJ指示器</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">arg()</td>
+<td style="text-align:center">限制连接点匹配参数为指定类型的执行方法</td>
+</tr>
+<tr>
+<td style="text-align:left">@args()</td>
+<td style="text-align:center">限制连接点匹配参数由指定注解的执行方法</td>
+</tr>
+<tr>
+<td style="text-align:left">execution()</td>
+<td style="text-align:center">用于匹配是连接点的执行方法</td>
+</tr>
+<tr>
+<td style="text-align:left">this()</td>
+<td style="text-align:center">限制连接点匹配AOP代理的Bean引用为指定类型的类</td>
+</tr>
+<tr>
+<td style="text-align:left">target()</td>
+<td style="text-align:center">限制连接点匹配目标对象为指定类型的类</td>
+</tr>
+<tr>
+<td style="text-align:left">@target()</td>
+<td style="text-align:center">限制连接点匹配特定的执行对象，这些对象对应的类要具备指定类型的注解</td>
+</tr>
+<tr>
+<td style="text-align:left">within()</td>
+<td style="text-align:center">限制连接点匹配指定的类型</td>
+</tr>
+<tr>
+<td style="text-align:left">@within()</td>
+<td style="text-align:center">限制连接点匹配指定注解所标注的类型</td>
+</tr>
+<tr>
+<td style="text-align:left">@annotation()</td>
+<td style="text-align:center">限制匹配带有指定注解连接点</td>
+</tr>
+</tbody>
+</table>
+<p>只有execution指示器是唯一的执行匹配，其他都是限制匹配。</p>
+<h3 id="编写切点"><a href="#编写切点" class="headerlink" title="编写切点"></a>编写切点</h3><p><code>execution(* com.springinaction.springidol.Instrument.play(..))</code><br>我们使用execution()指示器去选择Instrument的play()方法。方法表达式以<em>开始，标示了方法返回值的类型，然后指定全限定类名和方法名，使用(..)标示切点选择任意的play方法。<br>如果需要限定匹配该包下的play方法，需要添加限定<br>`execution(</em> com.springinaction.springidol.Instrument.play(..)) and withi n(com.springinaction.springidol.*)`</p>
+<h3 id="使用Spring的bean-指示器"><a href="#使用Spring的bean-指示器" class="headerlink" title="使用Spring的bean()指示器"></a>使用Spring的bean()指示器</h3><p>bean()指示器允许我们在切点表达式中使用Bean的ID来标识Bean。<br><code>execution(* com.springinaction.springidol.Instrument.play() and bean(eddie))</code>表示限定Bean的ID为Eddie。</p>
+<h2 id="在XML中声明切面"><a href="#在XML中声明切面" class="headerlink" title="在XML中声明切面"></a>在XML中声明切面</h2><p>Spring的AOP配置元素简化了基于POJO切面的声明：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">AOP配置元素</th>
+<th style="text-align:left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><aop:advisor></aop:advisor></td>
+<td style="text-align:left">定义AOP通知器</td>
+</tr>
+<tr>
+<td style="text-align:left"><aop:after></aop:after></td>
+<td style="text-align:left">定义AOP后置通知，不管通知的方法是否执行成功</td>
+</tr>
+<tr>
+<td style="text-align:left"><aop:after-returning></aop:after-returning></td>
+<td style="text-align:left">定义AOP After-retruning通知</td>
+</tr>
+<tr>
+<td style="text-align:left"><aop:after-throwing></aop:after-throwing></td>
+<td style="text-align:left">定义After-throwing通知</td>
+</tr>
+<tr>
+<td style="text-align:left"><aop:around></aop:around></td>
+<td style="text-align:left">定义AOP环绕通知</td>
+</tr>
+<tr>
+<td style="text-align:left"><aop:aspect></aop:aspect></td>
+<td style="text-align:left">定义切面</td>
+</tr>
+<tr>
+<td style="text-align:left"><aop:aspect-autoproxy></aop:aspect-autoproxy></td>
+<td style="text-align:left">启用@AspectJ注解驱动的切面</td>
+</tr>
+<tr>
+<td style="text-align:left"><aop:before></aop:before></td>
+<td style="text-align:left">定义AOP前置通知</td>
+</tr>
+<tr>
+<td style="text-align:left"><aop:config></aop:config></td>
+<td style="text-align:left">顶层的AOP配置元素，大多数的<aop:*>元素必须在<aop:config>元素内部</aop:config></aop:*></td>
+</tr>
+<tr>
+<td style="text-align:left"><aop:declare-parents></aop:declare-parents></td>
+<td style="text-align:left">为被通知的对象引入额外的接口，并透明的实现</td>
+</tr>
+<tr>
+<td style="text-align:left"><aop:pointcut></aop:pointcut></td>
+<td style="text-align:left">定义切点</td>
+</tr>
+</tbody>
+</table>
+<p>选秀节目需要装配观众，每一个选手都需要装配同样的观众，创建一个观众类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">package com.springinaction.springidol;</div><div class="line"></div><div class="line">public class Audience &#123;</div><div class="line">    //before perform</div><div class="line">    public void takeSeats() &#123;</div><div class="line">        System.out.println(&quot;The Audience is taking their seats!&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void turnOffCellPhone() &#123;</div><div class="line">        System.out.println(&quot;The audience is turning off their cell phones.&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //after perform</div><div class="line">    public void applaud() &#123;</div><div class="line">        System.out.println(&quot;Clap! Clap! Clap!&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //after perform failure</div><div class="line">    public void demandRefund() &#123;</div><div class="line">        System.out.println(&quot;We want our money back!&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>将其注册为Spring上下文的一个Bean：<code>&lt;bean id=&quot;audience&quot; class=&quot;com.springinaction.springidol.Audience&quot;/&gt;</code></p>
 
           
         

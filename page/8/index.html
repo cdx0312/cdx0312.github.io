@@ -1183,6 +1183,203 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/java/Java网络编程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/21/java/Java网络编程/" itemprop="url">Java网络编程</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="网络编程中的两个主要问题"><a href="#网络编程中的两个主要问题" class="headerlink" title="网络编程中的两个主要问题"></a>网络编程中的两个主要问题</h1><ul>
+<li>如何准确的定位网络上的一台或者多台主机</li>
+</ul>
+<p>TCP/IP协议中IP协议主要负责网络主机的定位，数据传输的路由，可以由IP地址唯一的确定Internet上的一台主机。</p>
+<ul>
+<li>找到主机后如何进行可靠高效的数据传输</li>
+</ul>
+<p>TCP层提供面向应用的可靠传输（TCP） 或者非可靠的UDP数据传输机制。目前比较流行的网络编程模型为C/S架构，也就是通信一方作为服务器等待客户提出请求并给予相应，客户端在需要服务时向服务器提出申请。服务器一般作为守护进程始终执行，监听网络端口，一旦有客户请求，就会启动一个服务进程来响应客户，同时自己继续监听服务端口，使后来的客户也能及时得到服务。</p>
+<h1 id="TCP协议和UDP协议"><a href="#TCP协议和UDP协议" class="headerlink" title="TCP协议和UDP协议"></a>TCP协议和UDP协议</h1><p>TCP：Transfer Control Protocol的简称，是一种面向连接的可靠传输协议。通过TCP协议传输得到的是一个顺序的无差错的数据流，发送方和接收方的成对的连个socket必须建立连接，以便在TCP协议的基础上进行通信。</p>
+<p>UDP：User Datagram Protocol的简称，是一种无连接的协议。每个数据报都是一个独立的消息，包括完整的源地址或目的地址，在网络上以任何可能的路径进行传送，能否到达目的地以及到达的时间都不确定。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align:center">UDP</th>
+<th style="text-align:right">TCP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>连接性</td>
+<td style="text-align:center">无连接</td>
+<td style="text-align:right">面向连接</td>
+</tr>
+<tr>
+<td>传输数据大小</td>
+<td style="text-align:center">大小有限制，64KB以内</td>
+<td style="text-align:right">统一格式数据传输</td>
+</tr>
+<tr>
+<td>可靠性</td>
+<td style="text-align:center">不可靠，不保证到达</td>
+<td style="text-align:right">可靠协议</td>
+</tr>
+<tr>
+<td>应用</td>
+<td style="text-align:center">Telnet/FTP</td>
+<td style="text-align:right">视频会议</td>
+</tr>
+</tbody>
+</table>
+<h1 id="基于Socket的Java网络编程"><a href="#基于Socket的Java网络编程" class="headerlink" title="基于Socket的Java网络编程"></a>基于Socket的Java网络编程</h1><p>网络上两个程序通过一个双向的通讯连接实现数据的交换，这个双向链路的一端成为一个Socket。Socket通常用来实现客户方和服务端的链接。一个Socket由一个IP和一个PROT唯一确定。Java环境下，Socket编程主要是指基于TCP/IP协议的网络编程。</p>
+<h2 id="Socket通信流程"><a href="#Socket通信流程" class="headerlink" title="Socket通信流程"></a>Socket通信流程</h2><ol>
+<li>Server端监听某个端口是否有连接请求</li>
+<li>Client端相Server端发送Connect请求</li>
+<li>Server端相Client端发送Accept消息，建立连接。</li>
+<li>Server端和Client端都可以通过Send，Write等方式通信。</li>
+<li>关闭Socket</li>
+</ol>
+<h2 id="创建一个Socket"><a href="#创建一个Socket" class="headerlink" title="创建一个Socket"></a>创建一个Socket</h2><p>Java中java.net包中提供了两个类，Socket，ServerSocket，分别表示双向连接的客户端和服务端。</p>
+<p>客户端类的构造方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public Socket(String host, int port)</div><div class="line">    throws UnknownHostException, IOException</div><div class="line">&#123;</div><div class="line">    this(host != null ? new InetSocketAddress(host, port) :</div><div class="line">         new InetSocketAddress(InetAddress.getByName(null), port),</div><div class="line">         (SocketAddress) null, true);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>服务端的构造方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public ServerSocket(int port) throws IOException &#123;</div><div class="line">    this(port, 50, null);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="简单的Client-Server程序"><a href="#简单的Client-Server程序" class="headerlink" title="简单的Client/Server程序"></a>简单的Client/Server程序</h2><hr>
+<p>未完</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/java/Java多线程学习整理/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1504,203 +1701,6 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * <span class="doctag">@program</span>: 02_Basic</span></div><div class="line"><span class="comment"> * <span class="doctag">@author</span>: cdx</span></div><div class="line"><span class="comment"> * <span class="doctag">@create</span>: 2018-09-02 16:23</span></div><div class="line"><span class="comment"> **/</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CreateThreadByExtendsThread</span> <span class="keyword">extends</span> <span class="title">Thread</span></span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CreateThreadByExtendsThread</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CreateThreadByExtendsThread</span><span class="params">()</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++)</div><div class="line">            System.out.println(<span class="keyword">this</span>.name + <span class="string">" create thread by extends Thread!"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        Thread threadA = <span class="keyword">new</span> CreateThreadByExtendsThread();</div><div class="line">        Thread threadB = <span class="keyword">new</span> CreateThreadByExtendsThread();</div><div class="line">        ((CreateThreadByExtendsThread) threadA).writeName(<span class="string">"A"</span>);</div><div class="line">        ((CreateThreadByExtendsThread) threadB).writeName(<span class="string">"B"</span>);</div><div class="line">        threadA.start();</div><div class="line">        threadB.start();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h2 id="通过回调函数传递数据"><a href="#通过回调函数传递数据" class="headerlink" title="通过回调函数传递数据"></a>通过回调函数传递数据</h2><p>前两种都是main方法中向线程类中传递数据，实际中，有些数据需要从线程类传递到main函数中，如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.Arrays;</div><div class="line"><span class="keyword">import</span> java.util.Random;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment">* <span class="doctag">@program</span>: 02_Basic</span></div><div class="line"><span class="comment">* <span class="doctag">@author</span>: cdx</span></div><div class="line"><span class="comment">* <span class="doctag">@create</span>: 2018-09-02 21:26</span></div><div class="line"><span class="comment">**/</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadDataTransferByCallback</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</div><div class="line">   <span class="keyword">private</span> Work work;</div><div class="line"></div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="title">ThreadDataTransferByCallback</span><span class="params">(Work work)</span> </span>&#123;</div><div class="line">       <span class="keyword">this</span>.work = work;</div><div class="line">   &#125;</div><div class="line"></div><div class="line"></div><div class="line">   <span class="meta">@Override</span></div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">       Random random = <span class="keyword">new</span> Random();</div><div class="line">       Data data = <span class="keyword">new</span> Data();</div><div class="line">       <span class="keyword">int</span> n1 = random.nextInt(<span class="number">1000</span>);</div><div class="line">       <span class="keyword">int</span> n2 = random.nextInt(<span class="number">1000</span>);</div><div class="line">       <span class="keyword">int</span> n3 = random.nextInt(<span class="number">1000</span>);</div><div class="line"></div><div class="line">       work.process(data, <span class="keyword">new</span> Integer[]&#123;n1, n2, n3&#125;);</div><div class="line">       System.out.printf(<span class="string">"n1 is %d, n2 is %d, n3 is %d,sum is %d\n"</span>, n1, n2, n3, data.value);</div><div class="line">   &#125;</div><div class="line"></div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">       <span class="keyword">new</span> ThreadDataTransferByCallback(<span class="keyword">new</span> Work()).run();</div><div class="line">   &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Data</span> </span>&#123;</div><div class="line">   <span class="keyword">int</span> value = <span class="number">0</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Work</span> </span>&#123;</div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">process</span><span class="params">(Data data, Integer[] numbers)</span> </span>&#123;</div><div class="line">       <span class="keyword">for</span> (Integer i : numbers)</div><div class="line">           data.value += i;</div><div class="line">   &#125;</div><div class="line">&#125;</div><div class="line"><span class="comment">// n1 is 540, n2 is 982, n3 is 945,sum is 2467</span></div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/java/Java网络编程/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/java/Java网络编程/" itemprop="url">Java网络编程</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="网络编程中的两个主要问题"><a href="#网络编程中的两个主要问题" class="headerlink" title="网络编程中的两个主要问题"></a>网络编程中的两个主要问题</h1><ul>
-<li>如何准确的定位网络上的一台或者多台主机</li>
-</ul>
-<p>TCP/IP协议中IP协议主要负责网络主机的定位，数据传输的路由，可以由IP地址唯一的确定Internet上的一台主机。</p>
-<ul>
-<li>找到主机后如何进行可靠高效的数据传输</li>
-</ul>
-<p>TCP层提供面向应用的可靠传输（TCP） 或者非可靠的UDP数据传输机制。目前比较流行的网络编程模型为C/S架构，也就是通信一方作为服务器等待客户提出请求并给予相应，客户端在需要服务时向服务器提出申请。服务器一般作为守护进程始终执行，监听网络端口，一旦有客户请求，就会启动一个服务进程来响应客户，同时自己继续监听服务端口，使后来的客户也能及时得到服务。</p>
-<h1 id="TCP协议和UDP协议"><a href="#TCP协议和UDP协议" class="headerlink" title="TCP协议和UDP协议"></a>TCP协议和UDP协议</h1><p>TCP：Transfer Control Protocol的简称，是一种面向连接的可靠传输协议。通过TCP协议传输得到的是一个顺序的无差错的数据流，发送方和接收方的成对的连个socket必须建立连接，以便在TCP协议的基础上进行通信。</p>
-<p>UDP：User Datagram Protocol的简称，是一种无连接的协议。每个数据报都是一个独立的消息，包括完整的源地址或目的地址，在网络上以任何可能的路径进行传送，能否到达目的地以及到达的时间都不确定。</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th style="text-align:center">UDP</th>
-<th style="text-align:right">TCP</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>连接性</td>
-<td style="text-align:center">无连接</td>
-<td style="text-align:right">面向连接</td>
-</tr>
-<tr>
-<td>传输数据大小</td>
-<td style="text-align:center">大小有限制，64KB以内</td>
-<td style="text-align:right">统一格式数据传输</td>
-</tr>
-<tr>
-<td>可靠性</td>
-<td style="text-align:center">不可靠，不保证到达</td>
-<td style="text-align:right">可靠协议</td>
-</tr>
-<tr>
-<td>应用</td>
-<td style="text-align:center">Telnet/FTP</td>
-<td style="text-align:right">视频会议</td>
-</tr>
-</tbody>
-</table>
-<h1 id="基于Socket的Java网络编程"><a href="#基于Socket的Java网络编程" class="headerlink" title="基于Socket的Java网络编程"></a>基于Socket的Java网络编程</h1><p>网络上两个程序通过一个双向的通讯连接实现数据的交换，这个双向链路的一端成为一个Socket。Socket通常用来实现客户方和服务端的链接。一个Socket由一个IP和一个PROT唯一确定。Java环境下，Socket编程主要是指基于TCP/IP协议的网络编程。</p>
-<h2 id="Socket通信流程"><a href="#Socket通信流程" class="headerlink" title="Socket通信流程"></a>Socket通信流程</h2><ol>
-<li>Server端监听某个端口是否有连接请求</li>
-<li>Client端相Server端发送Connect请求</li>
-<li>Server端相Client端发送Accept消息，建立连接。</li>
-<li>Server端和Client端都可以通过Send，Write等方式通信。</li>
-<li>关闭Socket</li>
-</ol>
-<h2 id="创建一个Socket"><a href="#创建一个Socket" class="headerlink" title="创建一个Socket"></a>创建一个Socket</h2><p>Java中java.net包中提供了两个类，Socket，ServerSocket，分别表示双向连接的客户端和服务端。</p>
-<p>客户端类的构造方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public Socket(String host, int port)</div><div class="line">    throws UnknownHostException, IOException</div><div class="line">&#123;</div><div class="line">    this(host != null ? new InetSocketAddress(host, port) :</div><div class="line">         new InetSocketAddress(InetAddress.getByName(null), port),</div><div class="line">         (SocketAddress) null, true);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>服务端的构造方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public ServerSocket(int port) throws IOException &#123;</div><div class="line">    this(port, 50, null);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="简单的Client-Server程序"><a href="#简单的Client-Server程序" class="headerlink" title="简单的Client/Server程序"></a>简单的Client/Server程序</h2><hr>
-<p>未完</p>
 
           
         
@@ -2359,189 +2359,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/java/Java多线程-CAS比较交换/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cdx">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小黄">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/21/java/Java多线程-CAS比较交换/" itemprop="url">Java多线程-CAS比较交换</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
-                2019-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/Multi-Thread/" itemprop="url" rel="index">
-                    <span itemprop="name">Multi-Thread</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="CAS"><a href="#CAS" class="headerlink" title="CAS"></a>CAS</h1><ul>
-<li>CAS：compare and swap，比较交换</li>
-<li>CAS有三个参数CAS(V,E,N)<ul>
-<li>V表示要更新的变量</li>
-<li>E表示预期值</li>
-<li>N表示新值</li>
-<li>只有V=E相等时，才会将V更新为N,否则说明其他线程进行了更新，什么也不做。</li>
-<li>失败会被告知，允许再次尝试</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">int</span> a = <span class="number">1</span>;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">compareAndSwapInt</span><span class="params">(<span class="keyword">int</span> b)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (a == <span class="number">1</span>) &#123;</div><div class="line">        a = b;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>上面的代码中，多个线程同时更改a的值时，无法确定a最后的值，对compareAndSwapInt进行加锁，使其成为一个原子操作，同一个时刻只有一个线程才可以改变a的值。</li>
-<li>CAS中的比较和替换是一组原子操作，不会被外部打断，先根据paramLong回去到当前内存中的值V，然后将内存值V和原值E做比较，相等则将V替换为N,效率要高于加锁的操作。</li>
-</ul>
-<h2 id="AtomicInteger"><a href="#AtomicInteger" class="headerlink" title="AtomicInteger"></a>AtomicInteger</h2><ul>
-<li>无锁的线程安全整数类</li>
-</ul>
-<h3 id="成员变量"><a href="#成员变量" class="headerlink" title="成员变量"></a>成员变量</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AtomicInteger</span> <span class="keyword">extends</span> <span class="title">Number</span> <span class="keyword">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">6214790243416807050L</span>;</div><div class="line"></div><div class="line">    <span class="comment">// java通过native来访问底层操作系统，Unsafe类提供了硬件级别的原子操作</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Unsafe unsafe = Unsafe.getUnsafe();</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> valueOffset;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> &#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="comment">// 变量值在内存中的偏移地址</span></div><div class="line">            valueOffset = unsafe.objectFieldOffset</div><div class="line">                (AtomicInteger.class.getDeclaredField(<span class="string">"value"</span>));</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception ex) &#123; <span class="keyword">throw</span> <span class="keyword">new</span> Error(ex); &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// value使用volatile修饰，从而多个线程之间可见</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">int</span> value;</div><div class="line">    <span class="comment">// ...</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="构造方法"><a href="#构造方法" class="headerlink" title="构造方法"></a>构造方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">AtomicInteger</span><span class="params">(<span class="keyword">int</span> initialValue)</span> </span>&#123;</div><div class="line">    value = initialValue;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">AtomicInteger</span><span class="params">()</span> </span>&#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="普通方法"><a href="#普通方法" class="headerlink" title="普通方法"></a>普通方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 读</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">get</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> value;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 写</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(<span class="keyword">int</span> newValue)</span> </span>&#123;</div><div class="line">    value = newValue;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 延迟写</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">lazySet</span><span class="params">(<span class="keyword">int</span> newValue)</span> </span>&#123;</div><div class="line">    unsafe.putOrderedInt(<span class="keyword">this</span>, valueOffset, newValue);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="原子方法"><a href="#原子方法" class="headerlink" title="原子方法"></a>原子方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment">  原子操作，更新值，返回旧值</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndSet</span><span class="params">(<span class="keyword">int</span> newValue)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> unsafe.getAndSetInt(<span class="keyword">this</span>, valueOffset, newValue);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndSetInt</span><span class="params">(Object var1, <span class="keyword">long</span> var2, <span class="keyword">int</span> var4)</span> </span>&#123;</div><div class="line">    <span class="keyword">int</span> var5;</div><div class="line">    <span class="keyword">do</span> &#123;</div><div class="line">        var5 = <span class="keyword">this</span>.getIntVolatile(var1, var2);</div><div class="line">    &#125; <span class="keyword">while</span>(!<span class="keyword">this</span>.compareAndSwapInt(var1, var2, var5, var4));</div><div class="line"></div><div class="line">    <span class="keyword">return</span> var5;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 更新值，成功返回true</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">compareAndSet</span><span class="params">(<span class="keyword">int</span> expect, <span class="keyword">int</span> update)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> unsafe.compareAndSwapInt(<span class="keyword">this</span>, valueOffset, expect, update);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 原子累加</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndIncrement</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> unsafe.getAndAddInt(<span class="keyword">this</span>, valueOffset, <span class="number">1</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 原子递减</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndDecrement</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> unsafe.getAndAddInt(<span class="keyword">this</span>, valueOffset, -<span class="number">1</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 原子增加</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndAdd</span><span class="params">(<span class="keyword">int</span> delta)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> unsafe.getAndAddInt(<span class="keyword">this</span>, valueOffset, delta);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h1><ul>
-<li>AtomicInteger累加</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> third;</div><div class="line"></div><div class="line"><span class="keyword">import</span> java.util.concurrent.CountDownLatch;</div><div class="line"><span class="keyword">import</span> java.util.concurrent.ExecutorService;</div><div class="line"><span class="keyword">import</span> java.util.concurrent.Executors;</div><div class="line"><span class="keyword">import</span> java.util.concurrent.atomic.AtomicInteger;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AtomicIntegerDemo</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> AtomicInteger integer = <span class="keyword">new</span> AtomicInteger();</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">        ExecutorService service = Executors.newFixedThreadPool(<span class="number">10</span>);</div><div class="line">        CountDownLatch cd = <span class="keyword">new</span> CountDownLatch(<span class="number">10</span>);</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</div><div class="line">            service.execute(<span class="keyword">new</span> AddThread(cd, integer));</div><div class="line">        &#125;</div><div class="line">        cd.await();</div><div class="line">        System.out.println(integer);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">AddThread</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> CountDownLatch cd;</div><div class="line">    <span class="keyword">private</span> AtomicInteger integer;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AddThread</span><span class="params">(CountDownLatch cd, AtomicInteger integer)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.cd = cd;</div><div class="line">        <span class="keyword">this</span>.integer = integer;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; <span class="number">10000</span>; k++)</div><div class="line">            integer.incrementAndGet();</div><div class="line">        cd.countDown();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="comment">// 100000</span></div></pre></td></tr></table></figure>
-<ul>
-<li>AtomicIntegerArray累加</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AtomicIntegerArrayDemo</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">        AtomicIntegerArray integers = <span class="keyword">new</span> AtomicIntegerArray(<span class="number">10</span>);</div><div class="line">        CountDownLatch latch = <span class="keyword">new</span> CountDownLatch(<span class="number">10</span>);</div><div class="line">        ExecutorService service = Executors.newFixedThreadPool(<span class="number">10</span>);</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</div><div class="line">            service.execute(<span class="keyword">new</span> AddArrThread(integers, latch));</div><div class="line">        latch.await();</div><div class="line">        System.out.println(integers);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">AddArrThread</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> AtomicIntegerArray integers;</div><div class="line">    <span class="keyword">private</span> CountDownLatch cd;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AddArrThread</span><span class="params">(AtomicIntegerArray integers, CountDownLatch cd)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.integers = integers;</div><div class="line">        <span class="keyword">this</span>.cd = cd;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; <span class="number">10000</span>; k++)</div><div class="line">            integers.getAndIncrement(k % (integers.length()-<span class="number">2</span>));</div><div class="line">        cd.countDown();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/java/Java 反射/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2804,6 +2621,189 @@
 <p>更新要反射的类只操作配置文件就可以，便于后期维护和更新。</p>
 <h2 id="反射越过泛型检查"><a href="#反射越过泛型检查" class="headerlink" title="反射越过泛型检查"></a>反射越过泛型检查</h2><p>泛型用于编译器，编译过后进行泛型擦除，可以通过反射来越过泛型检查。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">package reflect;</div><div class="line"></div><div class="line">import java.lang.reflect.Method;</div><div class="line">import java.util.ArrayList;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by cdx0312</div><div class="line"> * 2018/4/20</div><div class="line"> */</div><div class="line">public class Test &#123;</div><div class="line">    public static void main(String[] args) throws Exception&#123;</div><div class="line">        ArrayList&lt;String&gt; strList = new ArrayList&lt;&gt;();</div><div class="line">        strList.add(&quot;aaa&quot;);</div><div class="line">        strList.add(&quot;bbb&quot;);</div><div class="line"></div><div class="line">        //  strList.add(100);</div><div class="line">        //获取ArrayList的Class对象，反向的调用add()方法，添加数据</div><div class="line">        Class clazz = strList.getClass(); //得到 strList 对象的字节码 对象</div><div class="line">        //获取add()方法</div><div class="line">        Method m = clazz.getMethod(&quot;add&quot;, Object.class);</div><div class="line">        //调用add()方法</div><div class="line">        m.invoke(strList, 100);</div><div class="line"></div><div class="line">        //遍历集合</div><div class="line">        for(Object obj : strList)&#123;</div><div class="line">            System.out.println(obj);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/java/Java多线程-CAS比较交换/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/21/java/Java多线程-CAS比较交换/" itemprop="url">Java多线程-CAS比较交换</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-21T14:13:14+08:00">
+                2019-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/Multi-Thread/" itemprop="url" rel="index">
+                    <span itemprop="name">Multi-Thread</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="CAS"><a href="#CAS" class="headerlink" title="CAS"></a>CAS</h1><ul>
+<li>CAS：compare and swap，比较交换</li>
+<li>CAS有三个参数CAS(V,E,N)<ul>
+<li>V表示要更新的变量</li>
+<li>E表示预期值</li>
+<li>N表示新值</li>
+<li>只有V=E相等时，才会将V更新为N,否则说明其他线程进行了更新，什么也不做。</li>
+<li>失败会被告知，允许再次尝试</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">int</span> a = <span class="number">1</span>;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">compareAndSwapInt</span><span class="params">(<span class="keyword">int</span> b)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (a == <span class="number">1</span>) &#123;</div><div class="line">        a = b;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>上面的代码中，多个线程同时更改a的值时，无法确定a最后的值，对compareAndSwapInt进行加锁，使其成为一个原子操作，同一个时刻只有一个线程才可以改变a的值。</li>
+<li>CAS中的比较和替换是一组原子操作，不会被外部打断，先根据paramLong回去到当前内存中的值V，然后将内存值V和原值E做比较，相等则将V替换为N,效率要高于加锁的操作。</li>
+</ul>
+<h2 id="AtomicInteger"><a href="#AtomicInteger" class="headerlink" title="AtomicInteger"></a>AtomicInteger</h2><ul>
+<li>无锁的线程安全整数类</li>
+</ul>
+<h3 id="成员变量"><a href="#成员变量" class="headerlink" title="成员变量"></a>成员变量</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AtomicInteger</span> <span class="keyword">extends</span> <span class="title">Number</span> <span class="keyword">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">6214790243416807050L</span>;</div><div class="line"></div><div class="line">    <span class="comment">// java通过native来访问底层操作系统，Unsafe类提供了硬件级别的原子操作</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Unsafe unsafe = Unsafe.getUnsafe();</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> valueOffset;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> &#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="comment">// 变量值在内存中的偏移地址</span></div><div class="line">            valueOffset = unsafe.objectFieldOffset</div><div class="line">                (AtomicInteger.class.getDeclaredField(<span class="string">"value"</span>));</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception ex) &#123; <span class="keyword">throw</span> <span class="keyword">new</span> Error(ex); &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// value使用volatile修饰，从而多个线程之间可见</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">int</span> value;</div><div class="line">    <span class="comment">// ...</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="构造方法"><a href="#构造方法" class="headerlink" title="构造方法"></a>构造方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">AtomicInteger</span><span class="params">(<span class="keyword">int</span> initialValue)</span> </span>&#123;</div><div class="line">    value = initialValue;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">AtomicInteger</span><span class="params">()</span> </span>&#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="普通方法"><a href="#普通方法" class="headerlink" title="普通方法"></a>普通方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 读</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">get</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> value;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 写</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(<span class="keyword">int</span> newValue)</span> </span>&#123;</div><div class="line">    value = newValue;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 延迟写</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">lazySet</span><span class="params">(<span class="keyword">int</span> newValue)</span> </span>&#123;</div><div class="line">    unsafe.putOrderedInt(<span class="keyword">this</span>, valueOffset, newValue);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="原子方法"><a href="#原子方法" class="headerlink" title="原子方法"></a>原子方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment">  原子操作，更新值，返回旧值</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndSet</span><span class="params">(<span class="keyword">int</span> newValue)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> unsafe.getAndSetInt(<span class="keyword">this</span>, valueOffset, newValue);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndSetInt</span><span class="params">(Object var1, <span class="keyword">long</span> var2, <span class="keyword">int</span> var4)</span> </span>&#123;</div><div class="line">    <span class="keyword">int</span> var5;</div><div class="line">    <span class="keyword">do</span> &#123;</div><div class="line">        var5 = <span class="keyword">this</span>.getIntVolatile(var1, var2);</div><div class="line">    &#125; <span class="keyword">while</span>(!<span class="keyword">this</span>.compareAndSwapInt(var1, var2, var5, var4));</div><div class="line"></div><div class="line">    <span class="keyword">return</span> var5;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 更新值，成功返回true</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">compareAndSet</span><span class="params">(<span class="keyword">int</span> expect, <span class="keyword">int</span> update)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> unsafe.compareAndSwapInt(<span class="keyword">this</span>, valueOffset, expect, update);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 原子累加</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndIncrement</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> unsafe.getAndAddInt(<span class="keyword">this</span>, valueOffset, <span class="number">1</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 原子递减</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndDecrement</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> unsafe.getAndAddInt(<span class="keyword">this</span>, valueOffset, -<span class="number">1</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 原子增加</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndAdd</span><span class="params">(<span class="keyword">int</span> delta)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> unsafe.getAndAddInt(<span class="keyword">this</span>, valueOffset, delta);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h1><ul>
+<li>AtomicInteger累加</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> third;</div><div class="line"></div><div class="line"><span class="keyword">import</span> java.util.concurrent.CountDownLatch;</div><div class="line"><span class="keyword">import</span> java.util.concurrent.ExecutorService;</div><div class="line"><span class="keyword">import</span> java.util.concurrent.Executors;</div><div class="line"><span class="keyword">import</span> java.util.concurrent.atomic.AtomicInteger;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AtomicIntegerDemo</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> AtomicInteger integer = <span class="keyword">new</span> AtomicInteger();</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">        ExecutorService service = Executors.newFixedThreadPool(<span class="number">10</span>);</div><div class="line">        CountDownLatch cd = <span class="keyword">new</span> CountDownLatch(<span class="number">10</span>);</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</div><div class="line">            service.execute(<span class="keyword">new</span> AddThread(cd, integer));</div><div class="line">        &#125;</div><div class="line">        cd.await();</div><div class="line">        System.out.println(integer);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">AddThread</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> CountDownLatch cd;</div><div class="line">    <span class="keyword">private</span> AtomicInteger integer;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AddThread</span><span class="params">(CountDownLatch cd, AtomicInteger integer)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.cd = cd;</div><div class="line">        <span class="keyword">this</span>.integer = integer;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; <span class="number">10000</span>; k++)</div><div class="line">            integer.incrementAndGet();</div><div class="line">        cd.countDown();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="comment">// 100000</span></div></pre></td></tr></table></figure>
+<ul>
+<li>AtomicIntegerArray累加</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AtomicIntegerArrayDemo</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">        AtomicIntegerArray integers = <span class="keyword">new</span> AtomicIntegerArray(<span class="number">10</span>);</div><div class="line">        CountDownLatch latch = <span class="keyword">new</span> CountDownLatch(<span class="number">10</span>);</div><div class="line">        ExecutorService service = Executors.newFixedThreadPool(<span class="number">10</span>);</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</div><div class="line">            service.execute(<span class="keyword">new</span> AddArrThread(integers, latch));</div><div class="line">        latch.await();</div><div class="line">        System.out.println(integers);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">AddArrThread</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> AtomicIntegerArray integers;</div><div class="line">    <span class="keyword">private</span> CountDownLatch cd;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AddArrThread</span><span class="params">(AtomicIntegerArray integers, CountDownLatch cd)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.integers = integers;</div><div class="line">        <span class="keyword">this</span>.cd = cd;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; <span class="number">10000</span>; k++)</div><div class="line">            integers.getAndIncrement(k % (integers.length()-<span class="number">2</span>));</div><div class="line">        cd.countDown();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
           
         

@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="go,源码解读," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="Pool
+一个Pool是一群对象的集合，集合可能是单独存储
+Pool中存储的对象可以自动在池中移除而不用通知，当只有Pool持有对象的引用时，对象有可能会释放内存
+Pool是线程安全的
+Pool的创建用意是缓存已经分配内存且已经用完的对象，方便后续复用的时候不必申请内存，同时减轻gc的压力
+Pool适用于管理一组对象，可以被多个独立的客户端复用，从而避免每个客户端都要申请内存。
+如果对象存在的声明">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go源码解读-sync.WaitGroup">
+<meta property="og:url" content="http://yoursite.com/2020/05/21/golang/源码解读/sync/pool/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="Pool
+一个Pool是一群对象的集合，集合可能是单独存储
+Pool中存储的对象可以自动在池中移除而不用通知，当只有Pool持有对象的引用时，对象有可能会释放内存
+Pool是线程安全的
+Pool的创建用意是缓存已经分配内存且已经用完的对象，方便后续复用的时候不必申请内存，同时减轻gc的压力
+Pool适用于管理一组对象，可以被多个独立的客户端复用，从而避免每个客户端都要申请内存。
+如果对象存在的声明">
+<meta property="og:updated_time" content="2020-05-21T04:15:49.280Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="go源码解读-sync.WaitGroup">
+<meta name="twitter:description" content="Pool
+一个Pool是一群对象的集合，集合可能是单独存储
+Pool中存储的对象可以自动在池中移除而不用通知，当只有Pool持有对象的引用时，对象有可能会释放内存
+Pool是线程安全的
+Pool的创建用意是缓存已经分配内存且已经用完的对象，方便后续复用的时候不必申请内存，同时减轻gc的压力
+Pool适用于管理一组对象，可以被多个独立的客户端复用，从而避免每个客户端都要申请内存。
+如果对象存在的声明">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/05/21/golang/源码解读/sync/pool/"/>
+
+
+
+
+
+  <title>go源码解读-sync.WaitGroup | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/21/golang/源码解读/sync/pool/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">go源码解读-sync.WaitGroup</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-21T10:31:29+08:00">
+                2020-05-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/源码解读/" itemprop="url" rel="index">
+                    <span itemprop="name">源码解读</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Pool"><a href="#Pool" class="headerlink" title="Pool"></a>Pool</h2><ul>
+<li>一个Pool是一群对象的集合，集合可能是单独存储</li>
+<li>Pool中存储的对象可以自动在池中移除而不用通知，当只有Pool持有对象的引用时，对象有可能会释放内存</li>
+<li>Pool是线程安全的</li>
+<li>Pool的创建用意是缓存已经分配内存且已经用完的对象，方便后续复用的时候不必申请内存，同时减轻gc的压力</li>
+<li>Pool适用于管理一组对象，可以被多个独立的客户端复用，从而避免每个客户端都要申请内存。</li>
+<li>如果对象存在的声明周期很短，则不适合用Pool来管理</li>
+</ul>
+<h3 id="Pool结构体"><a href="#Pool结构体" class="headerlink" title="Pool结构体"></a>Pool结构体</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Pool <span class="keyword">struct</span> &#123;</div><div class="line">	noCopy noCopy  <span class="comment">// 确保pool在使用之后不会被复制</span></div><div class="line">	local     unsafe.Pointer <span class="comment">// 指向[]poolLocal的指针</span></div><div class="line">	localSize <span class="keyword">uintptr</span>        <span class="comment">// poolLocal的长度</span></div><div class="line">	victim     unsafe.Pointer <span class="comment">// victim一次GC之后的幸存者，这个地方也是指向[]poolLocal的指针，local经过一次GC就变为了victim</span></div><div class="line">	victimSize <span class="keyword">uintptr</span>        <span class="comment">// victim的长度</span></div><div class="line">	New <span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; <span class="comment">// 当无法从Pool中获取到新的对象的时候，会调用New函数来创建个对象来返回</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>poolLocal是每个调度器P存储对象的结构体</li>
+<li>pad防止伪共享</li>
+<li>private为每个调度器的私有空间</li>
+<li>shared空间当前调度器可以pushHead和popTail，所有调度器都可以popTail</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> poolLocal <span class="keyword">struct</span> &#123;</div><div class="line">	poolLocalInternal</div><div class="line"></div><div class="line">	<span class="comment">// Prevents false sharing on widespread platforms with</span></div><div class="line">	<span class="comment">// 128 mod (cache line size) = 0 .</span></div><div class="line">	pad [<span class="number">128</span> - unsafe.Sizeof(poolLocalInternal&#123;&#125;)%<span class="number">128</span>]<span class="keyword">byte</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Local per-P Pool appendix.</span></div><div class="line"><span class="keyword">type</span> poolLocalInternal <span class="keyword">struct</span> &#123;</div><div class="line">	private <span class="keyword">interface</span>&#123;&#125; <span class="comment">// Can be used only by the respective P.</span></div><div class="line">	shared  poolChain   <span class="comment">// Local P can pushHead/popHead; any P can popTail.</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>poolChain为动态版的poolDequeue</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> poolChain <span class="keyword">struct</span> &#123;</div><div class="line">  <span class="comment">// push节点，由当前P来push，不需要加锁</span></div><div class="line">	head *poolChainElt</div><div class="line">  <span class="comment">// get节点，所有调度器都可以操作，需要用原子方法写入和读取</span></div><div class="line">	tail *poolChainElt</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// poolChain的一个节点</span></div><div class="line"><span class="keyword">type</span> poolChainElt <span class="keyword">struct</span> &#123;</div><div class="line">	poolDequeue <span class="comment">// 为一个无锁，固定大小的单生产者多消费穿者的唤醒队列</span></div><div class="line">	next, prev *poolChainElt</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> poolDequeue <span class="keyword">struct</span> &#123;</div><div class="line">  <span class="comment">// headTail表示下标，高32位表示头下标，低32位表示尾下标，poolDequeue定义了，head tail的pack和unpack函数方便转化，实际用的时候都会mod ( len(vals) - 1 ) 来防止溢出</span></div><div class="line">	headTail <span class="keyword">uint64</span></div><div class="line">  <span class="comment">// vals的大小必须是2的幂，因为go的内存管理策略是将内存分为2的幂大小的链表，申请2的幂大小的内存可以有效减小分配内存的开销</span></div><div class="line">	vals []eface</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> eface <span class="keyword">struct</span> &#123;</div><div class="line">	typ, val unsafe.Pointer</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Pool结构体的方法"><a href="#Pool结构体的方法" class="headerlink" title="Pool结构体的方法"></a>Pool结构体的方法</h3><ul>
+<li>Put方法将对象添加到Pool中<ul>
+<li>pin函数将当前goroutine绑定到指定的调度器P上，同时禁止抢占，返回poolLocal对象和绑定的Pid</li>
+<li>从Pool的local中获取调度器P的poolLocal，没有需要新建<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pool)</span> <span class="title">Put</span><span class="params">(x <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> x == <span class="literal">nil</span> &#123; <span class="comment">// 放入的对象为空，直接返回</span></div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> race.Enabled &#123; <span class="comment">// 关闭竞争检测</span></div><div class="line">		<span class="keyword">if</span> fastrand()%<span class="number">4</span> == <span class="number">0</span> &#123;</div><div class="line">			<span class="comment">// Randomly drop x on floor.</span></div><div class="line">			<span class="keyword">return</span></div><div class="line">		&#125;</div><div class="line">		race.ReleaseMerge(poolRaceAddr(x))</div><div class="line">		race.Disable() <span class="comment">// 关闭操作</span></div><div class="line">	&#125;</div><div class="line">	l, _ := p.pin()</div><div class="line">  <span class="comment">// 私有空间为空，则将x放置到私有空间</span></div><div class="line">	<span class="keyword">if</span> l.private == <span class="literal">nil</span> &#123;</div><div class="line">		l.private = x</div><div class="line">		x = <span class="literal">nil</span></div><div class="line">	&#125;</div><div class="line">  <span class="comment">// 私有空间已满，则将x放到公有空间中</span></div><div class="line">	<span class="keyword">if</span> x != <span class="literal">nil</span> &#123;</div><div class="line">		l.shared.pushHead(x)</div><div class="line">	&#125;</div><div class="line">	runtime_procUnpin()</div><div class="line">	<span class="keyword">if</span> race.Enabled &#123;</div><div class="line">		race.Enable()</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pool)</span> <span class="title">pin</span><span class="params">()</span> <span class="params">(*poolLocal, <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	pid := runtime_procPin() <span class="comment">// 关闭抢占，这个goroutine工作完才释放时间片</span></div><div class="line"></div><div class="line">	s := atomic.LoadUintptr(&amp;p.localSize) <span class="comment">// load-acquire</span></div><div class="line">	l := p.local                          <span class="comment">// load-consume</span></div><div class="line">	<span class="keyword">if</span> <span class="keyword">uintptr</span>(pid) &lt; s &#123; <span class="comment">// 如果p.local的长度大于pid，则直接取数据即可</span></div><div class="line">		<span class="keyword">return</span> indexLocal(l, pid), pid</div><div class="line">	&#125;</div><div class="line">  <span class="comment">// pinSlow函数来完成p.local的新增</span></div><div class="line">	<span class="keyword">return</span> p.pinSlow()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">indexLocal</span><span class="params">(l unsafe.Pointer, i <span class="keyword">int</span>)</span> *<span class="title">poolLocal</span></span> &#123;</div><div class="line">	lp := unsafe.Pointer(<span class="keyword">uintptr</span>(l) + <span class="keyword">uintptr</span>(i)*unsafe.Sizeof(poolLocal&#123;&#125;))</div><div class="line">	<span class="keyword">return</span> (*poolLocal)(lp)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pool)</span> <span class="title">pinSlow</span><span class="params">()</span> <span class="params">(*poolLocal, <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">  <span class="comment">// 尝试重新将goroutine绑定到其他的goroutine,查看是否有poolLocal使用</span></div><div class="line">	runtime_procUnpin()</div><div class="line">	allPoolsMu.Lock()</div><div class="line">	<span class="keyword">defer</span> allPoolsMu.Unlock()</div><div class="line">	pid := runtime_procPin()</div><div class="line">	<span class="comment">// poolCleanup won't be called while we are pinned.</span></div><div class="line">	s := p.localSize</div><div class="line">	l := p.local</div><div class="line">  <span class="comment">// 新绑定的P有poolLocal空间，则直接获取返回</span></div><div class="line">	<span class="keyword">if</span> <span class="keyword">uintptr</span>(pid) &lt; s &#123;</div><div class="line">		<span class="keyword">return</span> indexLocal(l, pid), pid</div><div class="line">	&#125;</div><div class="line">  <span class="comment">// Pool为空，则将pool添加到allPools中</span></div><div class="line">	<span class="keyword">if</span> p.local == <span class="literal">nil</span> &#123;</div><div class="line">		allPools = <span class="built_in">append</span>(allPools, p)</div><div class="line">	&#125;</div><div class="line">  <span class="comment">// 创建一个cpu数量大小的[]poolLocal并返回</span></div><div class="line">	size := runtime.GOMAXPROCS(<span class="number">0</span>)</div><div class="line">	local := <span class="built_in">make</span>([]poolLocal, size)</div><div class="line">	atomic.StorePointer(&amp;p.local, unsafe.Pointer(&amp;local[<span class="number">0</span>])) <span class="comment">// store-release</span></div><div class="line">	atomic.StoreUintptr(&amp;p.localSize, <span class="keyword">uintptr</span>(size))         <span class="comment">// store-release</span></div><div class="line">	<span class="keyword">return</span> &amp;local[pid], pid</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="Get方法"><a href="#Get方法" class="headerlink" title="Get方法"></a>Get方法</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pool)</span> <span class="title">Get</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</div><div class="line">  <span class="comment">// 关闭竞争检测</span></div><div class="line">	<span class="keyword">if</span> race.Enabled &#123;</div><div class="line">		race.Disable()</div><div class="line">	&#125;</div><div class="line">  <span class="comment">// 将goroutine固定到P上，并获取其localPool和pid</span></div><div class="line">	l, pid := p.pin()</div><div class="line">	x := l.private</div><div class="line">	l.private = <span class="literal">nil</span></div><div class="line">  <span class="comment">// localPool的私有空间为空，则从共享头空间中pop数据</span></div><div class="line">	<span class="keyword">if</span> x == <span class="literal">nil</span> &#123;</div><div class="line">		<span class="comment">// Try to pop the head of the local shard. We prefer</span></div><div class="line">		<span class="comment">// the head over the tail for temporal locality of</span></div><div class="line">		<span class="comment">// reuse.</span></div><div class="line">		x, _ = l.shared.popHead()</div><div class="line">		<span class="keyword">if</span> x == <span class="literal">nil</span> &#123;</div><div class="line">      <span class="comment">// pop数据为空，则调用getSlow方法来获取</span></div><div class="line">			x = p.getSlow(pid)</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	runtime_procUnpin()</div><div class="line">	<span class="keyword">if</span> race.Enabled &#123;</div><div class="line">		race.Enable()</div><div class="line">		<span class="keyword">if</span> x != <span class="literal">nil</span> &#123;</div><div class="line">			race.Acquire(poolRaceAddr(x))</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">  <span class="comment">// 如果没有获取到，则调用pool的New函数来完成创建</span></div><div class="line">	<span class="keyword">if</span> x == <span class="literal">nil</span> &amp;&amp; p.New != <span class="literal">nil</span> &#123;</div><div class="line">		x = p.New()</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> x</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 懒获取</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pool)</span> <span class="title">getSlow</span><span class="params">(pid <span class="keyword">int</span>)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</div><div class="line">  <span class="comment">// 获取Pool的localSize和local</span></div><div class="line">	size := atomic.LoadUintptr(&amp;p.localSize) <span class="comment">// load-acquire</span></div><div class="line">	locals := p.local                        <span class="comment">// load-consume</span></div><div class="line">  <span class="comment">// 遍历其他调度器的polLocal,看起poptail中是否可以取出对象</span></div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="keyword">int</span>(size); i++ &#123;</div><div class="line">		l := indexLocal(locals, (pid+i+<span class="number">1</span>)%<span class="keyword">int</span>(size))</div><div class="line">		<span class="keyword">if</span> x, _ := l.shared.popTail(); x != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">return</span> x</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">  <span class="comment">// 到pool的victim中查询</span></div><div class="line">	size = atomic.LoadUintptr(&amp;p.victimSize)</div><div class="line">	<span class="keyword">if</span> <span class="keyword">uintptr</span>(pid) &gt;= size &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">	&#125;</div><div class="line">	locals = p.victim</div><div class="line">	l := indexLocal(locals, pid)</div><div class="line">  <span class="comment">// 私有空间有直接返回</span></div><div class="line">	<span class="keyword">if</span> x := l.private; x != <span class="literal">nil</span> &#123;</div><div class="line">		l.private = <span class="literal">nil</span></div><div class="line">		<span class="keyword">return</span> x</div><div class="line">	&#125;</div><div class="line">  <span class="comment">// 遍历victim中其他调度的poolLocal，看是否可以通过popTail获取到对象</span></div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="keyword">int</span>(size); i++ &#123;</div><div class="line">		l := indexLocal(locals, (pid+i)%<span class="keyword">int</span>(size))</div><div class="line">		<span class="keyword">if</span> x, _ := l.shared.popTail(); x != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">return</span> x</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">  <span class="comment">// 没有查到，编辑victim为空，下次就不查找victim</span></div><div class="line">	atomic.StoreUintptr(&amp;p.victimSize, <span class="number">0</span>)</div><div class="line"></div><div class="line">	<span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/go/" rel="tag"># go</a>
+          
+            <a href="/tags/源码解读/" rel="tag"># 源码解读</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/18/golang/源码解读/sync/waitGroup/" rel="next" title="go源码解读-sync.WaitGroup">
+                <i class="fa fa-chevron-left"></i> go源码解读-sync.WaitGroup
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/29/golang/源码解读/unsafe/" rel="prev" title="go源码解读-unsafe包">
+                go源码解读-unsafe包 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">106</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">35</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Pool"><span class="nav-number">1.</span> <span class="nav-text">Pool</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Pool结构体"><span class="nav-number">1.1.</span> <span class="nav-text">Pool结构体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pool结构体的方法"><span class="nav-number">1.2.</span> <span class="nav-text">Pool结构体的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Get方法"><span class="nav-number">1.2.1.</span> <span class="nav-text">Get方法</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="go,源码解读,1.13.11," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="log包概述
+go源码提供了一个简单的日志包，包含Logger类型及其相关方法
+log包提供了一系列便捷方法来打印简单日子，如Println,Fatalln,Panicln等
+Fatal方法打印完日志后会调用os.Exit(1)进行退出
+Panic方法打印完日志后会调用panic方法退出
+
+Logger结构体
+Logger结构体可以理解为一个对象实例，可以逐行向io.Writer对象写入数据
+Lo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go源码解读-log包">
+<meta property="og:url" content="http://yoursite.com/2020/10/28/golang/源码解读/log/log/index.html">
+<meta property="og:site_name" content="小黄">
+<meta property="og:description" content="log包概述
+go源码提供了一个简单的日志包，包含Logger类型及其相关方法
+log包提供了一系列便捷方法来打印简单日子，如Println,Fatalln,Panicln等
+Fatal方法打印完日志后会调用os.Exit(1)进行退出
+Panic方法打印完日志后会调用panic方法退出
+
+Logger结构体
+Logger结构体可以理解为一个对象实例，可以逐行向io.Writer对象写入数据
+Lo">
+<meta property="og:updated_time" content="2020-10-28T07:55:13.533Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="go源码解读-log包">
+<meta name="twitter:description" content="log包概述
+go源码提供了一个简单的日志包，包含Logger类型及其相关方法
+log包提供了一系列便捷方法来打印简单日子，如Println,Fatalln,Panicln等
+Fatal方法打印完日志后会调用os.Exit(1)进行退出
+Panic方法打印完日志后会调用panic方法退出
+
+Logger结构体
+Logger结构体可以理解为一个对象实例，可以逐行向io.Writer对象写入数据
+Lo">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/10/28/golang/源码解读/log/log/"/>
+
+
+
+
+
+  <title>go源码解读-log包 | 小黄</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小黄</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">黄小黄的幸福生活！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java">
+          <a href="/Java/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Java
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/10/28/golang/源码解读/log/log/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cdx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小黄">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">go源码解读-log包</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-10-28T11:18:04+08:00">
+                2020-10-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/源码解读/" itemprop="url" rel="index">
+                    <span itemprop="name">源码解读</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/源码解读/1-13-11/" itemprop="url" rel="index">
+                    <span itemprop="name">1.13.11</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="log包概述"><a href="#log包概述" class="headerlink" title="log包概述"></a>log包概述</h2><ul>
+<li>go源码提供了一个简单的日志包，包含Logger类型及其相关方法</li>
+<li>log包提供了一系列便捷方法来打印简单日子，如Println,Fatalln,Panicln等</li>
+<li>Fatal方法打印完日志后会调用os.Exit(1)进行退出</li>
+<li>Panic方法打印完日志后会调用panic方法退出</li>
+</ul>
+<h2 id="Logger结构体"><a href="#Logger结构体" class="headerlink" title="Logger结构体"></a>Logger结构体</h2><ul>
+<li>Logger结构体可以理解为一个对象实例，可以逐行向io.Writer对象写入数据</li>
+<li>Logger结构体是线程安全的，sync.Mutex互斥量保证原子写入</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Logger <span class="keyword">struct</span> &#123;</div><div class="line">	mu     sync.Mutex <span class="comment">// 互斥量保证原子写入</span></div><div class="line">	prefix <span class="keyword">string</span>     <span class="comment">// 日志前缀</span></div><div class="line">	flag   <span class="keyword">int</span>        <span class="comment">// 日志格式flag</span></div><div class="line">	out    io.Writer  <span class="comment">// 写入的目标</span></div><div class="line">	buf    []<span class="keyword">byte</span>     <span class="comment">// 缓存要写入的内容</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 有参数构造方法</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(out io.Writer, prefix <span class="keyword">string</span>, flag <span class="keyword">int</span>)</span> *<span class="title">Logger</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> &amp;Logger&#123;out: out, prefix: prefix, flag: flag&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>flag定义来决定日志打印的格式化，采用比特位来节省空间</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> (</div><div class="line">	Ldate         = <span class="number">1</span> &lt;&lt; <span class="literal">iota</span>     <span class="comment">// 日期 00000001 2009/01/23</span></div><div class="line">	Ltime                         <span class="comment">// 时间 00000010 01:23:23</span></div><div class="line">	Lmicroseconds                 <span class="comment">// 显示毫秒 00000100</span></div><div class="line">	Llongfile                     <span class="comment">// 显示打印文件的全路径 00001000 /a/b/c/d.go:23</span></div><div class="line">	Lshortfile                    <span class="comment">// 显示打印文件的短路径，00010000 d.go, 会覆盖Llongfile</span></div><div class="line">	LUTC                          <span class="comment">// 使用UTC时区</span></div><div class="line">	LstdFlags     = Ldate | Ltime <span class="comment">// 默认flag</span></div><div class="line">)</div></pre></td></tr></table></figure>
+<h3 id="Logger的相关方法"><a href="#Logger的相关方法" class="headerlink" title="Logger的相关方法"></a>Logger的相关方法</h3><ul>
+<li>SetOutput指定日志的输出，参数为实现io.Writer接口的方法<br>-</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// SetOutput sets the output destination for the logger.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *Logger)</span> <span class="title">SetOutput</span><span class="params">(w io.Writer)</span></span> &#123;</div><div class="line">	l.mu.Lock()</div><div class="line">	<span class="keyword">defer</span> l.mu.Unlock()</div><div class="line">	l.out = w</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>formatHeader方法为内部方法</li>
+<li>formatHeader方法将日志头部写入缓存，依次为prefix信息，日期信息，打印日志文件信息</li>
+<li>itoa完成输入的数字转换成指定长度的字符串并写入buf中</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *Logger)</span> <span class="title">formatHeader</span><span class="params">(buf *[]<span class="keyword">byte</span>, t time.Time, file <span class="keyword">string</span>, line <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">  <span class="comment">// 写入prefix信息</span></div><div class="line">	*buf = <span class="built_in">append</span>(*buf, l.prefix...)</div><div class="line">  <span class="comment">// 判定flag的日期标志位不为0 =&gt; 00000111 =&gt; 也就是flag的二进制的后三位不都为0，写入日期信息到缓存</span></div><div class="line">	<span class="keyword">if</span> l.flag&amp;(Ldate|Ltime|Lmicroseconds) != <span class="number">0</span> &#123;</div><div class="line">    <span class="comment">// 时区判定</span></div><div class="line">		<span class="keyword">if</span> l.flag&amp;LUTC != <span class="number">0</span> &#123;</div><div class="line">			t = t.UTC()</div><div class="line">		&#125;</div><div class="line">    <span class="comment">// 写入日期信息 2020/11/11</span></div><div class="line">		<span class="keyword">if</span> l.flag&amp;Ldate != <span class="number">0</span> &#123;</div><div class="line">			year, month, day := t.Date()</div><div class="line">			itoa(buf, year, <span class="number">4</span>)</div><div class="line">			*buf = <span class="built_in">append</span>(*buf, <span class="string">'/'</span>)</div><div class="line">			itoa(buf, <span class="keyword">int</span>(month), <span class="number">2</span>)</div><div class="line">			*buf = <span class="built_in">append</span>(*buf, <span class="string">'/'</span>)</div><div class="line">			itoa(buf, day, <span class="number">2</span>)</div><div class="line">			*buf = <span class="built_in">append</span>(*buf, <span class="string">' '</span>)</div><div class="line">		&#125;</div><div class="line">    <span class="comment">// 写入时间信息 11:11:11</span></div><div class="line">		<span class="keyword">if</span> l.flag&amp;(Ltime|Lmicroseconds) != <span class="number">0</span> &#123;</div><div class="line">			hour, min, sec := t.Clock()</div><div class="line">			itoa(buf, hour, <span class="number">2</span>)</div><div class="line">			*buf = <span class="built_in">append</span>(*buf, <span class="string">':'</span>)</div><div class="line">			itoa(buf, min, <span class="number">2</span>)</div><div class="line">			*buf = <span class="built_in">append</span>(*buf, <span class="string">':'</span>)</div><div class="line">			itoa(buf, sec, <span class="number">2</span>)</div><div class="line">			<span class="keyword">if</span> l.flag&amp;Lmicroseconds != <span class="number">0</span> &#123;</div><div class="line">				*buf = <span class="built_in">append</span>(*buf, <span class="string">'.'</span>)</div><div class="line">				itoa(buf, t.Nanosecond()/<span class="number">1e3</span>, <span class="number">6</span>)</div><div class="line">			&#125;</div><div class="line">			*buf = <span class="built_in">append</span>(*buf, <span class="string">' '</span>)</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">  <span class="comment">// 写入文件信息</span></div><div class="line">	<span class="keyword">if</span> l.flag&amp;(Lshortfile|Llongfile) != <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">if</span> l.flag&amp;Lshortfile != <span class="number">0</span> &#123;</div><div class="line">			short := file</div><div class="line">			<span class="keyword">for</span> i := <span class="built_in">len</span>(file) - <span class="number">1</span>; i &gt; <span class="number">0</span>; i-- &#123;</div><div class="line">				<span class="keyword">if</span> file[i] == <span class="string">'/'</span> &#123;</div><div class="line">					short = file[i+<span class="number">1</span>:]</div><div class="line">					<span class="keyword">break</span></div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">			file = short</div><div class="line">		&#125;</div><div class="line">		*buf = <span class="built_in">append</span>(*buf, file...)</div><div class="line">		*buf = <span class="built_in">append</span>(*buf, <span class="string">':'</span>)</div><div class="line">		itoa(buf, line, <span class="number">-1</span>)</div><div class="line">		*buf = <span class="built_in">append</span>(*buf, <span class="string">": "</span>...)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// itoa 写入指定位数到buf中</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">itoa</span><span class="params">(buf *[]<span class="keyword">byte</span>, i <span class="keyword">int</span>, wid <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">var</span> b [<span class="number">20</span>]<span class="keyword">byte</span></div><div class="line">  <span class="comment">// 从最后一个字节开始写入</span></div><div class="line">	bp := <span class="built_in">len</span>(b) - <span class="number">1</span></div><div class="line">	<span class="keyword">for</span> i &gt;= <span class="number">10</span> || wid &gt; <span class="number">1</span> &#123;</div><div class="line">		wid--</div><div class="line">		q := i / <span class="number">10</span></div><div class="line">    <span class="comment">// 写入i的最后一位数字</span></div><div class="line">		b[bp] = <span class="keyword">byte</span>(<span class="string">'0'</span> + i - q*<span class="number">10</span>)</div><div class="line">		bp--</div><div class="line">		i = q</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// i &lt; 10</span></div><div class="line">	b[bp] = <span class="keyword">byte</span>(<span class="string">'0'</span> + i)</div><div class="line">  <span class="comment">// 将wid位字符写入buf缓存中</span></div><div class="line">	*buf = <span class="built_in">append</span>(*buf, b[bp:]...)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Output方法完成日志的写入实现</li>
+<li>s包含要输出的内容，calldepth记录调用深度</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *Logger)</span> <span class="title">Output</span><span class="params">(calldepth <span class="keyword">int</span>, s <span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</div><div class="line">	now := time.Now() <span class="comment">// get this early.</span></div><div class="line">	<span class="keyword">var</span> file <span class="keyword">string</span></div><div class="line">	<span class="keyword">var</span> line <span class="keyword">int</span></div><div class="line">	l.mu.Lock()</div><div class="line">	<span class="keyword">defer</span> l.mu.Unlock()</div><div class="line">  <span class="comment">// flag包含文件的bit位不全是0，则获取文件信息</span></div><div class="line">	<span class="keyword">if</span> l.flag&amp;(Lshortfile|Llongfile) != <span class="number">0</span> &#123;</div><div class="line">		<span class="comment">// Release lock while getting caller info - it's expensive.</span></div><div class="line">		l.mu.Unlock()</div><div class="line">		<span class="keyword">var</span> ok <span class="keyword">bool</span></div><div class="line">    <span class="comment">// runtime.Caller方法获取函数调用的行数和文件名</span></div><div class="line">		_, file, line, ok = runtime.Caller(calldepth)</div><div class="line">		<span class="keyword">if</span> !ok &#123;</div><div class="line">			file = <span class="string">"???"</span></div><div class="line">			line = <span class="number">0</span></div><div class="line">		&#125;</div><div class="line">		l.mu.Lock()</div><div class="line">	&#125;</div><div class="line">  <span class="comment">// 缓存置空</span></div><div class="line">	l.buf = l.buf[:<span class="number">0</span>]</div><div class="line">  <span class="comment">// 写入前缀，日期，文件信息到buf中</span></div><div class="line">	l.formatHeader(&amp;l.buf, now, file, line)</div><div class="line">  <span class="comment">// 写入打印的日志到buf中</span></div><div class="line">	l.buf = <span class="built_in">append</span>(l.buf, s...)</div><div class="line">  <span class="comment">// 自动换行</span></div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(s) == <span class="number">0</span> || s[<span class="built_in">len</span>(s)<span class="number">-1</span>] != <span class="string">'\n'</span> &#123;</div><div class="line">		l.buf = <span class="built_in">append</span>(l.buf, <span class="string">'\n'</span>)</div><div class="line">	&#125;</div><div class="line">  <span class="comment">// 将缓存写入到out对象中</span></div><div class="line">	_, err := l.out.Write(l.buf)</div><div class="line">	<span class="keyword">return</span> err</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Logger结构体的常见输出日志的方法</li>
+<li>Logger的getter和setter方法，不列出</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//格式化输出和普通输出</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *Logger)</span> <span class="title">Printf</span><span class="params">(format <span class="keyword">string</span>, v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	l.Output(<span class="number">2</span>, fmt.Sprintf(format, v...))</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *Logger)</span> <span class="title">Print</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123; l.Output(<span class="number">2</span>, fmt.Sprint(v...)) &#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *Logger)</span> <span class="title">Println</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123; l.Output(<span class="number">2</span>, fmt.Sprintln(v...)) &#125;</div><div class="line"></div><div class="line"><span class="comment">// Fatal 方法，会调用os.Exit(1)退出，多用于脚本中</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *Logger)</span> <span class="title">Fatal</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	l.Output(<span class="number">2</span>, fmt.Sprint(v...))</div><div class="line">	os.Exit(<span class="number">1</span>)</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *Logger)</span> <span class="title">Fatalf</span><span class="params">(format <span class="keyword">string</span>, v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	l.Output(<span class="number">2</span>, fmt.Sprintf(format, v...))</div><div class="line">	os.Exit(<span class="number">1</span>)</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *Logger)</span> <span class="title">Fatalln</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	l.Output(<span class="number">2</span>, fmt.Sprintln(v...))</div><div class="line">	os.Exit(<span class="number">1</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Panic方法会调用panic进行退出，多用于错误处理，和recover联合使用</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *Logger)</span> <span class="title">Panic</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	s := fmt.Sprint(v...)</div><div class="line">	l.Output(<span class="number">2</span>, s)</div><div class="line">	<span class="built_in">panic</span>(s)</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *Logger)</span> <span class="title">Panicf</span><span class="params">(format <span class="keyword">string</span>, v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	s := fmt.Sprintf(format, v...)</div><div class="line">	l.Output(<span class="number">2</span>, s)</div><div class="line">	<span class="built_in">panic</span>(s)</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *Logger)</span> <span class="title">Panicln</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	s := fmt.Sprintln(v...)</div><div class="line">	l.Output(<span class="number">2</span>, s)</div><div class="line">	<span class="built_in">panic</span>(s)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>为了方便快捷的使用log包，提供了一些公有方法采用打印输出到标准输出中，log.Println()即可</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 标准错误，flag为 Ldate | Ltime =&gt; 00000011</span></div><div class="line"><span class="keyword">var</span> std = New(os.Stderr, <span class="string">""</span>, LstdFlags)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Print</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	std.Output(<span class="number">2</span>, fmt.Sprint(v...))</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Fatal</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	std.Output(<span class="number">2</span>, fmt.Sprint(v...))</div><div class="line">	os.Exit(<span class="number">1</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Panic</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	s := fmt.Sprint(v...)</div><div class="line">	std.Output(<span class="number">2</span>, s)</div><div class="line">	<span class="built_in">panic</span>(s)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="cdx 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="cdx 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="bitcoin" style="display: inline-block">
+        <img id="bitcoin_qr" src="/images/bitcoin.png" alt="cdx 比特币"/>
+        <p>比特币</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/go/" rel="tag"># go</a>
+          
+            <a href="/tags/源码解读/" rel="tag"># 源码解读</a>
+          
+            <a href="/tags/1-13-11/" rel="tag"># 1.13.11</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/08/06/shell编程/" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/10/28/golang/源码解读/database/database/" rel="prev" title="go源码解读-database包">
+                go源码解读-database包 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.gif"
+              alt="cdx" />
+          
+            <p class="site-author-name" itemprop="name">cdx</p>
+            <p class="site-description motion-element" itemprop="description">Be a better man!</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">110</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">36</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cdx0312" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cdxu0312@outlook.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#log包概述"><span class="nav-number">1.</span> <span class="nav-text">log包概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Logger结构体"><span class="nav-number">2.</span> <span class="nav-text">Logger结构体</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Logger的相关方法"><span class="nav-number">2.1.</span> <span class="nav-text">Logger的相关方法</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cdx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
